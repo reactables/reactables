@@ -1,4 +1,4 @@
-import { Action } from '@hubfx/core';
+import { Action } from '@hub-fx/core';
 import { AbstractControl, FormArray } from '../Models/Controls';
 import { AddControl } from '../Models/Payloads';
 import { getControl } from '../Helpers/getControl';

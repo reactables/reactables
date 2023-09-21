@@ -1,5 +1,5 @@
 import cloneDeep from 'lodash.clonedeep';
-import { Action } from '@hubfx/core';
+import { Action } from '@hub-fx/core';
 import {
   updateAncestorValues,
   FORMS_UPDATE_ANCESTOR_VALUES,

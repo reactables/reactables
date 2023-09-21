@@ -1,5 +1,5 @@
 {
-  "name": "@hubfx/core",
+  "name": "@hub-fx/core",
   "description": "State management with rxjs",
   "main": "dist/index.js",
   "files": [
@@ -15,8 +15,5 @@
   "license": "ISC",
   "peerDependencies": {
     "rxjs": "^7.8.1"
-  },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
   }
 }

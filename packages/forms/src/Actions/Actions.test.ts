@@ -1,6 +1,6 @@
 import { Subscription, Observable } from 'rxjs';
 import cloneDeep from 'lodash.clonedeep';
-import { HubFactory, Action } from '@hubfx/core';
+import { HubFactory, Action } from '@hub-fx/core';
 import { controlChange } from './controlChange';
 import { addGroupControl } from './addGroupControl';
 import { addFormArrayControl } from './addArrayControl';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ControlModels } from '@hubfx/forms';
+import { ControlModels } from '@hub-fx/forms';
 import { Input } from './Input';
 import { Contact } from '../Testing/Models/Contact';
 import { Field } from './Field';

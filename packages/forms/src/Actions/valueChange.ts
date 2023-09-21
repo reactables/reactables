@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Action, Effect } from '@hubfx/core';
+import { Action, Effect } from '@hub-fx/core';
 import { AbstractControl } from '../Models/Controls';
 import { asyncValidationResponseSuccess } from './asyncValidationResponseSuccess';
 import { ControlAsyncValidationResponse } from '../Models/Payloads';

@@ -1,4 +1,4 @@
-import { Action, Reducer } from '@hubfx/core';
+import { Action, Reducer } from '@hub-fx/core';
 import { FORMS_CONTROL_CHANGE } from '../Actions/controlChange';
 import { FORMS_CONTROL_ASYNC_VALIDATION_RESPONSE_SUCCESS } from '../Actions/asyncValidationResponseSuccess';
 import { FORMS_VALUE_CHANGE_EFFECT } from '../Actions/valueChange';

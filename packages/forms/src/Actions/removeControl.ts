@@ -1,4 +1,4 @@
-import { Action } from '@hubfx/core';
+import { Action } from '@hub-fx/core';
 import { AbstractControl } from '../Models/Controls';
 import { ControlRef } from '../Models/ControlRef';
 import { getAncestorControls } from '../Helpers/getAncestorControls';

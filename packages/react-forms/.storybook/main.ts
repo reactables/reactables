@@ -13,13 +13,13 @@ const config: StorybookConfig = {
     const newConfig = {
       ...config,
       optimizeDeps: {
-        include: ['@hubfx/core', '@hubfx/forms'],
+        include: ['@hub-fx/core', '@hub-fx/forms'],
       },
     };
 
     if (newConfig.build) {
       newConfig.build.commonjsOptions = {
-        include: [/hubfx/, /node_modules/],
+        include: [/hub-fx/, /node_modules/],
       };
     }
 

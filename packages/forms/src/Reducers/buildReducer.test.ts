@@ -8,7 +8,7 @@ import { FormGroup, FormArray } from '../Models/Controls';
 import { FormArrayConfig, FormGroupConfig } from '../Models/Configs';
 import { Contact } from '../Testing/Models/Contact';
 import { EmergencyContact } from '../Testing/Models/EmergencyContact';
-import { Reducer } from '@hubfx/core';
+import { Reducer } from '@hub-fx/core';
 
 describe('buildReducer', () => {
   describe('reacting to change control', () => {

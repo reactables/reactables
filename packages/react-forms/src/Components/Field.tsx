@@ -12,7 +12,7 @@ import {
   getControl,
   markControlAsTouched,
   ControlModels,
-} from '@hubfx/forms';
+} from '@hub-fx/forms';
 import { FormContext } from './Form';
 
 export type EventHandler<Event> = (event: Event, name?: string) => void;

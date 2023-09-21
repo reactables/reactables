@@ -1,4 +1,4 @@
-import { Action, Reducer } from '@hubfx/core';
+import { Action, Reducer } from '@hub-fx/core';
 import { AbstractControl } from '../Models/Controls';
 import { ControlChange } from '../Models/Payloads';
 import { getAncestorControls } from '../Helpers/getAncestorControls';

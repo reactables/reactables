@@ -1,4 +1,4 @@
-import { Action } from '@hubfx/core';
+import { Action } from '@hub-fx/core';
 import { ControlRef } from '../Models/ControlRef';
 export const FORMS_MARK_CONTROL_AS_UNTOUCHED =
   'FORMS_MARK_CONTROL_AS_UNTOUCHED';

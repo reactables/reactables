@@ -1,6 +1,6 @@
 {
-  "name": "@hubfx/react-forms",
-  "description": "State management with rxjs",
+  "name": "@hub-fx/react-forms",
+  "description": "React forms with hub-fx",
   "main": "dist/index.js",
   "files": [
     "dist"
@@ -16,15 +16,12 @@
   "author": "David Lai",
   "license": "ISC",
   "dependencies": {
-    "@hubfx/core": "*",
-    "@hubfx/forms": "*"
+    "@hub-fx/core": "*",
+    "@hub-fx/forms": "*"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0",
     "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0",
     "rxjs": "^7.8.1"
-  },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
   }
 }

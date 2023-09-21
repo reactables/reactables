@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Hub, Dispatcher, Reducer } from '@hubfx/core';
+import { Hub, Dispatcher, Reducer } from '@hub-fx/core';
 import {
   AbstractControlConfig,
   buildReducer,
@@ -7,7 +7,7 @@ import {
   getControl,
   ControlRef,
   resetControl,
-} from '@hubfx/forms';
+} from '@hub-fx/forms';
 import { useObservable } from '../Hooks/useObservable';
 import { useHub } from '../Hooks/useHub';
 

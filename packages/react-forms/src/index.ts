@@ -1,4 +1,4 @@
 export * from './Hooks';
 export * from './Components';
-export * from '@hubfx/core';
-export * from '@hubfx/forms';
+export * from '@hub-fx/core';
+export * from '@hub-fx/forms';

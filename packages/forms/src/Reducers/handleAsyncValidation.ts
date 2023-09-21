@@ -1,5 +1,5 @@
 import cloneDeep from 'lodash.clonedeep';
-import { Action } from '@hubfx/core';
+import { Action } from '@hub-fx/core';
 import { AbstractControl } from '../Models/Controls';
 import { getAncestorControls } from '../Helpers/getAncestorControls';
 

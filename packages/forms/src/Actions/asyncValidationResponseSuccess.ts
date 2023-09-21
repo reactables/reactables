@@ -1,5 +1,5 @@
 import { ControlAsyncValidationResponse } from '../Models';
-import { Action } from '@hubfx/core';
+import { Action } from '@hub-fx/core';
 
 export const FORMS_CONTROL_ASYNC_VALIDATION_RESPONSE_SUCCESS =
   'FORMS_CONTROL_ASYNC_VALIDATION_RESPONSE_SUCCESS';

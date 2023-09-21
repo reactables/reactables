@@ -6,7 +6,7 @@ import {
   getControl,
   addFormArrayControl,
   removeControl,
-} from '@hubfx/forms';
+} from '@hub-fx/forms';
 import { FormContext } from './Form';
 
 export interface FormArrayChildrenProps {

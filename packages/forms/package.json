@@ -1,6 +1,6 @@
 {
-  "name": "@hubfx/forms",
-  "description": "Form library with hubfx",
+  "name": "@hub-fx/forms",
+  "description": "Form library with hub-fx",
   "main": "dist/index.js",
   "files": [
     "dist"
@@ -14,13 +14,10 @@
   "author": "David Lai",
   "license": "ISC",
   "dependencies": {
-    "@hubfx/core": "*",
+    "@hub-fx/core": "*",
     "lodash.clonedeep": "^4.5.0"
   },
   "peerDependencies": {
     "rxjs": "^7.8.1"
-  },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
   }
 }
