@@ -1,0 +1,30 @@
+{
+  "name": "@hubfx/react-forms",
+  "description": "State management with rxjs",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rimraf dist && rollup --config",
+    "lint": "eslint --max-warnings 0 \"src/**/*.ts*\" && prettier --check src/",
+    "fix": "eslint --fix \"src/**/*.ts*\" && prettier --write \"src/**/*.(ts*|scss)\"",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "test-storybook": "test-storybook"
+  },
+  "author": "David Lai",
+  "license": "ISC",
+  "dependencies": {
+    "@hubfx/core": "*",
+    "@hubfx/forms": "*"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0",
+    "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0",
+    "rxjs": "^7.8.1"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  }
+}
