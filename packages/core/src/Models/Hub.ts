@@ -19,6 +19,6 @@ export interface HubConfig {
 }
 export interface Hub {
   messages$: Observable<Action<unknown>>;
-  store: <T>(params: StoreConfig<T>) => Observable<T>;
+  store: <T>(config: StoreConfig<T>) => Observable<T>;
   dispatch: Dispatcher;
 }

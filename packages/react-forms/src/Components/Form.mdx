@@ -12,25 +12,27 @@ import * as FormStories from './Form.stories';
   padding: 16,
   background: 'white',
   borderLeft: '1px solid black'}}>
-  <div>Contents</div>
-  <nav>
-    <ul style={{ listStyle: 'none', paddingLeft: 0 }}>
-      <li>[Basic Control](#basic-control)</li>
-      <li>[Validation](#validation)</li>
-      <li>[Async Validation](#async-validation)</li>
-      <li>[Form Arrays](#form-arrays)</li>
-      <li>[Resetting Forms](#resetting-forms)</li>
-    </ul>
-  </nav>
+  ## Contents
+
+  1. [Examples](#examples)
+      1. [Basic Control](#basic-control)
+      1. [Validation](#validation)
+      1. [Async Validation](#async-validation)
+      1. [Form Arrays](#form-arrays)
+      1. [Resetting Forms](#resetting-forms)
 </div>
 <div className="container">
 
-# Hubfx React Forms
+# Hubfx React Forms (WIP)
 
-<br />
-<br />
+## Description
 
-## Basic Control <a name="basic-control"></a>
+Reactive React Forms powerd by [Hubfx Forms](https://github.com/hub-fx/hub-fx/tree/main/packages/forms) & [RxJS](https://rxjs.dev/).
+
+## Examples <a name="examples"></a>
+<br/>
+
+### Basic Control <a name="basic-control"></a>
 <Story of={FormStories.BasicControl} />
 <Source of={FormStories.BasicControl} language="tsx" code={`
 import { FormGroup, FormBuilder } from '@hub-fx/forms';
@@ -57,10 +59,58 @@ const MyForm = () => {
   );
 };`}/>
 
-## Validation <a name="validation"></a>
+### Validation <a name="validation"></a>
 <Story of={FormStories.Validation} />
 <Source of={FormStories.Validation} language="tsx" code={`
+import React from 'react';
 import { Form, FormBuilder, Validators } from '@hub-fx/react-forms';
+
+const Input = ({
+  input,
+  meta: { touched, errors, pending, valid },
+  label,
+}: InputProps) => {
+  return (
+    <div className="mb-3">
+      {label && (
+        <label
+          className={\`form-label \${touched && !valid ? 'text-danger' : ''}\`}
+        >
+          {label}
+        </label>
+      )}
+      <input
+        {...input}
+        type="text"
+        className={\`form-control \${
+          (touched && !valid) || errors.blacklistedEmail ? 'is-invalid' : ''
+        }\`}
+      />
+      {touched && errors.required && (
+        <div>
+          <small className="text-danger">Field is required</small>
+        </div>
+      )}
+      {touched && errors.email && (
+        <div>
+          <small className="text-danger">Not a valid email address</small>
+        </div>
+      )}
+      {errors.blacklistedEmail && (
+        <div>
+          <small className="text-danger">
+            This email has been blacklisted.
+          </small>
+        </div>
+      )}
+      {pending && (
+        <div>
+          <small className="text-warning">Pending</small>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const MyForm = () => {
   const formConfig = FormBuilder.group({
@@ -100,7 +150,7 @@ const MyForm = () => {
   );
 };`}/>
 
-## Async Validation <a name="async-validation"></a>
+### Async Validation <a name="async-validation"></a>
 <Story of={FormStories.AsyncValidation} />
 <Source of={FormStories.AsyncValidation} language="tsx" code={`
 import { Form, FormBuilder, Validators, ValidatorAsyncFn } from '@hub-fx/react-forms';
@@ -175,7 +225,7 @@ const MyForm = () => {
   );
 };`}/>
 
-## Form Arrays <a name="form-arrays"></a>
+### Form Arrays <a name="form-arrays"></a>
 <Story of={FormStories.FormArrays} />
 <Source of={FormStories.FormArrays} language="tsx" code={`
 import { Form, FormArray, FormBuilder } from '@hub-fx/react-forms';
@@ -270,7 +320,7 @@ const MyForm = () => {
   );
 };`}/>
 
-## Resetting Controls <a name="resetting-forms"></a>
+### Resetting Controls <a name="resetting-forms"></a>
 <Story of={FormStories.ResetForm} />
 <Source of={FormStories.ResetForm} language="tsx" code={`
 import { Form, FormArray, FormBuilder } from '@hub-fx/react-forms';

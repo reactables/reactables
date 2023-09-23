@@ -17,15 +17,11 @@ export const required: ValidatorFn = (value: unknown) => {
 };
 
 export const email: ValidatorFn = (value: string): FormErrors =>
-  value &&
-  !/^(([^<>()[\]\\.,;:\s@"]{1,64}(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"){1,64})@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
-    value,
-  )
+  value && !/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(value)
     ? { email: true }
     : { email: false };
 
 export const phoneNumber: ValidatorFn = (value: string): FormErrors =>
-  // (XXX) XXX-XXXX
-  value && !/^((\([0-9]{3}\)) [0-9]{3}-[0-9]{4})$/.test(value)
+  value && !/^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/.test(value)
     ? { phoneNumber: true }
     : { phoneNumber: false };
