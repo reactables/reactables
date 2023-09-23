@@ -1,4 +1,4 @@
-# Hubfx
+# Hubfx Core (WIP)
 
 ## Description
 
@@ -6,7 +6,6 @@ Reactive state management with RxJS.
 
 ## Table of Contents
 
-1. [Motivation](#motivation)
 1. [Installation](#installation)
 1. [Core concepts](#core-concepts)
     1. [Hub and Stores](#hub-stores)
@@ -15,35 +14,19 @@ Reactive state management with RxJS.
     1. [Integrating with UI](#integration)
     1. [Unidirectional Flow](#unidirectional-flow)
 1. [API](#api)
+    1. [Basic Usage](#api-usage)
+    1. [Effect](#api-effect)
+    1. [Action](#api-action)
+    1. [Reducer](#api-reducer)
+    1. [ScopedEffects](#api-scoped-effects)
+    1. [HubFactory](#hub-factory)
+        1. [HubConfig](#hub-config)
     1. [Hub](#hub)
-        1. [Basic Usage](#hub-usage)
         1. [Store Config](#store-config)
-        1. [messages$](#hub-messages)
-        1. [Angular Example](#hub-angular-example)
-        1. [React Example](#hub-react-example)
-    1. [Scoped Effects in Action](#action-scoped-effects)
 
-## Motivation <a name="motivation"></a>
-
-Purpose of this project is to provide a simple consistent pattern and api for managing both app state and local state in UI development.
-
-Reactive programming has become popular in UI development because it provides a predictable way to update complex application state and reduce side effects. Redux is probably the most famous example.
-
-However when it comes to local state there is still a lot of variation on how to handle it
-
-  i.e in React
-  - imperatively with `useState`
-  - declarative with `useReducer`
-
-  - and how about async actions?
-    - imperatively dispatching before and after a promises resolves.
-    - declaratively setting up middlewares to work with `useReducer`
-
-Imperatively managed state is often the choice for simple local state. But if state gets more complicated it becomes harder to keep track of side effects.
-
-Imperatively managed state is often more difficult to test vs state managed by pure reducer functions.
-
-This project hopes to provide a more consistent way of managing app and local state and make it easy to develop and test.
+1. [Examples](#examples)
+    1. [Angular Example](#hub-angular-example)
+    1. [React Example](#hub-react-example)
 
 ## Installation <a name="installation"></a>
 
@@ -51,7 +34,7 @@ This project hopes to provide a more consistent way of managing app and local st
 
 ## Core concepts <a name="core-concepts"></a>
 
-Taking inspiraton from [redux](https://redux.js.org/introduction/core-concepts) and [NgRx](https://ngrx.io/guide/store), Hubfx uses the same concepts regarding Actions, Effects, Reducers, Store. These concepts are coupled with RxJS observables to manage state modelled as reactive streams.
+Taking inspiraton from [Redux](https://redux.js.org/introduction/core-concepts) and [NgRx](https://ngrx.io/guide/store), Hubfx uses the same concepts regarding Actions, Effects, Reducers, Store. These concepts are coupled with [RxJS](https://rxjs.dev/) observables to manage state modelled as reactive streams.
 
 In this documentation the term *stream* will refer to an RxJS observable stream.
 
@@ -83,19 +66,15 @@ All actions and data will flow through the App in one direction.
 
 ## API <a name="api"></a>
 
-### Hub <a name="hub"></a>
-
-#### Basic Usage <a name="hub-usage"></a>
-
-```
-npm i @hub-fx/core
-```
+### Basic Usage <a name="api-usage"></a>
 
 ```typescript
 import { HubFactory } from '@hub-fx/core';
 
+// Create a hub
 const hub = HubFactory();
 
+// Pure reducer function to handle state updates
 const countReducer = (state = { counter: 0 }, action) => {
   switch (action.type) {
     case 'increment':
@@ -105,8 +84,10 @@ const countReducer = (state = { counter: 0 }, action) => {
   }
 }
 
+// Create a store listening to `hub`
 const count$ = hub.store({ reducer: countReducer });
 
+// Subscribe to store for updates
 count$.subscribe((count) => console.log(count));
 
 hub.dispatch({ type: 'increment' });
@@ -114,6 +95,127 @@ hub.dispatch({ type: 'increment' });
 // Output
 // 1
 ```
+### Effect <a name="api-effect"></a>
+```typescript
+type Effect<T, S> = OperatorFunction<Action<T>, Action<S>>;
+```
+Effects are expressed as [RxJS Operator Functions](https://rxjs.dev/api/index/interface/OperatorFunction). They pipe the [dispatcher$](#hub-dispatcher) stream and run side effects on incoming [Actions](#api-action).
+
+Example of an operator that filters for a particular [Action](#api-action) type.
+
+```typescript
+import { OperatorFunction } from 'rxjs';
+import { filter } from 'rxjs/operators';
+import { Action } from '../Models/Action';
+
+export const ofType: (type: string) => OperatorFunction<Action, Action> =
+  (type: string) => (dispatcher$) => {
+    return dispatcher$.pipe(filter((action) => action?.type === type));
+  };
+
+```
+
+### Action <a name="api-action"></a>
+```typescript
+interface Action<T = undefined> {
+  type: string;
+  payload?: T;
+  scopedEffects?: ScopedEffects<T>;
+}
+```
+| Property | Description |
+| -------- | ----------- |
+| type | type of Action being dispatched |
+| payload (optional) | payload associated with Action |
+| scopedEffects (optional) | [See ScopedEffects](#api-scoped-effects) |
+
+### ScopedEffects <a name="api-scoped-effects"></a>
+```typescript
+interface ScopedEffects<T> {
+  key?: string;
+  effects: Effect<T, unknown>[];
+}
+```
+| Property | Description |
+| -------- | ----------- |
+| key (optional) | key to be combined with the Action `type` to generate a unique signature for the effect stream(s). Example: An id for the entity the action is being performed on. |
+| effects | Array of [Effects](#api-effects) scoped to the Action `type` & `key` |
+
+Scoped Effects are declared in [Actions](#api-action). They are dynamically created stream(s) scoped to an Action `type` & `key` combination.
+
+Example:
+
+```typescript
+
+const UPDATE_TODO = 'UPDATE_TODO';
+const UPDATE_TODO_SUCCESS = 'UPDATE_TODO_SUCCESS';
+const updateTodo = ({ id, message }, todoService: TodoService) => ({
+  type: UPDATE_TODO,
+  payload: { id, message },
+  scopedEffects: {
+    key: id,
+    effects: [
+      (updateTodoActions$: Observable<Action<string>>) =>
+        updateTodoActions$.pipe(
+          mergeMap(({ payload: { id, message } }) => todoService.updateTodo(id, message))
+          map(({ data }) => ({
+            type: UPDATE_TODO_SUCCESS,
+            payload: data
+          }))
+        )
+    ]
+  }
+})
+```
+
+### Reducer <a name="api-reducer"></a>
+
+```typescript
+type Reducer<T> = (state?: T, action?: Action<unknown>) => T;
+```
+From [Redux Docs](https://redux.js.org/tutorials/fundamentals/part-3-state-actions-reducers)
+> Reducers are functions that take the current state and an action as arguments, and return a new state result
+
+### HubFactory <a name="hub-factory"></a>
+
+Factory function for creating [Hubs](#hub)
+
+```typescript
+type HubFactory = (config?: HubConfig) => Hub;
+
+```
+
+#### HubConfig <a name="hub-config"></a>
+
+```typescript
+interface HubConfig {
+  effects?: Effect<unknown, unknown>[];
+  sources?: Observable<Action<unknown>>[]; // WIP not implemented yet
+}
+```
+| Property | Description |
+| -------- | ----------- |
+| effects (optional) | Array of [Effects](#api-effects) to be registered to the Hub |
+| sources (optional) | Additional [Action](#api-actions) Observables the Hub is listening to |
+
+
+
+### Hub <a name="hub"></a>
+```typescript
+interface Hub {
+  messages$: Observable<Action<unknown>>;
+  store: <T>(config: StoreConfig<T>) => Observable<T>;
+  dispatch: (...actions: Action<unknown>[]) => void;
+}
+```
+| Property | Description |
+| -------- | ----------- |
+| messages$ | Observable of all [Actions](#api-actions) sent to store(s) listening to the hub |
+
+| Method | Description |
+| -------- | ----------- |
+| store | creates a store that will receive actions emitted from the hub via `messages$`. Accepts an configuration object (see [StoreConfig](#store-config)) |
+| dispatch | dispatches [Action(s)](#api-actions) to the store(s) and effects (if any) |
 
 #### Store Config <a name="store-config"></a>
 
@@ -121,25 +223,31 @@ hub.dispatch({ type: 'increment' });
 export interface StoreConfig<T> {
   reducer: Reducer<T>;
   initialState?: T;
-  name?: string; // name for store to show up in debugging
-  debug?: boolean; // This will console log all messages the store receives and the prev and new state
+  name?: string;
+  debug?: boolean;
 }
 ```
-Debug Example
+| Property | Description |
+| -------- | ----------- |
+| reducer | [Reducer](#api-reducer) function handle state updates in store |
+| intitialState (optional) | for seeding an initial state |
+| name (optional) | name of stream to show up during debugging |
+| debug (optional) | to turn on debugging to console.log all messages received by the store and state changes |
+
+Debug Example:
 
 <img src="https://github.com/hub-fx/hub-fx/blob/main/documentation/SlideSixDebug.jpg?raw=true" width="500" />
 
-#### messages$ <a name="hub-messages"></a>
-The hub also exposes a `Hub.messages$` observable of all the actions stores receive. It can be helpful for testing how your hub is handling actions and effects.
+## Examples <a name="examples"></a>
 
-#### Angular Example <a name="hub-angular-example"></a>
+### Angular Example <a name="hub-angular-example"></a>
 
 Using our above count example we can integrate with an Angular component. 
 
 ```typescript
 import { Component, Input, OnInit } from '@angular/core';
 import { HubFactory } from '@hub-fx/core';
-import { countReducer } from '/countReducer;
+import { countReducer } from '/countReducer';
 
 export class CounterComponent {
   @Input() hub = HubFactory();
@@ -156,7 +264,7 @@ export class CounterComponent {
 
 ```
 
-#### React Example <a name="hub-react-example"></a>
+### React Example <a name="hub-react-example"></a>
 
 Using our above count example we can integrate with a React component. 
 
@@ -221,37 +329,4 @@ export const useObservable = <T>(obs$: Observable<T>) => {
 
   return state;
 };
-```
-
-### Scoped Effects in Action <a name="action-scoped-effects"></a>
-
-<img src="https://github.com/hub-fx/hub-fx/blob/main/documentation/SlideThreeScopedEffects.jpg?raw=true" width="600" />
-
-Scoped effects can be declared in the action declaration and created with action creators. When the action is dispatched the hub will register a stream with the Action & key (if it hasnt already).
-
-The stream can then be manuipulated by piping operators as required.
-
-You can also have more than one effect and each stream will be independent of each other.
-
-```typescript
-
-const UPDATE_TODO = 'UPDATE_TODO';
-const UPDATE_TODO_SUCCESS = 'UPDATE_TODO_SUCCESS';
-const updateTodo = ({ id, message }, todoService: TodoService) => ({
-  type: UPDATE_TODO,
-  payload: message,
-  scopedEffects: {
-    key: id,
-    effects: [
-      (actions$: Observable<Action<string>>) =>
-        actions$.pipe(
-          mergeMap((action) => todoService.updateTodo(id, action.payload))
-          map(({ data }) => ({
-            type: UPDATE_TODO_SUCCESS,
-            payload: data
-          }))
-        )
-    ]
-  }
-})
 ```
