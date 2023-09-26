@@ -163,5 +163,81 @@ describe('HubFactory', () => {
         );
       });
     });
+
+    it('should handle two action with unique signatures independently', () => {
+      testScheduler.run(({ expectObservable, cold }) => {
+        const action: Action<string> = {
+          type: TEST_ACTION,
+          payload: 'test action no key',
+          scopedEffects: { effects: [switchMapTestEffect, debounceTestEffect] },
+        };
+
+        const actionTwo: Action<string> = {
+          type: TEST_ACTION,
+          payload: 'test action key two',
+          scopedEffects: { key: 'two', effects: [switchMapTestEffect] },
+        };
+
+        subscription = cold('a 124ms b 4ms c 69ms d', {
+          a: action,
+          b: action,
+          c: actionTwo,
+          d: action,
+        }).subscribe((action) => hub.dispatch(action));
+
+        expectObservable(hub.messages$).toBe(
+          'a 99ms b 24ms c 4ms d 29ms e 39ms f 29ms g 54ms h 14ms i 59ms j',
+          {
+            // 0
+            a: action,
+
+            //100
+            b: {
+              type: TEST_ACTION_SUCCESS,
+              payload: 'test action no key switchMap succeeded',
+            },
+
+            //125
+            c: action,
+
+            //130
+            d: actionTwo,
+
+            //160
+            e: {
+              type: TEST_ACTION_SUCCESS,
+              payload: 'test action no key debounceTime and mergeMap succeeded',
+            },
+
+            //200
+            f: action,
+
+            //230
+            g: {
+              type: TEST_ACTION_SUCCESS,
+              payload: 'test action key two switchMap succeeded',
+            },
+
+            //285
+            h: {
+              type: TEST_ACTION_SUCCESS,
+              payload: 'test action no key debounceTime and mergeMap succeeded',
+            },
+
+            //300
+            i: {
+              type: TEST_ACTION_SUCCESS,
+              payload: 'test action no key switchMap succeeded',
+            },
+
+            //360
+            j: {
+              type: TEST_ACTION_SUCCESS,
+              payload: 'test action no key debounceTime and mergeMap succeeded',
+            },
+          },
+        );
+      });
+    });
   });
 });
