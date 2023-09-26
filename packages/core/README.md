@@ -23,7 +23,9 @@ Reactive state management with RxJS.
         1. [HubConfig](#hub-config)
     1. [Hub](#hub)
         1. [Store Config](#store-config)
-
+1. [Testing](#testing)
+    1. [messages$](#testing-messages)
+    1. [store](#testing-store)
 1. [Examples](#examples)
     1. [Angular Example](#hub-angular-example)
     1. [React Example](#hub-react-example)
@@ -237,6 +239,97 @@ export interface StoreConfig<T> {
 Debug Example:
 
 <img src="https://github.com/hub-fx/hub-fx/blob/main/documentation/SlideSixDebug.jpg?raw=true" width="500" />
+
+## Testing <a name="testing"></a>
+
+### messages$ <a name="testing-messages"></a>
+
+You can test the Hub's [messages$](hub) stream to see that dispatched actions and results from side effects are being handled correctly.
+
+We can use RxJS's built in [Marble Testing](https://rxjs.dev/guide/testing/marble-testing) for testing our observable streams.
+
+Example of testing an effect:
+```typescript
+  it('should detect a generic effect', () => {
+    testScheduler.run(({ expectObservable, cold }) => {
+      const successAction = {
+        type: TEST_ACTION_SUCCESS,
+        payload: 'test action success',
+      };
+      const effect = (action$: Observable<unknown>) =>
+        action$.pipe(
+          switchMap(() => of(successAction).pipe(delay(2000))),
+        );
+
+      const { messages$, dispatch } = HubFactory({ effects: [effect] });
+      const action = { type: TEST_ACTION, payload: 'test' };
+
+      // Remember to unsubscribe this in your afterEach block
+      subscription = cold('a', { a: action }).subscribe(
+        dispatch,
+      );
+
+      expectObservable(messages$).toBe('a 1999ms b', {
+        a: action,
+        b: successAction,
+      });
+    });
+  });
+```
+
+### store <a name="testing-store"></a>
+#### Testing Reducers
+Testing reducer functions is easily done since they are pure functions. Just provide the neccessary inputs and assert the expected new state.
+
+#### Testing the stream
+We can also test the stream created from [Hub.store](#hub).
+
+Example of testing with [marble](https://rxjs.dev/guide/testing/marble-testing):
+
+```typescript
+  describe('store', () => {
+    const INCREMENT = 'INCREMENT';
+    const increment = (): Action => ({ type: INCREMENT });
+
+    const initialState = { count: 0 };
+    const reducer: Reducer<{ count: number }> = (
+      state = initialState,
+      action,
+    ) => {
+      switch (action?.type) {
+        case INCREMENT:
+          return {
+            ...state,
+            count: state.count + 1,
+          };
+        default:
+          return state;
+      }
+    };
+
+    it('should response to messages and update', () => {
+      testScheduler.run(({ expectObservable, cold }) => {
+        const state$ = hub.store({ reducer });
+        const action = increment();
+        // Remember to unsubscribe this in an afterEach block
+        subscription = cold('-a-b-c', {
+          a: action,
+          b: action,
+          c: action,
+        }).subscribe(hub.dispatch);
+
+        expectObservable(state$).toBe('0 1-2-3', [
+          { count: 0 },
+          { count: 1 },
+          { count: 2 },
+          { count: 3 },
+        ]);
+      });
+    });
+  });
+
+```
+
 
 ## Examples <a name="examples"></a>
 
