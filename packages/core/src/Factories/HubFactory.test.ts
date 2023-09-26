@@ -118,5 +118,50 @@ describe('HubFactory', () => {
         });
       });
     });
+
+    it('should handle more than one effect each independently', () => {
+      testScheduler.run(({ expectObservable, cold }) => {
+        const action: Action<string> = {
+          type: TEST_ACTION,
+          payload: 'test action with more that one effect',
+          scopedEffects: { effects: [switchMapTestEffect, debounceTestEffect] },
+        };
+
+        subscription = cold('a 49ms b 149ms c', {
+          a: action,
+          b: action,
+          c: action,
+        }).subscribe((action) => hub.dispatch(action));
+
+        expectObservable(hub.messages$).toBe(
+          'a 49ms b 99ms c 49ms d 9ms e 89ms f 59ms g',
+          {
+            a: action, // first dispatch
+            b: action, // dispatch at 50
+            c: {
+              type: TEST_ACTION_SUCCESS,
+              payload:
+                'test action with more that one effect switchMap succeeded',
+            },
+            d: action, // dispatch at 200
+            e: {
+              type: TEST_ACTION_SUCCESS,
+              payload:
+                'test action with more that one effect debounceTime and mergeMap succeeded',
+            },
+            f: {
+              type: TEST_ACTION_SUCCESS,
+              payload:
+                'test action with more that one effect switchMap succeeded',
+            },
+            g: {
+              type: TEST_ACTION_SUCCESS,
+              payload:
+                'test action with more that one effect debounceTime and mergeMap succeeded',
+            },
+          },
+        );
+      });
+    });
   });
 });
