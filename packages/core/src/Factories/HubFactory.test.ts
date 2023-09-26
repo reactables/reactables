@@ -24,7 +24,7 @@ describe('HubFactory', () => {
     afterEach(() => {
       subscription?.unsubscribe();
     });
-    it;
+
     it('should detect a test action dispatch', () => {
       testScheduler.run(({ expectObservable, cold }) => {
         const source = hub.messages$;
@@ -38,7 +38,7 @@ describe('HubFactory', () => {
         expectObservable(source).toBe('a--b', { a: action, b: actionB });
       });
     });
-    it;
+
     it('should detect a generic effect', () => {
       testScheduler.run(({ expectObservable, cold }) => {
         const successAction = {
