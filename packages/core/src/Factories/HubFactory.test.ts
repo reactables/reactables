@@ -32,7 +32,7 @@ describe('HubFactory', () => {
         const actionB = { type: 'TEST_ACTION_B', payload: 'testb' };
 
         subscription = cold('a--b', { a: action, b: actionB }).subscribe(
-          (action) => hub.dispatch(action),
+          hub.dispatch,
         );
 
         expectObservable(source).toBe('a--b', { a: action, b: actionB });
@@ -56,7 +56,7 @@ describe('HubFactory', () => {
         const actionB = { type: 'TEST_ACTION_B', payload: 'testb' };
 
         subscription = cold('a-b', { a: action, b: actionB }).subscribe(
-          (action) => dispatch(action),
+          dispatch,
         );
 
         expectObservable(messages$).toBe('a-b 1997ms c', {
@@ -75,9 +75,7 @@ describe('HubFactory', () => {
           scopedEffects: { effects: [switchMapTestEffect] },
         };
 
-        subscription = cold('a', { a: action }).subscribe((action) =>
-          hub.dispatch(action),
-        );
+        subscription = cold('a', { a: action }).subscribe(hub.dispatch);
 
         expectObservable(hub.messages$).toBe('a 99ms b', {
           a: action,
@@ -101,7 +99,7 @@ describe('HubFactory', () => {
           a: action,
           b: action,
           c: action,
-        }).subscribe((action) => hub.dispatch(action));
+        }).subscribe(hub.dispatch);
 
         expectObservable(hub.messages$).toBe('a 49ms b 99ms c 49ms d 99ms e', {
           a: action,
@@ -131,7 +129,7 @@ describe('HubFactory', () => {
           a: action,
           b: action,
           c: action,
-        }).subscribe((action) => hub.dispatch(action));
+        }).subscribe(hub.dispatch);
 
         expectObservable(hub.messages$).toBe(
           'a 49ms b 99ms c 49ms d 9ms e 89ms f 59ms g',
@@ -183,7 +181,7 @@ describe('HubFactory', () => {
           b: action,
           c: actionTwo,
           d: action,
-        }).subscribe((action) => hub.dispatch(action));
+        }).subscribe(hub.dispatch);
 
         expectObservable(hub.messages$).toBe(
           'a 99ms b 24ms c 4ms d 29ms e 39ms f 29ms g 54ms h 14ms i 59ms j',
@@ -268,5 +266,17 @@ describe('HubFactory', () => {
         expectObservable(state$).toBe('a', { a: initialState });
       });
     });
+
+    // it('should response to messages and update', () => {
+    //   testScheduler.run(({ expectObservable, cold }) => {
+    //     const state$ = hub.store({ reducer });
+    //     const action = increment();
+    //     subscription = cold('(abc)', {
+    //       a: action,
+    //       b: action,
+    //       c: action,
+    //     }).subscribe(hub.dispatch);
+    //   });
+    // });
   });
 });
