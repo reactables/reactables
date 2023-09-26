@@ -267,16 +267,23 @@ describe('HubFactory', () => {
       });
     });
 
-    // it('should response to messages and update', () => {
-    //   testScheduler.run(({ expectObservable, cold }) => {
-    //     const state$ = hub.store({ reducer });
-    //     const action = increment();
-    //     subscription = cold('(abc)', {
-    //       a: action,
-    //       b: action,
-    //       c: action,
-    //     }).subscribe(hub.dispatch);
-    //   });
-    // });
+    it('should response to messages and update', () => {
+      testScheduler.run(({ expectObservable, cold }) => {
+        const state$ = hub.store({ reducer });
+        const action = increment();
+        subscription = cold('-a-b-c', {
+          a: action,
+          b: action,
+          c: action,
+        }).subscribe(hub.dispatch);
+
+        expectObservable(state$).toBe('0 1-2-3', [
+          { count: 0 },
+          { count: 1 },
+          { count: 2 },
+          { count: 3 },
+        ]);
+      });
+    });
   });
 });
