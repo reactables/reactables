@@ -10,9 +10,9 @@ Reactive state management with RxJS.
 1. [Core concepts](#core-concepts)
     1. [Hub and Stores](#hub-stores)
     1. [Effects](#effects)
-       1. [Scoped Effects](#scoped-effects)
+    1. [Scoped Effects](#scoped-effects)
     1. [Integrating with UI](#integration)
-    1. [Unidirectional Flow](#unidirectional-flow)
+    1. [Flow & Containment](#flow-containment)
 1. [API](#api)
     1. [Basic Usage](#api-usage)
     1. [Effect](#api-effect)
@@ -23,7 +23,9 @@ Reactive state management with RxJS.
         1. [HubConfig](#hub-config)
     1. [Hub](#hub)
         1. [Store Config](#store-config)
-
+1. [Testing](#testing)
+    1. [messages$](#testing-messages)
+    1. [store](#testing-store)
 1. [Examples](#examples)
     1. [Angular Example](#hub-angular-example)
     1. [React Example](#hub-react-example)
@@ -34,7 +36,9 @@ Reactive state management with RxJS.
 
 ## Core concepts <a name="core-concepts"></a>
 
-Taking inspiraton from [Redux](https://redux.js.org/introduction/core-concepts) and [NgRx](https://ngrx.io/guide/store), Hubfx uses the same concepts regarding Actions, Effects, Reducers, Store. These concepts are coupled with [RxJS](https://rxjs.dev/) observables to manage state modelled as reactive streams.
+**Prerequisite**: Basic understanding of [Redux](https://redux.js.org/introduction/core-concepts) and [RxJS](https://rxjs.dev/) is helpful.
+
+Hubfx uses the same concepts from [Redux](https://redux.js.org/introduction/core-concepts) regarding Actions, Reducers, Store. These concepts are coupled with [RxJS](https://rxjs.dev/) observables to manage state modelled as reactive streams.
 
 In this documentation the term *stream* will refer to an RxJS observable stream.
 
@@ -50,7 +54,9 @@ When initializing a hub we can declare effects. The hub can listen for various a
 
 <img src="https://github.com/hub-fx/hub-fx/blob/main/documentation/SlideTwoEffect.jpg?raw=true" width="600" />
 
-**Scoped Effects** are dynamically created streams scoped to a particular action & key combination when an action is dispatch.<a name="scoped-effects"></a>
+### Scoped Effects <a name="scoped-effects"></a>
+
+Scoped Effects are dynamically created streams scoped to a particular action & key combination when an action is dispatch.
 
 <img src="https://github.com/hub-fx/hub-fx/blob/main/documentation/SlideThreeScopedEffects.jpg?raw=true" width="600" />
 
@@ -59,8 +65,12 @@ A network of hubs and stores can be integrated with UI components without tight 
 
 <img src="https://github.com/hub-fx/hub-fx/blob/main/documentation/SlideFourFiveIntegration.jpg?raw=true" />
 
-### Unidirectional Flow <a name="unidirectional-flow"></a>
-All actions and data will flow through the App in one direction.
+### Flow & Containment <a name="flow-containment"></a>
+Actions and logic flow through the App in one direction and are **contained** in their respective streams. This makes state updates more predictable and traceable during debugging.
+
+Avoid [tapping](https://rxjs.dev/api/operators/tap) your streams. This prevents **logic leaking** from the stream(s).
+
+  - i.e do not [tap](https://rxjs.dev/api/operators/tap) stream A to trigger an action on stream B. Instead consider declaring stream A as a [source](#hub-sources) for stream B so the dependency is explicit.
 
 <img src="https://github.com/hub-fx/hub-fx/blob/main/documentation/SlideSevenEightUnidirectionalFlow.jpg?raw=true" />
 
@@ -196,7 +206,7 @@ interface HubConfig {
 | Property | Description |
 | -------- | ----------- |
 | effects (optional) | Array of [Effects](#api-effects) to be registered to the Hub |
-| sources (optional) | Additional [Action](#api-actions) Observables the Hub is listening to |
+| sources (optional) <a name="hub-sources"></a> | Additional [Action](#api-actions) Observables the Hub is listening to |
 
 
 
@@ -210,11 +220,11 @@ interface Hub {
 ```
 | Property | Description |
 | -------- | ----------- |
-| messages$ | Observable of all [Actions](#api-actions) sent to store(s) listening to the hub |
+| messages$ <a name="hub-messages"></a> | Observable of all [Actions](#api-actions) sent to store(s) listening to the hub |
 
 | Method | Description |
 | -------- | ----------- |
-| store | creates a store that will receive actions emitted from the hub via `messages$`. Accepts an configuration object (see [StoreConfig](#store-config)) |
+| store | creates a store that will receive actions emitted from the hub via `messages$`. Accepts a configuration object (see [StoreConfig](#store-config)) |
 | dispatch | dispatches [Action(s)](#api-actions) to the store(s) and effects (if any) |
 
 #### Store Config <a name="store-config"></a>
@@ -237,6 +247,97 @@ export interface StoreConfig<T> {
 Debug Example:
 
 <img src="https://github.com/hub-fx/hub-fx/blob/main/documentation/SlideSixDebug.jpg?raw=true" width="500" />
+
+## Testing <a name="testing"></a>
+
+### messages$ <a name="testing-messages"></a>
+
+You can test the Hub's [messages$](hub-messages) stream to see that dispatched actions and results from side effects are being handled correctly.
+
+We can use RxJS's built in [Marble Testing](https://rxjs.dev/guide/testing/marble-testing) for testing our observable streams.
+
+Example of testing an effect:
+```typescript
+  it('should detect a generic effect', () => {
+    testScheduler.run(({ expectObservable, cold }) => {
+      const successAction = {
+        type: TEST_ACTION_SUCCESS,
+        payload: 'test action success',
+      };
+      const effect = (action$: Observable<unknown>) =>
+        action$.pipe(
+          switchMap(() => of(successAction).pipe(delay(2000))),
+        );
+
+      const { messages$, dispatch } = HubFactory({ effects: [effect] });
+      const action = { type: TEST_ACTION, payload: 'test' };
+
+      // Remember to unsubscribe this in your afterEach block
+      subscription = cold('a', { a: action }).subscribe(
+        dispatch,
+      );
+
+      expectObservable(messages$).toBe('a 1999ms b', {
+        a: action,
+        b: successAction,
+      });
+    });
+  });
+```
+
+### store <a name="testing-store"></a>
+#### Testing Reducers
+Testing reducer functions is easily done since they are pure functions. Just provide the neccessary inputs and assert the expected new state.
+
+#### Testing the stream
+We can also test the stream created from [Hub.store](#hub).
+
+Example of testing with [marble](https://rxjs.dev/guide/testing/marble-testing):
+
+```typescript
+  describe('store', () => {
+    const INCREMENT = 'INCREMENT';
+    const increment = (): Action => ({ type: INCREMENT });
+
+    const initialState = { count: 0 };
+    const reducer: Reducer<{ count: number }> = (
+      state = initialState,
+      action,
+    ) => {
+      switch (action?.type) {
+        case INCREMENT:
+          return {
+            ...state,
+            count: state.count + 1,
+          };
+        default:
+          return state;
+      }
+    };
+
+    it('should response to messages and update', () => {
+      testScheduler.run(({ expectObservable, cold }) => {
+        const state$ = hub.store({ reducer });
+        const action = increment();
+        // Remember to unsubscribe this in an afterEach block
+        subscription = cold('-a-b-c', {
+          a: action,
+          b: action,
+          c: action,
+        }).subscribe(hub.dispatch);
+
+        expectObservable(state$).toBe('0 1-2-3', [
+          { count: 0 },
+          { count: 1 },
+          { count: 2 },
+          { count: 3 },
+        ]);
+      });
+    });
+  });
+
+```
+
 
 ## Examples <a name="examples"></a>
 

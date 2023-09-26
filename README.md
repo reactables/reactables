@@ -57,3 +57,5 @@ Developers can follow a standardized reactive pattern for managing state in any 
 All Hubfx Actions flow in one direction contained in streams, making state updates highly predictable and traceable in debugging.
 
 <img src="https://github.com/hub-fx/hub-fx/blob/main/documentation/SlideThreeScopedEffects.jpg?raw=true" width="600" />
+
+### Learn more! -> [See the docs](https://github.com/hub-fx/hub-fx/tree/main/packages/core) 
