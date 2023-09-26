@@ -88,5 +88,35 @@ describe('HubFactory', () => {
         });
       });
     });
+
+    it('switchMap in effect should cancel previous inner observables', () => {
+      testScheduler.run(({ expectObservable, cold }) => {
+        const action: Action<string> = {
+          type: TEST_ACTION,
+          payload: 'test action with scoped effect',
+          scopedEffects: { effects: [switchMapTestEffect] },
+        };
+
+        subscription = cold('a 49ms b 149ms c', {
+          a: action,
+          b: action,
+          c: action,
+        }).subscribe((action) => hub.dispatch(action));
+
+        expectObservable(hub.messages$).toBe('a 49ms b 99ms c 49ms d 99ms e', {
+          a: action,
+          b: action,
+          c: {
+            type: TEST_ACTION_SUCCESS,
+            payload: 'test action with scoped effect switchMap succeeded',
+          },
+          d: action,
+          e: {
+            type: TEST_ACTION_SUCCESS,
+            payload: 'test action with scoped effect switchMap succeeded',
+          },
+        });
+      });
+    });
   });
 });
