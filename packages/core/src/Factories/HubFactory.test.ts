@@ -3,28 +3,28 @@ import { TestScheduler } from 'rxjs/testing';
 import { switchMap, delay } from 'rxjs/operators';
 import { HubFactory } from './HubFactory';
 import { Action } from '../Models/Action';
-import { Hub } from '../Models/Hub';
+import { Hub, Reducer } from '../Models/Hub';
 import { TEST_ACTION, TEST_ACTION_SUCCESS } from '../Testing';
 import { ofType } from '../Operators/ofType';
 import { switchMapTestEffect, debounceTestEffect } from '../Testing/Effects';
 
 describe('HubFactory', () => {
+  let hub: Hub;
+  let testScheduler: TestScheduler;
+  let subscription: Subscription;
+
+  beforeEach(() => {
+    testScheduler = new TestScheduler((actual, expected) => {
+      expect(actual).toEqual(expected);
+    });
+    hub = HubFactory();
+  });
+
+  afterEach(() => {
+    subscription?.unsubscribe();
+  });
+
   describe('messages$', () => {
-    let hub: Hub;
-    let testScheduler: TestScheduler;
-    let subscription: Subscription;
-
-    beforeEach(() => {
-      testScheduler = new TestScheduler((actual, expected) => {
-        expect(actual).toEqual(expected);
-      });
-      hub = HubFactory();
-    });
-
-    afterEach(() => {
-      subscription?.unsubscribe();
-    });
-
     it('should detect a test action dispatch', () => {
       testScheduler.run(({ expectObservable, cold }) => {
         const source = hub.messages$;
@@ -237,6 +237,35 @@ describe('HubFactory', () => {
             },
           },
         );
+      });
+    });
+  });
+
+  describe('store', () => {
+    const INCREMENT = 'INCREMENT';
+    const increment = (): Action => ({ type: INCREMENT });
+
+    const initialState = { count: 0 };
+    const reducer: Reducer<{ count: number }> = (
+      state = initialState,
+      action,
+    ) => {
+      switch (action?.type) {
+        case INCREMENT:
+          return {
+            ...state,
+            count: state.count + 1,
+          };
+        default:
+          return state;
+      }
+    };
+
+    it('create an observable and emit initial value', () => {
+      testScheduler.run(({ expectObservable }) => {
+        const state$ = hub.store({ reducer });
+
+        expectObservable(state$).toBe('a', { a: initialState });
       });
     });
   });
