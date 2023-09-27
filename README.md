@@ -4,28 +4,6 @@
 
 Reactive state management with RxJS.
 
-## Packages
-
-[Hubfx Core](https://github.com/hub-fx/hub-fx/tree/main/packages/core) 
-
-- Core `Hub` used to model state as reactive streams.
-
-- `npm i @hub-fx/core`
-
-[Hubfx React Forms](https://github.com/hub-fx/hub-fx/tree/main/packages/react-forms)
-
-- See Storybook Demo [here](https://hub-fx.github.io/hub-fx/)
-
-- React Form Library built on [Hubfx Forms](https://github.com/hub-fx/hub-fx/tree/main/packages/forms)
-
-- `npm i @hub-fx/react-forms`
-
-[Hubfx Forms](https://github.com/hub-fx/hub-fx/tree/main/packages/forms)
-
-- Actions & Reducers for building a comprehensive form library using [Hubfx Core](https://github.com/hub-fx/hub-fx/tree/main/packages/core)
-
-- `npm i @hub-fx/forms`
-
 ## Motivation
 
 ### Consistent management of Application (Global) State and Component (Local) State.
@@ -59,3 +37,25 @@ All Hubfx Actions flow in one direction contained in streams, making state updat
 <img src="https://github.com/hub-fx/hub-fx/blob/main/documentation/SlideThreeScopedEffects.jpg?raw=true" width="600" />
 
 ### Learn more! -> [See the docs](https://github.com/hub-fx/hub-fx/tree/main/packages/core) 
+
+## Packages
+
+[Hubfx Core](https://github.com/hub-fx/hub-fx/tree/main/packages/core) 
+
+- Core `Hub` used to model state as reactive streams.
+
+- `npm i @hub-fx/core`
+
+[Hubfx React Forms](https://github.com/hub-fx/hub-fx/tree/main/packages/react-forms)
+
+- See Storybook Demo [here](https://hub-fx.github.io/hub-fx/)
+
+- React Form Library built on [Hubfx Forms](https://github.com/hub-fx/hub-fx/tree/main/packages/forms)
+
+- `npm i @hub-fx/react-forms`
+
+[Hubfx Forms](https://github.com/hub-fx/hub-fx/tree/main/packages/forms)
+
+- Actions & Reducers for building a comprehensive form library using [Hubfx Core](https://github.com/hub-fx/hub-fx/tree/main/packages/core)
+
+- `npm i @hub-fx/forms`
