@@ -200,7 +200,7 @@ type HubFactory = (config?: HubConfig) => Hub;
 ```typescript
 interface HubConfig {
   effects?: Effect<unknown, unknown>[];
-  sources?: Observable<Action<unknown>>[]; // WIP not implemented yet
+  sources?: Observable<Action<unknown>>[];
 }
 ```
 | Property | Description |
