@@ -6,7 +6,7 @@ import {
   emergencyContactConfigs,
   firstNameNotSameAsLast,
 } from '../Testing/config';
-import { FormGroup, FormArray } from '../Models/Controls';
+import { BaseGroupControl, BaseArrayControl } from '../Models/Controls';
 import { FORMS_ADD_FORM_ARRAY_CONTROL } from '../Actions/addArrayControl';
 import {
   FormArrayConfig,
@@ -40,7 +40,9 @@ describe('addFormArrayControl', () => {
     const clonedConfig: FormGroupConfig = cloneDeep(config);
     (<FormArrayConfig>clonedConfig.controls.emergencyContacts).controls =
       emergencyContactConfigs;
-    const initialState = buildControlState(clonedConfig) as FormGroup<Contact>;
+    const initialState = buildControlState(
+      clonedConfig,
+    ) as BaseGroupControl<Contact>;
 
     const newControlConfig: FormGroupConfig = {
       validators: [firstNameNotSameAsLast],
@@ -72,7 +74,7 @@ describe('addFormArrayControl', () => {
         config: newControlConfig,
         controlRef: ['emergencyContacts'],
       },
-    }) as FormGroup<Contact>;
+    }) as BaseGroupControl<Contact>;
 
     const newControl = buildControlState(newControlConfig, [
       'emergencyContacts',
@@ -91,7 +93,7 @@ describe('addFormArrayControl', () => {
     ];
 
     const emergencyContactsControl = expectedState.controls
-      .emergencyContacts as FormArray<unknown>;
+      .emergencyContacts as BaseArrayControl<unknown>;
 
     emergencyContactsControl.value = [
       ...initialValue,

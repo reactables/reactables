@@ -1,11 +1,11 @@
-import { AbstractControl } from '../Models/Controls';
+import { BaseControl } from '../Models/Controls';
 import { ControlRef } from '../Models/ControlRef';
-import { getControl } from './getControl';
+import { getControl } from '../Helpers/getControl';
 
 export const getAncestorControls = (
   controlRef: ControlRef,
-  form: AbstractControl<unknown>,
-): AbstractControl<unknown>[] => {
+  form: BaseControl<unknown>,
+): BaseControl<unknown>[] => {
   const formControls = controlRef.reduce(
     (acc, key) => {
       const currentRef = acc.currentRef.concat(key);
@@ -19,7 +19,7 @@ export const getAncestorControls = (
     },
     {
       currentRef: [] as ControlRef,
-      formControls: [] as AbstractControl<unknown>[],
+      formControls: [] as BaseControl<unknown>[],
     },
   ).formControls;
 

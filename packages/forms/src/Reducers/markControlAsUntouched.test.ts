@@ -3,7 +3,7 @@ import { markControlAsUntouched } from './markControlAsUntouched';
 import { markControlAsTouched } from './markControlAsTouched';
 import { buildControlState } from '../Helpers/buildControlState';
 import { config } from '../Testing/config';
-import { FormGroup } from '../Models/Controls';
+import { BaseGroupControl } from '../Models/Controls';
 import { Contact } from '../Testing/Models/Contact';
 import { DoctorInfo } from '../Testing/Models/DoctorInfo';
 import { FORMS_MARK_CONTROL_AS_UNTOUCHED } from '../Actions/markControlAsUntouched';
@@ -17,9 +17,9 @@ describe('markControlAsUntouched', () => {
       payload: ['doctorInfo', 'firstName'],
     });
 
-    const expectedState = cloneDeep(touchedState) as FormGroup<Contact>;
+    const expectedState = cloneDeep(touchedState) as BaseGroupControl<Contact>;
     expectedState.controls.doctorInfo.touched = false;
-    (<FormGroup<DoctorInfo>>(
+    (<BaseGroupControl<DoctorInfo>>(
       expectedState.controls.doctorInfo
     )).controls.firstName.touched = false;
 

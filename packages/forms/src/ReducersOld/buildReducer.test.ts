@@ -1,8 +1,8 @@
 import { buildReducer } from './buildReducer';
 import cloneDeep from 'lodash.clonedeep';
-import { buildControlState } from '../Helpers/buildControlState';
+import { buildControlState } from '../HelpersOld/buildControlState';
 import { config, emergencyContactConfigs } from '../Testing/config';
-import { FORMS_CONTROL_CHANGE } from '../Actions/controlChange';
+import { FORMS_CONTROL_CHANGE } from '../ActionsOld/controlChange';
 import { FORMS_RESET_CONTROL } from '../Actions/resetControl';
 import { FormGroup, FormArray } from '../Models/Controls';
 import { FormArrayConfig, FormGroupConfig } from '../Models/Configs';

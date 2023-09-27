@@ -2,7 +2,7 @@ import cloneDeep from 'lodash.clonedeep';
 import { removeControl } from './removeControl';
 import { buildControlState } from '../Helpers/buildControlState';
 import { config, emergencyContactConfigs } from '../Testing/config';
-import { FormGroup, FormArray } from '../Models/Controls';
+import { BaseGroupControl, BaseArrayControl } from '../Models/Controls';
 import {
   FormArrayConfig,
   FormGroupConfig,
@@ -23,26 +23,28 @@ describe('removeControl', () => {
 
     const initialState = buildControlState(
       configWithType,
-    ) as FormGroup<Contact>;
+    ) as BaseGroupControl<Contact>;
 
     const controlRef = ['doctorInfo', 'type'];
     const newState = removeControl(initialState, {
       type: FORMS_REMOVE_CONTROL,
       payload: controlRef,
-    }) as FormGroup<Contact>;
+    }) as BaseGroupControl<Contact>;
 
     const expectedState = cloneDeep(initialState);
-    delete (<FormGroup<DoctorInfo>>expectedState.controls.doctorInfo).controls
-      .type;
+    delete (<BaseGroupControl<DoctorInfo>>expectedState.controls.doctorInfo)
+      .controls.type;
     expectedState.controls.doctorInfo.value = {
-      ...(<FormGroup<DoctorInfo>>expectedState.controls.doctorInfo).value,
+      ...(<BaseGroupControl<DoctorInfo>>expectedState.controls.doctorInfo)
+        .value,
       type: undefined,
     };
 
     expectedState.value = {
       ...expectedState.value,
       doctorInfo: {
-        ...(<FormGroup<DoctorInfo>>expectedState.controls.doctorInfo).value,
+        ...(<BaseGroupControl<DoctorInfo>>expectedState.controls.doctorInfo)
+          .value,
         type: undefined,
       },
     };
@@ -54,7 +56,9 @@ describe('removeControl', () => {
     const clonedConfig: FormGroupConfig = cloneDeep(config);
     (<FormArrayConfig>clonedConfig.controls.emergencyContacts).controls =
       emergencyContactConfigs;
-    const initialState = buildControlState(clonedConfig) as FormGroup<Contact>;
+    const initialState = buildControlState(
+      clonedConfig,
+    ) as BaseGroupControl<Contact>;
 
     const controlRef = ['emergencyContacts', 0];
 
@@ -63,8 +67,8 @@ describe('removeControl', () => {
       payload: controlRef,
     });
 
-    const expectedState: FormGroup<Contact> = cloneDeep(initialState);
-    const emergencyContacts = <FormArray<EmergencyContact[]>>(
+    const expectedState: BaseGroupControl<Contact> = cloneDeep(initialState);
+    const emergencyContacts = <BaseArrayControl<EmergencyContact[]>>(
       expectedState.controls.emergencyContacts
     );
     expectedState.value = {
@@ -84,27 +88,31 @@ describe('removeControl', () => {
         controlRef: ['emergencyContacts', 0],
         controls: {
           firstName: {
-            ...(<FormGroup<EmergencyContact>>emergencyContacts.controls[1])
-              .controls.firstName,
+            ...(<BaseGroupControl<EmergencyContact>>(
+              emergencyContacts.controls[1]
+            )).controls.firstName,
             controlRef: ['emergencyContacts', 0, 'firstName'],
           },
           lastName: {
-            ...(<FormGroup<EmergencyContact>>emergencyContacts.controls[1])
-              .controls.lastName,
+            ...(<BaseGroupControl<EmergencyContact>>(
+              emergencyContacts.controls[1]
+            )).controls.lastName,
             controlRef: ['emergencyContacts', 0, 'lastName'],
           },
           email: {
-            ...(<FormGroup<EmergencyContact>>emergencyContacts.controls[1])
-              .controls.email,
+            ...(<BaseGroupControl<EmergencyContact>>(
+              emergencyContacts.controls[1]
+            )).controls.email,
             controlRef: ['emergencyContacts', 0, 'email'],
           },
           relation: {
-            ...(<FormGroup<EmergencyContact>>emergencyContacts.controls[1])
-              .controls.relation,
+            ...(<BaseGroupControl<EmergencyContact>>(
+              emergencyContacts.controls[1]
+            )).controls.relation,
             controlRef: ['emergencyContacts', 0, 'relation'],
           },
         },
-      },
+      } as BaseGroupControl<EmergencyContact>,
     ];
     emergencyContacts.value = [
       {

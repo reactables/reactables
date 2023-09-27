@@ -1,14 +1,14 @@
 import { Action, Reducer } from '@hub-fx/core';
-import { FORMS_CONTROL_CHANGE } from '../Actions/controlChange';
-import { FORMS_CONTROL_ASYNC_VALIDATION_RESPONSE_SUCCESS } from '../Actions/asyncValidationResponseSuccess';
-import { FORMS_VALUE_CHANGE_EFFECT } from '../Actions/valueChange';
-import { FORMS_ADD_GROUP_CONTROL } from '../Actions/addGroupControl';
-import { FORMS_ADD_FORM_ARRAY_CONTROL } from '../Actions/addArrayControl';
+import { FORMS_CONTROL_CHANGE } from '../ActionsOld/controlChange';
+import { FORMS_CONTROL_ASYNC_VALIDATION_RESPONSE_SUCCESS } from '../ActionsOld/asyncValidationResponseSuccess';
+import { FORMS_VALUE_CHANGE_EFFECT } from '../ActionsOld/valueChange';
+import { FORMS_ADD_GROUP_CONTROL } from '../ActionsOld/addGroupControl';
+import { FORMS_ADD_FORM_ARRAY_CONTROL } from '../ActionsOld/addArrayControl';
 import { FORMS_REMOVE_CONTROL } from '../Actions/removeControl';
 import { FORMS_RESET_CONTROL } from '../Actions/resetControl';
 import { FORMS_MARK_CONTROL_AS_PRISTINE } from '../Actions/markControlAsPristine';
-import { FORMS_MARK_CONTROL_AS_TOUCHED } from '../Actions/markControlAsTouched';
-import { FORMS_MARK_CONTROL_AS_UNTOUCHED } from '../Actions/markControlAsUntouched';
+import { FORMS_MARK_CONTROL_AS_TOUCHED } from '../ActionsOld/markControlAsTouched';
+import { FORMS_MARK_CONTROL_AS_UNTOUCHED } from '../ActionsOld/markControlAsUntouched';
 import { AbstractControl } from '../Models/Controls';
 import { AbstractControlConfig } from '../Models/Configs';
 import {
@@ -28,8 +28,8 @@ import { removeControl } from './removeControl';
 import { markControlAsPristine } from './markControlAsPristine';
 import { markControlAsTouched } from './markControlAsTouched';
 import { markControlAsUntouched } from './markControlAsUntouched';
-import { resetControl } from './resetControl';
-import { buildControlState } from '../Helpers/buildControlState';
+import { resetControl } from '../Reducers/resetControl';
+import { buildControlState } from '../HelpersOld/buildControlState';
 
 export const buildReducer = (config: AbstractControlConfig) => {
   const initialState = buildControlState(config);

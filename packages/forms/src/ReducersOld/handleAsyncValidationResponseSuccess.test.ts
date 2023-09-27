@@ -1,15 +1,15 @@
 import cloneDeep from 'lodash.clonedeep';
 import { handleAsyncValidationResponseSuccess } from './handleAsyncValidationResponseSuccess';
 import { handleAsyncValidation } from './handleAsyncValidation';
-import { buildControlState } from '../Helpers/buildControlState';
+import { buildControlState } from '../HelpersOld/buildControlState';
 import { config, emergencyContactConfigs } from '../Testing/config';
 import { FormGroup, FormArray } from '../Models/Controls';
 import { FormArrayConfig, FormGroupConfig } from '../Models/Configs';
 import { Contact } from '../Testing/Models/Contact';
 import { EmergencyContact } from '../Testing/Models/EmergencyContact';
-import { FORMS_VALUE_CHANGE_EFFECT } from '../Actions/valueChange';
-import { FORMS_CONTROL_ASYNC_VALIDATION_RESPONSE_SUCCESS } from '../Actions/asyncValidationResponseSuccess';
-import { getControl } from '../Helpers/getControl';
+import { FORMS_VALUE_CHANGE_EFFECT } from '../ActionsOld/valueChange';
+import { FORMS_CONTROL_ASYNC_VALIDATION_RESPONSE_SUCCESS } from '../ActionsOld/asyncValidationResponseSuccess';
+import { getControl } from '../HelpersOld/getControl';
 
 describe('handleAsyncValidationResponseSuccess', () => {
   it('should update errors for control', () => {

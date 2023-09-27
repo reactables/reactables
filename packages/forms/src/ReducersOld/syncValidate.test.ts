@@ -1,8 +1,8 @@
 import { updateValues } from './updateValues';
 import { syncValidate } from './syncValidate';
-import { buildControlState } from '../Helpers/buildControlState';
+import { buildControlState } from '../HelpersOld/buildControlState';
 import { config, emergencyContactConfigs } from '../Testing/config';
-import { FORMS_CONTROL_CHANGE } from '../Actions/controlChange';
+import { FORMS_CONTROL_CHANGE } from '../ActionsOld/controlChange';
 import { FormGroup, FormArray } from '../Models/Controls';
 import { FormArrayConfig, FormGroupConfig } from '../Models/Configs';
 import { Contact } from '../Testing/Models/Contact';

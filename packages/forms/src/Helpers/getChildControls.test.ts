@@ -1,7 +1,7 @@
 import cloneDeep from 'lodash.clonedeep';
 import { getChildControls } from './getChildControls';
 
-import { buildControlState } from '../Helpers/buildControlState';
+import { buildControlState } from './buildControlState';
 import { config, emergencyContactConfigs } from '../Testing/config';
 import { FormArrayConfig, FormGroupConfig } from '../Models/Configs';
 

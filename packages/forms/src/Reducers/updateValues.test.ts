@@ -3,7 +3,7 @@ import cloneDeep from 'lodash.clonedeep';
 import { buildControlState } from '../Helpers/buildControlState';
 import { config, emergencyContactConfigs } from '../Testing/config';
 import { FORMS_CONTROL_CHANGE } from '../Actions/controlChange';
-import { FormGroup, FormArray } from '../Models/Controls';
+import { BaseGroupControl, BaseArrayControl } from '../Models/Controls';
 import { FormArrayConfig, FormGroupConfig } from '../Models/Configs';
 import { Contact } from '../Testing/Models/Contact';
 import { EmergencyContact } from '../Testing/Models/EmergencyContact';
@@ -11,7 +11,7 @@ import { DoctorInfo } from '../Testing/Models/DoctorInfo';
 
 describe('updateValues', () => {
   it('should update values only for a FC -> FG', () => {
-    const initialState = buildControlState(config) as FormGroup<Contact>;
+    const initialState = buildControlState(config) as BaseGroupControl<Contact>;
     const expectedState = {
       ...initialState,
       value: {
@@ -47,7 +47,7 @@ describe('updateValues', () => {
   });
 
   it('should update values only for a FC -> FG -> FG', () => {
-    const initialState = buildControlState(config) as FormGroup<Contact>;
+    const initialState = buildControlState(config) as BaseGroupControl<Contact>;
     expect(
       updateValues(initialState, {
         type: FORMS_CONTROL_CHANGE,
@@ -80,11 +80,12 @@ describe('updateValues', () => {
             email: '',
           },
           controls: {
-            ...(<FormGroup<DoctorInfo>>initialState.controls.doctorInfo)
+            ...(<BaseGroupControl<DoctorInfo>>initialState.controls.doctorInfo)
               .controls,
             firstName: {
-              ...(<FormGroup<DoctorInfo>>initialState.controls.doctorInfo)
-                .controls.firstName,
+              ...(<BaseGroupControl<DoctorInfo>>(
+                initialState.controls.doctorInfo
+              )).controls.firstName,
               value: 'Dr First Name',
             },
           },
@@ -123,7 +124,7 @@ describe('updateValues', () => {
 
     const initialState = buildControlState(
       nonEmptyConfig,
-    ) as FormGroup<Contact>;
+    ) as BaseGroupControl<Contact>;
 
     expect(
       updateValues(initialState, {
@@ -157,28 +158,28 @@ describe('updateValues', () => {
             },
           ],
           controls: [
-            (<FormArray<EmergencyContact>>(
+            (<BaseArrayControl<EmergencyContact>>(
               initialState.controls.emergencyContacts
             )).controls[0],
             {
-              ...((<FormArray<EmergencyContact>>(
+              ...((<BaseArrayControl<EmergencyContact>>(
                 initialState.controls.emergencyContacts
-              )).controls[1] as FormGroup<EmergencyContact>),
+              )).controls[1] as BaseGroupControl<EmergencyContact>),
               value: {
                 ...initialValue[1],
                 firstName: 'Moe Flaming',
               },
               controls: {
                 ...(
-                  (<FormArray<EmergencyContact>>(
+                  (<BaseArrayControl<EmergencyContact>>(
                     initialState.controls.emergencyContacts
-                  )).controls[1] as FormGroup<EmergencyContact>
+                  )).controls[1] as BaseGroupControl<EmergencyContact>
                 ).controls,
                 firstName: {
                   ...(
-                    (<FormArray<EmergencyContact>>(
+                    (<BaseArrayControl<EmergencyContact>>(
                       initialState.controls.emergencyContacts
-                    )).controls[1] as FormGroup<EmergencyContact>
+                    )).controls[1] as BaseGroupControl<EmergencyContact>
                   ).controls.firstName,
                   value: 'Moe Flaming',
                 },
@@ -196,14 +197,14 @@ describe('updateValues', () => {
       lastName: 'Ho',
       email: 'dr@hoe.com',
     };
-    const state = buildControlState(config) as FormGroup<Contact>;
+    const state = buildControlState(config) as BaseGroupControl<Contact>;
     const expectedState = cloneDeep(state);
     expectedState.value = {
       ...expectedState.value,
       doctorInfo: newDoctorValue,
     };
     const doctorInfoControl = expectedState.controls
-      .doctorInfo as FormGroup<DoctorInfo>;
+      .doctorInfo as BaseGroupControl<DoctorInfo>;
     doctorInfoControl.value = newDoctorValue;
     doctorInfoControl.controls.firstName.value = newDoctorValue.firstName;
     doctorInfoControl.controls.lastName.value = newDoctorValue.lastName;
@@ -229,7 +230,9 @@ describe('updateValues', () => {
     (<FormArrayConfig>clonedConfig.controls.emergencyContacts).controls =
       emergencyContactConfigs;
 
-    const initialState = buildControlState(clonedConfig) as FormGroup<Contact>;
+    const initialState = buildControlState(
+      clonedConfig,
+    ) as BaseGroupControl<Contact>;
     const newValue: EmergencyContact[] = [
       {
         firstName: 'Milhouse',
@@ -251,12 +254,12 @@ describe('updateValues', () => {
     expectedState.controls.emergencyContacts.value = newValue;
 
     const emergencyContactControls = expectedState.controls
-      .emergencyContacts as FormArray<unknown>;
+      .emergencyContacts as BaseArrayControl<unknown>;
 
     const emergencyContactControls0 = emergencyContactControls
-      .controls[0] as FormGroup<EmergencyContact>;
+      .controls[0] as BaseGroupControl<EmergencyContact>;
     const emergencyContactControls1 = emergencyContactControls
-      .controls[1] as FormGroup<EmergencyContact>;
+      .controls[1] as BaseGroupControl<EmergencyContact>;
 
     emergencyContactControls0.value = newValue[0];
     emergencyContactControls0.controls.firstName.value = newValue[0].firstName;

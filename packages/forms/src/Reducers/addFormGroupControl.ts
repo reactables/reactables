@@ -4,21 +4,21 @@ import {
   updateAncestorValues,
   FORMS_UPDATE_ANCESTOR_VALUES,
 } from './updateAncestorValues';
-import { FormGroup, AbstractControl } from '../Models/Controls';
+import { BaseGroupControl, BaseControl } from '../Models/Controls';
 import { AddControl } from '../Models/Payloads';
 import { buildControlState } from '../Helpers/buildControlState';
 import { getControl } from '../Helpers/getControl';
 import { FormArrayConfig, FormGroupConfig } from '../Models';
 
 export const addFormGroupControl = <T>(
-  state: AbstractControl<T>,
+  state: BaseControl<T>,
   { payload: { controlRef, config } }: Action<AddControl>,
 ) => {
   const newState = cloneDeep(state);
   const newControl = getControl(
     controlRef.slice(0, -1),
     newState,
-  ) as FormGroup<unknown>;
+  ) as BaseGroupControl<unknown>;
 
   const controls = (<FormArrayConfig | FormGroupConfig>newControl.config)
     .controls;

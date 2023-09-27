@@ -1,27 +1,13 @@
 import { Action } from '@hub-fx/core';
-import { AbstractControl } from '../Models/Controls';
-import { ControlRef } from '../Models/ControlRef';
 import { AddControl } from '../Models/Payloads';
-import { getControlBranch } from '../Helpers/getControlBranch';
-import { getValueChangeEffects } from './valueChange';
 
 export const FORMS_ADD_GROUP_CONTROL = 'FORMS_ADD_GROUP_CONTROL';
-export const addGroupControl = <T>(
-  { controlRef, config }: AddControl,
-  state: AbstractControl<T>,
-  reducer: (
-    state: AbstractControl<T>,
-    action: Action<unknown>,
-  ) => AbstractControl<T>,
-): (Action<AddControl> | Action<ControlRef>)[] => {
-  const mainAction: Action<AddControl> = {
+export const addGroupControl = <T>({
+  controlRef,
+  config,
+}: AddControl): Action<AddControl> => {
+  return {
     type: FORMS_ADD_GROUP_CONTROL,
     payload: { controlRef, config },
   };
-  const newState = reducer(state, mainAction);
-  const formControls = getControlBranch(controlRef, newState);
-  const effects = getValueChangeEffects(formControls);
-  const actions = [mainAction, ...effects];
-
-  return actions;
 };

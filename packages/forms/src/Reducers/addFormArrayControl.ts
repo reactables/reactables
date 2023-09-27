@@ -1,6 +1,6 @@
 import cloneDeep from 'lodash.clonedeep';
 import { Action } from '@hub-fx/core';
-import { FormArray, AbstractControl } from '../Models/Controls';
+import { BaseArrayControl, BaseControl } from '../Models/Controls';
 import { AddControl } from '../Models/Payloads';
 import { buildControlState } from '../Helpers/buildControlState';
 import { getControl } from '../Helpers/getControl';
@@ -10,12 +10,15 @@ import {
 } from './updateAncestorValues';
 
 export const addFormArrayControl = <T>(
-  state: AbstractControl<T>,
+  state: BaseControl<T>,
   { payload: { config, controlRef } }: Action<AddControl>,
 ) => {
   const newState = cloneDeep(state);
 
-  const arrayControl = getControl(controlRef, newState) as FormArray<unknown>;
+  const arrayControl = getControl(
+    controlRef,
+    newState,
+  ) as BaseArrayControl<unknown>;
 
   const newIndex = arrayControl.controls.length
     ? arrayControl.controls.length

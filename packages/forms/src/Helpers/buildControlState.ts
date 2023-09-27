@@ -1,8 +1,7 @@
 import {
-  FormControl,
-  FormGroup,
-  FormArray,
-  AbstractControl,
+  BaseArrayControl,
+  BaseControl,
+  BaseGroupControl,
 } from '../Models/Controls';
 import { ControlRef } from '../Models/ControlRef';
 import { FormErrors } from '../Models/FormErrors';
@@ -12,18 +11,18 @@ import {
   FormGroupConfig,
   AbstractControlConfig,
 } from '../Models/Configs';
-
-import { getValueFromControlConfig } from './getValueFromControlConfig';
 import cloneDeep from 'lodash.clonedeep';
+
+import { getValueFromControlConfig } from '../Helpers/getValueFromControlConfig';
 
 export const buildControlState = <T>(
   controlConfig: AbstractControlConfig,
   controlRef: ControlRef = [],
-): AbstractControl<T> => {
+): BaseControl<unknown> => {
   // Form Group
   const controls = (<FormGroupConfig | FormArrayConfig>controlConfig).controls;
   if (controls && !(controls instanceof Array)) {
-    const controls = {} as { [key: string]: FormControl<unknown> };
+    const controls = {} as { [key: string]: BaseControl<unknown> };
     const groupInitialValue: {
       [key: string]: unknown;
     } = getValueFromControlConfig(controlConfig);
@@ -38,7 +37,7 @@ export const buildControlState = <T>(
       );
     }
 
-    const errors =
+    const syncErrors =
       controlConfig.validators?.reduce((errors, validator) => {
         return {
           ...errors,
@@ -46,29 +45,13 @@ export const buildControlState = <T>(
         };
       }, {} as FormErrors) || {};
 
-    const groupControlHasError = errors
-      ? Object.values(errors).some((error) => error)
-      : false;
-
-    const controlsHasErrors = Object.values(controls).some((control) => {
-      if (control.errors) {
-        return Object.values(control.errors).some((error) => error);
-      }
-
-      return false;
-    });
-
-    const result: FormGroup<T> = {
+    const result: BaseGroupControl<T> = {
       controlRef,
       dirty: false,
       touched: false,
       value: groupInitialValue as T,
-      valid: !groupControlHasError && !controlsHasErrors,
-      submitting: false,
-      asyncValidateInProgress: {},
-      pending: false,
       controls,
-      errors,
+      syncErrors,
       config: controlConfig,
     };
 
@@ -76,9 +59,9 @@ export const buildControlState = <T>(
     // Form Array
   } else if (controls && controls instanceof Array) {
     const configControls = (<FormArrayConfig>controlConfig).controls;
-    const controls: AbstractControl<unknown>[] = configControls
+    const controls: BaseControl<unknown>[] = configControls
       ? configControls.reduce(
-          (acc: AbstractControl<unknown>[], config, index) =>
+          (acc: BaseControl<unknown>[], config, index) =>
             (acc = acc.concat(
               buildControlState(config, controlRef.concat(index)),
             )),
@@ -94,30 +77,15 @@ export const buildControlState = <T>(
         };
       }, {} as FormErrors) || {};
 
-    const arrayControlHasError = errors
-      ? Object.values(errors).some((error) => error)
-      : false;
-
-    const controlsHasErrors = controls.some((control) => {
-      if (control.errors) {
-        return Object.values(control.errors).some((error) => error);
-      }
-
-      return false;
-    });
-
     const value = controls.map(({ value }) => value) as T;
 
-    const result: FormArray<T> = {
+    const result: BaseArrayControl<T> = {
       controlRef,
       controls,
       dirty: false,
       value,
       touched: false,
-      asyncValidateInProgress: {},
-      pending: false,
-      valid: !arrayControlHasError && !controlsHasErrors,
-      errors,
+      syncErrors: errors,
       config: controlConfig,
     };
 
@@ -132,15 +100,12 @@ export const buildControlState = <T>(
         };
       }, {} as FormErrors) || {};
 
-    const result: FormControl<T> = {
+    const result: BaseControl<T> = {
       controlRef,
       dirty: false,
       value: (<FormControlConfig<T>>controlConfig).initialValue,
       touched: false,
-      valid: errors ? Object.values(errors).every((error) => !error) : true,
-      asyncValidateInProgress: {},
-      pending: false,
-      errors,
+      syncErrors: errors,
       config: controlConfig,
     };
 

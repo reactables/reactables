@@ -1,15 +1,19 @@
 import cloneDeep from 'lodash.clonedeep';
 import { Action } from '@hub-fx/core';
-import { FormArray, FormGroup, AbstractControl } from '../Models/Controls';
+import {
+  BaseArrayControl,
+  BaseGroupControl,
+  BaseControl,
+} from '../Models/Controls';
 import { ControlRef } from '../Models/ControlRef';
 import { getControl } from '../Helpers/getControl';
 import { FormGroupConfig, FormArrayConfig } from '../Models';
 
 export const FORMS_UPDATE_ANCESTOR_VALUES = 'FORMS_UPDATE_ANCESTOR_VALUES';
 export const updateAncestorValues = <T>(
-  state: AbstractControl<T>,
+  state: BaseControl<T>,
   { payload: controlRef }: Action<ControlRef>,
-): AbstractControl<T> => {
+): BaseControl<T> => {
   if (!controlRef.length) return state;
 
   const newState = cloneDeep(state);
@@ -23,14 +27,14 @@ export const updateAncestorValues = <T>(
   const controls = config.controls;
 
   if (controls && !(controls instanceof Array)) {
-    (<FormGroup<unknown>>parentControl).value = {
-      ...(<FormGroup<unknown>>parentControl.value),
+    (<BaseGroupControl<unknown>>parentControl).value = {
+      ...(<BaseGroupControl<unknown>>parentControl.value),
       [key]: value,
     };
   } else if (controls && controls instanceof Array) {
-    (<FormArray<unknown[]>>parentControl).value = (<FormArray<unknown[]>>(
-      parentControl
-    )).controls.map((control) => control.value);
+    (<BaseArrayControl<unknown[]>>parentControl).value = (<
+      BaseArrayControl<unknown[]>
+    >parentControl).controls.map((control) => control.value);
   }
 
   return updateAncestorValues(newState, {
