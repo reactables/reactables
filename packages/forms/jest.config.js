@@ -4,6 +4,10 @@ module.exports = {
   testMatch: ['**/+(*.)+(spec|test).+(ts|js)?(x)'],
   moduleFileExtensions: ['ts', 'js'],
   transform: {
-      '^.+\\.ts?$': 'ts-jest'
-  }
+    '^.+\\.ts?$': 'ts-jest',
+  },
+  testPathIgnorePatterns: [
+    '<rootDir>/src/ReducersOld/',
+    '<rootDir>/src/HelpersOld/',
+  ],
 };

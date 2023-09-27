@@ -1,18 +1,23 @@
 import { getControl } from './getControl';
 import { buildControlState } from './buildControlState';
 import { config } from '../Testing/config';
-import { FormGroup, FormArray, FormControl } from '../Models/Controls';
+import {
+  BaseGroupControl,
+  BaseArrayControl,
+  BaseControl,
+} from '../Models/Controls';
 import { FormArrayConfig, FormGroupConfig } from '../Models/Configs';
 import { Contact } from '../Testing/Models/Contact';
 import { EmergencyContact } from '../Testing/Models/EmergencyContact';
 
 describe('getControl', () => {
-  const contactFormGroup = buildControlState(config) as FormGroup<Contact>;
+  const contactFormGroup = buildControlState(
+    config,
+  ) as BaseGroupControl<Contact>;
+
   const BASE_FORM_CONTROL = {
     dirty: false,
     touched: false,
-    asyncValidateInProgress: {},
-    pending: false,
   };
 
   it('should get form control', () => {
@@ -21,11 +26,10 @@ describe('getControl', () => {
       config: config.controls.firstName,
       controlRef: ['firstName'],
       value: '',
-      valid: false,
-      errors: {
+      syncErrors: {
         required: true,
       },
-    } as FormControl<string>;
+    } as BaseControl<string>;
     expect(getControl(['firstName'], contactFormGroup)).toEqual({
       pristineControl: expectedControl,
       ...expectedControl,
@@ -36,11 +40,10 @@ describe('getControl', () => {
       config: (<FormGroupConfig>config.controls.doctorInfo).controls.firstName,
       controlRef: ['doctorInfo', 'firstName'],
       value: '',
-      valid: false,
-      errors: {
+      syncErrors: {
         required: true,
       },
-    } as FormControl<string>;
+    } as BaseControl<string>;
 
     expect(getControl(['doctorInfo', 'firstName'], contactFormGroup)).toEqual({
       pristineControl: expectedControlDoctorInfoFirstName,
@@ -52,12 +55,11 @@ describe('getControl', () => {
       config: <FormArrayConfig>config.controls.emergencyContacts,
       controlRef: ['emergencyContacts'],
       value: [] as EmergencyContact[],
-      controls: [] as FormControl<EmergencyContact>[],
-      valid: false,
-      errors: {
+      controls: [] as BaseControl<EmergencyContact>[],
+      syncErrors: {
         required: true,
       },
-    } as FormArray<EmergencyContact[]>;
+    } as BaseArrayControl<EmergencyContact[]>;
 
     expect(getControl(['emergencyContacts'], contactFormGroup)).toEqual({
       pristineControl: expectedEmergencyContactsControl,

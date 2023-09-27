@@ -2,7 +2,7 @@ import cloneDeep from 'lodash.clonedeep';
 import { markControlAsTouched } from './markControlAsTouched';
 import { buildControlState } from '../Helpers/buildControlState';
 import { config } from '../Testing/config';
-import { FormGroup } from '../Models/Controls';
+import { BaseGroupControl } from '../Models/Controls';
 import { Contact } from '../Testing/Models/Contact';
 import { DoctorInfo } from '../Testing/Models/DoctorInfo';
 import { FORMS_MARK_CONTROL_AS_TOUCHED } from '../Actions/markControlAsTouched';
@@ -15,11 +15,12 @@ describe('markControlAsTouched', () => {
       payload: ['doctorInfo', 'firstName'],
     });
 
-    const expectedState = cloneDeep(initialState) as FormGroup<Contact>;
+    const expectedState = cloneDeep(initialState) as BaseGroupControl<Contact>;
 
     expectedState.touched = true;
-    (<FormGroup<DoctorInfo>>expectedState.controls.doctorInfo).touched = true;
-    (<FormGroup<DoctorInfo>>(
+    (<BaseGroupControl<DoctorInfo>>expectedState.controls.doctorInfo).touched =
+      true;
+    (<BaseGroupControl<DoctorInfo>>(
       expectedState.controls.doctorInfo
     )).controls.firstName.touched = true;
 

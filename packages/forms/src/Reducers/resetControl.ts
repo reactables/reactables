@@ -1,6 +1,10 @@
 import cloneDeep from 'lodash.clonedeep';
 import { Action } from '@hub-fx/core';
-import { FormArray, FormGroup, AbstractControl } from '../Models/Controls';
+import {
+  BaseArrayControl,
+  BaseGroupControl,
+  BaseControl,
+} from '../Models/Controls';
 import { ControlRef } from '../Models/ControlRef';
 import { getControl } from '../Helpers/getControl';
 import {
@@ -9,7 +13,7 @@ import {
 } from './updateAncestorValues';
 
 export const resetControl = <T>(
-  state: AbstractControl<T>,
+  state: BaseControl<T>,
   { payload: controlRef }: Action<ControlRef>,
 ) => {
   if (!controlRef.length) {
@@ -24,8 +28,8 @@ export const resetControl = <T>(
 
   const control = getControl(controlRef, newState);
   const parentControl = getControl(parentRef, newState) as
-    | FormGroup<unknown>
-    | FormArray<unknown>;
+    | BaseGroupControl<unknown>
+    | BaseArrayControl<unknown>;
   parentControl.controls[controlRef.slice(-1)[0]] = {
     pristineControl: control.pristineControl,
     ...control.pristineControl,

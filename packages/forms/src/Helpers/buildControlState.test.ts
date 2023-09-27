@@ -5,7 +5,11 @@ import {
 } from '../Testing/config';
 import { Contact } from '../Testing/Models/Contact';
 import { DoctorInfo } from '../Testing/Models/DoctorInfo';
-import { FormControl, FormArray, FormGroup } from '../Models/Controls';
+import {
+  BaseControl,
+  BaseArrayControl,
+  BaseGroupControl,
+} from '../Models/Controls';
 import {
   FormArrayConfig,
   FormControlConfig,
@@ -19,8 +23,6 @@ describe('buildControlState', () => {
   const BASE_FORM_CONTROL = {
     dirty: false,
     touched: false,
-    asyncValidateInProgress: {},
-    pending: false,
   };
 
   it('should build the control state for for type field', () => {
@@ -28,12 +30,11 @@ describe('buildControlState', () => {
       ...BASE_FORM_CONTROL,
       controlRef: ['firstName'],
       value: '',
-      valid: false,
-      errors: {
+      syncErrors: {
         required: true,
       },
       config: config.controls.firstName,
-    } as FormControl<string>;
+    } as BaseControl<string>;
     expect(buildControlState(config.controls.firstName, ['firstName'])).toEqual(
       {
         pristineControl: expectedControl,
@@ -52,8 +53,7 @@ describe('buildControlState', () => {
     const expectedFirstNameControl = {
       ...BASE_FORM_CONTROL,
       controlRef: ['doctorInfo', 'firstName'],
-      valid: false,
-      errors: {
+      syncErrors: {
         required: true,
       },
       value: '',
@@ -62,8 +62,7 @@ describe('buildControlState', () => {
     const expectedLastNameControl = {
       ...BASE_FORM_CONTROL,
       controlRef: ['doctorInfo', 'lastName'],
-      valid: false,
-      errors: {
+      syncErrors: {
         required: true,
       },
       value: '',
@@ -72,22 +71,19 @@ describe('buildControlState', () => {
     const expectedEmailControl = {
       ...BASE_FORM_CONTROL,
       controlRef: ['doctorInfo', 'email'],
-      valid: false,
-      errors: {
+      syncErrors: {
         email: false,
         required: true,
       },
       value: '',
       config: (<FormGroupConfig>config.controls.doctorInfo).controls.email,
     };
-    const expectedControl: FormGroup<DoctorInfo> = {
+    const expectedControl: BaseGroupControl<DoctorInfo> = {
       ...BASE_FORM_CONTROL,
       controlRef: ['doctorInfo'],
-      submitting: false,
-      valid: false,
       value: initialValue,
       config: config.controls.doctorInfo,
-      errors: {
+      syncErrors: {
         firstNameNotSameAsLast: true,
       },
       controls: {
@@ -104,7 +100,7 @@ describe('buildControlState', () => {
           ...expectedEmailControl,
         },
       },
-    } as FormGroup<DoctorInfo>;
+    } as BaseGroupControl<DoctorInfo>;
     expect(
       buildControlState(config.controls.doctorInfo, ['doctorInfo']),
     ).toEqual({
@@ -139,8 +135,7 @@ describe('buildControlState', () => {
     const expectedFirstNameControl = {
       ...BASE_FORM_CONTROL,
       controlRef: ['doctorInfo', 'firstName'],
-      valid: true,
-      errors: {
+      syncErrors: {
         required: false,
       },
       value: 'Dr',
@@ -149,8 +144,7 @@ describe('buildControlState', () => {
     const expectedLastNameControl = {
       ...BASE_FORM_CONTROL,
       controlRef: ['doctorInfo', 'lastName'],
-      valid: true,
-      errors: {
+      syncErrors: {
         required: false,
       },
       value: 'Bob',
@@ -159,22 +153,19 @@ describe('buildControlState', () => {
     const expectedEmailControl = {
       ...BASE_FORM_CONTROL,
       controlRef: ['doctorInfo', 'email'],
-      valid: false,
-      errors: {
+      syncErrors: {
         email: true,
         required: false,
       },
       value: 'DrBobbob.com',
       config: testConfig.controls.email,
     };
-    const expectedControl: FormGroup<DoctorInfo> = {
+    const expectedControl: BaseGroupControl<DoctorInfo> = {
       ...BASE_FORM_CONTROL,
       controlRef: ['doctorInfo'],
-      submitting: false,
-      valid: false,
       value: initialValue,
       config: testConfig,
-      errors: {
+      syncErrors: {
         firstNameNotSameAsLast: false,
       },
       controls: {
@@ -191,7 +182,7 @@ describe('buildControlState', () => {
           ...expectedEmailControl,
         },
       },
-    } as FormGroup<DoctorInfo>;
+    } as BaseGroupControl<DoctorInfo>;
     expect(buildControlState(testConfig, ['doctorInfo'])).toEqual({
       pristineControl: expectedControl,
       ...expectedControl,
@@ -204,12 +195,11 @@ describe('buildControlState', () => {
       controlRef: ['emergencyContacts'],
       controls: [],
       value: [],
-      valid: false,
       config: config.controls.emergencyContacts,
-      errors: {
+      syncErrors: {
         required: true,
       },
-    } as FormArray<unknown>;
+    } as BaseArrayControl<unknown>;
     expect(
       buildControlState(config.controls.emergencyContacts, [
         'emergencyContacts',
@@ -229,8 +219,7 @@ describe('buildControlState', () => {
     const expectedControl0FirstName = {
       ...BASE_FORM_CONTROL,
       controlRef: ['emergencyContacts', 0, 'firstName'],
-      valid: true,
-      errors: {
+      syncErrors: {
         required: false,
       },
       value: 'Homer',
@@ -243,8 +232,7 @@ describe('buildControlState', () => {
     const expectedControl0LastName = {
       ...BASE_FORM_CONTROL,
       controlRef: ['emergencyContacts', 0, 'lastName'],
-      valid: true,
-      errors: {
+      syncErrors: {
         required: false,
       },
       value: 'Simpson',
@@ -257,8 +245,7 @@ describe('buildControlState', () => {
     const expectedControl0Email = {
       ...BASE_FORM_CONTROL,
       controlRef: ['emergencyContacts', 0, 'email'],
-      valid: true,
-      errors: {
+      syncErrors: {
         email: false,
         required: false,
       },
@@ -272,8 +259,7 @@ describe('buildControlState', () => {
     const expectedControl0Relation = {
       ...BASE_FORM_CONTROL,
       controlRef: ['emergencyContacts', 0, 'relation'],
-      valid: true,
-      errors: {
+      syncErrors: {
         required: false,
       },
       value: 'friend',
@@ -286,15 +272,13 @@ describe('buildControlState', () => {
     const expectedControl0 = {
       ...BASE_FORM_CONTROL,
       controlRef: ['emergencyContacts', 0],
-      submitting: false,
       value: {
         firstName: 'Homer',
         lastName: 'Simpson',
         email: 'homer@homer.com',
         relation: 'friend',
       },
-      valid: true,
-      errors: {
+      syncErrors: {
         firstNameNotSameAsLast: false,
       },
       config: emergencyContactConfigs[0],
@@ -315,14 +299,13 @@ describe('buildControlState', () => {
           pristineControl: expectedControl0Relation,
           ...expectedControl0Relation,
         },
-      } as { [key: string]: FormControl<unknown> },
-    } as FormGroup<unknown>;
+      } as { [key: string]: BaseControl<unknown> },
+    } as BaseGroupControl<unknown>;
 
     const expectedControl1FirstName = {
       ...BASE_FORM_CONTROL,
       controlRef: ['emergencyContacts', 1, 'firstName'],
-      valid: true,
-      errors: {
+      syncErrors: {
         required: false,
       },
       value: 'moe',
@@ -335,8 +318,7 @@ describe('buildControlState', () => {
     const expectedControl1LastName = {
       ...BASE_FORM_CONTROL,
       controlRef: ['emergencyContacts', 1, 'lastName'],
-      valid: true,
-      errors: {
+      syncErrors: {
         required: false,
       },
       value: 'syzlak',
@@ -349,8 +331,7 @@ describe('buildControlState', () => {
     const expectedControl1Email = {
       ...BASE_FORM_CONTROL,
       controlRef: ['emergencyContacts', 1, 'email'],
-      valid: true,
-      errors: {
+      syncErrors: {
         email: false,
         required: false,
       },
@@ -364,8 +345,7 @@ describe('buildControlState', () => {
     const expectedControl1Relation = {
       ...BASE_FORM_CONTROL,
       controlRef: ['emergencyContacts', 1, 'relation'],
-      valid: true,
-      errors: {
+      syncErrors: {
         required: false,
       },
       value: 'friend',
@@ -378,15 +358,13 @@ describe('buildControlState', () => {
     const expectedControl1 = {
       ...BASE_FORM_CONTROL,
       controlRef: ['emergencyContacts', 1],
-      submitting: false,
       value: {
         firstName: 'moe',
         lastName: 'syzlak',
         email: 'moe@moe.com',
         relation: 'friend',
       },
-      valid: true,
-      errors: {
+      syncErrors: {
         firstNameNotSameAsLast: false,
       },
       config: {
@@ -425,8 +403,8 @@ describe('buildControlState', () => {
           pristineControl: expectedControl1Relation,
           ...expectedControl1Relation,
         },
-      } as { [key: string]: FormControl<unknown> },
-    } as FormGroup<unknown>;
+      } as { [key: string]: BaseControl<unknown> },
+    } as BaseGroupControl<unknown>;
 
     const expectedControl = {
       config: nonEmptyConfig,
@@ -436,7 +414,7 @@ describe('buildControlState', () => {
           ...expectedControl0,
         },
         { pristineControl: expectedControl1, ...expectedControl1 },
-      ] as FormGroup<unknown>[],
+      ] as BaseGroupControl<unknown>[],
       ...BASE_FORM_CONTROL,
       controlRef: ['emergencyContacts'],
       value: [
@@ -453,11 +431,10 @@ describe('buildControlState', () => {
           relation: 'friend',
         },
       ],
-      valid: true,
-      errors: {
+      syncErrors: {
         required: false,
       },
-    } as FormArray<unknown>;
+    } as BaseArrayControl<unknown>;
 
     expect(buildControlState(nonEmptyConfig, ['emergencyContacts'])).toEqual({
       pristineControl: expectedControl,
@@ -483,8 +460,7 @@ describe('buildControlState', () => {
       ...BASE_FORM_CONTROL,
       controlRef: ['firstName'],
       value: '',
-      valid: false,
-      errors: {
+      syncErrors: {
         required: true,
       },
       config: config.controls.firstName,
@@ -494,8 +470,7 @@ describe('buildControlState', () => {
       ...BASE_FORM_CONTROL,
       controlRef: ['lastName'],
       value: '',
-      valid: false,
-      errors: {
+      syncErrors: {
         required: true,
       },
       config: config.controls.lastName,
@@ -505,8 +480,7 @@ describe('buildControlState', () => {
       ...BASE_FORM_CONTROL,
       controlRef: ['email'],
       value: '',
-      valid: false,
-      errors: {
+      syncErrors: {
         email: false,
         required: true,
       },
@@ -517,8 +491,7 @@ describe('buildControlState', () => {
       ...BASE_FORM_CONTROL,
       controlRef: ['phone'],
       value: '',
-      valid: false,
-      errors: {
+      syncErrors: {
         required: true,
         phoneNumber: false,
       },
@@ -529,8 +502,7 @@ describe('buildControlState', () => {
       ...BASE_FORM_CONTROL,
       controlRef: ['emergencyContacts'],
       value: [],
-      valid: false,
-      errors: {
+      syncErrors: {
         required: true,
       },
       config: config.controls.emergencyContacts,
@@ -541,8 +513,7 @@ describe('buildControlState', () => {
       ...BASE_FORM_CONTROL,
       controlRef: ['doctorInfo', 'firstName'],
       value: '',
-      valid: false,
-      errors: {
+      syncErrors: {
         required: true,
       },
       config: (<FormGroupConfig>config.controls.doctorInfo).controls.firstName,
@@ -552,8 +523,7 @@ describe('buildControlState', () => {
       ...BASE_FORM_CONTROL,
       controlRef: ['doctorInfo', 'lastName'],
       value: '',
-      valid: false,
-      errors: {
+      syncErrors: {
         required: true,
       },
       config: (<FormGroupConfig>config.controls.doctorInfo).controls.lastName,
@@ -563,8 +533,7 @@ describe('buildControlState', () => {
       ...BASE_FORM_CONTROL,
       controlRef: ['doctorInfo', 'email'],
       value: '',
-      valid: false,
-      errors: {
+      syncErrors: {
         email: false,
         required: true,
       },
@@ -574,14 +543,12 @@ describe('buildControlState', () => {
     const expectedDoctorInfoControl = {
       ...BASE_FORM_CONTROL,
       controlRef: ['doctorInfo'],
-      submitting: false,
       value: {
         firstName: '',
         lastName: '',
         email: '',
       },
-      valid: false,
-      errors: {
+      syncErrors: {
         firstNameNotSameAsLast: true,
       },
       config: config.controls.doctorInfo,
@@ -603,11 +570,9 @@ describe('buildControlState', () => {
 
     const expectedControl = {
       ...BASE_FORM_CONTROL,
-      submitting: false,
       controlRef: [],
-      valid: false,
       value: initialValue,
-      errors: {
+      syncErrors: {
         firstNameNotSameAsLast: true,
       },
       config,
@@ -637,7 +602,7 @@ describe('buildControlState', () => {
           ...expectedDoctorInfoControl,
         },
       },
-    } as FormGroup<Contact>;
+    } as BaseGroupControl<Contact>;
     expect(buildControlState(config)).toEqual({
       pristineControl: expectedControl,
       ...expectedControl,

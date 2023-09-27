@@ -4,8 +4,8 @@ import { HubFactory, Action } from '@hub-fx/core';
 import { controlChange } from './controlChange';
 import { addGroupControl } from './addGroupControl';
 import { addFormArrayControl } from './addArrayControl';
-import { removeControl } from './removeControl';
-import { resetControl } from './resetControl';
+import { removeControl } from '../Actions/removeControl';
+import { resetControl } from '../Actions/resetControl';
 import { FORMS_CONTROL_ASYNC_VALIDATION_RESPONSE_SUCCESS } from './asyncValidationResponseSuccess';
 import {
   FormControlConfig,
@@ -18,7 +18,7 @@ import {
   blacklistedEmail,
   uniqueFirstAndLastName,
 } from '../Testing/AsyncValidators';
-import { buildReducer } from '../Reducers/buildReducer';
+import { buildReducer } from '../ReducersOld/buildReducer';
 import {
   emergencyContactConfigs,
   config as fullConfig,

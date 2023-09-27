@@ -1,9 +1,9 @@
-export { addFormArrayControl } from './addArrayControl';
-export { addGroupControl } from './addGroupControl';
-export { asyncValidationResponseSuccess } from './asyncValidationResponseSuccess';
+export { addFormArrayControl } from '../ActionsOld/addArrayControl';
+export { addGroupControl } from '../ActionsOld/addGroupControl';
+export { asyncValidationResponseSuccess } from '../ActionsOld/asyncValidationResponseSuccess';
 export { markControlAsPristine } from './markControlAsPristine';
-export { markControlAsTouched } from './markControlAsTouched';
-export { markControlAsUntouched } from './markControlAsUntouched';
+export { markControlAsTouched } from '../Actions/markControlAsTouched';
+export { markControlAsUntouched } from '../Actions/markControlAsUntouched';
 export { removeControl } from './removeControl';
 export { resetControl } from './resetControl';
 export { controlChange } from './controlChange';

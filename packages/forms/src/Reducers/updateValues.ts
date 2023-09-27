@@ -1,6 +1,6 @@
 import cloneDeep from 'lodash.clonedeep';
 import { Action } from '@hub-fx/core';
-import { AbstractControl } from '../Models/Controls';
+import { BaseControl } from '../Models/Controls';
 import { ControlChange } from '../Models/Payloads';
 import { getControl } from '../Helpers/getControl';
 import {
@@ -10,9 +10,9 @@ import {
 import { updateChildValues } from './updateChildValues';
 
 export const updateValues = <T>(
-  state: AbstractControl<T>,
+  state: BaseControl<T>,
   { payload: { controlRef, value } }: Action<ControlChange<unknown>>,
-): AbstractControl<T> => {
+): BaseControl<T> => {
   const newState = cloneDeep(state);
   const newControl = getControl(controlRef, newState);
   newControl.value = value;

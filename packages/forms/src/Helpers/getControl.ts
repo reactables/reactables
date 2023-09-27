@@ -1,26 +1,25 @@
 import {
-  FormControl,
-  FormArray,
-  FormGroup,
-  AbstractControl,
+  BaseArrayControl,
+  BaseGroupControl,
+  BaseControl,
 } from '../Models/Controls';
 import { ControlRef } from '../Models/ControlRef';
 
 export const getControl = (
   controlRef: ControlRef,
-  control: AbstractControl<unknown>,
-): AbstractControl<unknown> => {
+  control: BaseControl<unknown>,
+): BaseControl<unknown> => {
   if (!controlRef.length) {
     return control;
   }
 
-  const result: FormControl<unknown> = controlRef.reduce(
-    (acc, key): AbstractControl<unknown> => {
+  const result: BaseControl<unknown> = controlRef.reduce(
+    (acc, key): BaseControl<unknown> => {
       if (typeof key === 'string') {
-        return (<FormGroup<unknown>>acc).controls[key];
+        return (<BaseGroupControl<unknown>>acc).controls[key];
       }
 
-      return (<FormArray<unknown>>acc).controls[key];
+      return (<BaseArrayControl<unknown>>acc).controls[key];
     },
     control,
   );

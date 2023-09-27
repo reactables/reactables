@@ -5,7 +5,7 @@ import { buildControlState } from '../Helpers/buildControlState';
 import { config } from '../Testing/config';
 import { FORMS_CONTROL_CHANGE } from '../Actions/controlChange';
 import { FORMS_MARK_CONTROL_AS_PRISTINE } from '../Actions/markControlAsPristine';
-import { FormGroup } from '../Models/Controls';
+import { BaseGroupControl } from '../Models/Controls';
 import { Contact } from '../Testing/Models/Contact';
 import { DoctorInfo } from '../Testing/Models/DoctorInfo';
 
@@ -16,7 +16,7 @@ describe('markControlAsPristine', () => {
       lastName: 'Ho',
       email: 'dr@hoe.com',
     };
-    const state = buildControlState(config) as FormGroup<Contact>;
+    const state = buildControlState(config) as BaseGroupControl<Contact>;
     const expectedChangedState = cloneDeep(state);
     expectedChangedState.value = {
       ...expectedChangedState.value,
@@ -24,7 +24,7 @@ describe('markControlAsPristine', () => {
     };
     expectedChangedState.controls.doctorInfo.value = newDoctorValue;
     const doctorControl = expectedChangedState.controls
-      .doctorInfo as FormGroup<DoctorInfo>;
+      .doctorInfo as BaseGroupControl<DoctorInfo>;
     doctorControl.controls.firstName.value = newDoctorValue.firstName;
     doctorControl.controls.lastName.value = newDoctorValue.lastName;
     doctorControl.controls.email.value = newDoctorValue.email;
@@ -39,17 +39,17 @@ describe('markControlAsPristine', () => {
           email: 'dr@hoe.com',
         },
       },
-    }) as FormGroup<Contact>;
+    }) as BaseGroupControl<Contact>;
 
     expect(changedState).toEqual(expectedChangedState);
 
     const newPristineState = markControlAsPristine(changedState, {
       type: FORMS_MARK_CONTROL_AS_PRISTINE,
       payload: ['doctorInfo'],
-    }) as FormGroup<Contact>;
+    }) as BaseGroupControl<Contact>;
 
-    const doctorInfoControl: FormGroup<DoctorInfo> = cloneDeep(
-      changedState.controls.doctorInfo as FormGroup<DoctorInfo>,
+    const doctorInfoControl: BaseGroupControl<DoctorInfo> = cloneDeep(
+      changedState.controls.doctorInfo as BaseGroupControl<DoctorInfo>,
     );
     delete doctorInfoControl.pristineControl;
 
@@ -65,7 +65,7 @@ describe('markControlAsPristine', () => {
     delete doctorInfoEmailControl.pristineControl;
 
     const newPristineDoctorControl = newPristineState.controls
-      .doctorInfo as FormGroup<DoctorInfo>;
+      .doctorInfo as BaseGroupControl<DoctorInfo>;
 
     expect(newPristineState.controls.doctorInfo.pristineControl).toEqual(
       doctorInfoControl,

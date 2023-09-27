@@ -3,14 +3,14 @@ import { FORMS_ADD_GROUP_CONTROL } from '../Actions/addGroupControl';
 import { addFormGroupControl } from './addFormGroupControl';
 import { buildControlState } from '../Helpers/buildControlState';
 import { config } from '../Testing/config';
-import { FormGroup } from '../Models/Controls';
+import { BaseGroupControl } from '../Models/Controls';
 import { FormControlConfig } from '../Models/Configs';
 import { Contact } from '../Testing/Models/Contact';
 import { DoctorInfo } from '../Testing/Models/DoctorInfo';
 
 describe('addGroupFormControl', () => {
   it('should add a form control to a group', () => {
-    const initialState = buildControlState(config) as FormGroup<Contact>;
+    const initialState = buildControlState(config) as BaseGroupControl<Contact>;
     const controlRef = ['doctorInfo', 'type'];
     const newControlConfig: FormControlConfig<string> = {
       initialValue: 'proctology',
@@ -25,7 +25,7 @@ describe('addGroupFormControl', () => {
       },
     };
     const doctorInfo = expectedState.controls
-      .doctorInfo as FormGroup<DoctorInfo>;
+      .doctorInfo as BaseGroupControl<DoctorInfo>;
 
     doctorInfo.value = {
       ...doctorInfo.value,
@@ -37,7 +37,7 @@ describe('addGroupFormControl', () => {
     const newState = addFormGroupControl(initialState, {
       type: FORMS_ADD_GROUP_CONTROL,
       payload: { controlRef, config: newControlConfig },
-    }) as FormGroup<Contact>;
+    }) as BaseGroupControl<Contact>;
 
     expect(newState).toEqual(expectedState);
 
@@ -57,7 +57,7 @@ describe('addGroupFormControl', () => {
     const newStateWithOccupationControl = addFormGroupControl(newState, {
       type: FORMS_ADD_GROUP_CONTROL,
       payload: { controlRef: ['occupation'], config: occupationControlConfig },
-    }) as FormGroup<Contact>;
+    }) as BaseGroupControl<Contact>;
 
     expect(newStateWithOccupationControl).toEqual(
       expectedStateWithOccupationControl,
