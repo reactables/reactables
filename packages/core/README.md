@@ -13,8 +13,13 @@ Reactive state management with RxJS.
     1. [Scoped Effects](#scoped-effects)
     1. [Integrating with UI](#integration)
     1. [Flow & Containment](#flow-containment)
-1. [API](#api)
+1. [Examples](#examples)
     1. [Basic Usage](#api-usage)
+    1. [Angular Example](#hub-angular-example)
+    1. [React Example](#hub-react-example)
+    1. [Action with Scoped Effect](#scoped-effect-example)
+    1. [Advanced: Connecting two hubs (Hubfx Forms) ](#advanced-hubfx-forms)
+1. [API](#api)
     1. [Effect](#api-effect)
     1. [Action](#api-action)
     1. [Reducer](#api-reducer)
@@ -26,9 +31,6 @@ Reactive state management with RxJS.
 1. [Testing](#testing)
     1. [messages$](#testing-messages)
     1. [store](#testing-store)
-1. [Examples](#examples)
-    1. [Angular Example](#hub-angular-example)
-    1. [React Example](#hub-react-example)
 
 ## Installation <a name="installation"></a>
 
@@ -46,24 +48,24 @@ In this documentation the term *stream* will refer to an RxJS observable stream.
 
 The **Hub** is responsible for dispatching actions to the store(s) registered to the hub. It is also responsible for handling side effects. The main stream that initiates all actions and effects is the `dispatcher$` 
 
-<img src="https://github.com/hub-fx/hub-fx/blob/main/documentation/SlideOneHubStore.jpg?raw=true" width="600" />
+<img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/SlideOneHubStore.jpg" width="600" />
 
 ### Effects<a name="effects"></a>
 
 When initializing a hub we can declare effects. The hub can listen for various actions and perform side-effects as needed. Stores that are registered to the hub will be listening to these effects as well the `dispatcher$`.
 
-<img src="https://github.com/hub-fx/hub-fx/blob/main/documentation/SlideTwoEffect.jpg?raw=true" width="600" />
+<img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/SlideTwoEffect.jpg" width="600" />
 
 ### Scoped Effects <a name="scoped-effects"></a>
 
 Scoped Effects are dynamically created streams scoped to a particular action & key combination when an action is dispatch.
 
-<img src="https://github.com/hub-fx/hub-fx/blob/main/documentation/SlideThreeScopedEffects.jpg?raw=true" width="600" />
+<img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/SlideThreeScopedEffects.jpg" width="600" />
 
 ### Integrating with UI <a name="integration"></a>
 A network of hubs and stores can be integrated with UI components without tight coupling. Separating presentation concerns improves testability and allows developers to decide how to integrate with UI components.
 
-<img src="https://github.com/hub-fx/hub-fx/blob/main/documentation/SlideFourFiveIntegration.jpg?raw=true" />
+<img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/SlideFourFiveIntegration.jpg" />
 
 ### Flow & Containment <a name="flow-containment"></a>
 Actions and logic flow through the App in one direction and are **contained** in their respective streams. This makes state updates more predictable and traceable during debugging.
@@ -72,9 +74,9 @@ Avoid [tapping](https://rxjs.dev/api/operators/tap) your streams. This prevents 
 
   - i.e do not [tap](https://rxjs.dev/api/operators/tap) stream A to trigger an action on stream B. Instead consider declaring stream A as a [source](#hub-sources) for stream B so the dependency is explicit.
 
-<img src="https://github.com/hub-fx/hub-fx/blob/main/documentation/SlideSevenEightUnidirectionalFlow.jpg?raw=true" />
+<img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/SlideSevenEightUnidirectionalFlow.jpg" />
 
-## API <a name="api"></a>
+## Examples <a name="examples"></a>
 
 ### Basic Usage <a name="api-usage"></a>
 
@@ -105,25 +107,143 @@ hub.dispatch({ type: 'increment' });
 // Output
 // 1
 ```
+
+### Angular Example <a name="hub-angular-example"></a>
+
+Using our above count example we can integrate with an Angular component. 
+
+```typescript
+import { Component, Input, OnInit } from '@angular/core';
+import { HubFactory } from '@hub-fx/core';
+import { countReducer } from '/countReducer';
+
+export class CounterComponent {
+  // A component can have its own hub or connect to one from an ancestor component
+  @Input() hub = HubFactory();
+  count$: Observable<number>;
+
+  increment() {
+    this.hub.dispatch({ type: 'increment' });
+  }
+
+  ngOnInit() {
+    this.count$ = this.hub.store({ reducer: countReducer });
+  }
+}
+
+```
+
+### React Example <a name="hub-react-example"></a>
+
+Using our above count example we can integrate with a React component. 
+
+```typescript
+import { useHub } from './useHub';
+import { useObservable } from './useObservable';
+import { countReducer } from './countReducer';
+
+// A component can have its own hub or connect to one from an ancestor component
+const Counter = (({ hub = useHub() })) => {
+
+  const count = useObservable(hub.store(countReducer));
+
+  return (
+    <div>
+      Count: {count}
+      <button onClick={ () => {hub.dispatch({ type: 'increment' }); }}>
+        Increment
+      </button>
+    </div>
+  )
+}
+
+
+```
+
+Hook to store a hub reference.
+
+```typescript
+// useHub.ts
+
+import { useRef } from 'react';
+import { HubFactory } from '@hub-fx/core';
+
+export const useHub = () => {
+  return useRef(HubFactory()).current;
+};
+```
+
+Hook to bind observable to React state.
+
+```typescript
+// useObservable.ts
+
+import { useEffect, useState, useRef } from 'react';
+import { Observable } from 'rxjs';
+
+export const useObservable = <T>(obs$: Observable<T>) => {
+  const currentObs$ = useRef(obs$).current;
+  const [state, setState] = useState<T | undefined>(undefined);
+
+  useEffect(() => {
+    const subscription = currentObs$.subscribe((result) => {
+      setState(result);
+    });
+
+    const unsubscribe = subscription.unsubscribe.bind(
+      subscription,
+    ) as () => void;
+
+    return unsubscribe;
+  }, []);
+
+  return state;
+};
+```
+
+### Action with Scoped Effect <a name="scoped-effect-example"></a>
+
+Example of an action that when dispatched will dynamically create a effect stream scoped to the Action `type` and `key` combination.
+
+```typescript
+
+const UPDATE_TODO = 'UPDATE_TODO';
+const UPDATE_TODO_SUCCESS = 'UPDATE_TODO_SUCCESS';
+const updateTodo = ({ id, message }, todoService: TodoService) => ({
+  type: UPDATE_TODO,
+  payload: { id, message },
+  scopedEffects: {
+    key: id,
+    effects: [
+      (updateTodoActions$: Observable<Action<string>>) =>
+        updateTodoActions$.pipe(
+          mergeMap(({ payload: { id, message } }) => todoService.updateTodo(id, message))
+          map(({ data }) => ({
+            type: UPDATE_TODO_SUCCESS,
+            payload: data
+          }))
+        )
+    ]
+  }
+})
+```
+### Advanced: Connecting two hubs (example with [Hubfx Forms](https://github.com/hub-fx/hub-fx/tree/main/packages/forms)) <a name="advanced-hubfx-forms"></a>
+
+The following diagram visualizes the architecture of [Hubfx Forms](https://github.com/hub-fx/hub-fx/tree/main/packages/forms) - a state management model for building reactive forms.
+
+There are two sets of hub and stores. The first set is responsible for handling user input and updating the form. The second set is responsible for reacting to the form change in the first store and handling both synchronous and asynchronous validation.
+
+![Hubfx architecture](https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/Slide10HubfxForms.jpg)
+
+See [Hubfx Forms](https://github.com/hub-fx/hub-fx/tree/main/packages/forms) for more details.
+
+## API <a name="api"></a>
+
 ### Effect <a name="api-effect"></a>
 ```typescript
 type Effect<T, S> = OperatorFunction<Action<T>, Action<S>>;
 ```
 Effects are expressed as [RxJS Operator Functions](https://rxjs.dev/api/index/interface/OperatorFunction). They pipe the [dispatcher$](#hub-dispatcher) stream and run side effects on incoming [Actions](#api-action).
-
-Example of an operator that filters for a particular [Action](#api-action) type.
-
-```typescript
-import { OperatorFunction } from 'rxjs';
-import { filter } from 'rxjs/operators';
-import { Action } from '../Models/Action';
-
-export const ofType: (type: string) => OperatorFunction<Action, Action> =
-  (type: string) => (dispatcher$) => {
-    return dispatcher$.pipe(filter((action) => action?.type === type));
-  };
-
-```
 
 ### Action <a name="api-action"></a>
 ```typescript
@@ -200,7 +320,7 @@ type HubFactory = (config?: HubConfig) => Hub;
 ```typescript
 interface HubConfig {
   effects?: Effect<unknown, unknown>[];
-  sources?: Observable<Action<unknown>>[]; // WIP not implemented yet
+  sources?: Observable<Action<unknown>>[];
 }
 ```
 | Property | Description |
@@ -246,7 +366,7 @@ export interface StoreConfig<T> {
 
 Debug Example:
 
-<img src="https://github.com/hub-fx/hub-fx/blob/main/documentation/SlideSixDebug.jpg?raw=true" width="500" />
+<img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/SlideSixDebug.jpg" width="500" />
 
 ## Testing <a name="testing"></a>
 
@@ -336,98 +456,4 @@ Example of testing with [marble](https://rxjs.dev/guide/testing/marble-testing):
     });
   });
 
-```
-
-
-## Examples <a name="examples"></a>
-
-### Angular Example <a name="hub-angular-example"></a>
-
-Using our above count example we can integrate with an Angular component. 
-
-```typescript
-import { Component, Input, OnInit } from '@angular/core';
-import { HubFactory } from '@hub-fx/core';
-import { countReducer } from '/countReducer';
-
-export class CounterComponent {
-  @Input() hub = HubFactory();
-  count$: Observable<number>;
-
-  increment() {
-    this.hub.dispatch({ type: 'increment' });
-  }
-
-  ngOnInit() {
-    this.count$ = this.hub.store({ reducer: countReducer });
-  }
-}
-
-```
-
-### React Example <a name="hub-react-example"></a>
-
-Using our above count example we can integrate with a React component. 
-
-```typescript
-import { useHub } from './useHub';
-import { useObservable } from './useObservable';
-import { countReducer } from './countReducer';
-
-const Counter = (({ hub = useHub() })) => {
-
-  const count = useObservable(hub.store(countReducer));
-
-  return (
-    <div>
-      Count: {count}
-      <button onClick={ () => {hub.dispatch({ type: 'increment' }); }}>
-        Increment
-      </button>
-    </div>
-  )
-}
-
-
-```
-
-Hook to store a hub reference.
-
-```typescript
-// useHub.ts
-
-import { useRef } from 'react';
-import { HubFactory } from '@hub-fx/core';
-
-export const useHub = () => {
-  return useRef(HubFactory()).current;
-};
-```
-
-Hook to bind observable to React state.
-
-```typescript
-// useObservable.ts
-
-import { useEffect, useState, useRef } from 'react';
-import { Observable } from 'rxjs';
-
-export const useObservable = <T>(obs$: Observable<T>) => {
-  const currentObs$ = useRef(obs$).current;
-  const [state, setState] = useState<T | undefined>(undefined);
-
-  useEffect(() => {
-    const subscription = currentObs$.subscribe((result) => {
-      setState(result);
-    });
-
-    const unsubscribe = subscription.unsubscribe.bind(
-      subscription,
-    ) as () => void;
-
-    return unsubscribe;
-  }, []);
-
-  return state;
-};
 ```
