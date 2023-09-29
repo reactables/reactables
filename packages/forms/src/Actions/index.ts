@@ -1,5 +1,5 @@
-export { addFormArrayControl } from '../ActionsOld/addArrayControl';
-export { addGroupControl } from '../ActionsOld/addGroupControl';
+export { addFormArrayControl } from './addArrayControl';
+export { addGroupControl } from './addGroupControl';
 export { asyncValidationResponseSuccess } from '../ActionsOld/asyncValidationResponseSuccess';
 export { markControlAsPristine } from './markControlAsPristine';
 export { markControlAsTouched } from '../Actions/markControlAsTouched';
