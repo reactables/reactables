@@ -18,6 +18,7 @@ Reactive state management with RxJS.
     1. [Angular Example](#hub-angular-example)
     1. [React Example](#hub-react-example)
     1. [Action with Scoped Effect](#scoped-effect-example)
+    1. [Advanced: Connecting two hubs (Hubfx Forms) ](#advanced-hubfx-forms)
 1. [API](#api)
     1. [Effect](#api-effect)
     1. [Action](#api-action)
@@ -47,24 +48,24 @@ In this documentation the term *stream* will refer to an RxJS observable stream.
 
 The **Hub** is responsible for dispatching actions to the store(s) registered to the hub. It is also responsible for handling side effects. The main stream that initiates all actions and effects is the `dispatcher$` 
 
-<img src="https://github.com/hub-fx/hub-fx/blob/main/documentation/SlideOneHubStore.jpg?raw=true" width="600" />
+<img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/SlideOneHubStore.jpg" width="600" />
 
 ### Effects<a name="effects"></a>
 
 When initializing a hub we can declare effects. The hub can listen for various actions and perform side-effects as needed. Stores that are registered to the hub will be listening to these effects as well the `dispatcher$`.
 
-<img src="https://github.com/hub-fx/hub-fx/blob/main/documentation/SlideTwoEffect.jpg?raw=true" width="600" />
+<img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/SlideTwoEffect.jpg" width="600" />
 
 ### Scoped Effects <a name="scoped-effects"></a>
 
 Scoped Effects are dynamically created streams scoped to a particular action & key combination when an action is dispatch.
 
-<img src="https://github.com/hub-fx/hub-fx/blob/main/documentation/SlideThreeScopedEffects.jpg?raw=true" width="600" />
+<img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/SlideThreeScopedEffects.jpg" width="600" />
 
 ### Integrating with UI <a name="integration"></a>
 A network of hubs and stores can be integrated with UI components without tight coupling. Separating presentation concerns improves testability and allows developers to decide how to integrate with UI components.
 
-<img src="https://github.com/hub-fx/hub-fx/blob/main/documentation/SlideFourFiveIntegration.jpg?raw=true" />
+<img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/SlideFourFiveIntegration.jpg" />
 
 ### Flow & Containment <a name="flow-containment"></a>
 Actions and logic flow through the App in one direction and are **contained** in their respective streams. This makes state updates more predictable and traceable during debugging.
@@ -73,7 +74,7 @@ Avoid [tapping](https://rxjs.dev/api/operators/tap) your streams. This prevents 
 
   - i.e do not [tap](https://rxjs.dev/api/operators/tap) stream A to trigger an action on stream B. Instead consider declaring stream A as a [source](#hub-sources) for stream B so the dependency is explicit.
 
-<img src="https://github.com/hub-fx/hub-fx/blob/main/documentation/SlideSevenEightUnidirectionalFlow.jpg?raw=true" />
+<img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/SlideSevenEightUnidirectionalFlow.jpg" />
 
 ## Examples <a name="examples"></a>
 
@@ -226,6 +227,16 @@ const updateTodo = ({ id, message }, todoService: TodoService) => ({
   }
 })
 ```
+### Advanced: Connecting two hubs (example with [Hubfx Forms](https://github.com/hub-fx/hub-fx/tree/main/packages/forms)) <a name="advanced-hubfx-forms"></a>
+
+The following diagram visualizes the architecture of [Hubfx Forms](https://github.com/hub-fx/hub-fx/tree/main/packages/forms) - a state management model for building reactive forms.
+
+There are two sets of hub and stores. The first set is responsible for handling user input and updating the form. The second set is responsible for reacting to the form change in the first store and handling both synchronous and asynchronous validation.
+
+![Hubfx architecture](https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/Slide10HubfxForms.jpg)
+
+See [Hubfx Forms](https://github.com/hub-fx/hub-fx/tree/main/packages/forms) for more details.
+
 ## API <a name="api"></a>
 
 ### Effect <a name="api-effect"></a>
@@ -355,7 +366,7 @@ export interface StoreConfig<T> {
 
 Debug Example:
 
-<img src="https://github.com/hub-fx/hub-fx/blob/main/documentation/SlideSixDebug.jpg?raw=true" width="500" />
+<img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/SlideSixDebug.jpg" width="500" />
 
 ## Testing <a name="testing"></a>
 
