@@ -15,6 +15,7 @@ import * as FormStories from './Form.stories';
   [Hubfx on Github](https://github.com/hub-fx/hub-fx)
   ## Contents
 
+  1. [Architecture](#architecture)
   1. [Examples](#examples)
       1. [Basic Control](#basic-control)
       1. [Validation](#validation)
@@ -29,6 +30,18 @@ import * as FormStories from './Form.stories';
 ## Description
 
 Reactive React Forms powerd by [Hubfx](https://github.com/hub-fx/hub-fx)
+
+## Architecture (WIP [Ref:](https://github.com/hub-fx/hub-fx/issues/8)) <a name="architecture"></a>
+
+Hubfx React Forms built on [Hubfx Forms](https://github.com/hub-fx/hub-fx/tree/main/packages/forms) - a state management model for building reactive forms.
+
+The following diagram visualizes the architecture of [Hubfx Forms](https://github.com/hub-fx/hub-fx/tree/main/packages/forms).
+
+There are two sets of hub and stores. The first set is responsible for handling user input and updating the form. The second set is responsible for reacting to the form change in the first store and handling both synchronous and asynchronous validation.
+
+<a href="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/Slide10HubfxForms.jpg" target="_blank"><img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/Slide10HubfxForms.jpg" width="700" />
+</a>
+See [Hubfx Forms](https://github.com/hub-fx/hub-fx/tree/main/packages/forms) for more details.
 
 ## Examples <a name="examples"></a>
 <br/>
