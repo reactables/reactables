@@ -21,7 +21,7 @@ export interface FormArrayProps {
 }
 
 export const FormArray = ({ controlRef, children }: FormArrayProps) => {
-  const { state, dispatch, reducer } = useContext(FormContext);
+  const { state, dispatch } = useContext(FormContext);
   const formArray = getControl(
     controlRef,
     state,
@@ -30,10 +30,10 @@ export const FormArray = ({ controlRef, children }: FormArrayProps) => {
   const formArrayChildrenProps: FormArrayChildrenProps = {
     formArray,
     addControl: (config: AbstractControlConfig) => {
-      dispatch(...addFormArrayControl({ controlRef, config }, state, reducer));
+      dispatch(addFormArrayControl({ controlRef, config }));
     },
     removeControl: (controlRef: ControlRef) => {
-      dispatch(...removeControl(controlRef, state, reducer));
+      dispatch(removeControl(controlRef));
     },
   };
 

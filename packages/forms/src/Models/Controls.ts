@@ -9,6 +9,7 @@ export interface BaseControl<T> {
   dirty: boolean;
   touched: boolean;
   validatorErrors: FormErrors;
+  validatorsValid: boolean;
   config: AbstractControlConfig;
 }
 
@@ -22,21 +23,33 @@ export interface BaseArrayControl<T> extends BaseControl<T> {
   controls: BaseControl<unknown>[];
 }
 
-export interface AsyncFields {
-  valid: boolean;
-  errors: FormErrors;
+export type BaseAbstractControl<T> =
+  | BaseControl<T>
+  | BaseGroupControl<T>
+  | BaseArrayControl<T>;
+
+interface AsyncFields {
+  asyncValidatorsValid: boolean;
+  asyncValidatorErrors: FormErrors;
   asyncValidateInProgress: { [key: string | number]: boolean };
   pending?: boolean;
 }
 
+interface ValidatedFields {
+  valid: boolean;
+  errors: FormErrors;
+}
+
+export interface Hub2Fields extends AsyncFields, ValidatedFields {}
+
 export type AbstractControl<T> = FormControl<T> | FormArray<T> | FormGroup<T>;
 
-export interface FormControl<T> extends BaseControl<T>, AsyncFields {}
+export interface FormControl<T> extends BaseControl<T>, Hub2Fields {}
 
-export interface FormGroup<T> extends BaseGroupControl<T>, AsyncFields {
+export interface FormGroup<T> extends BaseGroupControl<T>, Hub2Fields {
   controls: { [key: string]: AbstractControl<unknown> };
 }
 
-export interface FormArray<T> extends BaseArrayControl<T>, AsyncFields {
+export interface FormArray<T> extends BaseArrayControl<T>, Hub2Fields {
   controls: AbstractControl<unknown>[];
 }

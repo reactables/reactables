@@ -1,12 +1,2 @@
-export { addFormArrayControl } from '../Reducers/addFormArrayControl';
-export { addFormGroupControl } from '../Reducers/addFormGroupControl';
-export { handleAsyncValidation } from '../ReducersOld/handleAsyncValidation';
-export { handleAsyncValidationResponseSuccess } from '../ReducersOld/handleAsyncValidationResponseSuccess';
-export { markControlAsPristine } from '../Reducers/markControlAsPristine';
-export { markControlAsTouched } from '../Reducers/markControlAsTouched';
-export { markControlAsUntouched } from '../Reducers/markControlAsUntouched';
-export { removeControl } from '../Reducers/removeControl';
-export { resetControl } from './resetControl';
-export { syncValidate } from '../ReducersOld/syncValidate';
-export { updateDirty } from '../Reducers/updateDirty';
-export { updateValues } from './updateValues';
+export * from './Hub1';
+export * from './Hub2';

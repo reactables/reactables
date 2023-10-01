@@ -21,7 +21,7 @@ describe('getControl', () => {
   };
 
   it('should get form control', () => {
-    const expectedControl = {
+    const expectedControl: BaseControl<string> = {
       ...BASE_FORM_CONTROL,
       config: config.controls.firstName,
       controlRef: ['firstName'],
@@ -29,13 +29,15 @@ describe('getControl', () => {
       validatorErrors: {
         required: true,
       },
-    } as BaseControl<string>;
+      validatorsValid: false,
+    };
+
     expect(getControl(['firstName'], contactFormGroup)).toEqual({
       pristineControl: expectedControl,
       ...expectedControl,
     });
 
-    const expectedControlDoctorInfoFirstName = {
+    const expectedControlDoctorInfoFirstName: BaseControl<string> = {
       ...BASE_FORM_CONTROL,
       config: (<FormGroupConfig>config.controls.doctorInfo).controls.firstName,
       controlRef: ['doctorInfo', 'firstName'],
@@ -43,14 +45,17 @@ describe('getControl', () => {
       validatorErrors: {
         required: true,
       },
-    } as BaseControl<string>;
+      validatorsValid: false,
+    };
 
     expect(getControl(['doctorInfo', 'firstName'], contactFormGroup)).toEqual({
       pristineControl: expectedControlDoctorInfoFirstName,
       ...expectedControlDoctorInfoFirstName,
     });
 
-    const expectedEmergencyContactsControl = {
+    const expectedEmergencyContactsControl: BaseArrayControl<
+      EmergencyContact[]
+    > = {
       ...BASE_FORM_CONTROL,
       config: <FormArrayConfig>config.controls.emergencyContacts,
       controlRef: ['emergencyContacts'],
@@ -59,7 +64,8 @@ describe('getControl', () => {
       validatorErrors: {
         required: true,
       },
-    } as BaseArrayControl<EmergencyContact[]>;
+      validatorsValid: false,
+    };
 
     expect(getControl(['emergencyContacts'], contactFormGroup)).toEqual({
       pristineControl: expectedEmergencyContactsControl,

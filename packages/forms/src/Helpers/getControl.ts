@@ -1,20 +1,20 @@
 import {
   BaseArrayControl,
   BaseGroupControl,
-  BaseControl,
+  BaseAbstractControl,
 } from '../Models/Controls';
 import { ControlRef } from '../Models/ControlRef';
 
 export const getControl = (
   controlRef: ControlRef,
-  control: BaseControl<unknown>,
-): BaseControl<unknown> => {
+  control: BaseAbstractControl<unknown>,
+): BaseAbstractControl<unknown> => {
   if (!controlRef.length) {
     return control;
   }
 
-  const result: BaseControl<unknown> = controlRef.reduce(
-    (acc, key): BaseControl<unknown> => {
+  const result: BaseAbstractControl<unknown> = controlRef.reduce(
+    (acc, key): BaseAbstractControl<unknown> => {
       if (typeof key === 'string') {
         return (<BaseGroupControl<unknown>>acc).controls[key];
       }

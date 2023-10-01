@@ -1,12 +1,12 @@
-import React, { useRef } from 'react';
-import { Hub, Dispatcher, Reducer } from '@hub-fx/core';
+import React from 'react';
+import { Hub, Dispatcher } from '@hub-fx/core';
 import {
   AbstractControlConfig,
-  buildReducer,
   ControlModels,
   getControl,
   ControlRef,
   resetControl,
+  buildForm,
 } from '@hub-fx/forms';
 import { useObservable } from '../Hooks/useObservable';
 import { useHub } from '../Hooks/useHub';
@@ -14,14 +14,13 @@ import { useHub } from '../Hooks/useHub';
 export const FormContext = React.createContext(null) as React.Context<{
   state: ControlModels.AbstractControl<unknown>;
   dispatch: Dispatcher;
-  reducer: Reducer<ControlModels.AbstractControl<unknown>>;
 }>;
 
 export interface FormChildrenProps {
   state: ControlModels.AbstractControl<unknown>;
   getControl: (
     controlRef: ControlRef,
-  ) => ControlModels.AbstractControl<unknown>;
+  ) => ControlModels.BaseAbstractControl<unknown>;
   resetControl: (controlRef: ControlRef) => void;
 }
 
@@ -32,16 +31,13 @@ interface FormProps {
 }
 
 export const Form = ({ formConfig, hub = useHub(), children }: FormProps) => {
-  const reducer = useRef(buildReducer(formConfig)).current;
-  const state = useObservable(
-    hub.store({ reducer, debug: true, name: 'Demo Form' }),
-  );
+  const state = useObservable(buildForm(formConfig, hub));
 
   const formChildrenProps: FormChildrenProps = {
     state,
     getControl: (controlRef) => getControl(controlRef, state),
     resetControl: (controlRef) => {
-      hub.dispatch(...resetControl(controlRef, state, reducer));
+      hub.dispatch(resetControl(controlRef));
     },
   };
 
@@ -50,7 +46,6 @@ export const Form = ({ formConfig, hub = useHub(), children }: FormProps) => {
       value={{
         state,
         dispatch: hub.dispatch,
-        reducer,
       }}
     >
       {state !== undefined && children && children(formChildrenProps)}

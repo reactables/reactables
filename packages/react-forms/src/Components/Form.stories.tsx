@@ -1,6 +1,6 @@
 import React from 'react';
 import { Meta, StoryObj } from '@storybook/react';
-import { Validators, FormBuilder, ControlModels } from '@hub-fx/forms';
+import { Validators, FormConfig, ControlModels } from '@hub-fx/forms';
 import { Form } from './Form';
 import { Field } from './Field';
 import { Input } from './Input';
@@ -20,7 +20,7 @@ type Story = StoryObj<typeof Form>;
 export const BasicControl: Story = {
   render: () => (
     <Form
-      formConfig={FormBuilder.control({
+      formConfig={FormConfig.control({
         initialValue: 'john',
       })}
     >
@@ -41,13 +41,13 @@ export const BasicControl: Story = {
 export const Validation: Story = {
   render: () => (
     <Form
-      formConfig={FormBuilder.group({
+      formConfig={FormConfig.group({
         controls: {
-          firstName: FormBuilder.control({
+          firstName: FormConfig.control({
             initialValue: 'John',
             validators: [Validators.required],
           }),
-          lastName: FormBuilder.control({
+          lastName: FormConfig.control({
             initialValue: '',
             validators: [Validators.required],
           }),
@@ -75,17 +75,17 @@ export const Validation: Story = {
 };
 
 const contactFormConfig = ({ firstName, lastName, email }: Contact) =>
-  FormBuilder.group({
+  FormConfig.group({
     controls: {
-      firstName: FormBuilder.control({
+      firstName: FormConfig.control({
         initialValue: firstName,
         validators: [Validators.required],
       }),
-      lastName: FormBuilder.control({
+      lastName: FormConfig.control({
         initialValue: lastName,
         validators: [Validators.required],
       }),
-      email: FormBuilder.control({
+      email: FormConfig.control({
         initialValue: email,
         validators: [Validators.required, Validators.email],
         asyncValidators: [blacklistedEmail],
@@ -114,9 +114,9 @@ export const AsyncValidation: Story = {
 export const FormArrays: Story = {
   render: () => (
     <Form
-      formConfig={FormBuilder.group({
+      formConfig={FormConfig.group({
         controls: {
-          emergencyContacts: FormBuilder.array({
+          emergencyContacts: FormConfig.array({
             validators: [arrayLengthRequired],
             controls: [
               {
@@ -202,7 +202,7 @@ export const FormArrays: Story = {
 export const ResetForm: Story = {
   render: () => (
     <Form
-      formConfig={FormBuilder.group(
+      formConfig={FormConfig.group(
         contactFormConfig({
           firstName: 'Bart',
           lastName: 'Simpson',

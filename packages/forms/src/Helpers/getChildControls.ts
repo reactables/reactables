@@ -2,17 +2,17 @@ import { FormArrayConfig, FormGroupConfig } from '../Models';
 import {
   BaseArrayControl,
   BaseGroupControl,
-  BaseControl,
+  BaseAbstractControl,
 } from '../Models/Controls';
 
 export const getChildControls = (
-  control: BaseControl<unknown>,
-): BaseControl<unknown>[] => {
+  control: BaseAbstractControl<unknown>,
+): BaseAbstractControl<unknown>[] => {
   const controls = (<FormGroupConfig | FormArrayConfig>control.config).controls;
   if (controls && !(controls instanceof Array)) {
     return [control].concat(
       Object.values((<BaseGroupControl<unknown>>control).controls).reduce(
-        (acc: BaseControl<unknown>[], control) =>
+        (acc: BaseAbstractControl<unknown>[], control) =>
           acc.concat(getChildControls(control)),
         [],
       ),
@@ -20,7 +20,10 @@ export const getChildControls = (
   } else if (controls && controls instanceof Array) {
     return [control].concat(
       (<BaseArrayControl<unknown>>control).controls.reduce(
-        (acc: BaseControl<unknown>[], control): BaseControl<unknown>[] =>
+        (
+          acc: BaseAbstractControl<unknown>[],
+          control,
+        ): BaseAbstractControl<unknown>[] =>
           acc.concat(getChildControls(control)),
         [],
       ),
