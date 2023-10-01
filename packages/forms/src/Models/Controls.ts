@@ -8,7 +8,7 @@ export interface BaseControl<T> {
   value: T;
   dirty: boolean;
   touched: boolean;
-  syncErrors: FormErrors;
+  validatorErrors: FormErrors;
   config: AbstractControlConfig;
 }
 

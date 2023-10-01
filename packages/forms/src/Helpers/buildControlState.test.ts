@@ -30,7 +30,7 @@ describe('buildControlState', () => {
       ...BASE_FORM_CONTROL,
       controlRef: ['firstName'],
       value: '',
-      syncErrors: {
+      validatorErrors: {
         required: true,
       },
       config: config.controls.firstName,
@@ -53,7 +53,7 @@ describe('buildControlState', () => {
     const expectedFirstNameControl = {
       ...BASE_FORM_CONTROL,
       controlRef: ['doctorInfo', 'firstName'],
-      syncErrors: {
+      validatorErrors: {
         required: true,
       },
       value: '',
@@ -62,7 +62,7 @@ describe('buildControlState', () => {
     const expectedLastNameControl = {
       ...BASE_FORM_CONTROL,
       controlRef: ['doctorInfo', 'lastName'],
-      syncErrors: {
+      validatorErrors: {
         required: true,
       },
       value: '',
@@ -71,7 +71,7 @@ describe('buildControlState', () => {
     const expectedEmailControl = {
       ...BASE_FORM_CONTROL,
       controlRef: ['doctorInfo', 'email'],
-      syncErrors: {
+      validatorErrors: {
         email: false,
         required: true,
       },
@@ -83,7 +83,7 @@ describe('buildControlState', () => {
       controlRef: ['doctorInfo'],
       value: initialValue,
       config: config.controls.doctorInfo,
-      syncErrors: {
+      validatorErrors: {
         firstNameNotSameAsLast: true,
       },
       controls: {
@@ -135,7 +135,7 @@ describe('buildControlState', () => {
     const expectedFirstNameControl = {
       ...BASE_FORM_CONTROL,
       controlRef: ['doctorInfo', 'firstName'],
-      syncErrors: {
+      validatorErrors: {
         required: false,
       },
       value: 'Dr',
@@ -144,7 +144,7 @@ describe('buildControlState', () => {
     const expectedLastNameControl = {
       ...BASE_FORM_CONTROL,
       controlRef: ['doctorInfo', 'lastName'],
-      syncErrors: {
+      validatorErrors: {
         required: false,
       },
       value: 'Bob',
@@ -153,7 +153,7 @@ describe('buildControlState', () => {
     const expectedEmailControl = {
       ...BASE_FORM_CONTROL,
       controlRef: ['doctorInfo', 'email'],
-      syncErrors: {
+      validatorErrors: {
         email: true,
         required: false,
       },
@@ -165,7 +165,7 @@ describe('buildControlState', () => {
       controlRef: ['doctorInfo'],
       value: initialValue,
       config: testConfig,
-      syncErrors: {
+      validatorErrors: {
         firstNameNotSameAsLast: false,
       },
       controls: {
@@ -196,7 +196,7 @@ describe('buildControlState', () => {
       controls: [],
       value: [],
       config: config.controls.emergencyContacts,
-      syncErrors: {
+      validatorErrors: {
         required: true,
       },
     } as BaseArrayControl<unknown>;
@@ -219,7 +219,7 @@ describe('buildControlState', () => {
     const expectedControl0FirstName = {
       ...BASE_FORM_CONTROL,
       controlRef: ['emergencyContacts', 0, 'firstName'],
-      syncErrors: {
+      validatorErrors: {
         required: false,
       },
       value: 'Homer',
@@ -232,7 +232,7 @@ describe('buildControlState', () => {
     const expectedControl0LastName = {
       ...BASE_FORM_CONTROL,
       controlRef: ['emergencyContacts', 0, 'lastName'],
-      syncErrors: {
+      validatorErrors: {
         required: false,
       },
       value: 'Simpson',
@@ -245,7 +245,7 @@ describe('buildControlState', () => {
     const expectedControl0Email = {
       ...BASE_FORM_CONTROL,
       controlRef: ['emergencyContacts', 0, 'email'],
-      syncErrors: {
+      validatorErrors: {
         email: false,
         required: false,
       },
@@ -259,7 +259,7 @@ describe('buildControlState', () => {
     const expectedControl0Relation = {
       ...BASE_FORM_CONTROL,
       controlRef: ['emergencyContacts', 0, 'relation'],
-      syncErrors: {
+      validatorErrors: {
         required: false,
       },
       value: 'friend',
@@ -278,7 +278,7 @@ describe('buildControlState', () => {
         email: 'homer@homer.com',
         relation: 'friend',
       },
-      syncErrors: {
+      validatorErrors: {
         firstNameNotSameAsLast: false,
       },
       config: emergencyContactConfigs[0],
@@ -305,7 +305,7 @@ describe('buildControlState', () => {
     const expectedControl1FirstName = {
       ...BASE_FORM_CONTROL,
       controlRef: ['emergencyContacts', 1, 'firstName'],
-      syncErrors: {
+      validatorErrors: {
         required: false,
       },
       value: 'moe',
@@ -318,7 +318,7 @@ describe('buildControlState', () => {
     const expectedControl1LastName = {
       ...BASE_FORM_CONTROL,
       controlRef: ['emergencyContacts', 1, 'lastName'],
-      syncErrors: {
+      validatorErrors: {
         required: false,
       },
       value: 'syzlak',
@@ -331,7 +331,7 @@ describe('buildControlState', () => {
     const expectedControl1Email = {
       ...BASE_FORM_CONTROL,
       controlRef: ['emergencyContacts', 1, 'email'],
-      syncErrors: {
+      validatorErrors: {
         email: false,
         required: false,
       },
@@ -345,7 +345,7 @@ describe('buildControlState', () => {
     const expectedControl1Relation = {
       ...BASE_FORM_CONTROL,
       controlRef: ['emergencyContacts', 1, 'relation'],
-      syncErrors: {
+      validatorErrors: {
         required: false,
       },
       value: 'friend',
@@ -364,7 +364,7 @@ describe('buildControlState', () => {
         email: 'moe@moe.com',
         relation: 'friend',
       },
-      syncErrors: {
+      validatorErrors: {
         firstNameNotSameAsLast: false,
       },
       config: {
@@ -431,7 +431,7 @@ describe('buildControlState', () => {
           relation: 'friend',
         },
       ],
-      syncErrors: {
+      validatorErrors: {
         required: false,
       },
     } as BaseArrayControl<unknown>;
@@ -460,7 +460,7 @@ describe('buildControlState', () => {
       ...BASE_FORM_CONTROL,
       controlRef: ['firstName'],
       value: '',
-      syncErrors: {
+      validatorErrors: {
         required: true,
       },
       config: config.controls.firstName,
@@ -470,7 +470,7 @@ describe('buildControlState', () => {
       ...BASE_FORM_CONTROL,
       controlRef: ['lastName'],
       value: '',
-      syncErrors: {
+      validatorErrors: {
         required: true,
       },
       config: config.controls.lastName,
@@ -480,7 +480,7 @@ describe('buildControlState', () => {
       ...BASE_FORM_CONTROL,
       controlRef: ['email'],
       value: '',
-      syncErrors: {
+      validatorErrors: {
         email: false,
         required: true,
       },
@@ -491,7 +491,7 @@ describe('buildControlState', () => {
       ...BASE_FORM_CONTROL,
       controlRef: ['phone'],
       value: '',
-      syncErrors: {
+      validatorErrors: {
         required: true,
         phoneNumber: false,
       },
@@ -502,7 +502,7 @@ describe('buildControlState', () => {
       ...BASE_FORM_CONTROL,
       controlRef: ['emergencyContacts'],
       value: [],
-      syncErrors: {
+      validatorErrors: {
         required: true,
       },
       config: config.controls.emergencyContacts,
@@ -513,7 +513,7 @@ describe('buildControlState', () => {
       ...BASE_FORM_CONTROL,
       controlRef: ['doctorInfo', 'firstName'],
       value: '',
-      syncErrors: {
+      validatorErrors: {
         required: true,
       },
       config: (<FormGroupConfig>config.controls.doctorInfo).controls.firstName,
@@ -523,7 +523,7 @@ describe('buildControlState', () => {
       ...BASE_FORM_CONTROL,
       controlRef: ['doctorInfo', 'lastName'],
       value: '',
-      syncErrors: {
+      validatorErrors: {
         required: true,
       },
       config: (<FormGroupConfig>config.controls.doctorInfo).controls.lastName,
@@ -533,7 +533,7 @@ describe('buildControlState', () => {
       ...BASE_FORM_CONTROL,
       controlRef: ['doctorInfo', 'email'],
       value: '',
-      syncErrors: {
+      validatorErrors: {
         email: false,
         required: true,
       },
@@ -548,7 +548,7 @@ describe('buildControlState', () => {
         lastName: '',
         email: '',
       },
-      syncErrors: {
+      validatorErrors: {
         firstNameNotSameAsLast: true,
       },
       config: config.controls.doctorInfo,
@@ -572,7 +572,7 @@ describe('buildControlState', () => {
       ...BASE_FORM_CONTROL,
       controlRef: [],
       value: initialValue,
-      syncErrors: {
+      validatorErrors: {
         firstNameNotSameAsLast: true,
       },
       config,

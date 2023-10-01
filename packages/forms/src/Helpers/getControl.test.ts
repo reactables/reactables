@@ -26,7 +26,7 @@ describe('getControl', () => {
       config: config.controls.firstName,
       controlRef: ['firstName'],
       value: '',
-      syncErrors: {
+      validatorErrors: {
         required: true,
       },
     } as BaseControl<string>;
@@ -40,7 +40,7 @@ describe('getControl', () => {
       config: (<FormGroupConfig>config.controls.doctorInfo).controls.firstName,
       controlRef: ['doctorInfo', 'firstName'],
       value: '',
-      syncErrors: {
+      validatorErrors: {
         required: true,
       },
     } as BaseControl<string>;
@@ -56,7 +56,7 @@ describe('getControl', () => {
       controlRef: ['emergencyContacts'],
       value: [] as EmergencyContact[],
       controls: [] as BaseControl<EmergencyContact>[],
-      syncErrors: {
+      validatorErrors: {
         required: true,
       },
     } as BaseArrayControl<EmergencyContact[]>;

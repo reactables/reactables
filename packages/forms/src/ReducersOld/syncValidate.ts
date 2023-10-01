@@ -51,7 +51,7 @@ export const syncValidate = <T>(
   }
 
   const validators = control.config.validators;
-  const syncErrors =
+  const validatorErrors =
     validators?.reduce((errors, validator) => {
       return {
         ...errors,
@@ -61,7 +61,7 @@ export const syncValidate = <T>(
 
   const errors = {
     ...newControl.errors,
-    ...syncErrors,
+    ...validatorErrors,
   };
 
   const groupControlHasError = errors

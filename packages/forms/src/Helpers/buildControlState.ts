@@ -37,7 +37,7 @@ export const buildControlState = <T>(
       );
     }
 
-    const syncErrors =
+    const validatorErrors =
       controlConfig.validators?.reduce((errors, validator) => {
         return {
           ...errors,
@@ -51,7 +51,7 @@ export const buildControlState = <T>(
       touched: false,
       value: groupInitialValue as T,
       controls,
-      syncErrors,
+      validatorErrors,
       config: controlConfig,
     };
 
@@ -85,7 +85,7 @@ export const buildControlState = <T>(
       dirty: false,
       value,
       touched: false,
-      syncErrors: errors,
+      validatorErrors: errors,
       config: controlConfig,
     };
 
@@ -105,7 +105,7 @@ export const buildControlState = <T>(
       dirty: false,
       value: (<FormControlConfig<T>>controlConfig).initialValue,
       touched: false,
-      syncErrors: errors,
+      validatorErrors: errors,
       config: controlConfig,
     };
 
