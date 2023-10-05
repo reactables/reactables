@@ -1,8 +1,8 @@
 import { Observable } from 'rxjs';
-import { AbstractControl } from './Controls';
+import { BaseAbstractControl } from './Controls';
 import { FormErrors } from './FormErrors';
 export type ValidatorFn = (value: unknown) => FormErrors;
 
 export type ValidatorAsyncFn = <T>(
-  control$: Observable<AbstractControl<T>>,
+  control$: Observable<BaseAbstractControl<T>>,
 ) => Observable<FormErrors>;

@@ -51,8 +51,11 @@ export const Field = ({
   controlRef,
   ...props
 }: FieldProps) => {
-  const { state, reducer, dispatch } = useContext(FormContext);
-  const control = getControl(controlRef, state);
+  const { state, dispatch } = useContext(FormContext);
+  const control = getControl(
+    controlRef,
+    state,
+  ) as ControlModels.AbstractControl<unknown>;
   const inputProps = {
     name: controlRef.join('.'),
     value: control.value,
@@ -64,7 +67,7 @@ export const Field = ({
         controlRef,
         value: event.currentTarget.value,
       };
-      dispatch(...controlChange(change, state, reducer));
+      dispatch(controlChange(change));
     },
   };
 

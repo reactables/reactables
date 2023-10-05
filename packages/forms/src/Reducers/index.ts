@@ -1,12 +1,2 @@
-export { addFormArrayControl } from './addFormArrayControl';
-export { addFormGroupControl } from './addFormGroupControl';
-export { handleAsyncValidation } from './handleAsyncValidation';
-export { handleAsyncValidationResponseSuccess } from './handleAsyncValidationResponseSuccess';
-export { markControlAsPristine } from './markControlAsPristine';
-export { markControlAsTouched } from './markControlAsTouched';
-export { markControlAsUntouched } from './markControlAsUntouched';
-export { removeControl } from './removeControl';
-export { resetControl } from './resetControl';
-export { syncValidate } from './syncValidate';
-export { updateDirty } from './updateDirty';
-export { updateValues } from './updateValues';
+export * from './Hub1';
+export * from './Hub2';

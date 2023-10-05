@@ -1,29 +1,29 @@
+import cloneDeep from 'lodash.clonedeep';
 import {
-  FormControl,
-  FormGroup,
-  FormArray,
-  AbstractControl,
+  BaseArrayControl,
+  BaseControl,
+  BaseGroupControl,
+  BaseAbstractControl,
 } from '../Models/Controls';
 import { ControlRef } from '../Models/ControlRef';
-import { FormErrors } from '../Models/FormErrors';
 import {
   FormControlConfig,
   FormArrayConfig,
   FormGroupConfig,
   AbstractControlConfig,
 } from '../Models/Configs';
+import { syncValidate } from '../Reducers';
 
-import { getValueFromControlConfig } from './getValueFromControlConfig';
-import cloneDeep from 'lodash.clonedeep';
+import { getValueFromControlConfig } from '../Helpers/getValueFromControlConfig';
 
 export const buildControlState = <T>(
   controlConfig: AbstractControlConfig,
   controlRef: ControlRef = [],
-): AbstractControl<T> => {
+): BaseAbstractControl<unknown> => {
   // Form Group
   const controls = (<FormGroupConfig | FormArrayConfig>controlConfig).controls;
   if (controls && !(controls instanceof Array)) {
-    const controls = {} as { [key: string]: FormControl<unknown> };
+    const controls = {} as { [key: string]: BaseControl<unknown> };
     const groupInitialValue: {
       [key: string]: unknown;
     } = getValueFromControlConfig(controlConfig);
@@ -38,47 +38,24 @@ export const buildControlState = <T>(
       );
     }
 
-    const errors =
-      controlConfig.validators?.reduce((errors, validator) => {
-        return {
-          ...errors,
-          ...validator(getValueFromControlConfig(controlConfig)),
-        };
-      }, {} as FormErrors) || {};
-
-    const groupControlHasError = errors
-      ? Object.values(errors).some((error) => error)
-      : false;
-
-    const controlsHasErrors = Object.values(controls).some((control) => {
-      if (control.errors) {
-        return Object.values(control.errors).some((error) => error);
-      }
-
-      return false;
-    });
-
-    const result: FormGroup<T> = {
+    const result: BaseGroupControl<T> = syncValidate({
       controlRef,
       dirty: false,
       touched: false,
       value: groupInitialValue as T,
-      valid: !groupControlHasError && !controlsHasErrors,
-      submitting: false,
-      asyncValidateInProgress: {},
-      pending: false,
       controls,
-      errors,
+      validatorErrors: {},
+      validatorsValid: true,
       config: controlConfig,
-    };
+    }) as BaseGroupControl<T>;
 
     return { pristineControl: cloneDeep(result), ...result };
     // Form Array
   } else if (controls && controls instanceof Array) {
     const configControls = (<FormArrayConfig>controlConfig).controls;
-    const controls: AbstractControl<unknown>[] = configControls
+    const controls: BaseControl<unknown>[] = configControls
       ? configControls.reduce(
-          (acc: AbstractControl<unknown>[], config, index) =>
+          (acc: BaseControl<unknown>[], config, index) =>
             (acc = acc.concat(
               buildControlState(config, controlRef.concat(index)),
             )),
@@ -86,63 +63,31 @@ export const buildControlState = <T>(
         )
       : [];
 
-    const errors =
-      controlConfig.validators?.reduce((errors, validator) => {
-        return {
-          ...errors,
-          ...validator(getValueFromControlConfig(controlConfig)),
-        };
-      }, {} as FormErrors) || {};
-
-    const arrayControlHasError = errors
-      ? Object.values(errors).some((error) => error)
-      : false;
-
-    const controlsHasErrors = controls.some((control) => {
-      if (control.errors) {
-        return Object.values(control.errors).some((error) => error);
-      }
-
-      return false;
-    });
-
     const value = controls.map(({ value }) => value) as T;
 
-    const result: FormArray<T> = {
+    const result: BaseArrayControl<T> = syncValidate({
       controlRef,
       controls,
       dirty: false,
       value,
       touched: false,
-      asyncValidateInProgress: {},
-      pending: false,
-      valid: !arrayControlHasError && !controlsHasErrors,
-      errors,
+      validatorErrors: {},
+      validatorsValid: true,
       config: controlConfig,
-    };
+    }) as BaseArrayControl<T>;
 
     return { pristineControl: cloneDeep(result), ...result };
     // Form Field
   } else {
-    const errors =
-      controlConfig.validators?.reduce((errors, validator) => {
-        return {
-          ...errors,
-          ...validator(getValueFromControlConfig(controlConfig)),
-        };
-      }, {} as FormErrors) || {};
-
-    const result: FormControl<T> = {
+    const result: BaseControl<T> = syncValidate({
       controlRef,
       dirty: false,
       value: (<FormControlConfig<T>>controlConfig).initialValue,
       touched: false,
-      valid: errors ? Object.values(errors).every((error) => !error) : true,
-      asyncValidateInProgress: {},
-      pending: false,
-      errors,
+      validatorErrors: {},
+      validatorsValid: true,
       config: controlConfig,
-    };
+    }) as BaseControl<T>;
 
     return { pristineControl: cloneDeep(result), ...result };
   }

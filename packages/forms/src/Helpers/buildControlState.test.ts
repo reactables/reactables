@@ -5,7 +5,11 @@ import {
 } from '../Testing/config';
 import { Contact } from '../Testing/Models/Contact';
 import { DoctorInfo } from '../Testing/Models/DoctorInfo';
-import { FormControl, FormArray, FormGroup } from '../Models/Controls';
+import {
+  BaseControl,
+  BaseArrayControl,
+  BaseGroupControl,
+} from '../Models/Controls';
 import {
   FormArrayConfig,
   FormControlConfig,
@@ -14,13 +18,12 @@ import {
 import { required, email } from '../Validators/Validators';
 import { uniqueEmail, blacklistedEmail } from '../Testing/AsyncValidators';
 import { buildControlState } from './buildControlState';
+import { EmergencyContact } from '../Testing/Models/EmergencyContact';
 
 describe('buildControlState', () => {
   const BASE_FORM_CONTROL = {
     dirty: false,
     touched: false,
-    asyncValidateInProgress: {},
-    pending: false,
   };
 
   it('should build the control state for for type field', () => {
@@ -28,12 +31,12 @@ describe('buildControlState', () => {
       ...BASE_FORM_CONTROL,
       controlRef: ['firstName'],
       value: '',
-      valid: false,
-      errors: {
+      validatorErrors: {
         required: true,
       },
+      validatorsValid: false,
       config: config.controls.firstName,
-    } as FormControl<string>;
+    } as BaseControl<string>;
     expect(buildControlState(config.controls.firstName, ['firstName'])).toEqual(
       {
         pristineControl: expectedControl,
@@ -49,47 +52,47 @@ describe('buildControlState', () => {
       email: '',
     };
 
-    const expectedFirstNameControl = {
+    const expectedFirstNameControl: BaseControl<string> = {
       ...BASE_FORM_CONTROL,
       controlRef: ['doctorInfo', 'firstName'],
-      valid: false,
-      errors: {
+      validatorErrors: {
         required: true,
       },
+      validatorsValid: false,
       value: '',
       config: (<FormGroupConfig>config.controls.doctorInfo).controls.firstName,
     };
-    const expectedLastNameControl = {
+
+    const expectedLastNameControl: BaseControl<string> = {
       ...BASE_FORM_CONTROL,
       controlRef: ['doctorInfo', 'lastName'],
-      valid: false,
-      errors: {
+      validatorErrors: {
         required: true,
       },
+      validatorsValid: false,
       value: '',
       config: (<FormGroupConfig>config.controls.doctorInfo).controls.lastName,
     };
-    const expectedEmailControl = {
+    const expectedEmailControl: BaseControl<string> = {
       ...BASE_FORM_CONTROL,
       controlRef: ['doctorInfo', 'email'],
-      valid: false,
-      errors: {
+      validatorErrors: {
         email: false,
         required: true,
       },
+      validatorsValid: false,
       value: '',
       config: (<FormGroupConfig>config.controls.doctorInfo).controls.email,
     };
-    const expectedControl: FormGroup<DoctorInfo> = {
+    const expectedControl: BaseGroupControl<DoctorInfo> = {
       ...BASE_FORM_CONTROL,
       controlRef: ['doctorInfo'],
-      submitting: false,
-      valid: false,
       value: initialValue,
       config: config.controls.doctorInfo,
-      errors: {
+      validatorErrors: {
         firstNameNotSameAsLast: true,
       },
+      validatorsValid: false,
       controls: {
         firstName: {
           pristineControl: expectedFirstNameControl,
@@ -104,7 +107,7 @@ describe('buildControlState', () => {
           ...expectedEmailControl,
         },
       },
-    } as FormGroup<DoctorInfo>;
+    } as BaseGroupControl<DoctorInfo>;
     expect(
       buildControlState(config.controls.doctorInfo, ['doctorInfo']),
     ).toEqual({
@@ -136,47 +139,50 @@ describe('buildControlState', () => {
         } as FormControlConfig<string>,
       },
     } as FormGroupConfig;
-    const expectedFirstNameControl = {
+
+    const expectedFirstNameControl: BaseControl<string> = {
       ...BASE_FORM_CONTROL,
       controlRef: ['doctorInfo', 'firstName'],
-      valid: true,
-      errors: {
+      validatorErrors: {
         required: false,
       },
+      validatorsValid: true,
       value: 'Dr',
       config: testConfig.controls.firstName,
     };
-    const expectedLastNameControl = {
+
+    const expectedLastNameControl: BaseControl<string> = {
       ...BASE_FORM_CONTROL,
       controlRef: ['doctorInfo', 'lastName'],
-      valid: true,
-      errors: {
+      validatorErrors: {
         required: false,
       },
+      validatorsValid: true,
       value: 'Bob',
       config: testConfig.controls.lastName,
     };
-    const expectedEmailControl = {
+
+    const expectedEmailControl: BaseControl<string> = {
       ...BASE_FORM_CONTROL,
       controlRef: ['doctorInfo', 'email'],
-      valid: false,
-      errors: {
+      validatorErrors: {
         email: true,
         required: false,
       },
+      validatorsValid: false,
       value: 'DrBobbob.com',
       config: testConfig.controls.email,
     };
-    const expectedControl: FormGroup<DoctorInfo> = {
+
+    const expectedControl: BaseGroupControl<DoctorInfo> = {
       ...BASE_FORM_CONTROL,
       controlRef: ['doctorInfo'],
-      submitting: false,
-      valid: false,
       value: initialValue,
       config: testConfig,
-      errors: {
+      validatorErrors: {
         firstNameNotSameAsLast: false,
       },
+      validatorsValid: false,
       controls: {
         firstName: {
           pristineControl: expectedFirstNameControl,
@@ -191,7 +197,8 @@ describe('buildControlState', () => {
           ...expectedEmailControl,
         },
       },
-    } as FormGroup<DoctorInfo>;
+    } as BaseGroupControl<DoctorInfo>;
+
     expect(buildControlState(testConfig, ['doctorInfo'])).toEqual({
       pristineControl: expectedControl,
       ...expectedControl,
@@ -199,17 +206,17 @@ describe('buildControlState', () => {
   });
 
   it('should build the control state for for type array with empty initial value', () => {
-    const expectedControl = {
+    const expectedControl: BaseArrayControl<unknown> = {
       ...BASE_FORM_CONTROL,
       controlRef: ['emergencyContacts'],
       controls: [],
       value: [],
-      valid: false,
       config: config.controls.emergencyContacts,
-      errors: {
+      validatorErrors: {
         required: true,
       },
-    } as FormArray<unknown>;
+      validatorsValid: false,
+    };
     expect(
       buildControlState(config.controls.emergencyContacts, [
         'emergencyContacts',
@@ -226,13 +233,13 @@ describe('buildControlState', () => {
       controls: emergencyContactConfigs,
     } as FormArrayConfig;
 
-    const expectedControl0FirstName = {
+    const expectedControl0FirstName: BaseControl<string> = {
       ...BASE_FORM_CONTROL,
       controlRef: ['emergencyContacts', 0, 'firstName'],
-      valid: true,
-      errors: {
+      validatorErrors: {
         required: false,
       },
+      validatorsValid: true,
       value: 'Homer',
       config: {
         ...emergencyContactConfigs[0].controls.firstName,
@@ -240,13 +247,13 @@ describe('buildControlState', () => {
       },
     };
 
-    const expectedControl0LastName = {
+    const expectedControl0LastName: BaseControl<string> = {
       ...BASE_FORM_CONTROL,
       controlRef: ['emergencyContacts', 0, 'lastName'],
-      valid: true,
-      errors: {
+      validatorErrors: {
         required: false,
       },
+      validatorsValid: true,
       value: 'Simpson',
       config: {
         ...emergencyContactConfigs[0].controls.lastName,
@@ -254,14 +261,14 @@ describe('buildControlState', () => {
       },
     };
 
-    const expectedControl0Email = {
+    const expectedControl0Email: BaseControl<string> = {
       ...BASE_FORM_CONTROL,
       controlRef: ['emergencyContacts', 0, 'email'],
-      valid: true,
-      errors: {
+      validatorErrors: {
         email: false,
         required: false,
       },
+      validatorsValid: true,
       value: 'homer@homer.com',
       config: {
         ...emergencyContactConfigs[0].controls.email,
@@ -269,13 +276,13 @@ describe('buildControlState', () => {
       },
     };
 
-    const expectedControl0Relation = {
+    const expectedControl0Relation: BaseControl<string> = {
       ...BASE_FORM_CONTROL,
       controlRef: ['emergencyContacts', 0, 'relation'],
-      valid: true,
-      errors: {
+      validatorErrors: {
         required: false,
       },
+      validatorsValid: true,
       value: 'friend',
       config: {
         ...emergencyContactConfigs[0].controls.relation,
@@ -283,20 +290,19 @@ describe('buildControlState', () => {
       },
     };
 
-    const expectedControl0 = {
+    const expectedControl0: BaseGroupControl<EmergencyContact> = {
       ...BASE_FORM_CONTROL,
       controlRef: ['emergencyContacts', 0],
-      submitting: false,
       value: {
         firstName: 'Homer',
         lastName: 'Simpson',
         email: 'homer@homer.com',
         relation: 'friend',
       },
-      valid: true,
-      errors: {
+      validatorErrors: {
         firstNameNotSameAsLast: false,
       },
+      validatorsValid: true,
       config: emergencyContactConfigs[0],
       controls: {
         firstName: {
@@ -315,16 +321,16 @@ describe('buildControlState', () => {
           pristineControl: expectedControl0Relation,
           ...expectedControl0Relation,
         },
-      } as { [key: string]: FormControl<unknown> },
-    } as FormGroup<unknown>;
+      } as { [key: string]: BaseControl<string> },
+    } as BaseGroupControl<EmergencyContact>;
 
-    const expectedControl1FirstName = {
+    const expectedControl1FirstName: BaseControl<string> = {
       ...BASE_FORM_CONTROL,
       controlRef: ['emergencyContacts', 1, 'firstName'],
-      valid: true,
-      errors: {
+      validatorErrors: {
         required: false,
       },
+      validatorsValid: true,
       value: 'moe',
       config: {
         ...emergencyContactConfigs[1].controls.firstName,
@@ -332,13 +338,13 @@ describe('buildControlState', () => {
       },
     };
 
-    const expectedControl1LastName = {
+    const expectedControl1LastName: BaseControl<string> = {
       ...BASE_FORM_CONTROL,
       controlRef: ['emergencyContacts', 1, 'lastName'],
-      valid: true,
-      errors: {
+      validatorErrors: {
         required: false,
       },
+      validatorsValid: true,
       value: 'syzlak',
       config: {
         ...emergencyContactConfigs[1].controls.lastName,
@@ -346,14 +352,14 @@ describe('buildControlState', () => {
       },
     };
 
-    const expectedControl1Email = {
+    const expectedControl1Email: BaseControl<string> = {
       ...BASE_FORM_CONTROL,
       controlRef: ['emergencyContacts', 1, 'email'],
-      valid: true,
-      errors: {
+      validatorErrors: {
         email: false,
         required: false,
       },
+      validatorsValid: true,
       value: 'moe@moe.com',
       config: {
         ...emergencyContactConfigs[1].controls.email,
@@ -361,13 +367,13 @@ describe('buildControlState', () => {
       },
     };
 
-    const expectedControl1Relation = {
+    const expectedControl1Relation: BaseControl<string> = {
       ...BASE_FORM_CONTROL,
       controlRef: ['emergencyContacts', 1, 'relation'],
-      valid: true,
-      errors: {
+      validatorErrors: {
         required: false,
       },
+      validatorsValid: true,
       value: 'friend',
       config: {
         ...emergencyContactConfigs[1].controls.relation,
@@ -375,20 +381,19 @@ describe('buildControlState', () => {
       },
     };
 
-    const expectedControl1 = {
+    const expectedControl1: BaseGroupControl<EmergencyContact> = {
       ...BASE_FORM_CONTROL,
       controlRef: ['emergencyContacts', 1],
-      submitting: false,
       value: {
         firstName: 'moe',
         lastName: 'syzlak',
         email: 'moe@moe.com',
         relation: 'friend',
       },
-      valid: true,
-      errors: {
+      validatorErrors: {
         firstNameNotSameAsLast: false,
       },
+      validatorsValid: true,
       config: {
         ...emergencyContactConfigs[1],
         controls: {
@@ -425,10 +430,10 @@ describe('buildControlState', () => {
           pristineControl: expectedControl1Relation,
           ...expectedControl1Relation,
         },
-      } as { [key: string]: FormControl<unknown> },
-    } as FormGroup<unknown>;
+      } as { [key: string]: BaseControl<unknown> },
+    };
 
-    const expectedControl = {
+    const expectedControl: BaseArrayControl<EmergencyContact[]> = {
       config: nonEmptyConfig,
       controls: [
         {
@@ -436,7 +441,7 @@ describe('buildControlState', () => {
           ...expectedControl0,
         },
         { pristineControl: expectedControl1, ...expectedControl1 },
-      ] as FormGroup<unknown>[],
+      ] as BaseGroupControl<unknown>[],
       ...BASE_FORM_CONTROL,
       controlRef: ['emergencyContacts'],
       value: [
@@ -453,11 +458,11 @@ describe('buildControlState', () => {
           relation: 'friend',
         },
       ],
-      valid: true,
-      errors: {
+      validatorErrors: {
         required: false,
       },
-    } as FormArray<unknown>;
+      validatorsValid: true,
+    };
 
     expect(buildControlState(nonEmptyConfig, ['emergencyContacts'])).toEqual({
       pristineControl: expectedControl,
@@ -479,111 +484,112 @@ describe('buildControlState', () => {
       },
     };
 
-    const expectedFirstNameControl = {
+    const expectedFirstNameControl: BaseControl<string> = {
       ...BASE_FORM_CONTROL,
       controlRef: ['firstName'],
       value: '',
-      valid: false,
-      errors: {
+      validatorErrors: {
         required: true,
       },
+      validatorsValid: false,
       config: config.controls.firstName,
     };
 
-    const expectedLastNameControl = {
+    const expectedLastNameControl: BaseControl<string> = {
       ...BASE_FORM_CONTROL,
       controlRef: ['lastName'],
       value: '',
-      valid: false,
-      errors: {
+      validatorErrors: {
         required: true,
       },
+      validatorsValid: false,
       config: config.controls.lastName,
     };
 
-    const expectedEmailControl = {
+    const expectedEmailControl: BaseControl<string> = {
       ...BASE_FORM_CONTROL,
       controlRef: ['email'],
       value: '',
-      valid: false,
-      errors: {
+      validatorErrors: {
         email: false,
         required: true,
       },
+      validatorsValid: false,
       config: config.controls.email,
     };
 
-    const expectedPhoneControl = {
+    const expectedPhoneControl: BaseControl<string> = {
       ...BASE_FORM_CONTROL,
       controlRef: ['phone'],
       value: '',
-      valid: false,
-      errors: {
+      validatorErrors: {
         required: true,
         phoneNumber: false,
       },
+      validatorsValid: false,
       config: config.controls.phone,
     };
 
-    const expectedEmergencyContactsControl = {
+    const expectedEmergencyContactsControl: BaseArrayControl<
+      EmergencyContact[]
+    > = {
       ...BASE_FORM_CONTROL,
       controlRef: ['emergencyContacts'],
       value: [],
-      valid: false,
-      errors: {
+      validatorErrors: {
         required: true,
       },
+      validatorsValid: false,
       config: config.controls.emergencyContacts,
       controls: [],
     };
 
-    const expectedDoctorInfoFirstNameControl = {
+    const expectedDoctorInfoFirstNameControl: BaseControl<string> = {
       ...BASE_FORM_CONTROL,
       controlRef: ['doctorInfo', 'firstName'],
       value: '',
-      valid: false,
-      errors: {
+      validatorErrors: {
         required: true,
       },
+      validatorsValid: false,
       config: (<FormGroupConfig>config.controls.doctorInfo).controls.firstName,
     };
 
-    const expectedDoctorInfoLastNameControl = {
+    const expectedDoctorInfoLastNameControl: BaseControl<string> = {
       ...BASE_FORM_CONTROL,
       controlRef: ['doctorInfo', 'lastName'],
       value: '',
-      valid: false,
-      errors: {
+      validatorErrors: {
         required: true,
       },
+      validatorsValid: false,
       config: (<FormGroupConfig>config.controls.doctorInfo).controls.lastName,
     };
 
-    const expectedDoctorInfoEmailControl = {
+    const expectedDoctorInfoEmailControl: BaseControl<string> = {
       ...BASE_FORM_CONTROL,
       controlRef: ['doctorInfo', 'email'],
       value: '',
-      valid: false,
-      errors: {
+      validatorErrors: {
         email: false,
         required: true,
       },
+      validatorsValid: false,
       config: (<FormGroupConfig>config.controls.doctorInfo).controls.email,
     };
 
-    const expectedDoctorInfoControl = {
+    const expectedDoctorInfoControl: BaseGroupControl<DoctorInfo> = {
       ...BASE_FORM_CONTROL,
       controlRef: ['doctorInfo'],
-      submitting: false,
       value: {
         firstName: '',
         lastName: '',
         email: '',
       },
-      valid: false,
-      errors: {
+      validatorErrors: {
         firstNameNotSameAsLast: true,
       },
+      validatorsValid: false,
       config: config.controls.doctorInfo,
       controls: {
         firstName: {
@@ -601,15 +607,14 @@ describe('buildControlState', () => {
       },
     };
 
-    const expectedControl = {
+    const expectedControl: BaseGroupControl<Contact> = {
       ...BASE_FORM_CONTROL,
-      submitting: false,
       controlRef: [],
-      valid: false,
       value: initialValue,
-      errors: {
+      validatorErrors: {
         firstNameNotSameAsLast: true,
       },
+      validatorsValid: false,
       config,
       controls: {
         firstName: {
@@ -637,7 +642,7 @@ describe('buildControlState', () => {
           ...expectedDoctorInfoControl,
         },
       },
-    } as FormGroup<Contact>;
+    };
     expect(buildControlState(config)).toEqual({
       pristineControl: expectedControl,
       ...expectedControl,
