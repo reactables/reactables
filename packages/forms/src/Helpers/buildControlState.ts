@@ -12,7 +12,7 @@ import {
   FormGroupConfig,
   AbstractControlConfig,
 } from '../Models/Configs';
-import { syncValidate } from '../Reducers';
+import { syncValidate } from '../Reducers/Hub1/syncValidate';
 
 import { getValueFromControlConfig } from '../Helpers/getValueFromControlConfig';
 
