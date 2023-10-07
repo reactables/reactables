@@ -11,7 +11,7 @@ export interface StoreConfig<T> {
   debug?: boolean;
 }
 
-export type Dispatcher = (...actions: Action<unknown>[]) => void;
+export type Dispatcher = <T>(...actions: Action<T>[]) => void;
 
 export interface HubConfig {
   effects?: Effect<unknown, unknown>[];
