@@ -1,4 +1,5 @@
-import { of, delay, mergeMap } from 'rxjs';
+import { of } from 'rxjs';
+import { delay, mergeMap } from 'rxjs/operators';
 import { ValidatorAsyncFn } from '../Models/Validators';
 
 export const uniqueEmail: ValidatorAsyncFn = (control$) => {
