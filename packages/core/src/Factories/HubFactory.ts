@@ -13,7 +13,7 @@ import { Action } from '../Models/Action';
 import { share, shareReplay } from 'rxjs/operators';
 import { Effect } from '../Models/Effect';
 
-const getScopedEffectSignature = (actionType: string, key: string) =>
+const getScopedEffectSignature = (actionType: string, key: string | number) =>
   `type: ${actionType}, scoped: true${key ? `,key:${key}` : ''}`;
 
 export const HubFactory = ({ effects, sources = [] }: HubConfig = {}): Hub => {
