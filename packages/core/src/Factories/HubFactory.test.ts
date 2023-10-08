@@ -89,7 +89,7 @@ describe('HubFactory', () => {
 
       it('should detect a scoped effect', () => {
         testScheduler.run(({ expectObservable, cold }) => {
-          const action: Action<string> = {
+          const action: Action<string, string> = {
             type: TEST_ACTION,
             payload: 'test action with scoped effect',
             scopedEffects: { effects: [switchMapTestEffect] },
@@ -115,7 +115,7 @@ describe('HubFactory', () => {
 
       it('switchMap in effect should cancel previous inner observables', () => {
         testScheduler.run(({ expectObservable, cold }) => {
-          const action: Action<string> = {
+          const action: Action<string, string> = {
             type: TEST_ACTION,
             payload: 'test action with scoped effect',
             scopedEffects: { effects: [switchMapTestEffect] },
@@ -154,7 +154,7 @@ describe('HubFactory', () => {
 
       it('should handle more than one effect each independently', () => {
         testScheduler.run(({ expectObservable, cold }) => {
-          const action: Action<string> = {
+          const action: Action<string, string> = {
             type: TEST_ACTION,
             payload: 'test action with more that one effect',
             scopedEffects: {
@@ -207,7 +207,7 @@ describe('HubFactory', () => {
 
       it('should handle two action with unique signatures independently', () => {
         testScheduler.run(({ expectObservable, cold }) => {
-          const action: Action<string> = {
+          const action: Action<string, string> = {
             type: TEST_ACTION,
             payload: 'test action no key',
             scopedEffects: {
@@ -215,7 +215,7 @@ describe('HubFactory', () => {
             },
           };
 
-          const actionTwo: Action<string> = {
+          const actionTwo: Action<string, string> = {
             type: TEST_ACTION,
             payload: 'test action key two',
             scopedEffects: { key: 'two', effects: [switchMapTestEffect] },
