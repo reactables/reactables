@@ -54,7 +54,13 @@ export const getAsyncValidationActions = (
   formControls: BaseAbstractControl<unknown>[],
 ) =>
   formControls.reduce(
-    (acc: Action<BaseAbstractControl<unknown>>[], control) => {
+    (
+      acc: Action<
+        BaseAbstractControl<unknown>,
+        ControlAsyncValidationResponse
+      >[],
+      control,
+    ) => {
       const { controlRef } = control;
 
       const effects = getScopedEffectsForControl(control);
