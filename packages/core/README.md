@@ -14,11 +14,9 @@ Reactive state management with RxJS.
     1. [Integrating with UI](#integration)
     1. [Flow & Containment](#flow-containment)
 1. [Examples](#examples)
-    1. [Basic Usage](#api-usage)
-    1. [Angular Example](#hub-angular-example)
-    1. [React Example](#hub-react-example)
-    1. [Action with Scoped Effect](#scoped-effect-example)
-    1. [Advanced: Connecting two hubs (Hubfx Forms) ](#advanced-hubfx-forms)
+    1. [Basic Counter](#basic-counter-example)
+    1. [Scoped Effects - Updating Todos](#scoped-effects-example)
+    1. [Connecting Multiple Hubs - Event Prices](#connecting-hub-example)
 1. [API](#api)
     1. [Effect](#api-effect)
     1. [Action](#api-action)
@@ -78,166 +76,30 @@ Avoid [tapping](https://rxjs.dev/api/operators/tap) your streams. This prevents 
 
 ## Examples <a name="examples"></a>
 
-### Basic Usage <a name="api-usage"></a>
+### Basic Counter <a name="basic-counter-example"></a>
 
-```typescript
-import { HubFactory } from '@hub-fx/core';
+Basic counter example. Button clicks dispatches actions to increment or reset the counter.
 
-// Create a hub
-const hub = HubFactory();
+Basic Counter             |  Design Diagram           | Try it out on StackBlitz.<br /> Choose your framework
+:-------------------------:|:-------------------------:|:-------------------------:
+<img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/BasicCounterExamplePic.jpg" width="200" />  | <img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/Slide11BasicCounterExample.jpg" width="400" />  |  <a href="https://stackblitz.com/edit/github-xq3k7n?file=src%2Findex.js"><img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/VanillaJS.jpg" width="50" /></a><br /><a href="https://stackblitz.com/edit/github-g8bz45?file=src%2Fapp%2Fcounter%2Fcounter.component.ts"><img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/Angular.png" width="60" /></a><br /><a href="https://stackblitz.com/edit/github-y2aqpb?file=src%2FCounter.tsx"><img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/React.png" width="60" /></a>
 
-// Pure reducer function to handle state updates
-const countReducer = (state = { counter: 0 }, action) => {
-  switch (action.type) {
-    case 'increment':
-      return { counter: state.counter + 1 };
-    default:
-      return state;
-  }
-}
+### Scoped Effects - Updating Todos <a name="scoped-effects-example"></a>
 
-// Create a store listening to `hub`
-const count$ = hub.store({ reducer: countReducer });
+Updating statuses of todo items shows scoped effects in action. An 'update todo' stream is created for each todo during update. Pending async calls in their respective stream are cancelled if a new request comes in with RxJS [switchMap](https://www.learnrxjs.io/learn-rxjs/operators/transformation/switchmap) operator.
 
-// Subscribe to store for updates
-count$.subscribe((count) => console.log(count));
+Todo Status Updates             |  Design Diagram           | Try it out on StackBlitz.<br /> Choose your framework
+:-------------------------:|:-------------------------:|:-------------------------:
+<img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/ScopedEffectsTodosPic.jpg" width="200" />  | <img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/Slide12ScopedEffectsExampleTodos.jpg" width="400" />  |  <a href="https://stackblitz.com/edit/github-9bn8cq?file=src%2Findex.js"><img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/VanillaJS.jpg" width="50" /></a><br /><a href="https://stackblitz.com/edit/github-ywpkfj?file=src%2Fapp%2Ftodos%2Ftodos.component.ts"><img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/Angular.png" width="60" /></a><br /><a href="https://stackblitz.com/edit/github-rgzak3?file=src%2FTodos.tsx"><img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/React.png" width="60" />
 
-hub.dispatch({ type: 'increment' });
+### Connecting Multiple Hubs - Event Prices  <a name="connecting-hub-example"></a>
 
-// Output
-// 1
-```
+This examples shows two sets of hub & stores. The first set is responsible for updating state of the user controls. The second set fetches prices based on input from the first set.
 
-### Angular Example <a name="hub-angular-example"></a>
+Event Prices             |  Design Diagram           | Try it out on StackBlitz.<br /> Choose your framework
+:-------------------------:|:-------------------------:|:-------------------------:
+<img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/ConnectingHubsEventPricesPic.jpg" width="200" />  | <img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/Slide13ConnectingHubsExampleEventPrices.jpg" width="400" />  | <a href="https://stackblitz.com/edit/github-wbozsv?file=src%2Findex.js"><img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/VanillaJS.jpg" width="50" /></a><br /><a href="https://stackblitz.com/edit/github-nwyrzx?file=src%2Fapp%2Fevent-tickets%2Fevent-tickets.component.ts"><img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/Angular.png" width="60" /></a><br /><a href="https://stackblitz.com/edit/github-evryfo?file=src%2FEventTickets.tsx"><img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/React.png" width="60" /></a><br />
 
-Using our above count example we can integrate with an Angular component. 
-
-```typescript
-import { Component, Input, OnInit } from '@angular/core';
-import { HubFactory } from '@hub-fx/core';
-import { countReducer } from '/countReducer';
-
-export class CounterComponent {
-  // A component can have its own hub or connect to one from an ancestor component
-  @Input() hub = HubFactory();
-  count$: Observable<number>;
-
-  increment() {
-    this.hub.dispatch({ type: 'increment' });
-  }
-
-  ngOnInit() {
-    this.count$ = this.hub.store({ reducer: countReducer });
-  }
-}
-
-```
-
-### React Example <a name="hub-react-example"></a>
-
-Using our above count example we can integrate with a React component. 
-
-```typescript
-import { useHub } from './useHub';
-import { useObservable } from './useObservable';
-import { countReducer } from './countReducer';
-
-// A component can have its own hub or connect to one from an ancestor component
-const Counter = (({ hub = useHub() })) => {
-
-  const count = useObservable(hub.store(countReducer));
-
-  return (
-    <div>
-      Count: {count}
-      <button onClick={ () => {hub.dispatch({ type: 'increment' }); }}>
-        Increment
-      </button>
-    </div>
-  )
-}
-
-
-```
-
-Hook to store a hub reference.
-
-```typescript
-// useHub.ts
-
-import { useRef } from 'react';
-import { HubFactory } from '@hub-fx/core';
-
-export const useHub = () => {
-  return useRef(HubFactory()).current;
-};
-```
-
-Hook to bind observable to React state.
-
-```typescript
-// useObservable.ts
-
-import { useEffect, useState, useRef } from 'react';
-import { Observable } from 'rxjs';
-
-export const useObservable = <T>(obs$: Observable<T>) => {
-  const currentObs$ = useRef(obs$).current;
-  const [state, setState] = useState<T | undefined>(undefined);
-
-  useEffect(() => {
-    const subscription = currentObs$.subscribe((result) => {
-      setState(result);
-    });
-
-    const unsubscribe = subscription.unsubscribe.bind(
-      subscription,
-    ) as () => void;
-
-    return unsubscribe;
-  }, []);
-
-  return state;
-};
-```
-
-### Action with Scoped Effect <a name="scoped-effect-example"></a>
-
-Example of an action that when dispatched will dynamically create a effect stream scoped to the Action `type` and `key` combination.
-
-```typescript
-
-const UPDATE_TODO = 'UPDATE_TODO';
-const UPDATE_TODO_SUCCESS = 'UPDATE_TODO_SUCCESS';
-const updateTodo = ({ id, message }, todoService: TodoService) => ({
-  type: UPDATE_TODO,
-  payload: { id, message },
-  scopedEffects: {
-    key: id,
-    effects: [
-      (updateTodoActions$: Observable<Action<string>>) =>
-        updateTodoActions$.pipe(
-          mergeMap(({ payload: { id, message } }) => todoService.updateTodo(id, message))
-          map(({ data }) => ({
-            type: UPDATE_TODO_SUCCESS,
-            payload: data
-          }))
-        )
-    ]
-  }
-})
-```
-### Advanced: Connecting two hubs (example with [Hubfx Forms](https://github.com/hub-fx/hub-fx/tree/main/packages/forms)) <a name="advanced-hubfx-forms"></a>
-
-The following diagram visualizes the architecture of [Hubfx Forms](https://github.com/hub-fx/hub-fx/tree/main/packages/forms) - a state management model for building reactive forms.
-
-There are two sets of hub and stores. The first set is responsible for handling user input and updating the form.
-
-The second set is responsible for reacting to the form change in the first store and asynchronous validation.
-
-![Hubfx architecture](https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/Slide10HubfxForms.jpg)
-
-See [Hubfx Forms](https://github.com/hub-fx/hub-fx/tree/main/packages/forms) for more details.
 
 ## API <a name="api"></a>
 
