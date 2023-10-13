@@ -1,152 +1,85 @@
-import { updateValues } from './updateValues';
 import { syncValidate } from './syncValidate';
-import { buildControlState } from '../../Helpers/buildControlState';
-import { config, emergencyContactConfigs } from '../../Testing/config';
-import { FORMS_CONTROL_CHANGE } from '../../Actions/Hub1/controlChange';
-import { BaseGroupControl, BaseArrayControl } from '../../Models/Controls';
-import { FormArrayConfig, FormGroupConfig } from '../../Models/Configs';
+import { buildFormState } from '../../Helpers/buildFormState';
+import { config } from '../../Testing/config';
+import { BaseForm } from '../../Models/Controls';
 import { Contact } from '../../Testing/Models/Contact';
-import { EmergencyContact } from '../../Testing/Models/EmergencyContact';
-import { DoctorInfo } from '../../Testing/Models/DoctorInfo';
+import { FormBuilder } from '../../Helpers/FormBuilder';
+import { required } from '../../Validators';
 
 describe('syncValidate', () => {
   it('should verify intitial state is not valid', () => {
-    const initialState = buildControlState(config) as BaseGroupControl<Contact>;
-    expect(syncValidate(initialState)).toEqual(initialState);
-  });
+    const initialState: BaseForm<Contact> = buildFormState(config);
+    const result = syncValidate(initialState);
 
-  it('should validate only for a FormControl in a FormGroup', () => {
-    const initialState = buildControlState(config) as BaseGroupControl<Contact>;
-    const valuesUpdatedState = updateValues(initialState, {
-      type: FORMS_CONTROL_CHANGE,
-      payload: {
-        controlRef: ['firstName'],
-        value: 'Homer',
-      },
-    }) as BaseGroupControl<Contact>;
-
-    expect(syncValidate(valuesUpdatedState)).toEqual({
-      ...valuesUpdatedState,
-      validatorErrors: {
-        firstNameNotSameAsLast: false,
-      },
-      validatorsValid: false,
-      controls: {
-        ...valuesUpdatedState.controls,
-        firstName: {
-          ...initialState.controls.firstName,
-          value: 'Homer',
-          validatorsValid: true,
-          validatorErrors: {
-            required: false,
-          },
-        },
-      },
+    expect(result.root.validatorsValid).toBe(false);
+    expect(result.root.validatorErrors).toEqual({
+      firstNameNotSameAsLast: true,
+    });
+    expect(result.firstName.validatorsValid).toBe(false);
+    expect(result.firstName.validatorErrors).toEqual({
+      required: true,
+    });
+    expect(result.lastName.validatorsValid).toBe(false);
+    expect(result.lastName.validatorErrors).toEqual({
+      required: true,
+    });
+    expect(result.email.validatorsValid).toBe(false);
+    expect(result.email.validatorErrors).toEqual({
+      email: false,
+      required: true,
+    });
+    expect(result.phone.validatorsValid).toBe(false);
+    expect(result.phone.validatorErrors).toEqual({
+      phoneNumber: false,
+      required: true,
+    });
+    expect(result.emergencyContacts.validatorsValid).toBe(false);
+    expect(result.emergencyContacts.validatorErrors).toEqual({
+      required: true,
+    });
+    expect(result.doctorInfo.validatorsValid).toBe(false);
+    expect(result.doctorInfo.validatorErrors).toEqual({
+      firstNameNotSameAsLast: true,
+    });
+    expect(result['doctorInfo.firstName'].validatorsValid).toBe(false);
+    expect(result['doctorInfo.firstName'].validatorErrors).toEqual({
+      required: true,
+    });
+    expect(result['doctorInfo.lastName'].validatorsValid).toBe(false);
+    expect(result['doctorInfo.lastName'].validatorErrors).toEqual({
+      required: true,
+    });
+    expect(result['doctorInfo.email'].validatorsValid).toBe(false);
+    expect(result['doctorInfo.email'].validatorErrors).toEqual({
+      email: false,
+      required: true,
     });
   });
 
-  it('should validate only for a FormGroup in a FormGroup', () => {
-    const initialState = buildControlState(config) as BaseGroupControl<Contact>;
-    const valuesUpdatedState = updateValues(initialState, {
-      type: FORMS_CONTROL_CHANGE,
-      payload: {
-        controlRef: ['doctorInfo', 'firstName'],
-        value: 'Dr First Name',
-      },
-    }) as BaseGroupControl<Contact>;
-    expect(syncValidate(valuesUpdatedState)).toEqual({
-      ...valuesUpdatedState,
+  it('should ancestor control validatorsValid should be false if a descendant as an error', () => {
+    const config = FormBuilder.group({
       controls: {
-        ...valuesUpdatedState.controls,
-        doctorInfo: {
-          ...valuesUpdatedState.controls.doctorInfo,
-          validatorErrors: {
-            firstNameNotSameAsLast: false,
-          },
-          validatorsValid: false,
-          controls: {
-            ...(<BaseGroupControl<DoctorInfo>>(
-              valuesUpdatedState.controls.doctorInfo
-            )).controls,
-            firstName: {
-              ...(<BaseGroupControl<DoctorInfo>>(
-                initialState.controls.doctorInfo
-              )).controls.firstName,
-              value: 'Dr First Name',
-              validatorsValid: true,
-              validatorErrors: {
-                required: false,
-              },
-            },
-          },
-        },
-      },
-    });
-  });
-
-  it('should validate only for a FormArray in a FormGroup', () => {
-    const emergencyContactsConfig = {
-      ...(config.controls.emergencyContacts as FormArrayConfig),
-      controls: emergencyContactConfigs,
-    };
-
-    const nonEmptyConfig: FormGroupConfig = {
-      ...config,
-      controls: {
-        ...config.controls,
-        emergencyContacts: emergencyContactsConfig,
-      },
-    };
-
-    const initialState = buildControlState(
-      nonEmptyConfig,
-    ) as BaseGroupControl<Contact>;
-
-    const valuesUpdatedState = updateValues(initialState, {
-      type: FORMS_CONTROL_CHANGE,
-      payload: {
-        controlRef: ['emergencyContacts', 1, 'firstName'],
-        value: 'syzlak',
-      },
-    }) as BaseGroupControl<Contact>;
-
-    expect(syncValidate(valuesUpdatedState)).toEqual({
-      ...valuesUpdatedState,
-      controls: {
-        ...valuesUpdatedState.controls,
-        emergencyContacts: {
-          ...valuesUpdatedState.controls.emergencyContacts,
-          validatorsValid: false,
+        name: FormBuilder.control({ initialValue: '', validators: [required] }),
+        nameList: FormBuilder.array({
           controls: [
-            (<BaseArrayControl<EmergencyContact>>(
-              valuesUpdatedState.controls.emergencyContacts
-            )).controls[0],
-            {
-              ...((<BaseArrayControl<EmergencyContact>>(
-                valuesUpdatedState.controls.emergencyContacts
-              )).controls[1] as BaseGroupControl<EmergencyContact>),
-              validatorsValid: false,
-              validatorErrors: {
-                firstNameNotSameAsLast: true,
-              },
-              controls: {
-                ...(
-                  (<BaseArrayControl<EmergencyContact>>(
-                    valuesUpdatedState.controls.emergencyContacts
-                  )).controls[1] as BaseGroupControl<EmergencyContact>
-                ).controls,
-                firstName: {
-                  ...(
-                    (<BaseArrayControl<EmergencyContact>>(
-                      valuesUpdatedState.controls.emergencyContacts
-                    )).controls[1] as BaseGroupControl<EmergencyContact>
-                  ).controls.firstName,
-                },
-              },
-            },
+            FormBuilder.control({ initialValue: '', validators: [required] }),
           ],
-        },
+        }),
       },
     });
+
+    const initialState = buildFormState(config);
+    const result = syncValidate(initialState);
+
+    expect(result.root.validatorsValid).toBe(false);
+    expect(result.root.validatorErrors).toEqual({});
+    expect(result.name.validatorsValid).toBe(false);
+    expect(result.name.validatorErrors).toEqual({
+      required: true,
+    });
+    expect(result.nameList.validatorsValid).toBe(false);
+    expect(result.nameList.validatorErrors).toEqual({});
+    expect(result['nameList.0'].validatorsValid).toBe(false);
+    expect(result['nameList.0'].validatorErrors).toEqual({ required: true });
   });
 });

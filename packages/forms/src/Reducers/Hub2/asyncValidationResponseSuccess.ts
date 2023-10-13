@@ -1,10 +1,12 @@
-import cloneDeep from 'lodash.clonedeep';
 import { Action } from '@hub-fx/core';
-import { AbstractControl } from '../../Models/Controls';
+import { Form, FormControl } from '../../Models/Controls';
 import { ControlAsyncValidationResponse } from '../../Models/Payloads';
 import { getAncestorControls } from '../../Helpers/getAncestorControls';
+import { getFormKey } from '../../Helpers/getFormKey';
+import { getDescendantControls } from '../../Helpers/getDescendantControls';
+import { mergeErrors } from './mergeErrors';
 
-const isControlValidating = (control: AbstractControl<unknown>): boolean => {
+const isControlValidating = (control: FormControl<unknown>): boolean => {
   if (!control.asyncValidateInProgress) return false;
 
   return Object.values(control.asyncValidateInProgress).some(
@@ -12,42 +14,68 @@ const isControlValidating = (control: AbstractControl<unknown>): boolean => {
   );
 };
 
-const isControlAsyncValid = (control: AbstractControl<unknown>): boolean => {
+const isControlAsyncValid = (control: FormControl<unknown>): boolean => {
   return !Object.values(control.asyncValidatorErrors).some((error) => error);
 };
 
-export const asyncValidationResponseSuccess = <T>(
-  state: AbstractControl<T>,
-  {
-    payload: { controlRef, validatorIndex, errors },
-  }: Action<ControlAsyncValidationResponse>,
-): AbstractControl<T> => {
-  const newState = cloneDeep(state);
-  const controlBranch = getAncestorControls(
-    controlRef,
-    newState,
-  ) as AbstractControl<unknown>[];
+const getControlByKey = (key: string, form: Form<unknown>) => {
+  return Object.values(form).find((control) => control.key === key);
+};
 
-  controlBranch.reverse().forEach((control, index) => {
-    if (index === 0) {
-      control.asyncValidateInProgress = {
+export const asyncValidationResponseSuccess = <T>(
+  form: Form<T>,
+  {
+    payload: { key, validatorIndex, errors },
+  }: Action<ControlAsyncValidationResponse>,
+): Form<T> => {
+  const control = getControlByKey(key, form);
+
+  const controlUpdated: Form<T> = {
+    ...form,
+    [getFormKey(control.controlRef)]: {
+      ...control,
+      asyncValidateInProgress: {
         ...control.asyncValidateInProgress,
         [validatorIndex]: false,
-      };
-      control.asyncValidatorErrors = {
+      },
+      asyncValidatorErrors: {
         ...control.asyncValidatorErrors,
         ...errors,
+      },
+    },
+  };
+
+  const ancestors = getAncestorControls(control.controlRef, controlUpdated);
+
+  const ancestorsUpdated = Object.entries(controlUpdated).reduce(
+    (acc, [key, control]) => {
+      if (ancestors.includes(control)) {
+        const descendants = getDescendantControls(
+          control.controlRef,
+          controlUpdated,
+        );
+
+        return {
+          ...acc,
+          [key]: {
+            ...control,
+            pending: descendants.some((control) =>
+              isControlValidating(control),
+            ),
+            asyncValidatorsValid: descendants.every((control) =>
+              isControlAsyncValid(control),
+            ),
+          },
+        };
+      }
+
+      return {
+        ...acc,
+        [key]: control,
       };
-    }
+    },
+    {} as Form<T>,
+  );
 
-    const childControl = controlBranch[index - 1];
-    control.pending =
-      isControlValidating(control) || Boolean(childControl?.pending);
-
-    control.asyncValidatorsValid =
-      isControlAsyncValid(control) &&
-      Boolean(childControl?.asyncValidatorsValid);
-  });
-
-  return newState;
+  return mergeErrors(ancestorsUpdated);
 };

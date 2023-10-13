@@ -17,7 +17,10 @@ export interface FormControlConfig<T> extends ValidatorConfigs {
   initialValue: T;
 }
 
-export type AbstractControlConfig =
+export type AbstractControlConfig = (
   | FormControlConfig<unknown>
   | FormArrayConfig
-  | FormGroupConfig;
+  | FormGroupConfig
+) & {
+  controls?: AbstractControlConfig[] | { [key: string]: AbstractControlConfig };
+};

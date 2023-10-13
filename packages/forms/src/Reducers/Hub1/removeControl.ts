@@ -1,84 +1,77 @@
-import cloneDeep from 'lodash.clonedeep';
 import { Action } from '@hub-fx/core';
-import {
-  BaseArrayControl,
-  BaseGroupControl,
-  BaseControl,
-} from '../../Models/Controls';
+import { BaseForm } from '../../Models/Controls';
 import { ControlRef } from '../../Models/ControlRef';
 import { getControl } from '../../Helpers/getControl';
 import {
   updateAncestorValues,
-  FORMS_UPDATE_ANCESTOR_VALUES,
+  UPDATE_ANCESTOR_VALUES,
 } from './updateAncestorValues';
-import { FormArrayConfig, FormGroupConfig } from '../../Models';
-
-const reindexControl = (
-  control: BaseControl<unknown>,
-  arrayRef: ControlRef,
-  newIndex: number,
-) => {
-  const newControl = cloneDeep(control);
-  const controls = (<FormArrayConfig | FormGroupConfig>newControl.config)
-    .controls;
-
-  if (controls && !(controls instanceof Array)) {
-    Object.entries((<BaseGroupControl<unknown>>newControl).controls).forEach(
-      ([key, control]) => {
-        (<BaseGroupControl<unknown>>newControl).controls[key] = reindexControl(
-          control,
-          arrayRef,
-          newIndex,
-        );
-      },
-    );
-  } else if (controls && controls instanceof Array) {
-    (<BaseArrayControl<unknown>>newControl).controls.forEach(
-      (control, index) => {
-        (<BaseArrayControl<unknown>>newControl).controls[index] =
-          reindexControl(control, arrayRef, newIndex);
-      },
-    );
-  }
-  return {
-    ...newControl,
-    controlRef: arrayRef
-      .concat(newIndex)
-      .concat(control.controlRef.slice(arrayRef.length + 1)),
-  };
-};
+import { syncValidate } from './syncValidate';
+import { updateDirty } from './updateDirty';
+import { getFormKey } from '../../Helpers/getFormKey';
 
 export const removeControl = <T>(
-  state: BaseControl<T>,
+  form: BaseForm<T>,
   { payload: controlRef }: Action<ControlRef>,
-) => {
-  if (!getControl(controlRef, state)) {
+): BaseForm<T> => {
+  if (!getControl(controlRef, form)) {
     throw 'Control not found';
   }
 
-  if (!controlRef.length) return state;
+  // Can't remove the root of the form
+  if (!controlRef.length) return form;
 
-  const newState = cloneDeep(state);
+  const parentRef = controlRef.slice(0, -1);
 
-  const parentControl = getControl(controlRef.slice(0, -1), newState);
-  const key = controlRef.slice(-1)[0];
-  const controls = (<FormArrayConfig | FormGroupConfig>parentControl.config)
-    .controls;
+  const parentIsFormArray = Array.isArray(
+    getControl(parentRef, form).config.controls,
+  );
 
-  if (controls && !(controls instanceof Array)) {
-    delete (<BaseGroupControl<unknown>>parentControl).controls[key];
-  } else if (controls && controls instanceof Array) {
-    const result = (<BaseArrayControl<unknown>>parentControl).controls
-      .filter((_, index) => index !== key)
-      .map((control, index) =>
-        reindexControl(control, parentControl.controlRef, index),
+  // Remove control and all descendants
+  const controlRemoved: BaseForm<T> = Object.entries(form)
+    .filter(([_, control]) => {
+      return !(
+        control.controlRef.length > parentRef.length &&
+        controlRef.every((key, index) => key === control.controlRef[index])
       );
+    })
+    .reduce((acc, [key, control]) => {
+      // May need to reindex array items of removed control
+      // if it was part of a Form Array.
+      if (parentIsFormArray) {
+        const oldIndex = control.controlRef.at(parentRef.length) as number;
 
-    (<BaseArrayControl<unknown>>parentControl).controls = result;
-  }
+        if (
+          // If control is descendant.
+          parentRef.every((ref, index) => control.controlRef[index] === ref) &&
+          control.controlRef.length > parentRef.length &&
+          // If the array item index was greater than the index of item removed
+          // we need to decrement its index by 1.
+          oldIndex > (controlRef.at(-1) as number)
+        ) {
+          const newRef: ControlRef = parentRef
+            .concat(oldIndex - 1)
+            .concat(control.controlRef.slice(parentRef.length + 1));
 
-  return updateAncestorValues(newState, {
-    type: FORMS_UPDATE_ANCESTOR_VALUES,
-    payload: controlRef,
-  });
+          return {
+            ...acc,
+            [getFormKey(newRef)]: {
+              ...control,
+              controlRef: newRef,
+            },
+          };
+        }
+      }
+
+      return { ...acc, [key]: control };
+    }, {});
+
+  return syncValidate(
+    updateDirty(
+      updateAncestorValues(controlRemoved, {
+        type: UPDATE_ANCESTOR_VALUES,
+        payload: controlRef,
+      }),
+    ),
+  );
 };

@@ -3,7 +3,7 @@ import { FormErrors } from './FormErrors';
 import { ControlRef } from './ControlRef';
 
 export interface BaseControl<T> {
-  pristineControl?: BaseControl<T>;
+  pristineValue: T;
   controlRef: ControlRef;
   value: T;
   dirty: boolean;
@@ -11,22 +11,8 @@ export interface BaseControl<T> {
   validatorErrors: FormErrors;
   validatorsValid: boolean;
   config: AbstractControlConfig;
+  key: string;
 }
-
-export interface BaseGroupControl<T> extends BaseControl<T> {
-  controls: {
-    [key: string]: BaseControl<unknown>;
-  };
-}
-
-export interface BaseArrayControl<T> extends BaseControl<T> {
-  controls: BaseControl<unknown>[];
-}
-
-export type BaseAbstractControl<T> =
-  | BaseControl<T>
-  | BaseGroupControl<T>
-  | BaseArrayControl<T>;
 
 interface AsyncFields {
   asyncValidatorsValid: boolean;
@@ -42,14 +28,14 @@ interface ValidatedFields {
 
 export interface Hub2Fields extends AsyncFields, ValidatedFields {}
 
-export type AbstractControl<T> = FormControl<T> | FormArray<T> | FormGroup<T>;
-
 export interface FormControl<T> extends BaseControl<T>, Hub2Fields {}
 
-export interface FormGroup<T> extends BaseGroupControl<T>, Hub2Fields {
-  controls: { [key: string]: AbstractControl<unknown> };
+export interface BaseForm<T> {
+  root?: BaseControl<T>;
+  [key: string]: BaseControl<unknown>;
 }
 
-export interface FormArray<T> extends BaseArrayControl<T>, Hub2Fields {
-  controls: AbstractControl<unknown>[];
+export interface Form<T> {
+  root: FormControl<T>;
+  [key: string]: FormControl<unknown>;
 }

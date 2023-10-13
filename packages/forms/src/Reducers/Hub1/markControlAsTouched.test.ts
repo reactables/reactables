@@ -1,29 +1,23 @@
-import cloneDeep from 'lodash.clonedeep';
 import { markControlAsTouched } from './markControlAsTouched';
-import { buildControlState } from '../../Helpers/buildControlState';
+import { markControlAsTouched as markControlAsTouchedAction } from '../../Actions/Hub1/markControlAsTouched';
+import { buildFormState } from '../../Helpers/buildFormState';
 import { config } from '../../Testing/config';
-import { BaseGroupControl } from '../../Models/Controls';
+import { BaseForm } from '../../Models/Controls';
 import { Contact } from '../../Testing/Models/Contact';
-import { DoctorInfo } from '../../Testing/Models/DoctorInfo';
-import { FORMS_MARK_CONTROL_AS_TOUCHED } from '../../Actions/Hub1/markControlAsTouched';
 
 describe('markControlAsTouched', () => {
   it('should mark control and all anscestors as touched', () => {
-    const initialState = buildControlState(config);
-    const newState = markControlAsTouched(initialState, {
-      type: FORMS_MARK_CONTROL_AS_TOUCHED,
-      payload: ['doctorInfo', 'firstName'],
-    });
+    const initialState: BaseForm<Contact> = buildFormState(config);
+    const result = markControlAsTouched(
+      initialState,
+      markControlAsTouchedAction({
+        controlRef: ['doctorInfo'],
+        markAll: true,
+      }),
+    );
 
-    const expectedState = cloneDeep(initialState) as BaseGroupControl<Contact>;
-
-    expectedState.touched = true;
-    (<BaseGroupControl<DoctorInfo>>expectedState.controls.doctorInfo).touched =
-      true;
-    (<BaseGroupControl<DoctorInfo>>(
-      expectedState.controls.doctorInfo
-    )).controls.firstName.touched = true;
-
-    expect(newState).toEqual(expectedState);
+    expect(result.root.touched).toBe(true);
+    expect(result.doctorInfo.touched).toBe(true);
+    expect(result['doctorInfo.firstName'].touched).toBe(true);
   });
 });

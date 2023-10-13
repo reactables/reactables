@@ -1,273 +1,183 @@
-import { formChange, DEFAULT_HUB2_FIELDS } from './formChange';
-import { buildControlState } from '../../Helpers/buildControlState';
+import { formChange } from './formChange';
+import { buildFormState } from '../../Helpers/buildFormState';
 import { FORMS_FORM_CHANGE } from '../../Actions/Hub2/formChange';
-import {
-  FormGroup,
-  BaseGroupControl,
-  BaseArrayControl,
-} from '../../Models/Controls';
-import {
-  FormGroupConfig,
-  FormArrayConfig,
-  FormControlConfig,
-} from '../../Models';
+import { BaseForm, Form } from '../../Models/Controls';
+import {} from '../../Models/Controls';
 import { Contact } from '../../Testing/Models/Contact';
-import { DoctorInfo } from '../../Testing/Models/DoctorInfo';
-import { FORMS_CONTROL_CHANGE } from '../../Actions/Hub1/controlChange';
+import { formChange as formChangeAction } from '../../Actions/Hub2/formChange';
 import { updateValues } from '../Hub1/updateValues';
 import { removeControl } from '../Hub1/removeControl';
-import { FORMS_REMOVE_CONTROL } from '../../Actions/Hub1/removeControl';
-import { FORMS_ADD_FORM_ARRAY_CONTROL } from '../../Actions/Hub1/addArrayControl';
-import { required, email } from '../../Validators';
-import { addFormArrayControl } from '../Hub1/addFormArrayControl';
-import {
-  emergencyContactConfigs,
-  firstNameNotSameAsLast,
-  config,
-} from '../../Testing/config';
-import {
-  uniqueEmail,
-  uniqueFirstAndLastName,
-  blacklistedEmail,
-} from '../../Testing/AsyncValidators';
-import cloneDeep = require('lodash.clonedeep');
+import { config } from '../../Testing/config';
 import { EmergencyContact } from '../../Testing/Models/EmergencyContact';
+import { addControl } from '../Hub1/addControl';
+import { addControl as addControlAction } from '../../Actions/Hub1/addControl';
+import { controlChange } from '../../Actions';
+import { removeControl as removeControlAction } from '../../Actions/Hub1/removeControl';
+import { FormBuilder } from '../../Helpers/FormBuilder';
 
 describe('formChange', () => {
-  const getExpectedState = (baseState: BaseGroupControl<Contact>) => ({
-    ...baseState,
-    ...DEFAULT_HUB2_FIELDS,
-    controls: {
-      firstName: {
-        ...baseState.controls.firstName,
-        ...DEFAULT_HUB2_FIELDS,
-      },
-      lastName: {
-        ...baseState.controls.lastName,
-        ...DEFAULT_HUB2_FIELDS,
-      },
-      email: {
-        ...baseState.controls.email,
-        ...DEFAULT_HUB2_FIELDS,
-      },
-      phone: {
-        ...baseState.controls.phone,
-        ...DEFAULT_HUB2_FIELDS,
-      },
-      emergencyContacts: {
-        ...baseState.controls.emergencyContacts,
-        ...DEFAULT_HUB2_FIELDS,
-      },
-      doctorInfo: {
-        ...baseState.controls.doctorInfo,
-        ...DEFAULT_HUB2_FIELDS,
-        controls: {
-          firstName: {
-            ...(<BaseGroupControl<DoctorInfo>>baseState.controls.doctorInfo)
-              .controls.firstName,
-            ...DEFAULT_HUB2_FIELDS,
-          },
-          lastName: {
-            ...(<BaseGroupControl<DoctorInfo>>baseState.controls.doctorInfo)
-              .controls.lastName,
-            ...DEFAULT_HUB2_FIELDS,
-          },
-          email: {
-            ...(<BaseGroupControl<DoctorInfo>>baseState.controls.doctorInfo)
-              .controls.email,
-            ...DEFAULT_HUB2_FIELDS,
-          },
-        },
-      } as FormGroup<DoctorInfo>,
-    },
-  });
-
   it('should initialize async properties', () => {
-    const initialBaseState = buildControlState(
-      config,
-    ) as BaseGroupControl<Contact>;
-    const action = {
-      type: FORMS_FORM_CHANGE,
-      payload: initialBaseState,
-    };
+    const initialBaseState = buildFormState(config);
+    const result = formChange(null, formChangeAction(initialBaseState));
 
-    const initialState = formChange(null, action);
+    expect(result.root).toEqual({
+      ...initialBaseState.root,
+      asyncValidatorsValid: true,
+      asyncValidatorErrors: {},
+      asyncValidateInProgress: {},
+      pending: false,
+      valid: true,
+      errors: {},
+    });
 
-    const expectedState: FormGroup<Contact> =
-      getExpectedState(initialBaseState);
-
-    expect(initialState).toEqual(expectedState);
+    expect(result['doctorInfo.firstName']).toEqual({
+      ...initialBaseState['doctorInfo.firstName'],
+      asyncValidatorsValid: true,
+      asyncValidatorErrors: {},
+      asyncValidateInProgress: {},
+      pending: false,
+      valid: true,
+      errors: {},
+    });
   });
 
   it('should update syncrounous properties only', () => {
-    const initialBaseState = buildControlState(
-      config,
-    ) as BaseGroupControl<Contact>;
+    const initialBaseState: BaseForm<Contact> = buildFormState(config);
 
-    const newBaseState = updateValues(initialBaseState, {
-      type: FORMS_CONTROL_CHANGE,
-      payload: {
+    const initialState = formChange(
+      null,
+      formChangeAction(initialBaseState),
+    ) as Form<Contact>;
+
+    const newBaseState = updateValues(
+      initialBaseState,
+      controlChange({
         controlRef: ['doctorInfo', 'firstName'],
         value: 'Dr First Name Change',
-      },
-    });
-
-    const initialState = formChange(null, {
-      type: FORMS_FORM_CHANGE,
-      payload: initialBaseState,
-    });
-
-    const newState = formChange(initialState, {
-      type: FORMS_FORM_CHANGE,
-      payload: newBaseState,
-    }) as FormGroup<Contact>;
-
-    const expectedState = getExpectedState(
-      newBaseState as BaseGroupControl<Contact>,
+      }),
     );
 
-    expect(newState).toEqual(expectedState);
+    const result = formChange(initialState, formChangeAction(newBaseState));
+
+    expect(result['doctorInfo.firstName']).toEqual({
+      ...initialState['doctorInfo.firstName'],
+      value: 'Dr First Name Change',
+      dirty: true,
+      validatorErrors: {
+        required: false,
+      },
+      validatorsValid: true,
+      errors: {
+        required: false,
+      },
+      valid: true,
+    });
   });
 
   it('should remove control', () => {
-    const initialBaseState = buildControlState(
-      config,
-    ) as BaseGroupControl<Contact>;
+    const initialBaseState = buildFormState(config);
 
     const initialState = formChange(null, {
       type: FORMS_FORM_CHANGE,
       payload: initialBaseState,
     });
+    const newBaseState = removeControl(
+      initialBaseState,
+      removeControlAction(['doctorInfo']),
+    );
 
-    const newBaseState = removeControl(initialBaseState, {
-      type: FORMS_REMOVE_CONTROL,
-      payload: ['doctorInfo'],
-    }) as BaseGroupControl<unknown>;
+    const result = formChange(initialState, formChangeAction(newBaseState));
 
-    const newState = formChange(initialState, {
-      type: FORMS_FORM_CHANGE,
-      payload: newBaseState,
-    }) as FormGroup<Contact>;
+    expect(Object.keys(result)).toEqual([
+      'root',
+      'firstName',
+      'lastName',
+      'email',
+      'phone',
+      'emergencyContacts',
+    ]);
 
-    expect(newState).toEqual({
-      ...newBaseState,
-      ...DEFAULT_HUB2_FIELDS,
-      controls: {
-        firstName: {
-          ...newBaseState.controls.firstName,
-          ...DEFAULT_HUB2_FIELDS,
-        },
-        lastName: {
-          ...newBaseState.controls.lastName,
-          ...DEFAULT_HUB2_FIELDS,
-        },
-        email: {
-          ...newBaseState.controls.email,
-          ...DEFAULT_HUB2_FIELDS,
-        },
-        phone: {
-          ...newBaseState.controls.phone,
-          ...DEFAULT_HUB2_FIELDS,
-        },
-        emergencyContacts: {
-          ...newBaseState.controls.emergencyContacts,
-          ...DEFAULT_HUB2_FIELDS,
-        },
+    expect(result.root).toEqual({
+      ...newBaseState.root,
+      asyncValidatorsValid: true,
+      asyncValidatorErrors: {},
+      asyncValidateInProgress: {},
+      pending: false,
+      valid: false,
+      errors: {
+        firstNameNotSameAsLast: true,
       },
     });
   });
 
   it('should add control', () => {
-    const initialValue = [
-      {
-        firstName: 'Homer',
-        lastName: 'Simpson',
-        email: 'homer@homer.com',
-        relation: 'friend',
-      },
-      {
-        firstName: 'moe',
-        lastName: 'syzlak',
-        email: 'moe@moe.com',
-        relation: 'friend',
-      },
-    ];
-    const clonedConfig: FormGroupConfig = cloneDeep(config);
-    (<FormArrayConfig>clonedConfig.controls.emergencyContacts).controls =
-      emergencyContactConfigs;
-    const initialBaseState = buildControlState(
-      clonedConfig,
-    ) as BaseGroupControl<Contact>;
-
-    const newControlConfig: FormGroupConfig = {
-      validators: [firstNameNotSameAsLast],
-      asyncValidators: [uniqueFirstAndLastName],
-      controls: {
-        firstName: {
-          initialValue: 'Barney',
-          validators: [required],
-        } as FormControlConfig<string>,
-        lastName: {
-          initialValue: 'Gumble',
-          validators: [required],
-        } as FormControlConfig<string>,
-        email: {
-          initialValue: 'barney@gumble.com',
-          validators: [required, email],
-          asyncValidators: [uniqueEmail, blacklistedEmail],
-        } as FormControlConfig<string>,
-        relation: {
-          initialValue: 'astronaut friend',
-          validators: [required],
-        } as FormControlConfig<string>,
-      },
+    const initialValue: EmergencyContact = {
+      firstName: 'Homer',
+      lastName: 'Simpson',
+      email: 'homer@homer.com',
+      relation: 'friend',
     };
 
-    const initialState = formChange(null, {
-      type: FORMS_FORM_CHANGE,
-      payload: initialBaseState,
-    });
+    const initialBaseState: BaseForm<Contact> = buildFormState(config);
 
-    const newBaseState = addFormArrayControl(initialBaseState, {
-      type: FORMS_ADD_FORM_ARRAY_CONTROL,
-      payload: {
-        config: newControlConfig,
+    const newBaseState = addControl(
+      initialBaseState,
+      addControlAction({
         controlRef: ['emergencyContacts'],
-      },
-    }) as BaseGroupControl<Contact>;
-
-    const newState = formChange(initialState, {
-      type: FORMS_FORM_CHANGE,
-      payload: newBaseState,
-    }) as FormGroup<Contact>;
-
-    const expectedState = getExpectedState(newBaseState) as FormGroup<Contact>;
-    expectedState.controls.emergencyContacts = {
-      ...expectedState.controls.emergencyContacts,
-      value: initialValue.concat({
-        firstName: 'Barney',
-        lastName: 'Gumble',
-        email: 'barney@gumble.com',
-        relation: 'astronaut friend',
-      }),
-      controls: (<BaseArrayControl<EmergencyContact[]>>(
-        newBaseState.controls.emergencyContacts
-      )).controls.map((control: FormGroup<EmergencyContact>) => ({
-        ...control,
-        ...DEFAULT_HUB2_FIELDS,
-        controls: Object.entries(control.controls).reduce(
-          (acc, [key, emergContactControl]) => {
-            acc[key] = {
-              ...emergContactControl,
-              ...DEFAULT_HUB2_FIELDS,
-            };
-            return acc;
+        config: FormBuilder.group({
+          controls: {
+            firstName: FormBuilder.control({
+              initialValue: initialValue.firstName,
+            }),
+            lastName: FormBuilder.control({
+              initialValue: initialValue.lastName,
+            }),
+            email: FormBuilder.control({
+              initialValue: initialValue.email,
+            }),
+            relation: FormBuilder.control({
+              initialValue: initialValue.relation,
+            }),
           },
-          {},
-        ),
-      })),
-    };
+        }),
+      }),
+    );
 
-    expect(newState).toEqual(expectedState);
+    const newState = formChange(
+      null,
+      formChangeAction(initialBaseState),
+    ) as Form<Contact>;
+
+    const result = formChange(newState, formChangeAction(newBaseState));
+
+    expect(Object.keys(result)).toEqual([
+      'root',
+      'firstName',
+      'lastName',
+      'email',
+      'phone',
+      'emergencyContacts',
+      'doctorInfo',
+      'doctorInfo.firstName',
+      'doctorInfo.lastName',
+      'doctorInfo.email',
+      'emergencyContacts.0',
+      'emergencyContacts.0.firstName',
+      'emergencyContacts.0.lastName',
+      'emergencyContacts.0.email',
+      'emergencyContacts.0.relation',
+    ]);
+
+    expect(result.root).toEqual({
+      ...newBaseState.root,
+      asyncValidatorsValid: true,
+      asyncValidatorErrors: {},
+      asyncValidateInProgress: {},
+      pending: false,
+      valid: false,
+      errors: {
+        firstNameNotSameAsLast: true,
+      },
+    });
   });
 });

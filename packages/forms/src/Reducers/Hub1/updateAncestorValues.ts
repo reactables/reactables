@@ -1,44 +1,60 @@
-import cloneDeep from 'lodash.clonedeep';
 import { Action } from '@hub-fx/core';
-import {
-  BaseArrayControl,
-  BaseGroupControl,
-  BaseControl,
-} from '../../Models/Controls';
+import { BaseForm } from '../../Models/Controls';
+import { getFormKey } from '../../Helpers/getFormKey';
+import { getDescendantControls } from '../../Helpers/getDescendantControls';
 import { ControlRef } from '../../Models/ControlRef';
-import { getControl } from '../../Helpers/getControl';
-import { FormGroupConfig, FormArrayConfig } from '../../Models';
 
-export const FORMS_UPDATE_ANCESTOR_VALUES = 'FORMS_UPDATE_ANCESTOR_VALUES';
+export const UPDATE_ANCESTOR_VALUES = 'UPDATE_ANCESTOR_VALUES';
 export const updateAncestorValues = <T>(
-  state: BaseControl<T>,
+  form: BaseForm<T>,
   { payload: controlRef }: Action<ControlRef>,
-): BaseControl<T> => {
-  if (!controlRef.length) return state;
+): BaseForm<T> => {
+  if (controlRef.length) {
+    const parentRef = controlRef.slice(0, -1);
+    const parentKey = getFormKey(parentRef);
 
-  const newState = cloneDeep(state);
-  const control = getControl(controlRef, newState);
-  const value = control?.value;
-  const [key] = controlRef.slice(-1);
-  const parentRef = controlRef.slice(0, -1);
-  const parentControl = getControl(parentRef, newState);
+    const siblingControls = getDescendantControls(parentRef, form).filter(
+      // Out of descendants we only need the siblings
+      (control) => control.controlRef.length === controlRef.length,
+    );
 
-  const config = parentControl.config as FormArrayConfig | FormGroupConfig;
-  const controls = config.controls;
+    let newValue: unknown;
 
-  if (controls && !(controls instanceof Array)) {
-    (<BaseGroupControl<unknown>>parentControl).value = {
-      ...(<BaseGroupControl<unknown>>parentControl.value),
-      [key]: value,
+    // If parent is a Form Array
+    if (Array.isArray(form[parentKey].value)) {
+      newValue = siblingControls
+        .slice()
+        .sort(
+          (a, b) =>
+            (a.controlRef.at(-1) as number) - (b.controlRef.at(-1) as number),
+        )
+        .map((control) => control.value);
+    } else {
+      // If parent is a Form Group
+      newValue = siblingControls.reduce((acc, { controlRef, value }) => {
+        return {
+          ...acc,
+          [controlRef.at(-1)]: value,
+        };
+      }, {});
+    }
+
+    const newParentControl = {
+      ...form[parentKey],
+      value: newValue,
     };
-  } else if (controls && controls instanceof Array) {
-    (<BaseArrayControl<unknown[]>>parentControl).value = (<
-      BaseArrayControl<unknown[]>
-    >parentControl).controls.map((control) => control.value);
+
+    return updateAncestorValues(
+      {
+        ...form,
+        [parentKey]: newParentControl,
+      },
+      {
+        type: UPDATE_ANCESTOR_VALUES,
+        payload: parentRef,
+      },
+    );
   }
 
-  return updateAncestorValues(newState, {
-    type: FORMS_UPDATE_ANCESTOR_VALUES,
-    payload: parentRef,
-  });
+  return form;
 };

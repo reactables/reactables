@@ -13,7 +13,12 @@ export interface AddControl {
 }
 
 export interface ControlAsyncValidationResponse {
-  controlRef: ControlRef;
+  key: string;
   validatorIndex: number;
   errors: FormErrors;
+}
+
+export interface MarkTouched {
+  controlRef: ControlRef;
+  markAll?: boolean;
 }

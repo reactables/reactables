@@ -12,6 +12,7 @@ export {
   ControlChange,
   AddControl,
   ControlAsyncValidationResponse,
+  MarkTouched,
 } from './Payloads';
 
 export { ValidatorAsyncFn, ValidatorFn } from './Validators';

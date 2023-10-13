@@ -1,51 +1,42 @@
-import { AbstractControl, FormArray, FormGroup } from '../../Models/Controls';
+import { Form } from '../../Models/Controls';
 import { FormErrors } from '../../Models';
+import { getDescendantControls } from '../../Helpers/getDescendantControls';
 const hasErrors = (errors: FormErrors) => {
-  return Object.entries(errors).some(([_, hasError]) => hasError);
+  return Object.values(errors).some((hasError) => hasError);
 };
-export const mergeErrors = <T extends AbstractControl<unknown>>(
-  control: T,
-): T => {
-  const errors = {
-    ...control.validatorErrors,
-    ...control.asyncValidatorErrors,
-  };
-  const newControl: T = {
-    ...control,
-    errors,
-  };
-  if (Array.isArray((<FormArray<T>>newControl).controls)) {
-    // If FormArray
-    const formArray = <FormArray<T>>newControl;
-    formArray.controls = formArray.controls.map(mergeErrors);
-    formArray.valid = !(
-      hasErrors(formArray.errors) ||
-      formArray.controls.some((control) => hasErrors(control.errors))
-    );
-    return formArray as T;
-  } else if ((<FormGroup<T>>control).controls) {
-    // If FormGroup
-    const formGroup = <FormGroup<T>>control;
 
-    formGroup.controls = Object.entries(formGroup.controls).reduce(
-      (acc, [key, control]) => {
-        acc[key] = mergeErrors(control);
-        return acc;
+export const mergeErrors = <T>(form: Form<T>): Form<T> => {
+  const errorsMerged = Object.entries(form).reduce((acc, [key, control]) => {
+    const errors = {
+      ...control.validatorErrors,
+      ...control.asyncValidatorErrors,
+    };
+    return {
+      ...acc,
+      [key]: {
+        ...control,
+        errors,
+        valid: !hasErrors(errors),
       },
-      {},
-    );
+    };
+  }, {} as Form<T>);
 
-    formGroup.valid = !(
-      hasErrors(formGroup.errors) ||
-      Object.values(formGroup.controls).some((control) => control.valid)
-    );
+  const childrenErrorsChecked = Object.entries(errorsMerged).reduce(
+    (acc, [key, control]) => {
+      return {
+        ...acc,
+        [key]: {
+          ...control,
+          valid:
+            control.valid &&
+            getDescendantControls(control.controlRef, errorsMerged).every(
+              (control) => control.valid,
+            ),
+        },
+      };
+    },
+    {} as Form<T>,
+  );
 
-    return formGroup as T;
-  }
-
-  // If FormControl
-
-  newControl.valid = !hasErrors(newControl.errors);
-
-  return newControl;
+  return childrenErrorsChecked;
 };

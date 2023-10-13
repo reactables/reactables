@@ -1,77 +1,51 @@
-import {
-  BaseArrayControl,
-  BaseGroupControl,
-  BaseAbstractControl,
-} from '../../Models/Controls';
+import { BaseForm } from '../../Models/Controls';
 import { FormErrors } from '../../Models/FormErrors';
-import cloneDeep from 'lodash.clonedeep';
+import { getDescendantControls } from '../../Helpers/getDescendantControls';
 
-export const syncValidate = <T>(
-  control: BaseAbstractControl<T>,
-): BaseAbstractControl<T> => {
-  let newControl: BaseAbstractControl<T> = cloneDeep(control);
+export const syncValidate = <T>(form: BaseForm<T>): BaseForm<T> => {
+  // First check each control for its own validation
+  const baseValidation = Object.entries(form).reduce(
+    (acc, [key, control]): BaseForm<T> => {
+      const validatorErrors: FormErrors =
+        control.config.validators?.reduce(
+          (acc, validator) => ({ ...acc, ...validator(control.value) }),
+          {} as FormErrors,
+        ) || {};
 
-  let controlsHasErrors = false;
+      const validatorsValid = !Object.values(validatorErrors).some(
+        (err) => err,
+      );
 
-  if (Array.isArray((<BaseArrayControl<T>>newControl).controls)) {
-    const controls = (<BaseArrayControl<T>>newControl).controls;
-    newControl = {
-      ...newControl,
-      controls: controls.map((control) => syncValidate(control)),
-    } as BaseArrayControl<T>;
-
-    controlsHasErrors = (<BaseArrayControl<T>>newControl).controls.some(
-      (control) => {
-        if (control.validatorErrors) {
-          return Object.values(control.validatorErrors).some((error) => error);
-        }
-
-        return false;
-      },
-    );
-  } else if ((<BaseGroupControl<T>>newControl).controls) {
-    const controls = (<BaseGroupControl<T>>control).controls;
-    newControl = {
-      ...newControl,
-      controls: Object.entries(controls).reduce(
-        (
-          result: { [key: string]: BaseAbstractControl<unknown> },
-          [key, control],
-        ) => {
-          result[key] = syncValidate(control);
-          return result;
-        },
-        {},
-      ),
-    } as BaseGroupControl<T>;
-
-    controlsHasErrors = Object.values(
-      (<BaseGroupControl<T>>newControl).controls,
-    ).some((control) => {
-      if (control.validatorErrors) {
-        return Object.values(control.validatorErrors).some((error) => error);
-      }
-
-      return false;
-    });
-  }
-
-  const validators = control.config.validators;
-  const validatorErrors =
-    validators?.reduce((errors, validator) => {
       return {
-        ...errors,
-        ...validator(control.value),
+        ...acc,
+        [key]: {
+          ...control,
+          validatorErrors,
+          validatorsValid,
+        },
       };
-    }, {} as FormErrors) || {};
+    },
+    {} as BaseForm<T>,
+  );
+  // Then check each controls children to see if there are errors
 
-  const groupControlHasError = validatorErrors
-    ? Object.values(validatorErrors).some((error) => error)
-    : false;
+  const validated = Object.entries(baseValidation).reduce(
+    (acc, [key, control]) => {
+      const validatorsValid = getDescendantControls(
+        control.controlRef,
+        baseValidation,
+      ).every(({ validatorsValid }) => validatorsValid);
 
-  return {
-    ...newControl,
-    validatorErrors,
-    validatorsValid: !groupControlHasError && !controlsHasErrors,
-  };
+      return {
+        ...acc,
+        [key]: {
+          ...control,
+          validatorsValid,
+        },
+      };
+    },
+    {} as BaseForm<T>,
+  );
+
+  return validated;
 };

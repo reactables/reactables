@@ -5,8 +5,8 @@
     "packages/*"
   ],
   "scripts": {
-    "link-packages": "npm link --workspaces --if-present && npm link @hub-fx/core --workspace=@hub-fx/forms && npm link @hub-fx/core @hub-fx/forms --workspace=@hub-fx/react-forms",
-    "build": "npm run build -w packages/core && npm run build -w packages/forms && npm run build -w packages/react-forms",
+    "link-packages": "npm link --workspaces --if-present && npm link @hub-fx/core --workspace=@hub-fx/forms && npm link @hub-fx/core --workspace=@hub-fx/examples && npm link @hub-fx/core @hub-fx/forms --workspace=@hub-fx/react-forms",
+    "build": "npm run build -w packages/core && npm run build -w packages/examples && npm run build -w packages/forms && npm run build -w packages/react-forms",
     "test": "npm run test --workspaces --if-present",
     "lint": "npm run lint --workspaces",
     "fix": "npm run fix --workspaces",
@@ -34,6 +34,7 @@
     "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^29.5.2",
     "@types/lodash.clonedeep": "^4.5.7",
+    "@types/lodash.isequal": "^4.5.7",
     "@types/node": "^16.18.34",
     "@types/react": "^18.2.8",
     "@types/react-dom": "^18.2.4",
