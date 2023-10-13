@@ -1,128 +1,123 @@
-import cloneDeep from 'lodash.clonedeep';
 import { removeControl } from './removeControl';
-import { buildControlState } from '../../Helpers/buildControlState';
-import { config, emergencyContactConfigs } from '../../Testing/config';
-import { BaseGroupControl, BaseArrayControl } from '../../Models/Controls';
-import {
-  FormArrayConfig,
-  FormGroupConfig,
-  FormControlConfig,
-} from '../../Models/Configs';
-import { FORMS_REMOVE_CONTROL } from '../../Actions/Hub1/removeControl';
-import { Contact } from '../../Testing/Models/Contact';
-import { EmergencyContact } from '../../Testing/Models/EmergencyContact';
-import { DoctorInfo } from '../../Testing/Models/DoctorInfo';
+import { removeControl as removeControlAction } from '../../Actions/Hub1/removeControl';
+import { buildFormState } from '../../Helpers/buildFormState';
+import { BaseForm } from '../../Models/Controls';
+import { FormBuilder } from '../../Helpers/FormBuilder';
 
 describe('removeControl', () => {
-  it('should remove a formGroup control', () => {
-    const configWithType: FormGroupConfig = cloneDeep(config);
+  describe('when removing a formGroup control', () => {
+    let initialState: BaseForm<{
+      firstName: string;
+      lastName: string;
+      emergencyContact: {
+        nextOfKin: string;
+      };
+    }>;
 
-    (<FormGroupConfig>configWithType.controls.doctorInfo).controls.type = {
-      initialValue: 'test',
-    } as FormControlConfig<string>;
-
-    const initialState = buildControlState(
-      configWithType,
-    ) as BaseGroupControl<Contact>;
-
-    const controlRef = ['doctorInfo', 'type'];
-    const newState = removeControl(initialState, {
-      type: FORMS_REMOVE_CONTROL,
-      payload: controlRef,
-    }) as BaseGroupControl<Contact>;
-
-    const expectedState = cloneDeep(initialState);
-    delete (<BaseGroupControl<DoctorInfo>>expectedState.controls.doctorInfo)
-      .controls.type;
-    expectedState.controls.doctorInfo.value = {
-      ...(<BaseGroupControl<DoctorInfo>>expectedState.controls.doctorInfo)
-        .value,
-      type: undefined,
-    };
-
-    expectedState.value = {
-      ...expectedState.value,
-      doctorInfo: {
-        ...(<BaseGroupControl<DoctorInfo>>expectedState.controls.doctorInfo)
-          .value,
-        type: undefined,
+    const expectedInitialValue = {
+      firstName: '',
+      lastName: '',
+      emergencyContact: {
+        nextOfKin: '',
       },
     };
 
-    expect(newState).toEqual(expectedState);
+    beforeEach(() => {
+      initialState = buildFormState(
+        FormBuilder.group({
+          controls: {
+            firstName: FormBuilder.control({ initialValue: '' }),
+            lastName: FormBuilder.control({ initialValue: '' }),
+            emergencyContact: FormBuilder.group({
+              controls: {
+                nextOfKin: FormBuilder.control({ initialValue: '' }),
+              },
+            }),
+          },
+        }),
+      );
+
+      expect(initialState.root.value).toEqual(expectedInitialValue);
+      expect(initialState['emergencyContact.nextOfKin']).toBeTruthy();
+    });
+
+    it('should remove a formGroup control', () => {
+      const result = removeControl(
+        initialState,
+        removeControlAction(['emergencyContact', 'nextOfKin']),
+      );
+
+      expect(result.root.value).toEqual({
+        firstName: '',
+        lastName: '',
+        emergencyContact: {},
+      });
+      expect(result['emergencyContact.nextOfKin']).toBeUndefined();
+    });
+
+    it('should remove a formGroup control and its descendants', () => {
+      const result = removeControl(
+        initialState,
+        removeControlAction(['emergencyContact']),
+      );
+
+      expect(result.root.value).toEqual({
+        firstName: '',
+        lastName: '',
+      });
+      expect(result['emergencyContact']).toBeUndefined();
+      expect(result['emergencyContact.nextOfKin']).toBeUndefined();
+    });
   });
 
   it('should remove an array control item', () => {
-    const clonedConfig: FormGroupConfig = cloneDeep(config);
-    (<FormArrayConfig>clonedConfig.controls.emergencyContacts).controls =
-      emergencyContactConfigs;
-    const initialState = buildControlState(
-      clonedConfig,
-    ) as BaseGroupControl<Contact>;
-
-    const controlRef = ['emergencyContacts', 0];
-
-    const newState = removeControl(initialState, {
-      type: FORMS_REMOVE_CONTROL,
-      payload: controlRef,
-    });
-
-    const expectedState: BaseGroupControl<Contact> = cloneDeep(initialState);
-    const emergencyContacts = <BaseArrayControl<EmergencyContact[]>>(
-      expectedState.controls.emergencyContacts
-    );
-    expectedState.value = {
-      ...expectedState.value,
-      emergencyContacts: [
-        {
-          firstName: 'moe',
-          lastName: 'syzlak',
-          email: 'moe@moe.com',
-          relation: 'friend',
-        },
-      ],
-    };
-    emergencyContacts.controls = [
-      {
-        ...emergencyContacts.controls[1],
-        controlRef: ['emergencyContacts', 0],
+    const initialState: BaseForm<{
+      firstName: string;
+      lastName: string;
+      emergencyContacts: string[];
+    }> = buildFormState(
+      FormBuilder.group({
         controls: {
-          firstName: {
-            ...(<BaseGroupControl<EmergencyContact>>(
-              emergencyContacts.controls[1]
-            )).controls.firstName,
-            controlRef: ['emergencyContacts', 0, 'firstName'],
-          },
-          lastName: {
-            ...(<BaseGroupControl<EmergencyContact>>(
-              emergencyContacts.controls[1]
-            )).controls.lastName,
-            controlRef: ['emergencyContacts', 0, 'lastName'],
-          },
-          email: {
-            ...(<BaseGroupControl<EmergencyContact>>(
-              emergencyContacts.controls[1]
-            )).controls.email,
-            controlRef: ['emergencyContacts', 0, 'email'],
-          },
-          relation: {
-            ...(<BaseGroupControl<EmergencyContact>>(
-              emergencyContacts.controls[1]
-            )).controls.relation,
-            controlRef: ['emergencyContacts', 0, 'relation'],
-          },
+          firstName: FormBuilder.control({ initialValue: '' }),
+          lastName: FormBuilder.control({ initialValue: '' }),
+          emergencyContacts: FormBuilder.array({
+            controls: [
+              FormBuilder.control({ initialValue: 'Homer' }),
+              FormBuilder.control({ initialValue: 'Moe' }),
+              FormBuilder.control({ initialValue: 'Barney' }),
+            ],
+          }),
         },
-      } as BaseGroupControl<EmergencyContact>,
-    ];
-    emergencyContacts.value = [
-      {
-        firstName: 'moe',
-        lastName: 'syzlak',
-        email: 'moe@moe.com',
-        relation: 'friend',
-      },
-    ];
+      }),
+    );
 
-    expect(newState).toEqual(expectedState);
+    expect(initialState.root.value.emergencyContacts).toEqual([
+      'Homer',
+      'Moe',
+      'Barney',
+    ]);
+    expect(initialState['emergencyContacts.0'].value).toBe('Homer');
+    expect(initialState['emergencyContacts.1'].value).toBe('Moe');
+    expect(initialState['emergencyContacts.2'].value).toBe('Barney');
+
+    const result = removeControl(
+      initialState,
+      removeControlAction(['emergencyContacts', 1]),
+    );
+
+    expect(result.root.value.emergencyContacts).toEqual(['Homer', 'Barney']);
+    expect(result.root.dirty).toBe(true);
+    expect(result.emergencyContacts.dirty).toBe(true);
+    expect(result['emergencyContacts.0'].value).toBe('Homer');
+    expect(result['emergencyContacts.0'].controlRef).toEqual([
+      'emergencyContacts',
+      0,
+    ]);
+    expect(result['emergencyContacts.1'].value).toBe('Barney');
+    expect(result['emergencyContacts.1'].controlRef).toEqual([
+      'emergencyContacts',
+      1,
+    ]);
+    expect(result['emergencyContacts.2']).toBeUndefined();
   });
 });

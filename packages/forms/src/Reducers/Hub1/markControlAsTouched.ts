@@ -1,19 +1,25 @@
-import cloneDeep from 'lodash.clonedeep';
 import { Action } from '@hub-fx/core';
-import { BaseControl } from '../../Models/Controls';
-import { ControlRef } from '../../Models/ControlRef';
+import { BaseForm } from '../../Models/Controls';
+import { MarkTouched } from '../../Models/Payloads';
 import { getAncestorControls } from '../../Helpers/getAncestorControls';
+import { getControlBranch } from '../../Helpers/getControlBranch';
 
 export const markControlAsTouched = <T>(
-  state: BaseControl<T>,
-  { payload: controlRef }: Action<ControlRef>,
+  form: BaseForm<T>,
+  { payload: { controlRef, markAll } }: Action<MarkTouched>,
 ) => {
-  const newState = cloneDeep(state);
-  const ancestorControls = getAncestorControls(controlRef, newState);
+  const controls = markAll
+    ? getControlBranch(controlRef, form)
+    : getAncestorControls(controlRef, form);
 
-  ancestorControls.forEach((control) => {
-    control.touched = true;
-  });
-
-  return newState;
+  return Object.entries(form).reduce(
+    (acc, [key, control]) => ({
+      ...acc,
+      [key]: {
+        ...control,
+        touched: controls.includes(control) ? true : control.touched,
+      },
+    }),
+    {} as BaseForm<T>,
+  );
 };

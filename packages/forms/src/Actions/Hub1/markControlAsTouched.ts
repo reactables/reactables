@@ -1,12 +1,12 @@
 import { Action } from '@hub-fx/core';
-import { ControlRef } from '../../Models/ControlRef';
+import { MarkTouched } from '../../Models/Payloads';
 
 export const FORMS_MARK_CONTROL_AS_TOUCHED = 'FORMS_MARK_CONTROL_AS_TOUCHED';
 export const markControlAsTouched = (
-  controlRef: ControlRef,
-): Action<ControlRef> => {
+  payload: MarkTouched,
+): Action<MarkTouched> => {
   return {
     type: FORMS_MARK_CONTROL_AS_TOUCHED,
-    payload: controlRef,
+    payload,
   };
 };

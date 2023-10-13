@@ -1,11 +1,13 @@
 import { Action } from '@hub-fx/core';
-import { BaseForm } from '../../Models/Controls';
+import { BaseForm, BaseControl } from '../../Models/Controls';
 import { getFormKey } from '../../Helpers/getFormKey';
 import { getDescendantControls } from '../../Helpers/getDescendantControls';
 import { ControlRef } from '../../Models/ControlRef';
 
-export const UPDATE_ANCESTOR_VALUES = 'UPDATE_ANCESTOR_VALUES';
-export const updateAncestorValues = <T>(
+// Same implementation as updateAncestor values except updating pristine values
+export const UPDATE_ANCESTOR_PRISTINE_VALUES =
+  'UPDATE_ANCESTOR_PRISTINE_VALUES';
+export const updateAncestorPristineValues = <T>(
   form: BaseForm<T>,
   { payload: controlRef }: Action<ControlRef>,
 ): BaseForm<T> => {
@@ -28,29 +30,32 @@ export const updateAncestorValues = <T>(
           (a, b) =>
             (a.controlRef.at(-1) as number) - (b.controlRef.at(-1) as number),
         )
-        .map((control) => control.value);
+        .map((control) => control.pristineValue);
     } else {
       // If parent is a Form Group
-      newValue = siblingControls.reduce((acc, { controlRef, value }) => {
-        return {
-          ...acc,
-          [controlRef.at(-1)]: value,
-        };
-      }, {});
+      newValue = siblingControls.reduce(
+        (acc, { controlRef, pristineValue }) => {
+          return {
+            ...acc,
+            [controlRef.at(-1)]: pristineValue,
+          };
+        },
+        {},
+      );
     }
 
-    const newParentControl = {
+    const newParentControl: BaseControl<unknown> = {
       ...form[parentKey],
-      value: newValue,
+      pristineValue: newValue,
     };
 
-    return updateAncestorValues(
+    return updateAncestorPristineValues(
       {
         ...form,
         [parentKey]: newParentControl,
       },
       {
-        type: UPDATE_ANCESTOR_VALUES,
+        type: UPDATE_ANCESTOR_PRISTINE_VALUES,
         payload: parentRef,
       },
     );

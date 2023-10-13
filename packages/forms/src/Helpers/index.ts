@@ -1,3 +1,2 @@
 export { getControl } from './getControl';
-export { FormConfig } from './FormConfig';
-export { buildForm } from './buildForm';
+export { FormBuilder } from './FormBuilder';

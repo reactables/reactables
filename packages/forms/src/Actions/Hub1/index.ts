@@ -1,5 +1,4 @@
-export { addFormArrayControl } from './addArrayControl';
-export { addGroupControl } from './addGroupControl';
+export { addControl } from './addControl';
 export { markControlAsPristine } from './markControlAsPristine';
 export { markControlAsTouched } from './markControlAsTouched';
 export { markControlAsUntouched } from './markControlAsUntouched';

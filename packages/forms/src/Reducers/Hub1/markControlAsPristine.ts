@@ -1,23 +1,39 @@
-import cloneDeep from 'lodash.clonedeep';
 import { Action } from '@hub-fx/core';
-import { BaseControl } from '../../Models/Controls';
+import { BaseForm } from '../../Models/Controls';
 import { ControlRef } from '../../Models/ControlRef';
-import { getControl } from '../../Helpers/getControl';
-import { getChildControls } from '../../Helpers/getChildControls';
+import { getDescendantControls } from '../../Helpers/getDescendantControls';
+import {
+  updateAncestorPristineValues,
+  UPDATE_ANCESTOR_PRISTINE_VALUES,
+} from './updateAncestorPristineValues';
+import { updateDirty } from './updateDirty';
 
 export const markControlAsPristine = <T>(
-  state: BaseControl<T>,
+  form: BaseForm<T>,
   { payload: controlRef }: Action<ControlRef>,
 ) => {
-  const newState = cloneDeep(state);
-  const control = getControl(controlRef, newState);
-  const controls = getChildControls(control);
+  const descendants = getDescendantControls(controlRef, form);
+  let result = Object.entries(form).reduce((acc, [key, control]) => {
+    const isDescendant = descendants.includes(control);
 
-  controls.forEach((control) => {
-    const pristineControl: BaseControl<unknown> = cloneDeep(control);
-    delete pristineControl.pristineControl;
-    control.pristineControl = pristineControl;
-  });
+    return {
+      ...acc,
+      [key]: isDescendant
+        ? {
+            ...control,
+            pristineValue: control.value,
+            dirty: false,
+          }
+        : control,
+    };
+  }, {} as BaseForm<T>);
 
-  return newState;
+  if (controlRef.length) {
+    result = updateAncestorPristineValues(result, {
+      type: UPDATE_ANCESTOR_PRISTINE_VALUES,
+      payload: controlRef,
+    });
+  }
+
+  return updateDirty(result);
 };

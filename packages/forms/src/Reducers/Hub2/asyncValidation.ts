@@ -1,30 +1,43 @@
-import cloneDeep from 'lodash.clonedeep';
 import { Action } from '@hub-fx/core';
-import { AbstractControl, BaseAbstractControl } from '../../Models/Controls';
+import { Form } from '../../Models/Controls';
 import { getAncestorControls } from '../../Helpers/getAncestorControls';
+import { getFormKey } from '../../Helpers/getFormKey';
+import { ControlRef } from '../../Models/ControlRef';
+import { BaseControl } from '../../Models/Controls';
 
 export const asyncValidation = <T>(
-  state: AbstractControl<T>,
-  action: Action<BaseAbstractControl<unknown>>,
-): AbstractControl<T> => {
-  const newState: AbstractControl<T> = cloneDeep(state);
-  const newControlBranch = getAncestorControls(
-    action.payload.controlRef,
-    newState,
-  ) as AbstractControl<unknown>[];
+  form: Form<T>,
+  { payload: { controlRef } }: Action<BaseControl<unknown>>,
+): Form<T> => {
+  const ancestors = getAncestorControls(controlRef, form);
 
-  newControlBranch.forEach((control, index) => {
-    control.pending = true;
+  const result = Object.entries(form).reduce((acc, [key, control]) => {
+    if (ancestors.includes(control)) {
+      const isChangedControl =
+        getFormKey(control.controlRef) === getFormKey(controlRef);
 
-    if (index === newControlBranch.length - 1) {
-      control.config.asyncValidators.forEach((_, j) => {
-        control.asyncValidateInProgress = {
-          ...control.asyncValidateInProgress,
-          [j]: true,
-        };
-      });
+      return {
+        ...acc,
+        [key]: {
+          ...control,
+          pending: true,
+          asyncValidateInProgress: isChangedControl
+            ? {
+                ...control.config.asyncValidators.reduce(
+                  (acc, _, index) => ({ ...acc, [index]: true }),
+                  {},
+                ),
+              }
+            : control.asyncValidateInProgress,
+        },
+      };
     }
-  });
 
-  return newState;
+    return {
+      ...acc,
+      [key]: control,
+    };
+  }, {} as Form<T>);
+
+  return result;
 };

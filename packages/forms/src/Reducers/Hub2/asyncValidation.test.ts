@@ -1,59 +1,47 @@
-import cloneDeep from 'lodash.clonedeep';
 import { asyncValidation } from './asyncValidation';
-import { buildControlState } from '../../Helpers/buildControlState';
+import { buildFormState } from '../../Helpers/buildFormState';
 import { config, emergencyContactConfigs } from '../../Testing/config';
-import { FormGroup, FormArray, AbstractControl } from '../../Models/Controls';
-import { FormArrayConfig, FormGroupConfig } from '../../Models/Configs';
+import { Form, BaseForm } from '../../Models/Controls';
+import { FormArrayConfig } from '../../Models/Configs';
 import { Contact } from '../../Testing/Models/Contact';
-import { EmergencyContact } from '../../Testing/Models/EmergencyContact';
 import { FORMS_ASYNC_VALIDATE_CONTROL } from '../../Actions/Hub2/valueChange';
-import { getControl } from '../../Helpers/getControl';
 import { formChange } from './formChange';
 import { formChange as formChangeAction } from '../../Actions/Hub2/formChange';
 
 describe('asyncValidation', () => {
   it('should update validation', () => {
-    const clonedConfig: FormGroupConfig = cloneDeep(config);
-    (<FormArrayConfig>clonedConfig.controls.emergencyContacts).controls =
-      emergencyContactConfigs;
-    const initialBaseState = buildControlState(
-      clonedConfig,
-    ) as FormGroup<Contact>;
+    const nonEmptyConfig = {
+      ...(config.controls.emergencyContacts as FormArrayConfig),
+      controls: emergencyContactConfigs,
+    } as FormArrayConfig;
+
+    const initialBaseState: BaseForm<Contact> = buildFormState({
+      ...config,
+      controls: {
+        ...config.controls,
+        emergencyContacts: nonEmptyConfig,
+      },
+    });
 
     const initialState = formChange(
       null,
       formChangeAction(initialBaseState),
-    ) as FormGroup<Contact>;
+    ) as Form<Contact>;
 
-    const expectedState: FormGroup<Contact> = cloneDeep(initialState);
-
-    const emergencyContacts = <FormArray<EmergencyContact[]>>(
-      expectedState.controls.emergencyContacts
-    );
-
-    const emergencyContact = <FormGroup<EmergencyContact>>(
-      emergencyContacts.controls[0]
-    );
-
-    const emergencyContactEmail = emergencyContact.controls.email;
-
-    expectedState.pending = true;
-    emergencyContacts.pending = true;
-    emergencyContact.pending = true;
-    emergencyContactEmail.pending = true;
-    emergencyContactEmail.asyncValidateInProgress = { 0: true, 1: true };
-
-    const controlRef = ['emergencyContacts', 0, 'email'];
-    const control = getControl(
-      controlRef,
-      initialState,
-    ) as AbstractControl<unknown>;
-
-    const newState = asyncValidation(initialState, {
+    const result = asyncValidation(initialState, {
       type: FORMS_ASYNC_VALIDATE_CONTROL,
-      payload: control,
+      payload: initialBaseState['emergencyContacts.0.email'],
     });
 
-    expect(newState).toEqual(expectedState);
+    expect(result.root.pending).toBe(true);
+    expect(result.emergencyContacts.pending).toBe(true);
+    expect(result['emergencyContacts.0'].pending).toBe(true);
+    expect(result['emergencyContacts.0.email'].pending).toBe(true);
+    expect(result['emergencyContacts.0.email'].asyncValidateInProgress).toEqual(
+      {
+        0: true,
+        1: true,
+      },
+    );
   });
 });

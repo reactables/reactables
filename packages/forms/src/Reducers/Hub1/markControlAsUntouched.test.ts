@@ -1,33 +1,28 @@
-import cloneDeep from 'lodash.clonedeep';
 import { markControlAsUntouched } from './markControlAsUntouched';
 import { markControlAsTouched } from './markControlAsTouched';
-import { buildControlState } from '../../Helpers/buildControlState';
+import { buildFormState } from '../../Helpers/buildFormState';
 import { config } from '../../Testing/config';
-import { BaseGroupControl } from '../../Models/Controls';
+import { BaseForm } from '../../Models/Controls';
 import { Contact } from '../../Testing/Models/Contact';
-import { DoctorInfo } from '../../Testing/Models/DoctorInfo';
-import { FORMS_MARK_CONTROL_AS_UNTOUCHED } from '../../Actions/Hub1/markControlAsUntouched';
-import { FORMS_MARK_CONTROL_AS_TOUCHED } from '../../Actions/Hub1/markControlAsTouched';
+import { markControlAsUntouched as markControlAsUntouchedAction } from '../../Actions/Hub1/markControlAsUntouched';
+import { markControlAsTouched as markControlAsTouchedAction } from '../../Actions/Hub1/markControlAsTouched';
 
 describe('markControlAsUntouched', () => {
-  it('should mark control and all anscestors as touched', () => {
-    const initialState = buildControlState(config);
-    const touchedState = markControlAsTouched(initialState, {
-      type: FORMS_MARK_CONTROL_AS_TOUCHED,
-      payload: ['doctorInfo', 'firstName'],
-    });
+  it('should mark control and all relevant controls untouched', () => {
+    const initialState: BaseForm<Contact> = buildFormState(config);
 
-    const expectedState = cloneDeep(touchedState) as BaseGroupControl<Contact>;
-    expectedState.controls.doctorInfo.touched = false;
-    (<BaseGroupControl<DoctorInfo>>(
-      expectedState.controls.doctorInfo
-    )).controls.firstName.touched = false;
+    const touchedState = markControlAsTouched(
+      initialState,
+      markControlAsTouchedAction({ controlRef: ['doctorInfo', 'firstName'] }),
+    );
 
-    const untouchedState = markControlAsUntouched(touchedState, {
-      type: FORMS_MARK_CONTROL_AS_UNTOUCHED,
-      payload: ['doctorInfo'],
-    });
+    const result = markControlAsUntouched(
+      touchedState,
+      markControlAsUntouchedAction(['doctorInfo']),
+    );
 
-    expect(untouchedState).toEqual(expectedState);
+    expect(result.root.touched).toBe(false);
+    expect(result.doctorInfo.touched).toBe(false);
+    expect(result['doctorInfo.firstName'].touched).toBe(false);
   });
 });

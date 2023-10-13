@@ -1,21 +1,42 @@
-import cloneDeep from 'lodash.clonedeep';
 import { Action } from '@hub-fx/core';
-import { BaseControl } from '../../Models/Controls';
+import { BaseForm } from '../../Models/Controls';
 import { ControlRef } from '../../Models/ControlRef';
-import { getControl } from '../../Helpers/getControl';
-import { getChildControls } from '../../Helpers/getChildControls';
+import { getDescendantControls } from '../../Helpers/getDescendantControls';
+import { getFormKey } from '../../Helpers/getFormKey';
 
 export const markControlAsUntouched = <T>(
-  state: BaseControl<T>,
+  form: BaseForm<T>,
   { payload: controlRef }: Action<ControlRef>,
 ) => {
-  const newState = cloneDeep(state);
-  const control = getControl(controlRef, newState);
-  const childControls = getChildControls(control);
+  const descendants = getDescendantControls(controlRef, form);
+  let result = Object.entries(form).reduce(
+    (acc, [key, control]) => ({
+      ...acc,
+      [key]: {
+        ...control,
+        touched: descendants.includes(control) ? false : control.touched,
+      },
+    }),
+    {} as BaseForm<T>,
+  );
 
-  childControls.forEach((control) => {
-    control.touched = false;
-  });
+  // Update ancestors
+  let currentRef = controlRef;
+  let key: string;
+  while (currentRef.length > 0) {
+    currentRef = currentRef.slice(0, -1);
 
-  return newState;
+    key = getFormKey(currentRef);
+    result = {
+      ...result,
+      [key]: {
+        ...result[key],
+        touched: getDescendantControls(currentRef, result, true).some(
+          (control) => control.touched,
+        ),
+      },
+    };
+  }
+
+  return result;
 };

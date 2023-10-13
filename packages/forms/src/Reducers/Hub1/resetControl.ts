@@ -1,42 +1,49 @@
-import cloneDeep from 'lodash.clonedeep';
 import { Action } from '@hub-fx/core';
-import {
-  BaseArrayControl,
-  BaseGroupControl,
-  BaseControl,
-} from '../../Models/Controls';
+import { BaseForm } from '../../Models/Controls';
 import { ControlRef } from '../../Models/ControlRef';
 import { getControl } from '../../Helpers/getControl';
 import {
   updateAncestorValues,
-  FORMS_UPDATE_ANCESTOR_VALUES,
+  UPDATE_ANCESTOR_VALUES,
 } from './updateAncestorValues';
+import { syncValidate } from './syncValidate';
+import { updateDirty } from './updateDirty';
+import { getDescendantControls } from '../../Helpers/getDescendantControls';
+import { buildFormState } from '../../Helpers/buildFormState';
 
 export const resetControl = <T>(
-  state: BaseControl<T>,
+  form: BaseForm<T>,
   { payload: controlRef }: Action<ControlRef>,
 ) => {
-  if (!controlRef.length) {
-    return {
-      pristineControl: state.pristineControl,
-      ...state.pristineControl,
-    };
-  }
+  const controlToReset = getControl(controlRef, form);
 
-  const parentRef = controlRef.slice(0, -1);
-  const newState = cloneDeep(state);
+  const descendants = getDescendantControls(controlRef, form);
 
-  const control = getControl(controlRef, newState);
-  const parentControl = getControl(parentRef, newState) as
-    | BaseGroupControl<unknown>
-    | BaseArrayControl<unknown>;
-  parentControl.controls[controlRef.slice(-1)[0]] = {
-    pristineControl: control.pristineControl,
-    ...control.pristineControl,
-  };
+  // Remove all descendants
+  const descendantsRemoved = Object.entries(form).reduce(
+    (acc, [key, control]) => {
+      if (descendants.includes(control)) return acc;
 
-  return updateAncestorValues(newState, {
-    type: FORMS_UPDATE_ANCESTOR_VALUES,
-    payload: controlRef,
-  });
+      return {
+        ...acc,
+        [key]: control,
+      };
+    },
+    {} as BaseForm<unknown>,
+  );
+
+  const restoredControls = buildFormState(
+    controlToReset.config,
+    descendantsRemoved,
+    controlToReset.controlRef,
+  );
+
+  return updateDirty(
+    syncValidate(
+      updateAncestorValues(restoredControls, {
+        type: UPDATE_ANCESTOR_VALUES,
+        payload: controlRef,
+      }),
+    ),
+  );
 };

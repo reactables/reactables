@@ -1,15 +1,16 @@
-import { BaseAbstractControl } from '../Models/Controls';
 import { ControlRef } from '../Models/ControlRef';
-import { getControl } from './getControl';
 import { getAncestorControls } from './getAncestorControls';
-import { getChildControls } from './getChildControls';
+import { getDescendantControls } from './getDescendantControls';
+import { BaseControl, FormControl, BaseForm, Form } from '../Models/Controls';
 
-export const getControlBranch = (
+export const getControlBranch = <T extends BaseForm<unknown> | Form<unknown>>(
   controlRef: ControlRef,
-  form: BaseAbstractControl<unknown>,
-): BaseAbstractControl<unknown>[] => {
+  form: T,
+): (T extends Form<unknown>
+  ? FormControl<unknown>
+  : BaseControl<unknown>)[] => {
   const ancestors = getAncestorControls(controlRef, form);
-  const childControls = getChildControls(getControl(controlRef, form)).slice(1);
+  const childControls = getDescendantControls(controlRef, form).slice(1);
 
   return ancestors.concat(childControls);
 };
