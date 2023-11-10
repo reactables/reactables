@@ -17,15 +17,17 @@ describe('Counter', () => {
 
   it('should increment and reset', () => {
     testScheduler.run(({ expectObservable, cold }) => {
-      const counter = Counter();
+      const {
+        state$,
+        actions: { increment, reset },
+      } = Counter();
 
-      subscription = cold('--b-c', { b: 'increment', c: 'reset' }).subscribe(
-        (action: 'increment' | 'reset') => {
-          counter.actions[action]();
-        },
-      );
+      subscription = cold('--b-c', {
+        b: increment,
+        c: reset,
+      }).subscribe((action) => action());
 
-      expectObservable(counter.state$).toBe('a-b-c', {
+      expectObservable(state$).toBe('a-b-c', {
         a: { count: 0 },
         b: { count: 1 },
         c: { count: 0 },

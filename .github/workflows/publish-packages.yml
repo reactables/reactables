@@ -32,6 +32,11 @@ jobs:
       - run: npm publish --workspace=@hub-fx/forms --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: npm install @hub-fx/core@${{ github.event.release.tag_name || inputs.tag_name }} --workspace=@hub-fx/examples
+      - run: npm run build --workspace=@hub-fx/examples
+      - run: npm publish --workspace=@hub-fx/examples --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - run: npm install @hub-fx/forms@${{ github.event.release.tag_name || inputs.tag_name }} --workspace=@hub-fx/react-forms
       - run: npm run build --workspace=@hub-fx/react-forms
       - run: npm publish --workspace=@hub-fx/react-forms --access public

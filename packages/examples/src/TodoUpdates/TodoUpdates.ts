@@ -5,7 +5,7 @@ import {
   Todo,
 } from './Models/Todos';
 import { switchMap, map } from 'rxjs/operators';
-import { Observable, from } from 'rxjs';
+import { Observable } from 'rxjs';
 
 // ACTIONS
 const SEND_TODO_STATUS_UPDATE = 'SEND_TODO_STATUS_UPDATE';
@@ -27,10 +27,7 @@ const sendTodoStatusUpdate = (
       (actions$: Observable<Action<UpdateTodoPayload>>) => {
         return actions$.pipe(
           // Call todo API Service - switchMap operator cancels previous pending call if a new one is initiated
-          switchMap(({ payload }) => {
-            const response = updateTodoApi(payload);
-            return response instanceof Promise ? from(response) : response;
-          }),
+          switchMap(({ payload }) => updateTodoApi(payload)),
 
           // Map success response to appropriate action
           map((payload) => todoStatusUpdateSuccess(payload)),
@@ -53,7 +50,7 @@ interface TodosState {
   todos: Todo[];
 }
 
-const initialState: TodosState = {
+export const initialState: TodosState = {
   todos: [
     {
       id: 1,
