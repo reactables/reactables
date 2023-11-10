@@ -1,8 +1,6 @@
 import { Observable } from 'rxjs';
 
-export interface Reactable<T> {
+export interface Reactable<T, S> {
   state$: Observable<T>;
-  actions: {
-    [key: string]: (...args: [unknown]) => void;
-  };
+  actions?: S;
 }
