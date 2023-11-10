@@ -1,5 +1,5 @@
 import { switchMap, map } from 'rxjs/operators';
-import { Action, Reducer, HubFactory, Hub } from '@hub-fx/core';
+import { Action, Reducer, HubFactory, Reactable } from '@hub-fx/core';
 import { Observable } from 'rxjs';
 import { EventTypes, FetchPricePayload } from './Models/EventTypes';
 
@@ -22,21 +22,25 @@ export const fetchPriceSuccess = (price: number): Action<number> => ({
   payload: price,
 });
 
-export const FETCH_PRICE = 'FETCH_PRICE';
-export const fetchPrice = (
-  payload: FetchPricePayload,
+export const CONTROL_CHANGE = 'CONTROL_CHANGE';
+export const controlChange = (
+  controlChange: ControlState,
   // Provide method for calling get price API service
-  getPrice: (payload: FetchPricePayload) => Observable<number>,
-): Action<FetchPricePayload, number> => ({
-  type: FETCH_PRICE,
-  payload,
+  getPriceApi: (
+    payload: FetchPricePayload,
+  ) => Observable<number> | Promise<number>,
+): Action<ControlState, number> => ({
+  type: CONTROL_CHANGE,
+  payload: controlChange,
   scopedEffects: {
     // Scoped Effects to listen for FETCH_PRICE action and handling get price API call
     effects: [
       (actions$) =>
         actions$.pipe(
           // Call get price API Service - switchMap operator cancels previous pending call if a new one is initiated
-          switchMap(({ payload }) => getPrice(payload)),
+          switchMap(({ payload: { selectedEvent: event, qty } }) =>
+            getPriceApi({ event, qty }),
+          ),
 
           // Map success response to appropriate action
           map((price) => fetchPriceSuccess(price)),
@@ -79,26 +83,32 @@ const controlReducer: Reducer<ControlState> = (
 
 // Event Tickets State
 
-interface EventTicketsState extends ControlState {
+export interface EventTicketsState {
+  controls: ControlState;
   calculating: boolean;
   price: number | null;
 }
 
-const initialState = {
-  ...initialControlState,
+export const initialState: EventTicketsState = {
+  controls: {
+    ...initialControlState,
+  },
   calculating: false,
   price: null,
 };
 
 // Reducer to handle price info updates
-const priceReducer: Reducer<EventTicketsState> = (
+const eventTicketsReducer: Reducer<EventTicketsState> = (
   state = initialState,
   action,
 ) => {
   switch (action?.type) {
-    case FETCH_PRICE:
+    case CONTROL_CHANGE:
       return {
         ...state,
+        controls: {
+          ...(action.payload as ControlState),
+        },
         calculating: true,
       };
     case FETCH_PRICE_SUCCESS:
@@ -112,26 +122,35 @@ const priceReducer: Reducer<EventTicketsState> = (
   }
 };
 
-// const buildObservables = (
-//   hub: Hub,
-//   // Provide method for calling get price API service
-//   getPrice: (payload: FetchPricePayload) => Observable<number>,
-// ) => {
-//   // Initialize observable stream for the control state
-//   const control$ = hub.store({ reducer: controlReducer });
+interface EventTicketsActions {
+  selectEvent: (event: EventTypes) => void;
+  setQty: (qty: number) => void;
+}
 
-//   // Initialize observable stream for the price info state
-//   const priceInfo$ = HubFactory({
-//     // Declare control$ stream as a source for priceInfo$.
-//     sources: [
-//       control$.pipe(
-//         // Map state changes from control$ to trigger FETCH_PRICE action for the priceInfo$ stream
-//         map(({ qty, selectedEvent: event }) =>
-//           fetchPrice({ qty, event }, getPrice),
-//         ),
-//       ),
-//     ],
-//   }).store({ reducer: priceReducer });
+export const EventTickets = (
+  getPriceApi: (
+    payload: FetchPricePayload,
+  ) => Observable<number> | Promise<number>,
+): Reactable<EventTicketsState, EventTicketsActions> => {
+  const hub1 = HubFactory();
 
-//   return { control$, priceInfo$ };
-// };
+  // Initialize observable stream for the control state
+  const control$ = hub1.store({ reducer: controlReducer });
+
+  const hub2 = HubFactory({
+    sources: [
+      control$.pipe(
+        // Map state changes from control$ to trigger FETCH_PRICE action for the priceInfo$ stream
+        map((change) => controlChange(change, getPriceApi)),
+      ),
+    ],
+  });
+
+  return {
+    state$: hub2.store({ reducer: eventTicketsReducer }),
+    actions: {
+      selectEvent: (event: EventTypes) => hub1.dispatch(selectEvent(event)),
+      setQty: (qty: number) => hub1.dispatch(setQty(qty)),
+    },
+  };
+};

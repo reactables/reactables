@@ -11,6 +11,7 @@ const reset = (): Action => ({ type: RESET });
 interface CounterState {
   count: number;
 }
+
 const reducer: Reducer<CounterState> = (state = { count: 0 }, action) => {
   switch (action?.type) {
     case INCREMENT:
@@ -22,7 +23,12 @@ const reducer: Reducer<CounterState> = (state = { count: 0 }, action) => {
   }
 };
 
-export const Counter = (): Reactable<CounterState> => {
+interface CounterActions {
+  increment: () => void;
+  reset: () => void;
+}
+
+export const Counter = (): Reactable<CounterState, CounterActions> => {
   const hub = HubFactory();
 
   return {
