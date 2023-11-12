@@ -1,0 +1,20 @@
+{
+  "name": "@hub-fx/react-helpers",
+  "description": "React Helpers for Hub-fx",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rimraf dist && rollup --config",
+    "lint": "eslint --max-warnings 0 \"src/**/*.ts*\" && prettier --check src/",
+    "fix": "eslint --fix \"src/**/*.ts*\" && prettier --write \"src/**/*.(ts*|scss)\""
+  },
+  "author": "David Lai",
+  "license": "ISC",
+  "dependencies": {},
+  "peerDependencies": {
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0",
+    "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0"
+  }
+}
