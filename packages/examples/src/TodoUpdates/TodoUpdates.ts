@@ -6,6 +6,7 @@ import {
 } from './Models/Todos';
 import { switchMap, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import React from 'react';
 
 // ACTIONS
 const SEND_TODO_STATUS_UPDATE = 'SEND_TODO_STATUS_UPDATE';
@@ -100,11 +101,17 @@ const reducer: Reducer<TodosState> = (state = initialState, action) => {
   return state;
 };
 
+interface ITodoUpdates extends Reactable<TodosState> {
+  actions: {
+    sendTodoStatusUpdate: (payload: UpdateTodoPayload) => void;
+  };
+}
+
 export const TodoUpdates = (
   updateTodoApi: (
     payload: UpdateTodoPayload,
   ) => Observable<UpdateTodoPayloadSuccess> | Promise<UpdateTodoPayloadSuccess>,
-): Reactable<TodosState> => {
+): ITodoUpdates => {
   const hub = HubFactory();
 
   return {

@@ -22,7 +22,14 @@ const reducer: Reducer<CounterState> = (state = { count: 0 }, action) => {
   }
 };
 
-export const Counter = (): Reactable<CounterState> => {
+interface ICounter extends Reactable<CounterState> {
+  actions: {
+    increment: () => void;
+    reset: () => void;
+  };
+}
+
+export const Counter = (): ICounter => {
   const hub = HubFactory();
 
   return {

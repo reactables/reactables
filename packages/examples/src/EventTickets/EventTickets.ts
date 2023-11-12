@@ -122,11 +122,18 @@ const eventTicketsReducer: Reducer<EventTicketsState> = (
   }
 };
 
+interface IEventTickets extends Reactable<EventTicketsState> {
+  actions: {
+    selectEvent: (event: EventTypes) => void;
+    setQty: (qty: number) => void;
+  };
+}
+
 export const EventTickets = (
   getPriceApi: (
     payload: FetchPricePayload,
   ) => Observable<number> | Promise<number>,
-): Reactable<EventTicketsState> => {
+): IEventTickets => {
   const hub1 = HubFactory();
 
   // Initialize observable stream for the control state
