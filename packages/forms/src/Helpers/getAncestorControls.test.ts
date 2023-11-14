@@ -7,8 +7,7 @@ import { FormArrayConfig, FormGroupConfig } from '../Models/Configs';
 describe('getAncestorControls', () => {
   it('should get ancestor controls', () => {
     const clonedConfig: FormGroupConfig = cloneDeep(config);
-    (<FormArrayConfig>clonedConfig.controls.emergencyContacts).controls =
-      emergencyContactConfigs;
+    (<FormArrayConfig>clonedConfig.controls.emergencyContacts).controls = emergencyContactConfigs;
 
     const form = buildFormState(clonedConfig);
 

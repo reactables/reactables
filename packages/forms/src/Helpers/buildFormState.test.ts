@@ -1,11 +1,7 @@
 import { buildFormState } from './buildFormState';
 import { FormArrayConfig, FormGroupConfig, FormControlConfig } from '../Models';
 import { DoctorInfo } from '../Testing/Models/DoctorInfo';
-import {
-  config,
-  firstNameNotSameAsLast,
-  emergencyContactConfigs,
-} from '../Testing/config';
+import { config, firstNameNotSameAsLast, emergencyContactConfigs } from '../Testing/config';
 import { required, email } from '../Validators/Validators';
 
 describe('buildFormState', () => {
@@ -158,27 +154,16 @@ describe('buildFormState', () => {
     expect(result.root.validatorErrors).toEqual({});
     expect(result.root.validatorsValid).toBe(null);
 
-    expect(result.emergencyContacts.value).toEqual(
-      expectedFormValue.emergencyContacts,
-    );
+    expect(result.emergencyContacts.value).toEqual(expectedFormValue.emergencyContacts);
     expect(result.emergencyContacts.controlRef).toEqual(['emergencyContacts']);
-    expect(result.emergencyContacts.pristineValue).toEqual(
-      expectedFormValue.emergencyContacts,
-    );
-    expect(result.emergencyContacts.config).toEqual(
-      mainConfig.controls['emergencyContacts'],
-    );
+    expect(result.emergencyContacts.pristineValue).toEqual(expectedFormValue.emergencyContacts);
+    expect(result.emergencyContacts.config).toEqual(mainConfig.controls['emergencyContacts']);
     expect(result.emergencyContacts.touched).toEqual(false);
     expect(result.emergencyContacts.validatorErrors).toEqual({});
     expect(result.emergencyContacts.validatorsValid).toBe(null);
 
-    expect(result['emergencyContacts.0'].value).toEqual(
-      expectedFormValue.emergencyContacts[0],
-    );
-    expect(result['emergencyContacts.0'].controlRef).toEqual([
-      'emergencyContacts',
-      0,
-    ]);
+    expect(result['emergencyContacts.0'].value).toEqual(expectedFormValue.emergencyContacts[0]);
+    expect(result['emergencyContacts.0'].controlRef).toEqual(['emergencyContacts', 0]);
     expect(result['emergencyContacts.0'].pristineValue).toEqual(
       expectedFormValue.emergencyContacts[0],
     );
@@ -189,13 +174,8 @@ describe('buildFormState', () => {
     expect(result['emergencyContacts.0'].validatorErrors).toEqual({});
     expect(result['emergencyContacts.0'].validatorsValid).toBe(null);
 
-    expect(result['emergencyContacts.1'].value).toEqual(
-      expectedFormValue.emergencyContacts[1],
-    );
-    expect(result['emergencyContacts.1'].controlRef).toEqual([
-      'emergencyContacts',
-      1,
-    ]);
+    expect(result['emergencyContacts.1'].value).toEqual(expectedFormValue.emergencyContacts[1]);
+    expect(result['emergencyContacts.1'].controlRef).toEqual(['emergencyContacts', 1]);
     expect(result['emergencyContacts.1'].pristineValue).toEqual(
       expectedFormValue.emergencyContacts[1],
     );

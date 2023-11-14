@@ -11,11 +11,7 @@ import { Contact } from '../Testing/Models/Contact';
 import { controlChange } from '../Actions/Hub1/controlChange';
 import { FORMS_ASYNC_VALIDATE_CONTROL } from '../Actions/Hub2/valueChange';
 import { FORMS_FORM_CHANGE } from '../Actions/Hub2/formChange';
-import {
-  config,
-  emergencyContactConfigs,
-  firstNameNotSameAsLast,
-} from '../Testing/config';
+import { config, emergencyContactConfigs, firstNameNotSameAsLast } from '../Testing/config';
 import cloneDeep from 'lodash.clonedeep';
 import { addControl } from '../Actions/Hub1/addControl';
 import { removeControl } from '../Actions/Hub1/removeControl';
@@ -27,7 +23,6 @@ import {
   uniqueFirstAndLastName,
   blacklistedEmail,
 } from '../Testing/AsyncValidators';
-import { ControlAsyncValidationResponse } from '../Models/Payloads';
 
 describe('buildHub2Source', () => {
   let testScheduler: TestScheduler;
@@ -36,9 +31,7 @@ describe('buildHub2Source', () => {
   const mapTypeAndControlRef = <T>({
     type,
     payload,
-  }:
-    | Action<BaseForm<T>>
-    | Action<BaseControl<unknown>, ControlAsyncValidationResponse>) => ({
+  }: Action<BaseForm<T>> | Action<BaseControl<unknown>>) => ({
     type,
     controlRef: payload.controlRef,
   });
@@ -74,13 +67,10 @@ describe('buildHub2Source', () => {
         });
 
         subscription = input$.subscribe(hub.dispatch);
-        expectObservable(sourceForHub2$.pipe(map(({ type }) => type))).toBe(
-          '(ab)',
-          {
-            a: FORMS_FORM_CHANGE,
-            b: FORMS_ASYNC_VALIDATE_CONTROL,
-          },
-        );
+        expectObservable(sourceForHub2$.pipe(map(({ type }) => type))).toBe('(ab)', {
+          a: FORMS_FORM_CHANGE,
+          b: FORMS_ASYNC_VALIDATE_CONTROL,
+        });
       });
     });
 
@@ -91,9 +81,7 @@ describe('buildHub2Source', () => {
         (<FormArrayConfig>clonedConfig.controls.emergencyContacts).controls =
           emergencyContactConfigs;
 
-        const reducer = buildHub1Reducer(clonedConfig) as Reducer<
-          BaseForm<Contact>
-        >;
+        const reducer = buildHub1Reducer(clonedConfig) as Reducer<BaseForm<Contact>>;
         const hub = HubFactory();
 
         const sourceForHub2$ = buildHub2Source(reducer, hub);
@@ -114,53 +102,48 @@ describe('buildHub2Source', () => {
         });
 
         subscription = input$.subscribe(hub.dispatch);
-        expectObservable(sourceForHub2$.pipe(map(mapTypeAndControlRef))).toBe(
-          '(abcde)-(fghij)',
-          {
-            a: { type: FORMS_FORM_CHANGE, controlRef: undefined },
-            b: {
-              type: FORMS_ASYNC_VALIDATE_CONTROL,
-              controlRef: [],
-            },
-            c: {
-              type: FORMS_ASYNC_VALIDATE_CONTROL,
-              controlRef: ['emergencyContacts'],
-            },
-            d: {
-              type: FORMS_ASYNC_VALIDATE_CONTROL,
-              controlRef: ['emergencyContacts', 1],
-            },
-            e: {
-              type: FORMS_ASYNC_VALIDATE_CONTROL,
-              controlRef: ['emergencyContacts', 1, 'email'],
-            },
-            f: { type: FORMS_FORM_CHANGE, controlRef: undefined },
-            g: {
-              type: FORMS_ASYNC_VALIDATE_CONTROL,
-              controlRef: [],
-            },
-            h: {
-              type: FORMS_ASYNC_VALIDATE_CONTROL,
-              controlRef: ['emergencyContacts'],
-            },
-            i: {
-              type: FORMS_ASYNC_VALIDATE_CONTROL,
-              controlRef: ['emergencyContacts', 0],
-            },
-            j: {
-              type: FORMS_ASYNC_VALIDATE_CONTROL,
-              controlRef: ['emergencyContacts', 0, 'email'],
-            },
+        expectObservable(sourceForHub2$.pipe(map(mapTypeAndControlRef))).toBe('(abcde)-(fghij)', {
+          a: { type: FORMS_FORM_CHANGE, controlRef: undefined },
+          b: {
+            type: FORMS_ASYNC_VALIDATE_CONTROL,
+            controlRef: [],
           },
-        );
+          c: {
+            type: FORMS_ASYNC_VALIDATE_CONTROL,
+            controlRef: ['emergencyContacts'],
+          },
+          d: {
+            type: FORMS_ASYNC_VALIDATE_CONTROL,
+            controlRef: ['emergencyContacts', 1],
+          },
+          e: {
+            type: FORMS_ASYNC_VALIDATE_CONTROL,
+            controlRef: ['emergencyContacts', 1, 'email'],
+          },
+          f: { type: FORMS_FORM_CHANGE, controlRef: undefined },
+          g: {
+            type: FORMS_ASYNC_VALIDATE_CONTROL,
+            controlRef: [],
+          },
+          h: {
+            type: FORMS_ASYNC_VALIDATE_CONTROL,
+            controlRef: ['emergencyContacts'],
+          },
+          i: {
+            type: FORMS_ASYNC_VALIDATE_CONTROL,
+            controlRef: ['emergencyContacts', 0],
+          },
+          j: {
+            type: FORMS_ASYNC_VALIDATE_CONTROL,
+            controlRef: ['emergencyContacts', 0, 'email'],
+          },
+        });
       });
     });
 
     it('should emit async validation for an added group control and all ancestors', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const reducer = buildHub1Reducer(cloneDeep(config)) as Reducer<
-          BaseForm<Contact>
-        >;
+        const reducer = buildHub1Reducer(cloneDeep(config)) as Reducer<BaseForm<Contact>>;
 
         const hub = HubFactory();
 
@@ -180,32 +163,27 @@ describe('buildHub2Source', () => {
         });
 
         subscription = input$.subscribe(hub.dispatch);
-        expectObservable(sourceForHub2$.pipe(map(mapTypeAndControlRef))).toBe(
-          '-(abcd)',
-          {
-            a: { type: FORMS_FORM_CHANGE, controlRef: undefined },
-            b: {
-              type: FORMS_ASYNC_VALIDATE_CONTROL,
-              controlRef: [],
-            },
-            c: {
-              type: FORMS_ASYNC_VALIDATE_CONTROL,
-              controlRef: ['doctorInfo'],
-            },
-            d: {
-              type: FORMS_ASYNC_VALIDATE_CONTROL,
-              controlRef: ['doctorInfo', 'type'],
-            },
+        expectObservable(sourceForHub2$.pipe(map(mapTypeAndControlRef))).toBe('-(abcd)', {
+          a: { type: FORMS_FORM_CHANGE, controlRef: undefined },
+          b: {
+            type: FORMS_ASYNC_VALIDATE_CONTROL,
+            controlRef: [],
           },
-        );
+          c: {
+            type: FORMS_ASYNC_VALIDATE_CONTROL,
+            controlRef: ['doctorInfo'],
+          },
+          d: {
+            type: FORMS_ASYNC_VALIDATE_CONTROL,
+            controlRef: ['doctorInfo', 'type'],
+          },
+        });
       });
     });
 
     it('should emit async validation for an added array control and all ancestors', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const reducer = buildHub1Reducer(cloneDeep(config)) as Reducer<
-          BaseForm<Contact>
-        >;
+        const reducer = buildHub1Reducer(cloneDeep(config)) as Reducer<BaseForm<Contact>>;
 
         const hub = HubFactory();
 
@@ -235,28 +213,25 @@ describe('buildHub2Source', () => {
 
         subscription = input$.subscribe(hub.dispatch);
 
-        expectObservable(sourceForHub2$.pipe(map(mapTypeAndControlRef))).toBe(
-          '-(abcde)',
-          {
-            a: { type: FORMS_FORM_CHANGE, controlRef: undefined },
-            b: {
-              type: FORMS_ASYNC_VALIDATE_CONTROL,
-              controlRef: [],
-            },
-            c: {
-              type: FORMS_ASYNC_VALIDATE_CONTROL,
-              controlRef: ['emergencyContacts'],
-            },
-            d: {
-              type: FORMS_ASYNC_VALIDATE_CONTROL,
-              controlRef: ['emergencyContacts', 0],
-            },
-            e: {
-              type: FORMS_ASYNC_VALIDATE_CONTROL,
-              controlRef: ['emergencyContacts', 0, 'email'],
-            },
+        expectObservable(sourceForHub2$.pipe(map(mapTypeAndControlRef))).toBe('-(abcde)', {
+          a: { type: FORMS_FORM_CHANGE, controlRef: undefined },
+          b: {
+            type: FORMS_ASYNC_VALIDATE_CONTROL,
+            controlRef: [],
           },
-        );
+          c: {
+            type: FORMS_ASYNC_VALIDATE_CONTROL,
+            controlRef: ['emergencyContacts'],
+          },
+          d: {
+            type: FORMS_ASYNC_VALIDATE_CONTROL,
+            controlRef: ['emergencyContacts', 0],
+          },
+          e: {
+            type: FORMS_ASYNC_VALIDATE_CONTROL,
+            controlRef: ['emergencyContacts', 0, 'email'],
+          },
+        });
       });
     });
 
@@ -266,9 +241,7 @@ describe('buildHub2Source', () => {
         (<FormArrayConfig>clonedConfig.controls.emergencyContacts).controls =
           emergencyContactConfigs;
 
-        const reducer = buildHub1Reducer(clonedConfig) as Reducer<
-          BaseForm<Contact>
-        >;
+        const reducer = buildHub1Reducer(clonedConfig) as Reducer<BaseForm<Contact>>;
 
         const hub = HubFactory();
         const action = removeControl(['emergencyContacts', 0]);
@@ -280,20 +253,17 @@ describe('buildHub2Source', () => {
 
         subscription = input$.subscribe(hub.dispatch);
 
-        expectObservable(sourceForHub2$.pipe(map(mapTypeAndControlRef))).toBe(
-          '-(abc)',
-          {
-            a: { type: FORMS_FORM_CHANGE, controlRef: undefined },
-            b: {
-              type: FORMS_ASYNC_VALIDATE_CONTROL,
-              controlRef: [],
-            },
-            c: {
-              type: FORMS_ASYNC_VALIDATE_CONTROL,
-              controlRef: ['emergencyContacts'],
-            },
+        expectObservable(sourceForHub2$.pipe(map(mapTypeAndControlRef))).toBe('-(abc)', {
+          a: { type: FORMS_FORM_CHANGE, controlRef: undefined },
+          b: {
+            type: FORMS_ASYNC_VALIDATE_CONTROL,
+            controlRef: [],
           },
-        );
+          c: {
+            type: FORMS_ASYNC_VALIDATE_CONTROL,
+            controlRef: ['emergencyContacts'],
+          },
+        });
       });
     });
 
@@ -303,9 +273,7 @@ describe('buildHub2Source', () => {
         (<FormArrayConfig>clonedConfig.controls.emergencyContacts).controls =
           emergencyContactConfigs;
 
-        const reducer = buildHub1Reducer(clonedConfig) as Reducer<
-          BaseForm<Contact>
-        >;
+        const reducer = buildHub1Reducer(clonedConfig) as Reducer<BaseForm<Contact>>;
 
         const hub = HubFactory();
         const action = resetControl(['emergencyContacts', 0]);
@@ -317,28 +285,25 @@ describe('buildHub2Source', () => {
 
         subscription = input$.subscribe(hub.dispatch);
 
-        expectObservable(sourceForHub2$.pipe(map(mapTypeAndControlRef))).toBe(
-          '-(abcde)',
-          {
-            a: { type: FORMS_FORM_CHANGE, controlRef: undefined },
-            b: {
-              type: FORMS_ASYNC_VALIDATE_CONTROL,
-              controlRef: [],
-            },
-            c: {
-              type: FORMS_ASYNC_VALIDATE_CONTROL,
-              controlRef: ['emergencyContacts'],
-            },
-            d: {
-              type: FORMS_ASYNC_VALIDATE_CONTROL,
-              controlRef: ['emergencyContacts', 0],
-            },
-            e: {
-              type: FORMS_ASYNC_VALIDATE_CONTROL,
-              controlRef: ['emergencyContacts', 0, 'email'],
-            },
+        expectObservable(sourceForHub2$.pipe(map(mapTypeAndControlRef))).toBe('-(abcde)', {
+          a: { type: FORMS_FORM_CHANGE, controlRef: undefined },
+          b: {
+            type: FORMS_ASYNC_VALIDATE_CONTROL,
+            controlRef: [],
           },
-        );
+          c: {
+            type: FORMS_ASYNC_VALIDATE_CONTROL,
+            controlRef: ['emergencyContacts'],
+          },
+          d: {
+            type: FORMS_ASYNC_VALIDATE_CONTROL,
+            controlRef: ['emergencyContacts', 0],
+          },
+          e: {
+            type: FORMS_ASYNC_VALIDATE_CONTROL,
+            controlRef: ['emergencyContacts', 0, 'email'],
+          },
+        });
       });
     });
   });
