@@ -10,14 +10,28 @@ export interface Slice<T> {
 export interface SliceConfig<T> {
   name: string;
   initialState: T;
-  reducers: {
-    [key: string]:
-      | SingleActionReducer<unknown, unknown>
-      | SliceCaseConfig<unknown, unknown>;
+  cases: {
+    [key: string]: SingleActionReducer<T, unknown>;
   };
 }
 
-export interface SliceCaseConfig<T, S> {
-  reducer: SingleActionReducer<T, S>;
-  prepare: <Q>(payload: Q) => Action<S>;
-}
+export const createSlice = <T>(config: SliceConfig<T>) => {
+  const { name, initialState, cases } = config;
+
+  const finalReducer: Reducer<T> = Object.entries(cases).reduce(
+    (acc, [key, _case]): Reducer<T> => {
+      const newFunc = <S>(state: T, action: Action<S>) => {
+        if (action.type === `${name}/${key}`) {
+          return _case(state, action);
+        }
+
+        return acc(state, action);
+      };
+
+      return newFunc as Reducer<T>;
+    },
+    (state = initialState) => state,
+  );
+
+  return finalReducer;
+};
