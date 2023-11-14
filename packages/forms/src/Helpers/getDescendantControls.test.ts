@@ -7,15 +7,13 @@ import { FormArrayConfig, FormGroupConfig } from '../Models/Configs';
 describe('getDescendantControls', () => {
   it('should get child controls', () => {
     const clonedConfig: FormGroupConfig = cloneDeep(config);
-    (<FormArrayConfig>clonedConfig.controls.emergencyContacts).controls =
-      emergencyContactConfigs;
+    (<FormArrayConfig>clonedConfig.controls.emergencyContacts).controls = emergencyContactConfigs;
 
     const form = buildFormState(clonedConfig);
 
-    const childControlRefs = getDescendantControls(
-      ['emergencyContacts'],
-      form,
-    ).map((control) => control.controlRef);
+    const childControlRefs = getDescendantControls(['emergencyContacts'], form).map(
+      (control) => control.controlRef,
+    );
 
     expect(childControlRefs).toEqual([
       ['emergencyContacts'],

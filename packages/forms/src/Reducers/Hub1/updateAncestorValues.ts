@@ -24,10 +24,7 @@ export const updateAncestorValues = <T>(
     if (Array.isArray(form[parentKey].value)) {
       newValue = siblingControls
         .slice()
-        .sort(
-          (a, b) =>
-            (a.controlRef.at(-1) as number) - (b.controlRef.at(-1) as number),
-        )
+        .sort((a, b) => (a.controlRef.at(-1) as number) - (b.controlRef.at(-1) as number))
         .map((control) => control.value);
     } else {
       // If parent is a Form Group

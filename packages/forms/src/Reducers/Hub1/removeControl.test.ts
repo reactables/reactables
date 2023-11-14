@@ -56,10 +56,7 @@ describe('removeControl', () => {
     });
 
     it('should remove a formGroup control and its descendants', () => {
-      const result = removeControl(
-        initialState,
-        removeControlAction(['emergencyContact']),
-      );
+      const result = removeControl(initialState, removeControlAction(['emergencyContact']));
 
       expect(result.root.value).toEqual({
         firstName: '',
@@ -91,33 +88,20 @@ describe('removeControl', () => {
       }),
     );
 
-    expect(initialState.root.value.emergencyContacts).toEqual([
-      'Homer',
-      'Moe',
-      'Barney',
-    ]);
+    expect(initialState.root.value.emergencyContacts).toEqual(['Homer', 'Moe', 'Barney']);
     expect(initialState['emergencyContacts.0'].value).toBe('Homer');
     expect(initialState['emergencyContacts.1'].value).toBe('Moe');
     expect(initialState['emergencyContacts.2'].value).toBe('Barney');
 
-    const result = removeControl(
-      initialState,
-      removeControlAction(['emergencyContacts', 1]),
-    );
+    const result = removeControl(initialState, removeControlAction(['emergencyContacts', 1]));
 
     expect(result.root.value.emergencyContacts).toEqual(['Homer', 'Barney']);
     expect(result.root.dirty).toBe(true);
     expect(result.emergencyContacts.dirty).toBe(true);
     expect(result['emergencyContacts.0'].value).toBe('Homer');
-    expect(result['emergencyContacts.0'].controlRef).toEqual([
-      'emergencyContacts',
-      0,
-    ]);
+    expect(result['emergencyContacts.0'].controlRef).toEqual(['emergencyContacts', 0]);
     expect(result['emergencyContacts.1'].value).toBe('Barney');
-    expect(result['emergencyContacts.1'].controlRef).toEqual([
-      'emergencyContacts',
-      1,
-    ]);
+    expect(result['emergencyContacts.1'].controlRef).toEqual(['emergencyContacts', 1]);
     expect(result['emergencyContacts.2']).toBeUndefined();
   });
 });

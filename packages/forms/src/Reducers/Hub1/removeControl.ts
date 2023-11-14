@@ -2,10 +2,7 @@ import { Action } from '@hub-fx/core';
 import { BaseForm } from '../../Models/Controls';
 import { ControlRef } from '../../Models/ControlRef';
 import { getControl } from '../../Helpers/getControl';
-import {
-  updateAncestorValues,
-  UPDATE_ANCESTOR_VALUES,
-} from './updateAncestorValues';
+import { updateAncestorValues, UPDATE_ANCESTOR_VALUES } from './updateAncestorValues';
 import { syncValidate } from './syncValidate';
 import { updateDirty } from './updateDirty';
 import { getFormKey } from '../../Helpers/getFormKey';
@@ -23,9 +20,7 @@ export const removeControl = <T>(
 
   const parentRef = controlRef.slice(0, -1);
 
-  const parentIsFormArray = Array.isArray(
-    getControl(parentRef, form).config.controls,
-  );
+  const parentIsFormArray = Array.isArray(getControl(parentRef, form).config.controls);
 
   // Remove control and all descendants
   const controlRemoved: BaseForm<T> = Object.entries(form)

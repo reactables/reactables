@@ -3,15 +3,11 @@ import { ControlRef } from '../Models/ControlRef';
 import { getFormKey } from './getFormKey';
 
 // Includes the original control of interest unless excludeSelf === true
-export const getDescendantControls = <
-  T extends BaseForm<unknown> | Form<unknown>,
->(
+export const getDescendantControls = <T extends BaseForm<unknown> | Form<unknown>>(
   controlRef: ControlRef,
   form: T,
   excludeSelf = false,
-): (T extends Form<unknown>
-  ? FormControl<unknown>
-  : BaseControl<unknown>)[] => {
+): (T extends Form<unknown> ? FormControl<unknown> : BaseControl<unknown>)[] => {
   const result = Object.entries(form)
     .filter(([key]) => {
       if (!controlRef.length) return true;
@@ -27,8 +23,6 @@ export const getDescendantControls = <
     : BaseControl<unknown>)[];
 
   return result.filter((control) =>
-    excludeSelf
-      ? getFormKey(control.controlRef) !== getFormKey(controlRef)
-      : true,
+    excludeSelf ? getFormKey(control.controlRef) !== getFormKey(controlRef) : true,
   );
 };

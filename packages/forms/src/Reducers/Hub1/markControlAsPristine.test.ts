@@ -28,13 +28,9 @@ describe('markControlAsPristine', () => {
     expect(changedState.root.dirty).toBe(true);
     expect(changedState.doctorInfo.value).toEqual(newDoctorValue);
     expect(changedState.doctorInfo.dirty).toBe(true);
-    expect(changedState['doctorInfo.firstName'].value).toBe(
-      newDoctorValue.firstName,
-    );
+    expect(changedState['doctorInfo.firstName'].value).toBe(newDoctorValue.firstName);
     expect(changedState['doctorInfo.firstName'].dirty).toBe(true);
-    expect(changedState['doctorInfo.lastName'].value).toBe(
-      newDoctorValue.lastName,
-    );
+    expect(changedState['doctorInfo.lastName'].value).toBe(newDoctorValue.lastName);
     expect(changedState['doctorInfo.lastName'].dirty).toBe(true);
     expect(changedState['doctorInfo.email'].value).toBe(newDoctorValue.email);
     expect(changedState['doctorInfo.email'].dirty).toBe(true);
@@ -53,10 +49,7 @@ describe('markControlAsPristine', () => {
   });
 
   it('should mark a control as pristine for a FG -> FG', () => {
-    const result = markControlAsPristine(
-      changedState,
-      markAsPristineAction(['doctorInfo']),
-    );
+    const result = markControlAsPristine(changedState, markAsPristineAction(['doctorInfo']));
     expect(result.root.dirty).toBe(false);
     expect(result.doctorInfo.dirty).toBe(false);
     expect(result['doctorInfo.firstName'].dirty).toBe(false);
