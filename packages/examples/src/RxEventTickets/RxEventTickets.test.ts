@@ -1,8 +1,9 @@
-import { EventTickets, initialState, EventTicketsState } from './EventTickets';
+import { RxEventTickets, initialState, EventTicketsState } from './RxEventTickets';
 import { Subscription, of, Observable } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { delay } from 'rxjs/operators';
 import { FetchPricePayload, EventTypes } from './Models/EventTypes';
+import { initialControlState } from './controlsSlice';
 
 describe('EventTickets', () => {
   let testScheduler: TestScheduler;
@@ -24,7 +25,7 @@ describe('EventTickets', () => {
       const {
         state$,
         actions: { setQty, selectEvent },
-      } = EventTickets(mockApi);
+      } = RxEventTickets(mockApi);
 
       subscription = cold('-------a---b', {
         a: () => setQty(1),
@@ -33,8 +34,12 @@ describe('EventTickets', () => {
 
       expectObservable(state$).toBe('(xy)z--a---b---c', {
         x: initialState,
-        y: { ...initialState, calculating: true },
-        z: { ...initialState, price: 0 },
+        y: {
+          ...initialState,
+          controls: initialControlState,
+          calculating: true,
+        },
+        z: { ...initialState, controls: initialControlState, price: 0 },
         a: {
           controls: {
             selectedEvent: EventTypes.ChiliCookOff,

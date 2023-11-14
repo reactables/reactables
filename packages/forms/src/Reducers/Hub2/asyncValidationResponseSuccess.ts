@@ -9,9 +9,7 @@ import { mergeErrors } from './mergeErrors';
 const isControlValidating = (control: FormControl<unknown>): boolean => {
   if (!control.asyncValidateInProgress) return false;
 
-  return Object.values(control.asyncValidateInProgress).some(
-    (pending) => pending,
-  );
+  return Object.values(control.asyncValidateInProgress).some((pending) => pending);
 };
 
 const isControlAsyncValid = (control: FormControl<unknown>): boolean => {
@@ -24,9 +22,7 @@ const getControlByKey = (key: string, form: Form<unknown>) => {
 
 export const asyncValidationResponseSuccess = <T>(
   form: Form<T>,
-  {
-    payload: { key, validatorIndex, errors },
-  }: Action<ControlAsyncValidationResponse>,
+  { payload: { key, validatorIndex, errors } }: Action<ControlAsyncValidationResponse>,
 ): Form<T> => {
   const control = getControlByKey(key, form);
 
@@ -47,35 +43,25 @@ export const asyncValidationResponseSuccess = <T>(
 
   const ancestors = getAncestorControls(control.controlRef, controlUpdated);
 
-  const ancestorsUpdated = Object.entries(controlUpdated).reduce(
-    (acc, [key, control]) => {
-      if (ancestors.includes(control)) {
-        const descendants = getDescendantControls(
-          control.controlRef,
-          controlUpdated,
-        );
-
-        return {
-          ...acc,
-          [key]: {
-            ...control,
-            pending: descendants.some((control) =>
-              isControlValidating(control),
-            ),
-            asyncValidatorsValid: descendants.every((control) =>
-              isControlAsyncValid(control),
-            ),
-          },
-        };
-      }
+  const ancestorsUpdated = Object.entries(controlUpdated).reduce((acc, [key, control]) => {
+    if (ancestors.includes(control)) {
+      const descendants = getDescendantControls(control.controlRef, controlUpdated);
 
       return {
         ...acc,
-        [key]: control,
+        [key]: {
+          ...control,
+          pending: descendants.some((control) => isControlValidating(control)),
+          asyncValidatorsValid: descendants.every((control) => isControlAsyncValid(control)),
+        },
       };
-    },
-    {} as Form<T>,
-  );
+    }
+
+    return {
+      ...acc,
+      [key]: control,
+    };
+  }, {} as Form<T>);
 
   return mergeErrors(ancestorsUpdated);
 };

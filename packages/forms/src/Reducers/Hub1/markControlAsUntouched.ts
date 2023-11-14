@@ -31,9 +31,7 @@ export const markControlAsUntouched = <T>(
       ...result,
       [key]: {
         ...result[key],
-        touched: getDescendantControls(currentRef, result, true).some(
-          (control) => control.touched,
-        ),
+        touched: getDescendantControls(currentRef, result, true).some((control) => control.touched),
       },
     };
   }

@@ -44,10 +44,7 @@ describe('formChange', () => {
   it('should update syncrounous properties only', () => {
     const initialBaseState: BaseForm<Contact> = buildFormState(config);
 
-    const initialState = formChange(
-      null,
-      formChangeAction(initialBaseState),
-    ) as Form<Contact>;
+    const initialState = formChange(null, formChangeAction(initialBaseState)) as Form<Contact>;
 
     const newBaseState = updateValues(
       initialBaseState,
@@ -81,10 +78,7 @@ describe('formChange', () => {
       type: FORMS_FORM_CHANGE,
       payload: initialBaseState,
     });
-    const newBaseState = removeControl(
-      initialBaseState,
-      removeControlAction(['doctorInfo']),
-    );
+    const newBaseState = removeControl(initialBaseState, removeControlAction(['doctorInfo']));
 
     const result = formChange(initialState, formChangeAction(newBaseState));
 
@@ -143,10 +137,7 @@ describe('formChange', () => {
       }),
     );
 
-    const newState = formChange(
-      null,
-      formChangeAction(initialBaseState),
-    ) as Form<Contact>;
+    const newState = formChange(null, formChangeAction(initialBaseState)) as Form<Contact>;
 
     const result = formChange(newState, formChangeAction(newBaseState));
 

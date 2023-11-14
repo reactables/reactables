@@ -42,8 +42,7 @@ export const buildFormState = <T>(
   } else if (controls && controls instanceof Array) {
     // Adding controls for Form Array
     newForm = (<FormArrayConfig>config).controls.reduce(
-      (acc, controlConfig, index) =>
-        buildFormState(controlConfig, acc, controlRef.concat(index)),
+      (acc, controlConfig, index) => buildFormState(controlConfig, acc, controlRef.concat(index)),
       newForm,
     );
   }

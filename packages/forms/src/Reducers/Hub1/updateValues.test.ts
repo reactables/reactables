@@ -17,10 +17,7 @@ describe('updateValues', () => {
       email: 'drhoe.com', // Validate to catch invalid email
     };
 
-    const result = updateValues(
-      initialState,
-      controlChange({ controlRef: ['doctorInfo'], value }),
-    );
+    const result = updateValues(initialState, controlChange({ controlRef: ['doctorInfo'], value }));
 
     expect(result.root.value.doctorInfo).toEqual(value);
     expect(result.doctorInfo.value).toEqual(value);
@@ -67,13 +64,9 @@ describe('updateValues', () => {
 
     expect(result.root.value.emergencyContacts[1].firstName).toBe(value);
 
-    expect(
-      (result.emergencyContacts.value[1] as EmergencyContact).firstName,
-    ).toBe(value);
+    expect((result.emergencyContacts.value[1] as EmergencyContact).firstName).toBe(value);
 
-    expect(
-      (result['emergencyContacts.1'].value as EmergencyContact).firstName,
-    ).toBe(value);
+    expect((result['emergencyContacts.1'].value as EmergencyContact).firstName).toBe(value);
 
     expect(result['emergencyContacts.1.firstName'].value).toBe(value);
 

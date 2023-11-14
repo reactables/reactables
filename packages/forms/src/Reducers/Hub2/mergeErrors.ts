@@ -21,22 +21,17 @@ export const mergeErrors = <T>(form: Form<T>): Form<T> => {
     };
   }, {} as Form<T>);
 
-  const childrenErrorsChecked = Object.entries(errorsMerged).reduce(
-    (acc, [key, control]) => {
-      return {
-        ...acc,
-        [key]: {
-          ...control,
-          valid:
-            control.valid &&
-            getDescendantControls(control.controlRef, errorsMerged).every(
-              (control) => control.valid,
-            ),
-        },
-      };
-    },
-    {} as Form<T>,
-  );
+  const childrenErrorsChecked = Object.entries(errorsMerged).reduce((acc, [key, control]) => {
+    return {
+      ...acc,
+      [key]: {
+        ...control,
+        valid:
+          control.valid &&
+          getDescendantControls(control.controlRef, errorsMerged).every((control) => control.valid),
+      },
+    };
+  }, {} as Form<T>);
 
   return childrenErrorsChecked;
 };

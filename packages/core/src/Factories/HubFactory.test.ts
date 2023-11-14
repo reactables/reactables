@@ -89,7 +89,7 @@ describe('HubFactory', () => {
 
       it('should detect a scoped effect', () => {
         testScheduler.run(({ expectObservable, cold }) => {
-          const action: Action<string, string> = {
+          const action: Action<string> = {
             type: TEST_ACTION,
             payload: 'test action with scoped effect',
             scopedEffects: { effects: [switchMapTestEffect] },
@@ -115,7 +115,7 @@ describe('HubFactory', () => {
 
       it('switchMap in effect should cancel previous inner observables', () => {
         testScheduler.run(({ expectObservable, cold }) => {
-          const action: Action<string, string> = {
+          const action: Action<string> = {
             type: TEST_ACTION,
             payload: 'test action with scoped effect',
             scopedEffects: { effects: [switchMapTestEffect] },
@@ -133,28 +133,25 @@ describe('HubFactory', () => {
             hub = HubFactory({ sources: [input$] });
           }
 
-          expectObservable(hub.messages$).toBe(
-            'a 49ms b 99ms c 49ms d 99ms e',
-            {
-              a: action,
-              b: action,
-              c: {
-                type: TEST_ACTION_SUCCESS,
-                payload: 'test action with scoped effect switchMap succeeded',
-              },
-              d: action,
-              e: {
-                type: TEST_ACTION_SUCCESS,
-                payload: 'test action with scoped effect switchMap succeeded',
-              },
+          expectObservable(hub.messages$).toBe('a 49ms b 99ms c 49ms d 99ms e', {
+            a: action,
+            b: action,
+            c: {
+              type: TEST_ACTION_SUCCESS,
+              payload: 'test action with scoped effect switchMap succeeded',
             },
-          );
+            d: action,
+            e: {
+              type: TEST_ACTION_SUCCESS,
+              payload: 'test action with scoped effect switchMap succeeded',
+            },
+          });
         });
       });
 
       it('should handle more than one effect each independently', () => {
         testScheduler.run(({ expectObservable, cold }) => {
-          const action: Action<string, string> = {
+          const action: Action<string> = {
             type: TEST_ACTION,
             payload: 'test action with more that one effect',
             scopedEffects: {
@@ -174,40 +171,33 @@ describe('HubFactory', () => {
             hub = HubFactory({ sources: [input$] });
           }
 
-          expectObservable(hub.messages$).toBe(
-            'a 49ms b 99ms c 49ms d 9ms e 89ms f 59ms g',
-            {
-              a: action, // first dispatch
-              b: action, // dispatch at 50
-              c: {
-                type: TEST_ACTION_SUCCESS,
-                payload:
-                  'test action with more that one effect switchMap succeeded',
-              },
-              d: action, // dispatch at 200
-              e: {
-                type: TEST_ACTION_SUCCESS,
-                payload:
-                  'test action with more that one effect debounceTime and mergeMap succeeded',
-              },
-              f: {
-                type: TEST_ACTION_SUCCESS,
-                payload:
-                  'test action with more that one effect switchMap succeeded',
-              },
-              g: {
-                type: TEST_ACTION_SUCCESS,
-                payload:
-                  'test action with more that one effect debounceTime and mergeMap succeeded',
-              },
+          expectObservable(hub.messages$).toBe('a 49ms b 99ms c 49ms d 9ms e 89ms f 59ms g', {
+            a: action, // first dispatch
+            b: action, // dispatch at 50
+            c: {
+              type: TEST_ACTION_SUCCESS,
+              payload: 'test action with more that one effect switchMap succeeded',
             },
-          );
+            d: action, // dispatch at 200
+            e: {
+              type: TEST_ACTION_SUCCESS,
+              payload: 'test action with more that one effect debounceTime and mergeMap succeeded',
+            },
+            f: {
+              type: TEST_ACTION_SUCCESS,
+              payload: 'test action with more that one effect switchMap succeeded',
+            },
+            g: {
+              type: TEST_ACTION_SUCCESS,
+              payload: 'test action with more that one effect debounceTime and mergeMap succeeded',
+            },
+          });
         });
       });
 
       it('should handle two action with unique signatures independently', () => {
         testScheduler.run(({ expectObservable, cold }) => {
-          const action: Action<string, string> = {
+          const action: Action<string> = {
             type: TEST_ACTION,
             payload: 'test action no key',
             scopedEffects: {
@@ -215,7 +205,7 @@ describe('HubFactory', () => {
             },
           };
 
-          const actionTwo: Action<string, string> = {
+          const actionTwo: Action<string> = {
             type: TEST_ACTION,
             payload: 'test action key two',
             scopedEffects: { key: 'two', effects: [switchMapTestEffect] },
@@ -255,8 +245,7 @@ describe('HubFactory', () => {
               //160
               e: {
                 type: TEST_ACTION_SUCCESS,
-                payload:
-                  'test action no key debounceTime and mergeMap succeeded',
+                payload: 'test action no key debounceTime and mergeMap succeeded',
               },
 
               //200
@@ -271,8 +260,7 @@ describe('HubFactory', () => {
               //285
               h: {
                 type: TEST_ACTION_SUCCESS,
-                payload:
-                  'test action no key debounceTime and mergeMap succeeded',
+                payload: 'test action no key debounceTime and mergeMap succeeded',
               },
 
               //300
@@ -284,8 +272,7 @@ describe('HubFactory', () => {
               //360
               j: {
                 type: TEST_ACTION_SUCCESS,
-                payload:
-                  'test action no key debounceTime and mergeMap succeeded',
+                payload: 'test action no key debounceTime and mergeMap succeeded',
               },
             },
           );
@@ -317,10 +304,7 @@ describe('HubFactory', () => {
     const increment = (): Action => ({ type: INCREMENT });
 
     const initialState = { count: 0 };
-    const reducer: Reducer<{ count: number }> = (
-      state = initialState,
-      action,
-    ) => {
+    const reducer: Reducer<{ count: number }> = (state = initialState, action) => {
       switch (action?.type) {
         case INCREMENT:
           return {

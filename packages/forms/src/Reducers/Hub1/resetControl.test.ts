@@ -26,10 +26,7 @@ describe('resetControl', () => {
     const resetAtRoot = resetControl(changedState, resetControlAction([]));
     expect(resetAtRoot.value).toEqual(initialState.value);
 
-    const resetAtFirstName = resetControl(
-      changedState,
-      resetControlAction(['firstName']),
-    );
+    const resetAtFirstName = resetControl(changedState, resetControlAction(['firstName']));
 
     expect(resetAtFirstName.value).toEqual(initialState.value);
   });
@@ -48,10 +45,7 @@ describe('resetControl', () => {
     const resetAtRoot = resetControl(changedState, resetControlAction([]));
     expect(resetAtRoot.value).toEqual(initialState.value);
 
-    const resetAtDoctorInfo = resetControl(
-      changedState,
-      resetControlAction(['doctorInfo']),
-    );
+    const resetAtDoctorInfo = resetControl(changedState, resetControlAction(['doctorInfo']));
 
     expect(resetAtDoctorInfo.value).toBe(initialState.value);
 
@@ -73,14 +67,10 @@ describe('resetControl', () => {
     });
     expect(resetAtDoctorInfoFirstName.doctorInfo.dirty).toBe(true);
     expect(resetAtDoctorInfoFirstName['doctorInfo.firstName'].value).toBe('');
-    expect(resetAtDoctorInfoFirstName['doctorInfo.firstName'].dirty).toBe(
-      false,
-    );
+    expect(resetAtDoctorInfoFirstName['doctorInfo.firstName'].dirty).toBe(false);
     expect(resetAtDoctorInfoFirstName['doctorInfo.lastName'].value).toBe('Ho');
     expect(resetAtDoctorInfoFirstName['doctorInfo.lastName'].dirty).toBe(true);
-    expect(resetAtDoctorInfoFirstName['doctorInfo.email'].value).toBe(
-      'dr@ho.com',
-    );
+    expect(resetAtDoctorInfoFirstName['doctorInfo.email'].value).toBe('dr@ho.com');
     expect(resetAtDoctorInfoFirstName['doctorInfo.email'].dirty).toBe(true);
   });
 
@@ -142,29 +132,21 @@ describe('resetControl', () => {
       resetControlAction(['emergencyContacts', 1, 'firstName']),
     ) as BaseForm<Contact>;
 
-    expect(
-      resetAtEmergencyContacts1FirstName.root.value.emergencyContacts[1]
-        .firstName,
-    ).toBe('moe');
+    expect(resetAtEmergencyContacts1FirstName.root.value.emergencyContacts[1].firstName).toBe(
+      'moe',
+    );
 
     expect(resetAtEmergencyContacts1FirstName.root.dirty).toBe(true);
 
     expect(
-      (
-        resetAtEmergencyContacts1FirstName.emergencyContacts
-          .value as EmergencyContact[]
-      )[1].firstName,
+      (resetAtEmergencyContacts1FirstName.emergencyContacts.value as EmergencyContact[])[1]
+        .firstName,
     ).toBe('moe');
 
-    expect(resetAtEmergencyContacts1FirstName.emergencyContacts.dirty).toBe(
-      true,
-    );
+    expect(resetAtEmergencyContacts1FirstName.emergencyContacts.dirty).toBe(true);
 
     expect(
-      (
-        resetAtEmergencyContacts1FirstName.emergencyContacts
-          .value as EmergencyContact[]
-      )[1],
+      (resetAtEmergencyContacts1FirstName.emergencyContacts.value as EmergencyContact[])[1],
     ).toEqual({
       firstName: 'moe',
       lastName: 'Moleman',
@@ -172,24 +154,16 @@ describe('resetControl', () => {
       relation: 'second son of homer',
     });
 
-    expect(
-      resetAtEmergencyContacts1FirstName['emergencyContacts.1'].value,
-    ).toEqual({
+    expect(resetAtEmergencyContacts1FirstName['emergencyContacts.1'].value).toEqual({
       firstName: 'moe',
       lastName: 'Moleman',
       email: 'hans@moleman.com',
       relation: 'second son of homer',
     });
 
-    expect(
-      resetAtEmergencyContacts1FirstName['emergencyContacts.1'].dirty,
-    ).toBe(true);
+    expect(resetAtEmergencyContacts1FirstName['emergencyContacts.1'].dirty).toBe(true);
 
-    expect(
-      resetAtEmergencyContacts1FirstName['emergencyContacts.1.firstName'].value,
-    ).toBe('moe');
-    expect(
-      resetAtEmergencyContacts1FirstName['emergencyContacts.1.firstName'].dirty,
-    ).toBe(false);
+    expect(resetAtEmergencyContacts1FirstName['emergencyContacts.1.firstName'].value).toBe('moe');
+    expect(resetAtEmergencyContacts1FirstName['emergencyContacts.1.firstName'].dirty).toBe(false);
   });
 });
