@@ -11,8 +11,7 @@ const getScopedEffectsForControl = <T>(
   const { config, key } = formControl;
   const { asyncValidators } = config;
 
-  let scopedEffects: Effect<BaseControl<T>, ControlAsyncValidationResponse>[] =
-    [];
+  let scopedEffects: Effect<BaseControl<T>, ControlAsyncValidationResponse>[] = [];
 
   if (asyncValidators && asyncValidators.length) {
     scopedEffects = asyncValidators.reduce(
@@ -47,25 +46,17 @@ const getScopedEffectsForControl = <T>(
 
 export const FORMS_ASYNC_VALIDATE_CONTROL = 'FORMS_ASYNC_VALIDATE_CONTROL';
 
-export const getAsyncValidationActions = (
-  formControls: BaseControl<unknown>[],
-) =>
-  formControls.reduce(
-    (
-      acc: Action<BaseControl<unknown>, ControlAsyncValidationResponse>[],
-      control,
-    ) => {
-      const effects = getScopedEffectsForControl(control);
-      if (!effects.length) return acc;
+export const getAsyncValidationActions = (formControls: BaseControl<unknown>[]) =>
+  formControls.reduce((acc: Action<BaseControl<unknown>>[], control) => {
+    const effects = getScopedEffectsForControl(control);
+    if (!effects.length) return acc;
 
-      return acc.concat({
-        type: FORMS_ASYNC_VALIDATE_CONTROL,
-        payload: control,
-        scopedEffects: {
-          key: control.key,
-          effects,
-        },
-      });
-    },
-    [],
-  );
+    return acc.concat({
+      type: FORMS_ASYNC_VALIDATE_CONTROL,
+      payload: control,
+      scopedEffects: {
+        key: control.key,
+        effects,
+      },
+    });
+  }, []);

@@ -1,4 +1,4 @@
-import { Counter } from './Counter';
+import { RxCounter } from './RxCounter';
 import { Subscription } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 
@@ -17,16 +17,19 @@ describe('Counter', () => {
 
   it('should increment and reset', () => {
     testScheduler.run(({ expectObservable, cold }) => {
+      // Create Counter Reactable
       const {
         state$,
         actions: { increment, reset },
-      } = Counter();
+      } = RxCounter();
 
+      // Call actions
       subscription = cold('--b-c', {
         b: increment,
         c: reset,
       }).subscribe((action) => action());
 
+      // Assertions
       expectObservable(state$).toBe('a-b-c', {
         a: { count: 0 },
         b: { count: 1 },

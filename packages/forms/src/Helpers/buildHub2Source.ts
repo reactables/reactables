@@ -49,15 +49,12 @@ export const buildHub2Source = <T extends BaseForm<unknown>>(
 
           if (Array.isArray(changedControl.config.controls)) {
             const index = (changedControl.value as Array<unknown>).length - 1;
-            const ref = (<Action<AddControl>>action).payload.controlRef.concat(
-              index,
-            );
+            const ref = (<Action<AddControl>>action).payload.controlRef.concat(index);
             controlsToCheck = getControlBranch(ref, newForm);
             break;
           } else {
             controlsToCheck = getControlBranch(
-              (<Action<ControlChange<unknown> | AddControl>>action).payload
-                .controlRef,
+              (<Action<ControlChange<unknown> | AddControl>>action).payload.controlRef,
               newForm,
             );
             break;
@@ -69,10 +66,7 @@ export const buildHub2Source = <T extends BaseForm<unknown>>(
           );
           break;
         case FORMS_RESET_CONTROL:
-          controlsToCheck = getControlBranch(
-            (<Action<ControlRef>>action).payload,
-            newForm,
-          );
+          controlsToCheck = getControlBranch((<Action<ControlRef>>action).payload, newForm);
           break;
         default:
           controlsToCheck = [];
