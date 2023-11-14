@@ -3,10 +3,7 @@ import { BaseForm } from '../../Models/Controls';
 import { FormArrayConfig, FormGroupConfig } from '../../Models';
 import { ControlChange } from '../../Models/Payloads';
 import { getFormKey } from '../../Helpers/getFormKey';
-import {
-  updateAncestorValues,
-  UPDATE_ANCESTOR_VALUES,
-} from './updateAncestorValues';
+import { updateAncestorValues, UPDATE_ANCESTOR_VALUES } from './updateAncestorValues';
 import { updateDirty } from './updateDirty';
 import { syncValidate } from './syncValidate';
 import { isChildRef } from '../../Helpers/isChildRef';
@@ -27,9 +24,7 @@ const updateDescendants = <T>(
         },
       };
 
-      const { controls: configControls } = control.config as
-        | FormArrayConfig
-        | FormGroupConfig;
+      const { controls: configControls } = control.config as FormArrayConfig | FormGroupConfig;
 
       if (configControls) {
         acc = updateDescendants(acc, {
@@ -61,9 +56,7 @@ export const updateValues = <T>(
     },
   };
 
-  const { controls: configControls } = form[ctrlKey].config as
-    | FormArrayConfig
-    | FormGroupConfig;
+  const { controls: configControls } = form[ctrlKey].config as FormArrayConfig | FormGroupConfig;
 
   // Update its children
   if (configControls) {

@@ -61,9 +61,7 @@ describe('asyncValidationResponseSuccess', () => {
       payload: control,
     });
 
-    expect(
-      pendingState['emergencyContacts.0.email'].asyncValidateInProgress,
-    ).toEqual({
+    expect(pendingState['emergencyContacts.0.email'].asyncValidateInProgress).toEqual({
       0: true,
       1: true,
     });
@@ -79,14 +77,10 @@ describe('asyncValidationResponseSuccess', () => {
       }),
     );
 
-    expect(
-      pendingSuccessState['emergencyContacts.0.email'].asyncValidatorErrors,
-    ).toEqual({
+    expect(pendingSuccessState['emergencyContacts.0.email'].asyncValidatorErrors).toEqual({
       uniqueEmail: true,
     });
-    expect(
-      pendingSuccessState['emergencyContacts.0.email'].asyncValidateInProgress,
-    ).toEqual({
+    expect(pendingSuccessState['emergencyContacts.0.email'].asyncValidateInProgress).toEqual({
       0: false,
       1: true,
     });
@@ -97,15 +91,9 @@ describe('asyncValidationResponseSuccess', () => {
     expect(pendingSuccessState['emergencyContacts.0.email'].pending).toBe(true);
 
     expect(pendingSuccessState.root.asyncValidatorsValid).toBe(false);
-    expect(pendingSuccessState.emergencyContacts.asyncValidatorsValid).toBe(
-      false,
-    );
-    expect(
-      pendingSuccessState['emergencyContacts.0'].asyncValidatorsValid,
-    ).toBe(false);
-    expect(
-      pendingSuccessState['emergencyContacts.0.email'].asyncValidatorsValid,
-    ).toBe(false);
+    expect(pendingSuccessState.emergencyContacts.asyncValidatorsValid).toBe(false);
+    expect(pendingSuccessState['emergencyContacts.0'].asyncValidatorsValid).toBe(false);
+    expect(pendingSuccessState['emergencyContacts.0.email'].asyncValidatorsValid).toBe(false);
 
     const pendingSuccessState2 = asyncValidationResponseSuccess(
       pendingSuccessState,
@@ -118,16 +106,12 @@ describe('asyncValidationResponseSuccess', () => {
       }),
     );
 
-    expect(
-      pendingSuccessState2['emergencyContacts.0.email'].asyncValidateInProgress,
-    ).toEqual({
+    expect(pendingSuccessState2['emergencyContacts.0.email'].asyncValidateInProgress).toEqual({
       0: false,
       1: false,
     });
 
-    expect(
-      pendingSuccessState2['emergencyContacts.0.email'].asyncValidatorErrors,
-    ).toEqual({
+    expect(pendingSuccessState2['emergencyContacts.0.email'].asyncValidatorErrors).toEqual({
       uniqueEmail: true,
       blacklistedEmail: true,
     });
@@ -135,19 +119,11 @@ describe('asyncValidationResponseSuccess', () => {
     expect(pendingSuccessState2.root.pending).toBe(false);
     expect(pendingSuccessState2.emergencyContacts.pending).toBe(false);
     expect(pendingSuccessState2['emergencyContacts.0'].pending).toBe(false);
-    expect(pendingSuccessState2['emergencyContacts.0.email'].pending).toBe(
-      false,
-    );
+    expect(pendingSuccessState2['emergencyContacts.0.email'].pending).toBe(false);
 
     expect(pendingSuccessState2.root.asyncValidatorsValid).toBe(false);
-    expect(pendingSuccessState2.emergencyContacts.asyncValidatorsValid).toBe(
-      false,
-    );
-    expect(
-      pendingSuccessState2['emergencyContacts.0'].asyncValidatorsValid,
-    ).toBe(false);
-    expect(
-      pendingSuccessState2['emergencyContacts.0.email'].asyncValidatorsValid,
-    ).toBe(false);
+    expect(pendingSuccessState2.emergencyContacts.asyncValidatorsValid).toBe(false);
+    expect(pendingSuccessState2['emergencyContacts.0'].asyncValidatorsValid).toBe(false);
+    expect(pendingSuccessState2['emergencyContacts.0.email'].asyncValidatorsValid).toBe(false);
   });
 });

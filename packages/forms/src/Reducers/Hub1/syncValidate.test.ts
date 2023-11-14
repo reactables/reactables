@@ -61,9 +61,7 @@ describe('syncValidate', () => {
       controls: {
         name: FormBuilder.control({ initialValue: '', validators: [required] }),
         nameList: FormBuilder.array({
-          controls: [
-            FormBuilder.control({ initialValue: '', validators: [required] }),
-          ],
+          controls: [FormBuilder.control({ initialValue: '', validators: [required] })],
         }),
       },
     });

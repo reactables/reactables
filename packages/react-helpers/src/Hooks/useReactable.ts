@@ -1,12 +1,11 @@
 import { useEffect, useState, useRef } from 'react';
-import { Reactable } from '@hub-fx/core';
-import { Observable } from 'rxjs';
+import { Reactable, ActionMap } from '@hub-fx/core';
 
 // React Strict Mode has bugs with clean up with refs so it breaks the useReactable hook as of now
 // See Bug: https://github.com/facebook/react/issues/26315
 // See Bug: https://github.com/facebook/react/issues/24670
 
-export const useReactable = <T, S>(reactable: Reactable<T, S>) => {
+export const useReactable = <T, S extends ActionMap>(reactable: Reactable<T, S>) => {
   const { state$, actions } = useRef(reactable).current;
   const [state, setState] = useState<T>();
 
@@ -15,9 +14,7 @@ export const useReactable = <T, S>(reactable: Reactable<T, S>) => {
       setState(result);
     });
 
-    const unsubscribe = subscription.unsubscribe.bind(
-      subscription,
-    ) as () => void;
+    const unsubscribe = subscription.unsubscribe.bind(subscription) as () => void;
 
     return unsubscribe;
   }, [state$]);

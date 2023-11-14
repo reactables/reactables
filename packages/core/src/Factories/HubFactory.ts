@@ -1,14 +1,6 @@
 import { Hub, HubConfig, StoreConfig } from '../Models/Hub';
 import { Observable, ReplaySubject, merge } from 'rxjs';
-import {
-  filter,
-  tap,
-  map,
-  mergeAll,
-  scan,
-  pairwise,
-  startWith,
-} from 'rxjs/operators';
+import { filter, tap, map, mergeAll, scan, pairwise, startWith } from 'rxjs/operators';
 import { Action } from '../Models/Action';
 import { share, shareReplay } from 'rxjs/operators';
 import { Effect } from '../Models/Effect';
@@ -18,10 +10,7 @@ const getScopedEffectSignature = (actionType: string, key: string | number) =>
 
 export const HubFactory = ({ effects, sources = [] }: HubConfig = {}): Hub => {
   const dispatcher$ = new ReplaySubject<Action<unknown>>(1);
-  const inputStream$ = merge(
-    dispatcher$,
-    ...sources.map((source) => source.pipe(shareReplay(1))),
-  );
+  const inputStream$ = merge(dispatcher$, ...sources.map((source) => source.pipe(shareReplay(1))));
 
   const genericEffects =
     effects?.reduce((result: Observable<Action<unknown>>[], effect) => {
@@ -37,8 +26,7 @@ export const HubFactory = ({ effects, sources = [] }: HubConfig = {}): Hub => {
 
       return (
         hasEffects &&
-        scopedEffectsDict[getScopedEffectSignature(type, scopedEffects.key)] ===
-          undefined
+        scopedEffectsDict[getScopedEffectSignature(type, scopedEffects.key)] === undefined
       );
     }),
     tap(({ type, scopedEffects: { key, effects } }) => {
@@ -53,10 +41,8 @@ export const HubFactory = ({ effects, sources = [] }: HubConfig = {}): Hub => {
             inputStream$.pipe(
               filter(
                 (initialAction) =>
-                  getScopedEffectSignature(
-                    initialAction.type,
-                    initialAction.scopedEffects?.key,
-                  ) === signature,
+                  getScopedEffectSignature(initialAction.type, initialAction.scopedEffects?.key) ===
+                  signature,
               ),
               effect,
             ),
@@ -69,11 +55,7 @@ export const HubFactory = ({ effects, sources = [] }: HubConfig = {}): Hub => {
     mergeAll(),
   );
 
-  const messages$ = merge(
-    inputStream$,
-    mergedScopedEffects,
-    ...genericEffects,
-  ).pipe(share());
+  const messages$ = merge(inputStream$, mergedScopedEffects, ...genericEffects).pipe(share());
 
   const store = <T>(config: StoreConfig<T>) => {
     const { reducer, name, debug, initialState } = config;

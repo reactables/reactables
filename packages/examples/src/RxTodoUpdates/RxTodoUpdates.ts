@@ -1,0 +1,72 @@
+import { Action, Reactable, RxBuilder, ScopedEffects } from '@hub-fx/core';
+import { UpdateTodoPayload, UpdateTodoPayloadSuccess, Todo } from './Models/Todos';
+import { switchMap, map } from 'rxjs/operators';
+import { ObservableOrPromise } from '../Models/ObservableOrPromise';
+
+interface TodoUpdatesState {
+  todos: Todo[];
+}
+
+export const initialState: TodoUpdatesState = {
+  todos: [
+    {
+      id: 1,
+      description: 'Pick Up Bart',
+      status: 'incomplete',
+      updating: false,
+    },
+    {
+      id: 2,
+      description: 'Moe the lawn',
+      status: 'incomplete',
+      updating: false,
+    },
+  ],
+};
+
+type TodoUpdatesActions = {
+  sendTodoStatusUpdate: (payload: UpdateTodoPayload) => void;
+};
+
+export const RxTodoUpdates = (
+  updateTodoApi: (payload: UpdateTodoPayload) => ObservableOrPromise<UpdateTodoPayloadSuccess>,
+): Reactable<TodoUpdatesState, TodoUpdatesActions> =>
+  RxBuilder({
+    initialState,
+    reducers: {
+      sendTodoStatusUpdate: {
+        reducer: (state, { payload }: Action<UpdateTodoPayload>) => ({
+          todos: state.todos.reduce((acc, todo) => {
+            const { todoId } = payload;
+
+            const newTodo = todo.id === todoId ? { ...todo, updating: true } : todo;
+
+            return acc.concat(newTodo);
+          }, [] as Todo[]),
+        }),
+        effects: (payload: UpdateTodoPayload): ScopedEffects<UpdateTodoPayload> => ({
+          key: payload.todoId,
+          effects: [
+            (actions$) => {
+              return actions$.pipe(
+                // Call todo API Service - switchMap operator cancels previous pending call if a new one is initiated
+                switchMap(({ payload }) => updateTodoApi(payload)),
+
+                // Map success response to appropriate action
+                map((payload) => ({ type: 'todoStatusUpdateSuccess', payload })),
+              );
+            },
+          ],
+        }),
+      },
+      todoStatusUpdateSuccess: (state, { payload }: Action<UpdateTodoPayload>) => ({
+        todos: state.todos.reduce((acc, todo) => {
+          const { todoId, status } = payload;
+
+          const newTodo = todo.id === todoId ? { ...todo, status, updating: false } : todo;
+
+          return acc.concat(newTodo);
+        }, [] as Todo[]),
+      }),
+    },
+  });
