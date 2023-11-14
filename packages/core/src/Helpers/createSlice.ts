@@ -7,11 +7,6 @@ export interface Slice<T> {
   reducer: Reducer<T>;
 }
 
-export interface SliceCaseConfig<T, S> {
-  reducer: SingleActionReducer<T, S>;
-  prepare: <Q>(payload: Q) => Action<S>;
-}
-
 export interface SliceConfig<T> {
   name: string;
   initialState: T;
@@ -20,4 +15,9 @@ export interface SliceConfig<T> {
       | SingleActionReducer<unknown, unknown>
       | SliceCaseConfig<unknown, unknown>;
   };
+}
+
+export interface SliceCaseConfig<T, S> {
+  reducer: SingleActionReducer<T, S>;
+  prepare: <Q>(payload: Q) => Action<S>;
 }
