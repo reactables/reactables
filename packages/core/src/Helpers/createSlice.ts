@@ -1,4 +1,5 @@
-import { Reducer, Action } from '../Models';
+import { Action } from '../Models/Action';
+import { Reducer } from '../Models/Hub';
 
 export type SingleActionReducer<T, S> = (state: T, action: Action<S>) => T;
 
