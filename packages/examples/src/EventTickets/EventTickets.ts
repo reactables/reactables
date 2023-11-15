@@ -1,11 +1,5 @@
 import { switchMap, map } from 'rxjs/operators';
-import {
-  Action,
-  Reducer,
-  HubFactory,
-  Reactable,
-  createSlice,
-} from '@hub-fx/core';
+import { Action, HubFactory, Reactable, createSlice } from '@hub-fx/core';
 import { Observable } from 'rxjs';
 import { EventTypes, FetchPricePayload } from './Models/EventTypes';
 // Control State
