@@ -2,10 +2,10 @@ import { Reducer, Action } from '../Models';
 
 export type SingleActionReducer<T, S> = (state: T, action: Action<S>) => T;
 
-export type ActionCreator<T, S> = (payload?: S) => Action<T>;
+export type ActionCreator<T> = (payload?: T) => Action<T>;
 
 export interface Slice<T> {
-  actions: { [key: string]: ActionCreator<unknown, unknown> };
+  actions: { [key: string]: ActionCreator<unknown> };
   reducer: Reducer<T>;
 }
 
@@ -45,7 +45,7 @@ export const createSlice = <T, S extends Cases<T>>(
       payload,
     });
     return acc;
-  }, {} as { [K in keyof S]: ActionCreator<unknown, unknown> });
+  }, {} as { [K in keyof S]: ActionCreator<unknown> });
 
   return {
     reducer,
