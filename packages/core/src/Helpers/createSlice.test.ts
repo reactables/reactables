@@ -6,7 +6,7 @@ describe('createSlice', () => {
     const counterSlice = createSlice({
       name: 'counter',
       initialState: { counter: 0 },
-      cases: {
+      reducers: {
         increment: (state) => ({ counter: state.counter + 1 }),
         decrement: (state) => ({ counter: state.counter - 1 }),
         reset: () => ({ counter: 0 }),

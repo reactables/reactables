@@ -12,7 +12,7 @@ interface CounterActions {
 const counterSlice = createSlice({
   name: 'counter',
   initialState: { count: 0 } as CounterState,
-  cases: {
+  reducers: {
     increment: (state) => ({ count: state.count + 1 }),
     reset: () => ({ count: 0 }),
   },
