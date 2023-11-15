@@ -5,11 +5,11 @@ import { Observable } from 'rxjs';
 
 export const addEffects = <T>(
   actionCreator: ActionCreator<T>,
-  scopedEffects: ScopedEffects<T>,
+  scopedEffects: (payload: T) => ScopedEffects<T>,
 ): ActionCreator<T> => {
   return (payload?: T) => ({
     ...actionCreator(payload),
-    scopedEffects,
+    scopedEffects: scopedEffects(payload),
   });
 };
 

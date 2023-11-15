@@ -1,32 +1,14 @@
 import { switchMap, map } from 'rxjs/operators';
-import { Action, HubFactory, Reactable, createSlice } from '@hub-fx/core';
+import {
+  Action,
+  HubFactory,
+  Reactable,
+  addEffects,
+  createSlice,
+} from '@hub-fx/core';
 import { Observable } from 'rxjs';
 import { EventTypes, FetchPricePayload } from './Models/EventTypes';
-// Control State
-interface ControlState {
-  selectedEvent: EventTypes;
-  qty: number;
-}
-
-const initialControlState: ControlState = {
-  selectedEvent: EventTypes.ChiliCookOff,
-  qty: 0,
-};
-
-const controlsSlice = createSlice({
-  name: 'controls',
-  initialState: initialControlState,
-  reducers: {
-    selectEvent: (state, { payload }: Action<EventTypes>) => ({
-      ...state,
-      selectedEvent: payload,
-    }),
-    setQty: (state, { payload }: Action<number>) => ({
-      ...state,
-      qty: payload,
-    }),
-  },
-});
+import { ControlState, controlsSlice } from './Controls';
 
 export interface EventTicketsState {
   controls: ControlState;
@@ -35,9 +17,7 @@ export interface EventTicketsState {
 }
 
 export const initialState: EventTicketsState = {
-  controls: {
-    ...initialControlState,
-  },
+  controls: null,
   calculating: false,
   price: null,
 };
@@ -59,34 +39,6 @@ const eventTicketsSlice = createSlice({
   },
 });
 
-export const controlChange = (
-  controlChange: ControlState,
-  // Provide method for calling get price API service
-  getPriceApi: (
-    payload: FetchPricePayload,
-  ) => Observable<number> | Promise<number>,
-): Action<ControlState> => {
-  return {
-    ...(eventTicketsSlice.actions.controlChange(
-      controlChange,
-    ) as Action<ControlState>),
-    scopedEffects: {
-      effects: [
-        (actions$) =>
-          actions$.pipe(
-            // Call get price API Service - switchMap operator cancels previous pending call if a new one is initiated
-            switchMap(({ payload: { selectedEvent: event, qty } }) =>
-              getPriceApi({ event, qty }),
-            ),
-
-            // Map success response to appropriate action
-            map((price) => eventTicketsSlice.actions.fetchPriceSuccess(price)),
-          ),
-      ],
-    },
-  };
-};
-
 interface EventTicketsActions {
   selectEvent: (event: EventTypes) => void;
   setQty: (qty: number) => void;
@@ -102,21 +54,43 @@ export const EventTickets = (
   // Initialize observable stream for the control state
   const control$ = hub1.store({ reducer: controlsSlice.reducer });
 
+  const controlChangeWithEffect = addEffects(
+    eventTicketsSlice.actions.controlChange,
+    () => ({
+      effects: [
+        (actions$) =>
+          actions$.pipe(
+            switchMap(
+              ({
+                payload: { selectedEvent: event, qty },
+              }: Action<ControlState>) => getPriceApi({ event, qty }),
+            ),
+
+            // Map success response to appropriate action
+            map((price) => eventTicketsSlice.actions.fetchPriceSuccess(price)),
+          ),
+      ],
+    }),
+  );
+
   const hub2 = HubFactory({
     sources: [
       control$.pipe(
         // Map state changes from control$ to trigger FETCH_PRICE action for the priceInfo$ stream
-        map((change) => controlChange(change, getPriceApi)),
+        map((change) => controlChangeWithEffect(change)),
       ),
     ],
   });
 
+  const {
+    actions: { selectEvent, setQty },
+  } = controlsSlice;
+
   return {
     state$: hub2.store({ reducer: eventTicketsSlice.reducer }),
     actions: {
-      selectEvent: (event: EventTypes) =>
-        hub1.dispatch(controlsSlice.actions.selectEvent(event)),
-      setQty: (qty: number) => hub1.dispatch(controlsSlice.actions.setQty(qty)),
+      selectEvent: (event: EventTypes) => hub1.dispatch(selectEvent(event)),
+      setQty: (qty: number) => hub1.dispatch(setQty(qty)),
     },
   };
 };

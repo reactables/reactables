@@ -3,6 +3,7 @@ import { Subscription, of, Observable } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { delay } from 'rxjs/operators';
 import { FetchPricePayload, EventTypes } from './Models/EventTypes';
+import { initialControlState } from './Controls';
 
 describe('EventTickets', () => {
   let testScheduler: TestScheduler;
@@ -33,8 +34,12 @@ describe('EventTickets', () => {
 
       expectObservable(state$).toBe('(xy)z--a---b---c', {
         x: initialState,
-        y: { ...initialState, calculating: true },
-        z: { ...initialState, price: 0 },
+        y: {
+          ...initialState,
+          controls: initialControlState,
+          calculating: true,
+        },
+        z: { ...initialState, controls: initialControlState, price: 0 },
         a: {
           controls: {
             selectedEvent: EventTypes.ChiliCookOff,
