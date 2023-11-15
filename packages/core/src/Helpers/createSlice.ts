@@ -1,9 +1,7 @@
-import { Action } from '../Models/Action';
+import { Action, ActionCreator } from '../Models/Action';
 import { Reducer } from '../Models/Hub';
 
 export type SingleActionReducer<T, S> = (state: T, action: Action<S>) => T;
-
-export type ActionCreator<T> = (payload?: T) => Action<T>;
 
 export interface Slice<T> {
   actions: { [key: string]: ActionCreator<unknown> };
