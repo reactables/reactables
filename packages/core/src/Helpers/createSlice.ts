@@ -1,28 +1,32 @@
 import { Reducer, Action } from '../Models';
 
-type SingleActionReducer<T, S> = (state: T, action: Action<S>) => T;
+export type SingleActionReducer<T, S> = (state: T, action: Action<S>) => T;
 
-type ActionCreator = (payload: unknown) => Action<unknown>;
+export type ActionCreator = (payload?: unknown) => Action<unknown>;
 
 export interface Slice<T> {
   actions: { [key: string]: ActionCreator };
   reducer: Reducer<T>;
 }
 
-export interface SliceConfig<T> {
-  name: string;
-  initialState: T;
-  cases: {
-    [key: string]: SingleActionReducer<T, unknown>;
-  };
+interface Cases<T> {
+  [key: string]: SingleActionReducer<T, unknown>;
 }
 
-export const createSlice = <T>(config: SliceConfig<T>): Slice<T> => {
+export interface SliceConfig<T, S extends Cases<T>> {
+  name: string;
+  initialState: T;
+  cases: S;
+}
+
+export const createSlice = <T, S extends Cases<T>>(
+  config: SliceConfig<T, S>,
+) => {
   const { name, initialState, cases } = config;
 
   const reducer: Reducer<T> = Object.entries(cases).reduce(
     (acc, [key, _case]): Reducer<T> => {
-      const newFunc = <S>(state: T, action: Action<S>) => {
+      const newFunc = (state: T, action: Action<unknown>) => {
         if (action.type === `${name}/${key}`) {
           return _case(state, action);
         }
@@ -35,18 +39,13 @@ export const createSlice = <T>(config: SliceConfig<T>): Slice<T> => {
     (state = initialState) => state,
   );
 
-  const actions: { [key: string]: ActionCreator } = Object.entries(
-    cases,
-  ).reduce(
-    <S>(
-      acc: { [key: string]: ActionCreator },
-      [key]: [string, SingleActionReducer<T, S>],
-    ) => {
-      acc[key] = (payload: S) => ({ type: `${name}/${key}`, payload });
-      return acc;
-    },
-    {},
-  );
+  const actions = Object.entries(cases).reduce((acc, [key]) => {
+    acc[key as keyof S] = (payload: unknown) => ({
+      type: `${name}/${key}`,
+      payload,
+    });
+    return acc;
+  }, {} as { [K in keyof S]: ActionCreator });
 
   return {
     reducer,
