@@ -50,22 +50,16 @@ export const FORMS_ASYNC_VALIDATE_CONTROL = 'FORMS_ASYNC_VALIDATE_CONTROL';
 export const getAsyncValidationActions = (
   formControls: BaseControl<unknown>[],
 ) =>
-  formControls.reduce(
-    (
-      acc: Action<BaseControl<unknown>, ControlAsyncValidationResponse>[],
-      control,
-    ) => {
-      const effects = getScopedEffectsForControl(control);
-      if (!effects.length) return acc;
+  formControls.reduce((acc: Action<BaseControl<unknown>>[], control) => {
+    const effects = getScopedEffectsForControl(control);
+    if (!effects.length) return acc;
 
-      return acc.concat({
-        type: FORMS_ASYNC_VALIDATE_CONTROL,
-        payload: control,
-        scopedEffects: {
-          key: control.key,
-          effects,
-        },
-      });
-    },
-    [],
-  );
+    return acc.concat({
+      type: FORMS_ASYNC_VALIDATE_CONTROL,
+      payload: control,
+      scopedEffects: {
+        key: control.key,
+        effects,
+      },
+    });
+  }, []);

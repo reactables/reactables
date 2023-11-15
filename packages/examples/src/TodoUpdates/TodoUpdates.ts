@@ -16,7 +16,7 @@ const sendTodoStatusUpdate = (
   updateTodoApi: (
     payload: UpdateTodoPayload,
   ) => Observable<UpdateTodoPayloadSuccess> | Promise<UpdateTodoPayloadSuccess>,
-): Action<UpdateTodoPayload, UpdateTodoPayload> => ({
+): Action<UpdateTodoPayload> => ({
   type: SEND_TODO_STATUS_UPDATE,
   payload,
   scopedEffects: {

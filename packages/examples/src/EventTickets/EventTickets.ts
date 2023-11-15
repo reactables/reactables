@@ -29,7 +29,7 @@ export const controlChange = (
   getPriceApi: (
     payload: FetchPricePayload,
   ) => Observable<number> | Promise<number>,
-): Action<ControlState, number> => ({
+): Action<ControlState> => ({
   type: CONTROL_CHANGE,
   payload: controlChange,
   scopedEffects: {
