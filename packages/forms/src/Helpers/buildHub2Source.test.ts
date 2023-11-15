@@ -27,7 +27,6 @@ import {
   uniqueFirstAndLastName,
   blacklistedEmail,
 } from '../Testing/AsyncValidators';
-import { ControlAsyncValidationResponse } from '../Models/Payloads';
 
 describe('buildHub2Source', () => {
   let testScheduler: TestScheduler;
@@ -36,9 +35,7 @@ describe('buildHub2Source', () => {
   const mapTypeAndControlRef = <T>({
     type,
     payload,
-  }:
-    | Action<BaseForm<T>>
-    | Action<BaseControl<unknown>, ControlAsyncValidationResponse>) => ({
+  }: Action<BaseForm<T>> | Action<BaseControl<unknown>>) => ({
     type,
     controlRef: payload.controlRef,
   });

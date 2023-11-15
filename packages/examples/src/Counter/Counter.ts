@@ -9,10 +9,7 @@ interface CounterActions {
   reset: () => void;
 }
 
-const {
-  reducer,
-  actions: { increment, reset },
-} = createSlice({
+const counterSlice = createSlice({
   name: 'counter',
   initialState: { count: 0 } as CounterState,
   cases: {
@@ -24,11 +21,13 @@ const {
 export const Counter = (): Reactable<CounterState, CounterActions> => {
   const hub = HubFactory();
 
+  const { reducer, actions } = counterSlice;
+
   return {
     state$: hub.store({ reducer }),
     actions: {
-      increment: () => hub.dispatch(increment()),
-      reset: () => hub.dispatch(reset()),
+      increment: () => hub.dispatch(actions.increment()),
+      reset: () => hub.dispatch(actions.reset()),
     },
   };
 };
