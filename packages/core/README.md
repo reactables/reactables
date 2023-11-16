@@ -49,9 +49,9 @@ In this documentation the term *stream* will refer to an RxJS observable stream.
 [Reactables](#reactable) are objects that encapulates all the logic required for managing state. They exposes a `state$` observable and actions methods. Applications can subscribe to `state$` to receive state changes and call action methods to trigger them.
 
 ```javascript
-import { Counter } from '@hub-fx/examples';
+import { RxCounter } from '@hub-fx/examples';
 
-const counterReactable = Counter();
+const counterReactable = RxCounter();
 
 const { state$, actions: { increment, reset } } = counterReactable;
 
@@ -155,9 +155,9 @@ Generates a reducer and actions for state updates. Inspired by [`@reduxjs/toolki
 type createSlice <T, S extends Cases<T>>(config: SliceConfig<T, S>) => Slice<T>
 
 export interface SliceConfig<T, S extends Cases<T>> {
-  name: string;
   initialState: T;
   reducers: S;
+  name?: string; // for namespacing if your slice is part of a larger state
 }
 
 interface Slice<T> {

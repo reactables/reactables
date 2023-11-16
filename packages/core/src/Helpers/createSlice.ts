@@ -13,9 +13,9 @@ export interface Cases<T> {
 }
 
 export interface SliceConfig<T, S extends Cases<T>> {
-  name: string;
   initialState: T;
   reducers: S;
+  name?: string;
 }
 
 export const createSlice = <T, S extends Cases<T>>(config: SliceConfig<T, S>) => {
@@ -24,7 +24,7 @@ export const createSlice = <T, S extends Cases<T>>(config: SliceConfig<T, S>) =>
   const reducer: Reducer<T> = Object.entries(reducers).reduce(
     (acc, [key, reducer]): Reducer<T> => {
       const newFunc = (state: T, action: Action<unknown>) => {
-        if (action && action.type === `${name}/${key}`) {
+        if (action && action.type === `${name ? `${name}/` : ''}}${key}`) {
           return reducer(state, action);
         }
 
@@ -38,7 +38,7 @@ export const createSlice = <T, S extends Cases<T>>(config: SliceConfig<T, S>) =>
 
   const actions = Object.entries(reducers).reduce((acc, [key]) => {
     acc[key as keyof S] = (payload: unknown) => ({
-      type: `${name}/${key}`,
+      type: `${name ? `${name}/` : ''}}${key}`,
       payload,
     });
     return acc;

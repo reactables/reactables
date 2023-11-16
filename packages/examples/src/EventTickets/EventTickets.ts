@@ -26,7 +26,6 @@ export const EventTickets = (
 ): Reactable<EventTicketsState, EventTicketsActions> => {
   // Create Slice to generate actions and reducers
   const { reducer, actions } = RxBuilder.createSlice({
-    name: 'eventTickets',
     initialState,
     reducers: {
       controlChange: (state, { payload }: Action<ControlState>) => ({

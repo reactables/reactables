@@ -34,7 +34,6 @@ export const TodoUpdates = (
 ): Reactable<TodoUpdatesState, TodoUpdatesActions> => {
   // Create Slice to generate actions and reducers
   const { reducer, actions } = RxBuilder.createSlice({
-    name: 'updateTodos',
     initialState,
     reducers: {
       sendTodoStatusUpdate: (state, { payload }: Action<UpdateTodoPayload>) => ({
