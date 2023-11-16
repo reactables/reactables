@@ -15,9 +15,7 @@ export const useReactable = <T, S>(reactable: Reactable<T, S>) => {
       setState(result);
     });
 
-    const unsubscribe = subscription.unsubscribe.bind(
-      subscription,
-    ) as () => void;
+    const unsubscribe = subscription.unsubscribe.bind(subscription) as () => void;
 
     return unsubscribe;
   }, [state$]);

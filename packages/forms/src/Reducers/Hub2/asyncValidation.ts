@@ -13,8 +13,7 @@ export const asyncValidation = <T>(
 
   const result = Object.entries(form).reduce((acc, [key, control]) => {
     if (ancestors.includes(control)) {
-      const isChangedControl =
-        getFormKey(control.controlRef) === getFormKey(controlRef);
+      const isChangedControl = getFormKey(control.controlRef) === getFormKey(controlRef);
 
       return {
         ...acc,

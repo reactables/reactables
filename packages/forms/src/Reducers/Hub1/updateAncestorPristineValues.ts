@@ -5,8 +5,7 @@ import { getDescendantControls } from '../../Helpers/getDescendantControls';
 import { ControlRef } from '../../Models/ControlRef';
 
 // Same implementation as updateAncestor values except updating pristine values
-export const UPDATE_ANCESTOR_PRISTINE_VALUES =
-  'UPDATE_ANCESTOR_PRISTINE_VALUES';
+export const UPDATE_ANCESTOR_PRISTINE_VALUES = 'UPDATE_ANCESTOR_PRISTINE_VALUES';
 export const updateAncestorPristineValues = <T>(
   form: BaseForm<T>,
   { payload: controlRef }: Action<ControlRef>,
@@ -26,22 +25,16 @@ export const updateAncestorPristineValues = <T>(
     if (Array.isArray(form[parentKey].value)) {
       newValue = siblingControls
         .slice()
-        .sort(
-          (a, b) =>
-            (a.controlRef.at(-1) as number) - (b.controlRef.at(-1) as number),
-        )
+        .sort((a, b) => (a.controlRef.at(-1) as number) - (b.controlRef.at(-1) as number))
         .map((control) => control.pristineValue);
     } else {
       // If parent is a Form Group
-      newValue = siblingControls.reduce(
-        (acc, { controlRef, pristineValue }) => {
-          return {
-            ...acc,
-            [controlRef.at(-1)]: pristineValue,
-          };
-        },
-        {},
-      );
+      newValue = siblingControls.reduce((acc, { controlRef, pristineValue }) => {
+        return {
+          ...acc,
+          [controlRef.at(-1)]: pristineValue,
+        };
+      }, {});
     }
 
     const newParentControl: BaseControl<unknown> = {

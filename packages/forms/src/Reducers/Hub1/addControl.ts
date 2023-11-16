@@ -4,10 +4,7 @@ import { AddControl } from '../../Models/Payloads';
 import { ControlRef } from '../../Models';
 import { FormArrayConfig } from '../../Models';
 import { buildFormState } from '../../Helpers/buildFormState';
-import {
-  UPDATE_ANCESTOR_VALUES,
-  updateAncestorValues,
-} from './updateAncestorValues';
+import { UPDATE_ANCESTOR_VALUES, updateAncestorValues } from './updateAncestorValues';
 import { getControl } from '../../Helpers/getControl';
 import { syncValidate } from './syncValidate';
 import { updateDirty } from './updateDirty';
@@ -21,13 +18,8 @@ export const addControl = <T>(
   const existingControl = getControl(controlRef, form);
 
   // If controlRef exists we are adding control to a Form Array
-  if (
-    existingControl &&
-    Array.isArray((existingControl.config as FormArrayConfig).controls)
-  ) {
-    newControlRef = controlRef.concat(
-      (existingControl.value as Array<unknown>).length,
-    );
+  if (existingControl && Array.isArray((existingControl.config as FormArrayConfig).controls)) {
+    newControlRef = controlRef.concat((existingControl.value as Array<unknown>).length);
   } else {
     // If controlRef does not exist we are adding control to a Form Group
 

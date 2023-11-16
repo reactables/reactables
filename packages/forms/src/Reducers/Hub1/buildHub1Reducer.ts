@@ -20,14 +20,9 @@ import { resetControl } from './resetControl';
 import { buildFormState } from '../../Helpers/buildFormState';
 import { FORMS_ADD_CONTROL } from '../../Actions/Hub1/addControl';
 
-export const buildHub1Reducer = (
-  config: AbstractControlConfig,
-): Reducer<BaseForm<unknown>> => {
+export const buildHub1Reducer = (config: AbstractControlConfig): Reducer<BaseForm<unknown>> => {
   const initialState = syncValidate(buildFormState(config));
-  const formsReducer: Reducer<BaseForm<unknown>> = (
-    state = initialState,
-    action,
-  ) => {
+  const formsReducer: Reducer<BaseForm<unknown>> = (state = initialState, action) => {
     switch (action?.type) {
       case FORMS_CONTROL_CHANGE:
         return updateValues(state, action as Action<ControlChange<unknown>>);

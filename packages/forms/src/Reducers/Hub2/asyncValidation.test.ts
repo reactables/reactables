@@ -23,10 +23,7 @@ describe('asyncValidation', () => {
       },
     });
 
-    const initialState = formChange(
-      null,
-      formChangeAction(initialBaseState),
-    ) as Form<Contact>;
+    const initialState = formChange(null, formChangeAction(initialBaseState)) as Form<Contact>;
 
     const result = asyncValidation(initialState, {
       type: FORMS_ASYNC_VALIDATE_CONTROL,
@@ -37,11 +34,9 @@ describe('asyncValidation', () => {
     expect(result.emergencyContacts.pending).toBe(true);
     expect(result['emergencyContacts.0'].pending).toBe(true);
     expect(result['emergencyContacts.0.email'].pending).toBe(true);
-    expect(result['emergencyContacts.0.email'].asyncValidateInProgress).toEqual(
-      {
-        0: true,
-        1: true,
-      },
-    );
+    expect(result['emergencyContacts.0.email'].asyncValidateInProgress).toEqual({
+      0: true,
+      1: true,
+    });
   });
 });

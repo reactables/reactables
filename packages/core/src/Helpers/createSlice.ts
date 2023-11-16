@@ -18,9 +18,7 @@ export interface SliceConfig<T, S extends Cases<T>> {
   reducers: S;
 }
 
-export const createSlice = <T, S extends Cases<T>>(
-  config: SliceConfig<T, S>,
-) => {
+export const createSlice = <T, S extends Cases<T>>(config: SliceConfig<T, S>) => {
   const { name, initialState, reducers } = config;
 
   const reducer: Reducer<T> = Object.entries(reducers).reduce(

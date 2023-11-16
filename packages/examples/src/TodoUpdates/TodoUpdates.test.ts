@@ -19,9 +19,8 @@ describe('TodoUpdates', () => {
 
   it('should update todo statuses and handle updating state', () => {
     testScheduler.run(({ expectObservable, cold }) => {
-      const mockApi = (
-        payload: UpdateTodoPayload,
-      ): Observable<UpdateTodoPayload> => of(payload).pipe(delay(2));
+      const mockApi = (payload: UpdateTodoPayload): Observable<UpdateTodoPayload> =>
+        of(payload).pipe(delay(2));
 
       const {
         state$,
@@ -42,68 +41,65 @@ describe('TodoUpdates', () => {
           }),
       }).subscribe((action) => action());
 
-      expectObservable(state$.pipe(map(({ todos }) => todos))).toBe(
-        'a-b-c-d-e',
-        {
-          a: initialState.todos,
-          b: [
-            {
-              id: 1,
-              description: 'Pick Up Bart',
-              status: 'incomplete',
-              updating: true,
-            },
-            {
-              id: 2,
-              description: 'Moe the lawn',
-              status: 'incomplete',
-              updating: false,
-            },
-          ],
-          c: [
-            {
-              id: 1,
-              description: 'Pick Up Bart',
-              status: 'in progress',
-              updating: false,
-            },
-            {
-              id: 2,
-              description: 'Moe the lawn',
-              status: 'incomplete',
-              updating: false,
-            },
-          ],
-          d: [
-            {
-              id: 1,
-              description: 'Pick Up Bart',
-              status: 'in progress',
-              updating: false,
-            },
-            {
-              id: 2,
-              description: 'Moe the lawn',
-              status: 'incomplete',
-              updating: true,
-            },
-          ],
-          e: [
-            {
-              id: 1,
-              description: 'Pick Up Bart',
-              status: 'in progress',
-              updating: false,
-            },
-            {
-              id: 2,
-              description: 'Moe the lawn',
-              status: 'done',
-              updating: false,
-            },
-          ],
-        },
-      );
+      expectObservable(state$.pipe(map(({ todos }) => todos))).toBe('a-b-c-d-e', {
+        a: initialState.todos,
+        b: [
+          {
+            id: 1,
+            description: 'Pick Up Bart',
+            status: 'incomplete',
+            updating: true,
+          },
+          {
+            id: 2,
+            description: 'Moe the lawn',
+            status: 'incomplete',
+            updating: false,
+          },
+        ],
+        c: [
+          {
+            id: 1,
+            description: 'Pick Up Bart',
+            status: 'in progress',
+            updating: false,
+          },
+          {
+            id: 2,
+            description: 'Moe the lawn',
+            status: 'incomplete',
+            updating: false,
+          },
+        ],
+        d: [
+          {
+            id: 1,
+            description: 'Pick Up Bart',
+            status: 'in progress',
+            updating: false,
+          },
+          {
+            id: 2,
+            description: 'Moe the lawn',
+            status: 'incomplete',
+            updating: true,
+          },
+        ],
+        e: [
+          {
+            id: 1,
+            description: 'Pick Up Bart',
+            status: 'in progress',
+            updating: false,
+          },
+          {
+            id: 2,
+            description: 'Moe the lawn',
+            status: 'done',
+            updating: false,
+          },
+        ],
+      });
     });
   });
 });

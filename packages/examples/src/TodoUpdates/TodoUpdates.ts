@@ -1,9 +1,5 @@
 import { Action, Reactable, RxBuilder } from '@hub-fx/core';
-import {
-  UpdateTodoPayload,
-  UpdateTodoPayloadSuccess,
-  Todo,
-} from './Models/Todos';
+import { UpdateTodoPayload, UpdateTodoPayloadSuccess, Todo } from './Models/Todos';
 import { switchMap, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { ObservableOrPromise } from '../Models/ObservableOrPromise';
@@ -34,37 +30,27 @@ interface TodoUpdatesActions {
 }
 
 export const TodoUpdates = (
-  updateTodoApi: (
-    payload: UpdateTodoPayload,
-  ) => ObservableOrPromise<UpdateTodoPayloadSuccess>,
+  updateTodoApi: (payload: UpdateTodoPayload) => ObservableOrPromise<UpdateTodoPayloadSuccess>,
 ): Reactable<TodoUpdatesState, TodoUpdatesActions> => {
   // Create Slice to generate actions and reducers
   const { reducer, actions } = RxBuilder.createSlice({
     name: 'updateTodos',
     initialState,
     reducers: {
-      sendTodoStatusUpdate: (
-        state,
-        { payload }: Action<UpdateTodoPayload>,
-      ) => ({
+      sendTodoStatusUpdate: (state, { payload }: Action<UpdateTodoPayload>) => ({
         todos: state.todos.reduce((acc, todo) => {
           const { todoId } = payload;
 
-          const newTodo =
-            todo.id === todoId ? { ...todo, updating: true } : todo;
+          const newTodo = todo.id === todoId ? { ...todo, updating: true } : todo;
 
           return acc.concat(newTodo);
         }, [] as Todo[]),
       }),
-      todoStatusUpdateSuccess: (
-        state,
-        { payload }: Action<UpdateTodoPayload>,
-      ) => ({
+      todoStatusUpdateSuccess: (state, { payload }: Action<UpdateTodoPayload>) => ({
         todos: state.todos.reduce((acc, todo) => {
           const { todoId, status } = payload;
 
-          const newTodo =
-            todo.id === todoId ? { ...todo, status, updating: false } : todo;
+          const newTodo = todo.id === todoId ? { ...todo, status, updating: false } : todo;
 
           return acc.concat(newTodo);
         }, [] as Todo[]),

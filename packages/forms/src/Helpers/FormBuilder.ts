@@ -11,11 +11,7 @@ import { hub2Reducer } from '../Reducers/Hub2/hub2Reducer';
 import { formChange } from '../Actions';
 import { ValidatorFn, ValidatorAsyncFn } from '../Models/Validators';
 
-type FbControl<T> = [
-  T,
-  (ValidatorFn | ValidatorFn[])?,
-  (ValidatorAsyncFn | ValidatorAsyncFn[])?,
-];
+type FbControl<T> = [T, (ValidatorFn | ValidatorFn[])?, (ValidatorAsyncFn | ValidatorAsyncFn[])?];
 const control = <T>(config: FormControlConfig<T> | FbControl<T>) => {
   if (Array.isArray(config)) {
     return (config as FbControl<T>).reduce((acc, item, index) => {

@@ -42,24 +42,19 @@ export const EventTickets = (
   });
 
   // Add effect for calling Api
-  const controlChangeWithEffect = RxBuilder.addEffects(
-    actions.controlChange,
-    () => ({
-      effects: [
-        (actions$) =>
-          actions$.pipe(
-            switchMap(
-              ({
-                payload: { selectedEvent: event, qty },
-              }: Action<ControlState>) => getPriceApi({ event, qty }),
-            ),
-
-            // Map success response to success action
-            map((price) => actions.fetchPriceSuccess(price)),
+  const controlChangeWithEffect = RxBuilder.addEffects(actions.controlChange, () => ({
+    effects: [
+      (actions$) =>
+        actions$.pipe(
+          switchMap(({ payload: { selectedEvent: event, qty } }: Action<ControlState>) =>
+            getPriceApi({ event, qty }),
           ),
-      ],
-    }),
-  );
+
+          // Map success response to success action
+          map((price) => actions.fetchPriceSuccess(price)),
+        ),
+    ],
+  }));
 
   // Create Hub 1 and Store 1
   const hub1 = RxBuilder.createHub();

@@ -5,9 +5,7 @@ import {
   AbstractControlConfig,
 } from '../Models/Configs';
 
-export const getValueFromControlConfig = <T>(
-  controlConfig: AbstractControlConfig,
-): T => {
+export const getValueFromControlConfig = <T>(controlConfig: AbstractControlConfig): T => {
   const controls = (<FormArrayConfig | FormGroupConfig>controlConfig).controls;
   if (controls && !(controls instanceof Array)) {
     const result: { [key: string]: unknown } = {};

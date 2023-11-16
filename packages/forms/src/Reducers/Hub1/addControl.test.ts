@@ -1,11 +1,7 @@
 import { addControl } from './addControl';
 import { addControl as addControlAction } from '../../Actions/Hub1/addControl';
 import { buildFormState } from '../../Helpers/buildFormState';
-import {
-  config,
-  emergencyContactConfigs,
-  firstNameNotSameAsLast,
-} from '../../Testing/config';
+import { config, emergencyContactConfigs, firstNameNotSameAsLast } from '../../Testing/config';
 import {
   uniqueFirstAndLastName,
   uniqueEmail,
