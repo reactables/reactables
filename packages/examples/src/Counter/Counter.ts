@@ -1,5 +1,4 @@
-import { HubFactory, Reactable, createSlice } from '@hub-fx/core';
-
+import { RxBuilder, Reactable } from '@hub-fx/core';
 interface CounterState {
   count: number;
 }
@@ -9,7 +8,7 @@ interface CounterActions {
   reset: () => void;
 }
 
-const counterSlice = createSlice({
+const counterSlice = RxBuilder.createSlice({
   name: 'counter',
   initialState: { count: 0 } as CounterState,
   reducers: {
@@ -19,7 +18,7 @@ const counterSlice = createSlice({
 });
 
 export const Counter = (): Reactable<CounterState, CounterActions> => {
-  const hub = HubFactory();
+  const hub = RxBuilder.createHub();
 
   const { reducer, actions } = counterSlice;
 

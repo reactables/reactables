@@ -1,4 +1,4 @@
-import { Action, createSlice } from '@hub-fx/core';
+import { Action, RxBuilder } from '@hub-fx/core';
 import { EventTypes } from './Models/EventTypes';
 
 // Control State
@@ -12,7 +12,7 @@ export const initialControlState: ControlState = {
   qty: 0,
 };
 
-export const controlsSlice = createSlice({
+export const controlsSlice = RxBuilder.createSlice({
   name: 'controls',
   initialState: initialControlState,
   reducers: {

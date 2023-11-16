@@ -1,11 +1,5 @@
 import { switchMap, map } from 'rxjs/operators';
-import {
-  Action,
-  HubFactory,
-  Reactable,
-  addEffects,
-  createSlice,
-} from '@hub-fx/core';
+import { Action, Reactable, RxBuilder } from '@hub-fx/core';
 import { Observable } from 'rxjs';
 import { EventTypes, FetchPricePayload } from './Models/EventTypes';
 import { ControlState, controlsSlice } from './Controls';
@@ -22,7 +16,7 @@ export const initialState: EventTicketsState = {
   price: null,
 };
 
-const eventTicketsSlice = createSlice({
+const eventTicketsSlice = RxBuilder.createSlice({
   name: 'eventTickets',
   initialState,
   reducers: {
@@ -49,12 +43,12 @@ export const EventTickets = (
     payload: FetchPricePayload,
   ) => Observable<number> | Promise<number>,
 ): Reactable<EventTicketsState, EventTicketsActions> => {
-  const hub1 = HubFactory();
+  const hub1 = RxBuilder.createHub();
 
   // Initialize observable stream for the control state
   const control$ = hub1.store({ reducer: controlsSlice.reducer });
 
-  const controlChangeWithEffect = addEffects(
+  const controlChangeWithEffect = RxBuilder.addEffects(
     eventTicketsSlice.actions.controlChange,
     () => ({
       effects: [
@@ -73,7 +67,7 @@ export const EventTickets = (
     }),
   );
 
-  const hub2 = HubFactory({
+  const hub2 = RxBuilder.createHub({
     sources: [
       control$.pipe(
         // Map state changes from control$ to trigger fetching price

@@ -1,1 +1,1 @@
-export * from './RxBuilder';
+export { RxBuilder } from './RxBuilder';
