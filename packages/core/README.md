@@ -18,15 +18,14 @@ Reactive state management with RxJS.
     1. [Scoped Effects - Updating Todos](#scoped-effects-example)
     1. [Connecting Multiple Hubs - Event Prices](#connecting-hub-example)
 1. [API](#api)
-    1. [HubFactory](#hub-factory)
-        1. [HubConfig](#hub-config)
-    1. [Hub](#hub)
-        1. [Store Config](#store-config)
     1. [Reactable](#reactable)
     1. [RxBuilder](#rx-builder)
         1. [createSlice](#create-slice)
         1. [createHub](#create-hub)
         1. [addEffects](#add-effects)
+        1. [HubConfig](#hub-config)
+    1. [Hub](#hub)
+        1. [Store Config](#store-config)
     1. [Effect](#api-effect)
     1. [ScopedEffects](#api-scoped-effects)
     1. [Action](#api-action)
@@ -108,12 +107,65 @@ Event Prices             |  Design Diagram           | Try it out on StackBlitz.
 
 ## API <a name="api"></a>
 
-### HubFactory <a name="hub-factory"></a>
+### Reactable <a name="reactable"></a>
 
-Factory function for creating [Hubs](#hub)
+Reactables provide the API for applications and UI components to trigger state updates.
 
 ```typescript
-type HubFactory = (config?: HubConfig) => Hub;
+export interface Reactable<T, S extends ActionMap> {
+  state$: Observable<T>;
+  actions?: S;
+}
+
+export interface ActionMap {
+  [key: string | number]: (payload?: unknown) => void;
+}
+```
+| Property | Description |
+| -------- | ----------- |
+| state$ | Observable that emit state changes |
+| actions (optional) | Dictionary of methods that dispatches actions to update state |
+
+### RxBuilder
+
+RxBuilder provides utilities to help build [Reactables](#reactable)
+
+#### `createSlice`
+Generates a reducer and actions for state updates. Inspired by [`@reduxjs/toolkit/createSlice`](https://redux-toolkit.js.org/api/createSlice). 
+
+```typescript
+type createSlice <T, S extends Cases<T>>(config: SliceConfig<T, S>) => Slice<T>
+
+export interface SliceConfig<T, S extends Cases<T>> {
+  name: string;
+  initialState: T;
+  reducers: S;
+}
+
+interface Slice<T> {
+  actions: { [key: string]: ActionCreator<unknown> };
+  reducer: Reducer<T>;
+}
+```
+
+#### `addEffects`
+
+Decorator function that accepts an action creator and extends the behaviour with a [ScopedEffects](#scoped-effects) for triggering side effects. 
+
+
+```typescript
+type addEffects = <T>(
+  actionCreator: ActionCreator<T>,
+  scopedEffects: (payload: T) => ScopedEffects<T>
+) => ActionCreator<T>
+```
+
+#### `createHub`
+
+Creates a [Hub](#scoped-effects)
+
+```typescript
+type createHub = (config?: HubConfig) => Hub;
 
 ```
 
@@ -169,25 +221,6 @@ export interface StoreConfig<T> {
 Debug Example:
 
 <img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/SlideSixDebug.jpg" width="500" />
-
-### Reactable <a name="reactable"></a>
-
-Reactables provide the API for applications and UI components to trigger state updates.
-
-```typescript
-export interface Reactable<T, S extends ActionMap> {
-  state$: Observable<T>;
-  actions?: S;
-}
-
-export interface ActionMap {
-  [key: string | number]: (payload?: unknown) => void;
-}
-```
-| Property | Description |
-| -------- | ----------- |
-| state$ | Observable that emit state changes |
-| actions (optional) | Dictionary of methods that dispatches actions to update state |
 
 ### Effect <a name="api-effect"></a>
 
