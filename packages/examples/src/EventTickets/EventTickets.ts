@@ -76,7 +76,7 @@ export const EventTickets = (
   const hub2 = HubFactory({
     sources: [
       control$.pipe(
-        // Map state changes from control$ to trigger FETCH_PRICE action for the priceInfo$ stream
+        // Map state changes from control$ to trigger fetching price
         map((change) => controlChangeWithEffect(change)),
       ),
     ],

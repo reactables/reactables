@@ -8,7 +8,7 @@ export interface Slice<T> {
   reducer: Reducer<T>;
 }
 
-interface Cases<T> {
+export interface Cases<T> {
   [key: string]: SingleActionReducer<T, unknown>;
 }
 
