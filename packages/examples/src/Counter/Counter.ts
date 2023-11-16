@@ -1,9 +1,9 @@
-import { RxBuilder, Reactable } from '@hub-fx/core';
+import { RxBuilder, Reactable, ActionMap } from '@hub-fx/core';
 interface CounterState {
   count: number;
 }
 
-interface CounterActions {
+interface CounterActions extends ActionMap {
   increment: () => void;
   reset: () => void;
 }

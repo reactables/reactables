@@ -1,5 +1,5 @@
 import { switchMap, map } from 'rxjs/operators';
-import { Action, Reactable, RxBuilder } from '@hub-fx/core';
+import { Action, Reactable, RxBuilder, ActionMap } from '@hub-fx/core';
 import { EventTypes, FetchPricePayload } from './Models/EventTypes';
 import { ControlState, controlsSlice } from './Controls';
 import { ObservableOrPromise } from '../Models/ObservableOrPromise';
@@ -16,7 +16,7 @@ export const initialState: EventTicketsState = {
   price: null,
 };
 
-interface EventTicketsActions {
+interface EventTicketsActions extends ActionMap {
   selectEvent: (event: EventTypes) => void;
   setQty: (qty: number) => void;
 }

@@ -1,4 +1,4 @@
-import { Action, Reactable, RxBuilder } from '@hub-fx/core';
+import { Action, Reactable, RxBuilder, ActionMap } from '@hub-fx/core';
 import { UpdateTodoPayload, UpdateTodoPayloadSuccess, Todo } from './Models/Todos';
 import { switchMap, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
@@ -25,7 +25,7 @@ export const initialState: TodoUpdatesState = {
   ],
 };
 
-interface TodoUpdatesActions {
+interface TodoUpdatesActions extends ActionMap {
   sendTodoStatusUpdate: (payload: UpdateTodoPayload) => void;
 }
 
