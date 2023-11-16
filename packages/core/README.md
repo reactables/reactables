@@ -31,8 +31,8 @@ Reactive state management with RxJS.
     1. [Action](#api-action)
     1. [Reducer](#api-reducer)
 1. [Testing](#testing)
+    1. [Reactables](#testing-reactables)
     1. [messages$](#testing-messages)
-    1. [store](#testing-store)
 
 ## Installation <a name="installation"></a>
 
@@ -295,11 +295,59 @@ type Reducer<T> = (state?: T, action?: Action<unknown>) => T;
 
 ## Testing <a name="testing"></a>
 
+We can use RxJS's built in [Marble Testing](https://rxjs.dev/guide/testing/marble-testing) for testing [Reactables](#reactable).
+
+### Reactables <a name="testing-reactables"></a>
+
+```typescript
+// https://github.com/hub-fx/hub-fx/blob/main/packages/examples/src/Counter/Counter.test.ts
+import { Counter } from './Counter';
+import { Subscription } from 'rxjs';
+import { TestScheduler } from 'rxjs/testing';
+
+describe('Counter', () => {
+  let testScheduler: TestScheduler;
+  let subscription: Subscription;
+
+  beforeEach(() => {
+    testScheduler = new TestScheduler((actual, expected) => {
+      expect(actual).toEqual(expected);
+    });
+  });
+  afterEach(() => {
+    subscription?.unsubscribe();
+  });
+
+  it('should increment and reset', () => {
+    testScheduler.run(({ expectObservable, cold }) => {
+      // Create Counter Reactable
+      const {
+        state$,
+        actions: { increment, reset },
+      } = Counter();
+
+      // Call actions
+      subscription = cold('--b-c', {
+        b: increment,
+        c: reset,
+      }).subscribe((action) => action());
+
+      // Assertions
+      expectObservable(state$).toBe('a-b-c', {
+        a: { count: 0 },
+        b: { count: 1 },
+        c: { count: 0 },
+      });
+    });
+  });
+});
+
+```
+
 ### messages$ <a name="testing-messages"></a>
 
 You can test the Hub's [messages$](hub-messages) stream to see that dispatched actions and results from side effects are being handled correctly.
 
-We can use RxJS's built in [Marble Testing](https://rxjs.dev/guide/testing/marble-testing) for testing our observable streams.
 
 Example of testing an effect:
 ```typescript
@@ -330,55 +378,3 @@ Example of testing an effect:
   });
 ```
 
-### store <a name="testing-store"></a>
-#### Testing Reducers
-Testing reducer functions is easily done since they are pure functions. Just provide the neccessary inputs and assert the expected new state.
-
-#### Testing the stream
-We can also test the stream created from [Hub.store](#hub).
-
-Example of testing with [marble](https://rxjs.dev/guide/testing/marble-testing):
-
-```typescript
-  describe('store', () => {
-    const INCREMENT = 'INCREMENT';
-    const increment = (): Action => ({ type: INCREMENT });
-
-    const initialState = { count: 0 };
-    const reducer: Reducer<{ count: number }> = (
-      state = initialState,
-      action,
-    ) => {
-      switch (action?.type) {
-        case INCREMENT:
-          return {
-            ...state,
-            count: state.count + 1,
-          };
-        default:
-          return state;
-      }
-    };
-
-    it('should response to messages and update', () => {
-      testScheduler.run(({ expectObservable, cold }) => {
-        const state$ = hub.store({ reducer });
-        const action = increment();
-        // Remember to unsubscribe this in an afterEach block
-        subscription = cold('-a-b-c', {
-          a: action,
-          b: action,
-          c: action,
-        }).subscribe(hub.dispatch);
-
-        expectObservable(state$).toBe('0 1-2-3', [
-          { count: 0 },
-          { count: 1 },
-          { count: 2 },
-          { count: 3 },
-        ]);
-      });
-    });
-  });
-
-```
