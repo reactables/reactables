@@ -57,14 +57,14 @@ export const EventTickets = (
     ],
   }));
 
-  // Create Hub 1 and Store 1
-  const hub1 = RxBuilder.createHub();
-  const hub1Store$ = hub1.store({ reducer: controlsSlice.reducer });
+  // Create first hub for controls
+  const _controlsHub = RxBuilder.createHub();
+  const _controls$ = _controlsHub.store({ reducer: controlsSlice.reducer });
 
-  // Create Hub 2 and Store 2 with Hub 1 Store as a source
-  const hub2 = RxBuilder.createHub({
+  // Create second hub with first hub Store as a source
+  const hub = RxBuilder.createHub({
     sources: [
-      hub1Store$.pipe(
+      _controls$.pipe(
         // Map state changes from control$ to trigger fetching price
         map((change) => controlChangeWithEffect(change)),
       ),
@@ -76,10 +76,10 @@ export const EventTickets = (
   } = controlsSlice;
 
   return {
-    state$: hub2.store({ reducer }),
+    state$: hub.store({ reducer }),
     actions: {
-      selectEvent: (event: EventTypes) => hub1.dispatch(selectEvent(event)),
-      setQty: (qty: number) => hub1.dispatch(setQty(qty)),
+      selectEvent: (event: EventTypes) => _controlsHub.dispatch(selectEvent(event)),
+      setQty: (qty: number) => _controlsHub.dispatch(setQty(qty)),
     },
   };
 };
