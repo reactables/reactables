@@ -58,7 +58,7 @@ export const TodoUpdates = (
     },
   });
 
-  // Add effect for calling Api
+  // Add effect to action for calling Api
   const sendTodoStatusUpdate = RxBuilder.addEffects(
     actions.sendTodoStatusUpdate,
     (payload: UpdateTodoPayload) => ({

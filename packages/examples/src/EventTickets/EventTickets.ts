@@ -42,7 +42,7 @@ export const EventTickets = (
     },
   });
 
-  // Add effect for calling Api
+  // Add effect to action for calling Api
   const controlChangeWithEffect = RxBuilder.addEffects(actions.controlChange, () => ({
     effects: [
       (actions$) =>
