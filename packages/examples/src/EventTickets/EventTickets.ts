@@ -15,6 +15,7 @@ export const initialState: EventTicketsState = {
   calculating: false,
   price: null,
 };
+
 interface EventTicketsActions {
   selectEvent: (event: EventTypes) => void;
   setQty: (qty: number) => void;
