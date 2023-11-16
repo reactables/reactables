@@ -15,24 +15,6 @@ export const initialState: EventTicketsState = {
   calculating: false,
   price: null,
 };
-
-const eventTicketsSlice = RxBuilder.createSlice({
-  name: 'eventTickets',
-  initialState,
-  reducers: {
-    controlChange: (state, { payload }: Action<ControlState>) => ({
-      ...state,
-      controls: payload,
-      calculating: true,
-    }),
-    fetchPriceSuccess: (state, { payload }: Action<number>) => ({
-      ...state,
-      calculating: false,
-      price: payload,
-    }),
-  },
-});
-
 interface EventTicketsActions {
   selectEvent: (event: EventTypes) => void;
   setQty: (qty: number) => void;
@@ -41,13 +23,27 @@ interface EventTicketsActions {
 export const EventTickets = (
   getPriceApi: (payload: FetchPricePayload) => ObservableOrPromise<number>,
 ): Reactable<EventTicketsState, EventTicketsActions> => {
-  const hub1 = RxBuilder.createHub();
+  // Create Slice to generate actions and reducers
+  const { reducer, actions } = RxBuilder.createSlice({
+    name: 'eventTickets',
+    initialState,
+    reducers: {
+      controlChange: (state, { payload }: Action<ControlState>) => ({
+        ...state,
+        controls: payload,
+        calculating: true,
+      }),
+      fetchPriceSuccess: (state, { payload }: Action<number>) => ({
+        ...state,
+        calculating: false,
+        price: payload,
+      }),
+    },
+  });
 
-  // Initialize observable stream for the control state
-  const control$ = hub1.store({ reducer: controlsSlice.reducer });
-
+  // Add effect for calling Api
   const controlChangeWithEffect = RxBuilder.addEffects(
-    eventTicketsSlice.actions.controlChange,
+    actions.controlChange,
     () => ({
       effects: [
         (actions$) =>
@@ -58,16 +54,21 @@ export const EventTickets = (
               }: Action<ControlState>) => getPriceApi({ event, qty }),
             ),
 
-            // Map success response to appropriate action
-            map((price) => eventTicketsSlice.actions.fetchPriceSuccess(price)),
+            // Map success response to success action
+            map((price) => actions.fetchPriceSuccess(price)),
           ),
       ],
     }),
   );
 
+  // Create Hub 1 and Store 1
+  const hub1 = RxBuilder.createHub();
+  const hub1Store$ = hub1.store({ reducer: controlsSlice.reducer });
+
+  // Create Hub 2 and Store 2 with Hub 1 Store as a source
   const hub2 = RxBuilder.createHub({
     sources: [
-      control$.pipe(
+      hub1Store$.pipe(
         // Map state changes from control$ to trigger fetching price
         map((change) => controlChangeWithEffect(change)),
       ),
@@ -79,7 +80,7 @@ export const EventTickets = (
   } = controlsSlice;
 
   return {
-    state$: hub2.store({ reducer: eventTicketsSlice.reducer }),
+    state$: hub2.store({ reducer }),
     actions: {
       selectEvent: (event: EventTypes) => hub1.dispatch(selectEvent(event)),
       setQty: (qty: number) => hub1.dispatch(setQty(qty)),

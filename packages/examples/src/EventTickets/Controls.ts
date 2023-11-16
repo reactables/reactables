@@ -1,7 +1,6 @@
 import { Action, RxBuilder } from '@hub-fx/core';
 import { EventTypes } from './Models/EventTypes';
 
-// Control State
 export interface ControlState {
   selectedEvent: EventTypes;
   qty: number;

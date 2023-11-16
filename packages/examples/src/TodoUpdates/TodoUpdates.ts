@@ -38,7 +38,8 @@ export const TodoUpdates = (
     payload: UpdateTodoPayload,
   ) => ObservableOrPromise<UpdateTodoPayloadSuccess>,
 ): Reactable<TodoUpdatesState, TodoUpdatesActions> => {
-  const updateTodosSlice = RxBuilder.createSlice({
+  // Create Slice to generate actions and reducers
+  const { reducer, actions } = RxBuilder.createSlice({
     name: 'updateTodos',
     initialState,
     reducers: {
@@ -70,8 +71,6 @@ export const TodoUpdates = (
       }),
     },
   });
-
-  const { reducer, actions } = updateTodosSlice;
 
   // Add effect for calling Api
   const sendTodoStatusUpdate = RxBuilder.addEffects(

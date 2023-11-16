@@ -8,19 +8,19 @@ interface CounterActions {
   reset: () => void;
 }
 
-const counterSlice = RxBuilder.createSlice({
-  name: 'counter',
-  initialState: { count: 0 } as CounterState,
-  reducers: {
-    increment: (state) => ({ count: state.count + 1 }),
-    reset: () => ({ count: 0 }),
-  },
-});
-
 export const Counter = (): Reactable<CounterState, CounterActions> => {
-  const hub = RxBuilder.createHub();
+  // Create Slice to generate actions and reducers
+  const { reducer, actions } = RxBuilder.createSlice({
+    name: 'counter',
+    initialState: { count: 0 } as CounterState,
+    reducers: {
+      increment: (state) => ({ count: state.count + 1 }),
+      reset: () => ({ count: 0 }),
+    },
+  });
 
-  const { reducer, actions } = counterSlice;
+  // Create hub and initialize store
+  const hub = RxBuilder.createHub();
 
   return {
     state$: hub.store({ reducer }),
