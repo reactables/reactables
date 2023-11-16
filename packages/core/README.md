@@ -42,6 +42,8 @@ Reactive state management with RxJS.
 
 **Prerequisite**: Basic understanding of [Redux](https://redux.js.org/introduction/core-concepts) and [RxJS](https://rxjs.dev/) is helpful.
 
+In this documentation the term *stream* will refer to an RxJS observable stream.
+
 ### Reactables <a name="reactable-concept"></a>
 
 [Reactables](#reactable) are objects that encapulates all the logic required for managing state. They exposes a `state$` observable and actions methods. Applications can subscribe to `state$` to receive state changes and call action methods to trigger them.
