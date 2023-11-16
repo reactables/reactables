@@ -1,9 +1,9 @@
-import { EventTickets, initialState, EventTicketsState } from './EventTickets';
+import { RxEventTickets, initialState, EventTicketsState } from './RxEventTickets';
 import { Subscription, of, Observable } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { delay } from 'rxjs/operators';
 import { FetchPricePayload, EventTypes } from './Models/EventTypes';
-import { initialControlState } from './Controls';
+import { initialControlState } from './controlsSlice';
 
 describe('EventTickets', () => {
   let testScheduler: TestScheduler;
@@ -25,7 +25,7 @@ describe('EventTickets', () => {
       const {
         state$,
         actions: { setQty, selectEvent },
-      } = EventTickets(mockApi);
+      } = RxEventTickets(mockApi);
 
       subscription = cold('-------a---b', {
         a: () => setQty(1),

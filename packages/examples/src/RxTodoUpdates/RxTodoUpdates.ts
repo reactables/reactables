@@ -29,7 +29,7 @@ interface TodoUpdatesActions extends ActionMap {
   sendTodoStatusUpdate: (payload: UpdateTodoPayload) => void;
 }
 
-export const TodoUpdates = (
+export const RxTodoUpdates = (
   updateTodoApi: (payload: UpdateTodoPayload) => ObservableOrPromise<UpdateTodoPayloadSuccess>,
 ): Reactable<TodoUpdatesState, TodoUpdatesActions> => {
   // Create Slice to generate actions and reducers

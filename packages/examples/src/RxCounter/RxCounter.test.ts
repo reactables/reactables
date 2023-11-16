@@ -1,4 +1,4 @@
-import { Counter } from './Counter';
+import { RxCounter } from './RxCounter';
 import { Subscription } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 
@@ -21,7 +21,7 @@ describe('Counter', () => {
       const {
         state$,
         actions: { increment, reset },
-      } = Counter();
+      } = RxCounter();
 
       // Call actions
       subscription = cold('--b-c', {

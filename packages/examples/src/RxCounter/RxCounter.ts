@@ -8,7 +8,7 @@ interface CounterActions extends ActionMap {
   reset: () => void;
 }
 
-export const Counter = (): Reactable<CounterState, CounterActions> => {
+export const RxCounter = (): Reactable<CounterState, CounterActions> => {
   // Create Slice to generate actions and reducers
   const { reducer, actions } = RxBuilder.createSlice({
     initialState: { count: 0 } as CounterState,

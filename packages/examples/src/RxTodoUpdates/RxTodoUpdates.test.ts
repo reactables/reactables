@@ -1,4 +1,4 @@
-import { TodoUpdates, initialState } from './TodoUpdates';
+import { RxTodoUpdates, initialState } from './RxTodoUpdates';
 import { Observable, Subscription, of } from 'rxjs';
 import { delay, map } from 'rxjs/operators';
 import { TestScheduler } from 'rxjs/testing';
@@ -25,7 +25,7 @@ describe('TodoUpdates', () => {
       const {
         state$,
         actions: { sendTodoStatusUpdate },
-      } = TodoUpdates(mockApi);
+      } = RxTodoUpdates(mockApi);
 
       subscription = cold('--a---b', {
         a: () =>

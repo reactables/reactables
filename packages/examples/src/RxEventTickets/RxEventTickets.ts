@@ -1,7 +1,7 @@
 import { switchMap, map } from 'rxjs/operators';
 import { Action, Reactable, RxBuilder, ActionMap } from '@hub-fx/core';
 import { EventTypes, FetchPricePayload } from './Models/EventTypes';
-import { ControlState, controlsSlice } from './Controls';
+import { ControlState, controlsSlice } from './controlsSlice';
 import { ObservableOrPromise } from '../Models/ObservableOrPromise';
 
 export interface EventTicketsState {
@@ -21,7 +21,7 @@ interface EventTicketsActions extends ActionMap {
   setQty: (qty: number) => void;
 }
 
-export const EventTickets = (
+export const RxEventTickets = (
   getPriceApi: (payload: FetchPricePayload) => ObservableOrPromise<number>,
 ): Reactable<EventTicketsState, EventTicketsActions> => {
   // Create Slice to generate actions and reducers
