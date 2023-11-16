@@ -8,10 +8,10 @@ Reactive state management with RxJS.
 
 1. [Installation](#installation)
 1. [Core concepts](#core-concepts)
+    1. [Reactables](#reactable-concept)
     1. [Hub and Stores](#hub-stores)
     1. [Effects](#effects)
     1. [Scoped Effects](#scoped-effects)
-    1. [Integrating with UI](#integration)
     1. [Flow & Containment](#flow-containment)
 1. [Examples](#examples)
     1. [Basic Counter](#basic-counter-example)
@@ -42,11 +42,32 @@ Reactive state management with RxJS.
 
 **Prerequisite**: Basic understanding of [Redux](https://redux.js.org/introduction/core-concepts) and [RxJS](https://rxjs.dev/) is helpful.
 
-Hubfx uses the same concepts from [Redux](https://redux.js.org/introduction/core-concepts) regarding Actions, Reducers, Store. These concepts are coupled with [RxJS](https://rxjs.dev/) observables to manage state modelled as reactive streams.
+### Reactables <a name="reactable-concept"></a>
 
-In this documentation the term *stream* will refer to an RxJS observable stream.
+[Reactables](#reactable) are objects that encapulates all the logic required for managing state. They exposes a `state$` observable and actions methods. Applications can subscribe to `state$` to receive state changes and call action methods to trigger them.
+
+```javascript
+import { Counter } from '@hub-fx/examples';
+
+const counterReactable = Counter();
+
+const { state$, actions: { increment, reset } } = counterReactable;
+
+state$.subscribe(({ count }) => {
+  // Update the count when state changes.
+  document.getElementById('count').innerHTML = count;
+});
+
+// Bind click handlers
+document.getElementById('increment').addEventListener('click', increment);
+document.getElementById('reset').addEventListener('click', reset);
+
+```
+For full example see [Basic Counter Example](#basic-counter-example).
 
 ### Hub and Stores <a name="hub-stores"></a>
+
+[Reactables](#reactable-concept) are composed of Hubs & Stores.
 
 The **Hub** is responsible for dispatching actions to the store(s) registered to the hub. It is also responsible for handling side effects. The main stream that initiates all actions and effects is the `dispatcher$` 
 
@@ -63,11 +84,6 @@ When initializing a hub we can declare effects. The hub can listen for various a
 Scoped Effects are dynamically created streams scoped to a particular action & key combination when an action is dispatch.
 
 <img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/SlideThreeScopedEffects.jpg" width="600" />
-
-### Integrating with UI <a name="integration"></a>
-A network of hubs and stores can be integrated with UI components without tight coupling. Separating presentation concerns improves testability and allows developers to decide how to integrate with UI components.
-
-<img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/SlideFourFiveIntegration.jpg" />
 
 ### Flow & Containment <a name="flow-containment"></a>
 Actions and logic flow through the App in one direction and are **contained** in their respective streams. This makes state updates more predictable and traceable during debugging.
@@ -162,7 +178,7 @@ type addEffects = <T>(
 
 #### `createHub`
 
-Creates a [Hub](#scoped-effects)
+Creates a [Hub](#hub)
 
 ```typescript
 type createHub = (config?: HubConfig) => Hub;
