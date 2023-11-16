@@ -23,6 +23,10 @@ Reactive state management with RxJS.
     1. [Hub](#hub)
         1. [Store Config](#store-config)
     1. [Reactable](#reactable)
+    1. [RxBuilder](#rx-builder)
+        1. [createSlice](#create-slice)
+        1. [createHub](#create-hub)
+        1. [addEffects](#add-effects)
     1. [Effect](#api-effect)
     1. [ScopedEffects](#api-scoped-effects)
     1. [Action](#api-action)
@@ -166,14 +170,37 @@ Debug Example:
 
 <img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/SlideSixDebug.jpg" width="500" />
 
+### Reactable <a name="reactable"></a>
+
+Reactables provide the API for applications and UI components to trigger state updates.
+
+```typescript
+export interface Reactable<T, S extends ActionMap> {
+  state$: Observable<T>;
+  actions?: S;
+}
+
+export interface ActionMap {
+  [key: string | number]: (payload?: unknown) => void;
+}
+```
+| Property | Description |
+| -------- | ----------- |
+| state$ | Observable that emit state changes |
+| actions (optional) | Dictionary of methods that dispatches actions to update state |
+
 ### Effect <a name="api-effect"></a>
+
+Effects are expressed as [RxJS Operator Functions](https://rxjs.dev/api/index/interface/OperatorFunction). They pipe the [dispatcher$](#hub-dispatcher) stream and run side effects on incoming [Actions](#api-action).
+
 ```typescript
 type Effect<T, S> = OperatorFunction<Action<T>, Action<S>>;
 ```
-Effects are expressed as [RxJS Operator Functions](https://rxjs.dev/api/index/interface/OperatorFunction). They pipe the [dispatcher$](#hub-dispatcher) stream and run side effects on incoming [Actions](#api-action).
-
 
 ### ScopedEffects <a name="api-scoped-effects"></a>
+
+Scoped Effects are declared in [Actions](#api-action). They are dynamically created stream(s) scoped to an Action `type` & `key` combination.
+
 ```typescript
 interface ScopedEffects<T> {
   key?: string;
@@ -184,8 +211,6 @@ interface ScopedEffects<T> {
 | -------- | ----------- |
 | key (optional) | key to be combined with the Action `type` to generate a unique signature for the effect stream(s). Example: An id for the entity the action is being performed on. |
 | effects | Array of [Effects](#api-effects) scoped to the Action `type` & `key` |
-
-Scoped Effects are declared in [Actions](#api-action). They are dynamically created stream(s) scoped to an Action `type` & `key` combination.
 
 Example:
 
@@ -228,11 +253,12 @@ interface Action<T = undefined> {
 
 ### Reducer <a name="api-reducer"></a>
 
+From [Redux Docs](https://redux.js.org/tutorials/fundamentals/part-3-state-actions-reducers)
+> Reducers are functions that take the current state and an action as arguments, and return a new state result
+
 ```typescript
 type Reducer<T> = (state?: T, action?: Action<unknown>) => T;
 ```
-From [Redux Docs](https://redux.js.org/tutorials/fundamentals/part-3-state-actions-reducers)
-> Reducers are functions that take the current state and an action as arguments, and return a new state result
 
 ## Testing <a name="testing"></a>
 
