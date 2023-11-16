@@ -18,14 +18,15 @@ Reactive state management with RxJS.
     1. [Scoped Effects - Updating Todos](#scoped-effects-example)
     1. [Connecting Multiple Hubs - Event Prices](#connecting-hub-example)
 1. [API](#api)
-    1. [Effect](#api-effect)
-    1. [Action](#api-action)
-    1. [Reducer](#api-reducer)
-    1. [ScopedEffects](#api-scoped-effects)
     1. [HubFactory](#hub-factory)
         1. [HubConfig](#hub-config)
     1. [Hub](#hub)
         1. [Store Config](#store-config)
+    1. [Reactable](#reactable)
+    1. [Effect](#api-effect)
+    1. [ScopedEffects](#api-scoped-effects)
+    1. [Action](#api-action)
+    1. [Reducer](#api-reducer)
 1. [Testing](#testing)
     1. [messages$](#testing-messages)
     1. [store](#testing-store)
@@ -103,73 +104,6 @@ Event Prices             |  Design Diagram           | Try it out on StackBlitz.
 
 ## API <a name="api"></a>
 
-### Effect <a name="api-effect"></a>
-```typescript
-type Effect<T, S> = OperatorFunction<Action<T>, Action<S>>;
-```
-Effects are expressed as [RxJS Operator Functions](https://rxjs.dev/api/index/interface/OperatorFunction). They pipe the [dispatcher$](#hub-dispatcher) stream and run side effects on incoming [Actions](#api-action).
-
-### Action <a name="api-action"></a>
-```typescript
-interface Action<T = undefined> {
-  type: string;
-  payload?: T;
-  scopedEffects?: ScopedEffects<T>;
-}
-```
-| Property | Description |
-| -------- | ----------- |
-| type | type of Action being dispatched |
-| payload (optional) | payload associated with Action |
-| scopedEffects (optional) | [See ScopedEffects](#api-scoped-effects) |
-
-### ScopedEffects <a name="api-scoped-effects"></a>
-```typescript
-interface ScopedEffects<T> {
-  key?: string;
-  effects: Effect<T, unknown>[];
-}
-```
-| Property | Description |
-| -------- | ----------- |
-| key (optional) | key to be combined with the Action `type` to generate a unique signature for the effect stream(s). Example: An id for the entity the action is being performed on. |
-| effects | Array of [Effects](#api-effects) scoped to the Action `type` & `key` |
-
-Scoped Effects are declared in [Actions](#api-action). They are dynamically created stream(s) scoped to an Action `type` & `key` combination.
-
-Example:
-
-```typescript
-
-const UPDATE_TODO = 'UPDATE_TODO';
-const UPDATE_TODO_SUCCESS = 'UPDATE_TODO_SUCCESS';
-const updateTodo = ({ id, message }, todoService: TodoService) => ({
-  type: UPDATE_TODO,
-  payload: { id, message },
-  scopedEffects: {
-    key: id,
-    effects: [
-      (updateTodoActions$: Observable<Action<string>>) =>
-        updateTodoActions$.pipe(
-          mergeMap(({ payload: { id, message } }) => todoService.updateTodo(id, message))
-          map(({ data }) => ({
-            type: UPDATE_TODO_SUCCESS,
-            payload: data
-          }))
-        )
-    ]
-  }
-})
-```
-
-### Reducer <a name="api-reducer"></a>
-
-```typescript
-type Reducer<T> = (state?: T, action?: Action<unknown>) => T;
-```
-From [Redux Docs](https://redux.js.org/tutorials/fundamentals/part-3-state-actions-reducers)
-> Reducers are functions that take the current state and an action as arguments, and return a new state result
-
 ### HubFactory <a name="hub-factory"></a>
 
 Factory function for creating [Hubs](#hub)
@@ -231,6 +165,74 @@ export interface StoreConfig<T> {
 Debug Example:
 
 <img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/SlideSixDebug.jpg" width="500" />
+
+### Effect <a name="api-effect"></a>
+```typescript
+type Effect<T, S> = OperatorFunction<Action<T>, Action<S>>;
+```
+Effects are expressed as [RxJS Operator Functions](https://rxjs.dev/api/index/interface/OperatorFunction). They pipe the [dispatcher$](#hub-dispatcher) stream and run side effects on incoming [Actions](#api-action).
+
+
+### ScopedEffects <a name="api-scoped-effects"></a>
+```typescript
+interface ScopedEffects<T> {
+  key?: string;
+  effects: Effect<T, unknown>[];
+}
+```
+| Property | Description |
+| -------- | ----------- |
+| key (optional) | key to be combined with the Action `type` to generate a unique signature for the effect stream(s). Example: An id for the entity the action is being performed on. |
+| effects | Array of [Effects](#api-effects) scoped to the Action `type` & `key` |
+
+Scoped Effects are declared in [Actions](#api-action). They are dynamically created stream(s) scoped to an Action `type` & `key` combination.
+
+Example:
+
+```typescript
+
+const UPDATE_TODO = 'UPDATE_TODO';
+const UPDATE_TODO_SUCCESS = 'UPDATE_TODO_SUCCESS';
+const updateTodo = ({ id, message }, todoService: TodoService) => ({
+  type: UPDATE_TODO,
+  payload: { id, message },
+  scopedEffects: {
+    key: id,
+    effects: [
+      (updateTodoActions$: Observable<Action<string>>) =>
+        updateTodoActions$.pipe(
+          mergeMap(({ payload: { id, message } }) => todoService.updateTodo(id, message))
+          map(({ data }) => ({
+            type: UPDATE_TODO_SUCCESS,
+            payload: data
+          }))
+        )
+    ]
+  }
+})
+```
+
+### Action <a name="api-action"></a>
+```typescript
+interface Action<T = undefined> {
+  type: string;
+  payload?: T;
+  scopedEffects?: ScopedEffects<T>;
+}
+```
+| Property | Description |
+| -------- | ----------- |
+| type | type of Action being dispatched |
+| payload (optional) | payload associated with Action |
+| scopedEffects (optional) | [See ScopedEffects](#api-scoped-effects) |
+
+### Reducer <a name="api-reducer"></a>
+
+```typescript
+type Reducer<T> = (state?: T, action?: Action<unknown>) => T;
+```
+From [Redux Docs](https://redux.js.org/tutorials/fundamentals/part-3-state-actions-reducers)
+> Reducers are functions that take the current state and an action as arguments, and return a new state result
 
 ## Testing <a name="testing"></a>
 

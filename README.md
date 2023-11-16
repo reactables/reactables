@@ -24,8 +24,6 @@ Developers can follow a standardized reactive pattern for managing state in any 
     
     - With Hubfx developers can develop and test their state logic independently without rendering any UI providing greater flexibility and speed in unit testing. 
 
-    - `@hubfx/forms` is an example where all the state logic was built and tested independently. It was then integrated with React in `@hubfx/react-forms`
-
 1. Reusability and Framework agnostic
 
     - Hubfx pattern is highly composable, reusable and can easily integrate with any UI framework/library or vanilla JS.
@@ -46,6 +44,12 @@ All Hubfx Actions flow in one direction contained in streams, making state updat
 
 - `npm i @hub-fx/core`
 
+[Hubfx Forms](https://github.com/hub-fx/hub-fx/tree/main/packages/forms)
+
+- Actions & Reducers for building a comprehensive form library using [Hubfx Core](https://github.com/hub-fx/hub-fx/tree/main/packages/core)
+
+- `npm i @hub-fx/forms`
+
 [Hubfx React Forms](https://github.com/hub-fx/hub-fx/tree/main/packages/react-forms)
 
 - See Storybook Demo [here](https://hub-fx.github.io/hub-fx/)
@@ -54,8 +58,8 @@ All Hubfx Actions flow in one direction contained in streams, making state updat
 
 - `npm i @hub-fx/react-forms`
 
-[Hubfx Forms](https://github.com/hub-fx/hub-fx/tree/main/packages/forms)
+[Hubfx Examples](https://github.com/hub-fx/hub-fx/tree/main/packages/examples) 
 
-- Actions & Reducers for building a comprehensive form library using [Hubfx Core](https://github.com/hub-fx/hub-fx/tree/main/packages/core)
+- Examples of Hubfx. See [Hubfx Examples](https://github.com/hub-fx/hub-fx/tree/main/packages/core#examples).
 
-- `npm i @hub-fx/forms`
+- `npm i @hub-fx/examples`
