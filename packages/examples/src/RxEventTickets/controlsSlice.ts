@@ -12,7 +12,6 @@ export const initialControlState: ControlState = {
 };
 
 export const controlsSlice = RxBuilder.createSlice({
-  name: 'controls',
   initialState: initialControlState,
   reducers: {
     selectEvent: (state, { payload }: Action<EventTypes>) => ({
