@@ -125,7 +125,7 @@ Event Prices             |  Design Diagram           | Try it out on StackBlitz.
 
 ### Reactable <a name="reactable"></a>
 
-Reactables provide the API for applications and UI components to trigger state updates.
+Reactables provide the API for applications and UI components to receive and trigger state updates.
 
 ```typescript
 export interface Reactable<T, S extends ActionMap> {
