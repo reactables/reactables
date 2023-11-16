@@ -6,6 +6,7 @@ import {
 } from './Models/Todos';
 import { switchMap, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { ObservableOrPromise } from '../Models/ObservableOrPromise';
 
 interface TodoUpdatesState {
   todos: Todo[];
@@ -35,7 +36,7 @@ interface TodoUpdatesActions {
 export const TodoUpdates = (
   updateTodoApi: (
     payload: UpdateTodoPayload,
-  ) => Observable<UpdateTodoPayloadSuccess> | Promise<UpdateTodoPayloadSuccess>,
+  ) => ObservableOrPromise<UpdateTodoPayloadSuccess>,
 ): Reactable<TodoUpdatesState, TodoUpdatesActions> => {
   const updateTodosSlice = RxBuilder.createSlice({
     name: 'updateTodos',

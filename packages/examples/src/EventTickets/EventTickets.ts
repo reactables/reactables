@@ -3,6 +3,7 @@ import { Action, Reactable, RxBuilder } from '@hub-fx/core';
 import { Observable } from 'rxjs';
 import { EventTypes, FetchPricePayload } from './Models/EventTypes';
 import { ControlState, controlsSlice } from './Controls';
+import { ObservableOrPromise } from '../Models/ObservableOrPromise';
 
 export interface EventTicketsState {
   controls: ControlState;
@@ -39,9 +40,7 @@ interface EventTicketsActions {
 }
 
 export const EventTickets = (
-  getPriceApi: (
-    payload: FetchPricePayload,
-  ) => Observable<number> | Promise<number>,
+  getPriceApi: (payload: FetchPricePayload) => ObservableOrPromise<number>,
 ): Reactable<EventTicketsState, EventTicketsActions> => {
   const hub1 = RxBuilder.createHub();
 
