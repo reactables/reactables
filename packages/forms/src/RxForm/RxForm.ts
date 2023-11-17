@@ -13,6 +13,7 @@ import {
 import { buildHub2Source } from '../Helpers/buildHub2Source';
 import { ValidatorFn, ValidatorAsyncFn } from '../Models/Validators';
 
+// Config Builders
 type FbControl<T> = [T, (ValidatorFn | ValidatorFn[])?, (ValidatorAsyncFn | ValidatorAsyncFn[])?];
 const control = <T>(config: FormControlConfig<T> | FbControl<T>) => {
   if (Array.isArray(config)) {
@@ -35,6 +36,7 @@ const control = <T>(config: FormControlConfig<T> | FbControl<T>) => {
 const array = (config: FormArrayConfig) => config;
 const group = (config: FormGroupConfig) => config;
 
+// Building Reactable
 type RxFormActions = {
   updateValues: <T>(payload: ControlChange<T>) => void;
   addControl: (payload: AddControl) => void;
@@ -44,7 +46,6 @@ type RxFormActions = {
   markControlAsUntouched: (payload: ControlRef) => void;
   resetControl: (payload: ControlRef) => void;
 };
-
 const build = (config: AbstractControlConfig): Reactable<unknown, RxFormActions> => {
   const initialState = buildFormState(config);
   const hub1Slice = getHub1Slice(initialState);
