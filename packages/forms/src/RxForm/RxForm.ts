@@ -1,11 +1,39 @@
 import { RxBuilder, Reactable } from '@hub-fx/core';
 import { getHub1Slice } from './getHub1Slice';
 import { buildFormState } from '../Helpers/buildFormState';
-import { AbstractControlConfig } from '../Models';
-import { buildHub2Source } from '../Helpers/buildHub2Source';
 import { hub2Slice } from './hub2Slice';
 import { ControlChange, AddControl, MarkTouched } from '../Models/Payloads';
 import { ControlRef } from '../Models';
+import {
+  FormControlConfig,
+  FormArrayConfig,
+  FormGroupConfig,
+  AbstractControlConfig,
+} from '../Models/Configs';
+import { buildHub2Source } from '../Helpers/buildHub2Source';
+import { ValidatorFn, ValidatorAsyncFn } from '../Models/Validators';
+
+type FbControl<T> = [T, (ValidatorFn | ValidatorFn[])?, (ValidatorAsyncFn | ValidatorAsyncFn[])?];
+const control = <T>(config: FormControlConfig<T> | FbControl<T>) => {
+  if (Array.isArray(config)) {
+    return (config as FbControl<T>).reduce((acc, item, index) => {
+      const indexMap = {
+        0: 'initialValue',
+        1: 'validators',
+        2: 'asyncValidators',
+      };
+      return {
+        ...acc,
+        [indexMap[index]]: index < 1 ? item : [].concat(item || []),
+      };
+    }, {} as FormControlConfig<T>);
+  }
+
+  return config;
+};
+
+const array = (config: FormArrayConfig) => config;
+const group = (config: FormGroupConfig) => config;
 
 type RxFormActions = {
   updateValues: <T>(payload: ControlChange<T>) => void;
@@ -43,5 +71,8 @@ const build = (config: AbstractControlConfig): Reactable<unknown, RxFormActions>
 };
 
 export const RxForm = {
+  group,
+  array,
+  control,
   build,
 };
