@@ -5,6 +5,7 @@ import { FormArrayConfig, FormGroupConfig } from '../Models';
 import { getValueFromControlConfig } from './getValueFromControlConfig';
 import { getFormKey } from './getFormKey';
 import { generateKey } from './generateKey';
+import { syncValidate } from '../Reducers/Hub1';
 
 export const buildFormState = <T>(
   config: AbstractControlConfig,
@@ -47,5 +48,5 @@ export const buildFormState = <T>(
     );
   }
 
-  return newForm;
+  return syncValidate(newForm);
 };
