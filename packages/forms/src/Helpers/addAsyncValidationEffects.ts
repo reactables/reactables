@@ -1,9 +1,10 @@
 import { Observable } from 'rxjs';
+import { Action, Effect, RxBuilder } from '@hub-fx/core';
 import { map } from 'rxjs/operators';
-import { Action, Effect } from '@hub-fx/core';
-import { BaseControl } from '../../Models/Controls';
-import { asyncValidationResponseSuccess } from './asyncValidationResponseSuccess';
-import { ControlAsyncValidationResponse } from '../../Models/Payloads';
+import { BaseControl } from '../Models/Controls';
+import { asyncValidationResponseSuccess } from '../Actions/Hub2/asyncValidationResponseSuccess';
+import { ControlAsyncValidationResponse } from '../Models/Payloads';
+import { hub2Slice } from '../RxForm/hub2Slice';
 
 const getScopedEffectsForControl = <T>(
   formControl: BaseControl<T>,
@@ -44,19 +45,21 @@ const getScopedEffectsForControl = <T>(
   return scopedEffects;
 };
 
-export const FORMS_ASYNC_VALIDATE_CONTROL = 'FORMS_ASYNC_VALIDATE_CONTROL';
-
 export const getAsyncValidationActions = (formControls: BaseControl<unknown>[]) =>
   formControls.reduce((acc: Action<BaseControl<unknown>>[], control) => {
     const effects = getScopedEffectsForControl(control);
     if (!effects.length) return acc;
 
-    return acc.concat({
-      type: FORMS_ASYNC_VALIDATE_CONTROL,
-      payload: control,
-      scopedEffects: {
-        key: control.key,
-        effects,
-      },
-    });
+    const {
+      actions: { asyncValidation },
+    } = hub2Slice;
+
+    const asyncValidationWithEffect = RxBuilder.addEffects(asyncValidation, () => ({
+      key: control.key,
+      effects,
+    }));
+
+    const action = asyncValidationWithEffect(control) as Action<BaseControl<unknown>>;
+
+    return acc.concat(action);
   }, []);

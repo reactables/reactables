@@ -9,7 +9,7 @@ import { BaseForm, BaseControl } from '../Models/Controls';
 import { FormArrayConfig } from '../Models/Configs';
 import { Contact } from '../Testing/Models/Contact';
 import { controlChange } from '../Actions/Hub1/controlChange';
-import { FORMS_ASYNC_VALIDATE_CONTROL } from '../Actions/Hub2/valueChange';
+import { FORMS_ASYNC_VALIDATE_CONTROL } from './addAsyncValidationEffects';
 import { FORMS_FORM_CHANGE } from '../Actions/Hub2/formChange';
 import { config, emergencyContactConfigs, firstNameNotSameAsLast } from '../Testing/config';
 import cloneDeep from 'lodash.clonedeep';

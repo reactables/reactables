@@ -4,7 +4,7 @@ import { config, emergencyContactConfigs } from '../../Testing/config';
 import { Form, BaseForm } from '../../Models/Controls';
 import { FormArrayConfig } from '../../Models/Configs';
 import { Contact } from '../../Testing/Models/Contact';
-import { FORMS_ASYNC_VALIDATE_CONTROL } from '../../Actions/Hub2/valueChange';
+import { FORMS_ASYNC_VALIDATE_CONTROL } from '../../Helpers/addAsyncValidationEffects';
 import { formChange } from './formChange';
 import { formChange as formChangeAction } from '../../Actions/Hub2/formChange';
 

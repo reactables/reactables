@@ -5,7 +5,7 @@ import { config, emergencyContactConfigs } from '../../Testing/config';
 import { Form } from '../../Models/Controls';
 import { FormGroupConfig } from '../../Models/Configs';
 import { Contact } from '../../Testing/Models/Contact';
-import { FORMS_ASYNC_VALIDATE_CONTROL } from '../../Actions/Hub2/valueChange';
+import { FORMS_ASYNC_VALIDATE_CONTROL } from '../../Helpers/addAsyncValidationEffects';
 import { asyncValidationResponseSuccess as asyncValidationResponseSuccessAction } from '../../Actions/Hub2/asyncValidationResponseSuccess';
 import { getControl } from '../../Helpers/getControl';
 import { formChange as formChangeAction } from '../../Actions';
