@@ -12,6 +12,7 @@ describe('markControlAsTouched', () => {
       initialState,
       markControlAsTouchedAction({
         controlRef: ['doctorInfo'],
+        //TODO: update this test to show that marks children as well if this flag is true
         markAll: true,
       }),
     );

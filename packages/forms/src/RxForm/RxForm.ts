@@ -1,11 +1,23 @@
-import { RxBuilder } from '@hub-fx/core';
+import { RxBuilder, Reactable } from '@hub-fx/core';
 import { getHub1Slice } from './getHub1Slice';
 import { buildFormState } from '../Helpers/buildFormState';
 import { AbstractControlConfig } from '../Models';
 import { buildHub2Source } from '../Helpers/buildHub2Source';
 import { hub2Slice } from './hub2Slice';
+import { ControlChange, AddControl, MarkTouched } from '../Models/Payloads';
+import { ControlRef } from '../Models';
 
-export const RxForm = (config: AbstractControlConfig) => {
+type RxFormActions = {
+  updateValues: <T>(payload: ControlChange<T>) => void;
+  addControl: (payload: AddControl) => void;
+  removeControl: (payload: ControlRef) => void;
+  markControlAsPristine: (payload) => void;
+  markControlAsTouched: (payload: MarkTouched) => void;
+  markControlAsUntouched: (payload: ControlRef) => void;
+  resetControl: (payload: ControlRef) => void;
+};
+
+const build = (config: AbstractControlConfig): Reactable<unknown, RxFormActions> => {
   const initialState = buildFormState(config);
   const hub1Slice = getHub1Slice(initialState);
 
@@ -28,4 +40,8 @@ export const RxForm = (config: AbstractControlConfig) => {
       resetControl: (payload) => dispatch(actions.markControlAsTouched(payload)),
     },
   };
+};
+
+export const RxForm = {
+  build,
 };
