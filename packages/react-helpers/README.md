@@ -1,3 +1,3 @@
 # Hubfx React Helpers
 
-- `useReactable` hook to bind state to React component
+A `useReactable` hook to bind state to React component.
