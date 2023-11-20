@@ -41,7 +41,7 @@ In this documentation the term *stream* will refer to an RxJS observable stream.
 
 ### Reactables <a name="reactable-concept"></a>
 
-[Reactables](#reactable) (prefixed with Rx) are objects that encapulates all the logic required for managing state. They expose a `state$` observable and actions methods. Applications can subscribe to `state$` to receive state changes and call action methods to trigger them.
+[Reactables](#reactable) (prefixed with Rx) are objects that encapulate all the logic required for state management. They expose a `state$` observable and `actions` methods. Applications can subscribe to `state$` to receive state changes and call action methods to trigger them.
 
 ```javascript
 import { RxCounter } from '@hub-fx/examples';
@@ -60,7 +60,7 @@ document.getElementById('increment').addEventListener('click', increment);
 document.getElementById('reset').addEventListener('click', reset);
 
 ```
-For full example see [Basic Counter Example](#basic-counter-example).
+For a full example, see [Basic Counter Example](#basic-counter-example).
 
 ### Hub and Stores <a name="hub-stores"></a>
 
@@ -72,7 +72,7 @@ The **Hub** is responsible for dispatching actions to the store(s) registered to
 
 ### Effects<a name="effects"></a>
 
-When initializing a hub we can declare effects. The hub can listen for various actions and perform side-effects as needed. Stores that are registered to the hub will be listening to these effects as well the `dispatcher$`.
+When initializing a hub we can declare effects. The hub can listen for various actions and perform side effects as needed. Stores that are registered to the hub will be listening to these effects as well the `dispatcher$`.
 
 <img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/SlideTwoEffect.jpg" width="600" />
 
@@ -95,7 +95,7 @@ Avoid [tapping](https://rxjs.dev/api/operators/tap) your streams. This prevents 
 
 ### Basic Counter <a name="basic-counter-example"></a>
 
-Basic counter example. Button clicks dispatches actions to increment or reset the counter.
+Basic counter example. Button clicks dispatch actions to increment or reset the counter.
 
 Basic Counter             |  Design Diagram           | Try it out on StackBlitz.<br /> Choose your framework
 :-------------------------:|:-------------------------:|:-------------------------:
@@ -111,7 +111,7 @@ Todo Status Updates             |  Design Diagram           | Try it out on Stac
 
 ### Connecting Multiple Hubs - Event Prices  <a name="connecting-hub-example"></a>
 
-This examples shows two sets of hub & stores. The first set is responsible for updating state of the user controls. The second set fetches prices based on input from the first set.
+This examples shows two sets of hubs & stores. The first set is responsible for updating state of the user controls. The second set fetches prices based on input from the first set.
 
 Event Prices             |  Design Diagram           | Try it out on StackBlitz.<br /> Choose your framework
 :-------------------------:|:-------------------------:|:-------------------------:
