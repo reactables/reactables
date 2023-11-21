@@ -141,7 +141,7 @@ export interface ActionMap {
 
 ### RxBuilder <a name="rx-builder"></a>
 
-RxBuilder factory method help build [Reactables](#reactable). Accepts a [RxConfig](#rx-confg) configuration object
+RxBuilder factory help build [Reactables](#reactable). Accepts a [RxConfig](#rx-confg) configuration object
 
 ```typescript
 type RxBuilder = <T, S extends Cases<T>>(config: RxConfig<T, S>) => Reactable<T, unknown>
