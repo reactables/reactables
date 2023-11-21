@@ -20,19 +20,14 @@ Reactive state management with RxJS.
 1. [API](#api)
     1. [Reactable](#reactable)
     1. [RxBuilder](#rx-builder)
-        1. [createSlice](#create-slice)
-        1. [createHub](#create-hub)
-        1. [addEffects](#add-effects)
-        1. [HubConfig](#hub-config)
-    1. [Hub](#hub)
-        1. [Store Config](#store-config)
-    1. [Effect](#api-effect)
-    1. [ScopedEffects](#api-scoped-effects)
-    1. [Action](#api-action)
-    1. [Reducer](#api-reducer)
+        1. [RxConfig](#rx-config)
+    1. [Other Interfaces](#interfaces)
+        1. [Effect](#api-effect)
+        1. [ScopedEffects](#api-scoped-effects)
+        1. [Action](#api-action)
+        1. [Reducer](#api-reducer)
 1. [Testing](#testing)
     1. [Reactables](#testing-reactables)
-    1. [messages$](#testing-messages)
 
 ## Installation <a name="installation"></a>
 
@@ -46,7 +41,7 @@ In this documentation the term *stream* will refer to an RxJS observable stream.
 
 ### Reactables <a name="reactable-concept"></a>
 
-[Reactables](#reactable) (prefixed with Rx) are objects that encapulates all the logic required for managing state. They expose a `state$` observable and actions methods. Applications can subscribe to `state$` to receive state changes and call action methods to trigger them.
+[Reactables](#reactable) (prefixed with Rx) are objects that encapulate all the logic required for state management. They expose a `state$` observable and `actions` methods. Applications can subscribe to `state$` to receive state changes and call action methods to trigger them.
 
 ```javascript
 import { RxCounter } from '@hub-fx/examples';
@@ -65,7 +60,7 @@ document.getElementById('increment').addEventListener('click', increment);
 document.getElementById('reset').addEventListener('click', reset);
 
 ```
-For full example see [Basic Counter Example](#basic-counter-example).
+For a full example, see [Basic Counter Example](#basic-counter-example).
 
 ### Hub and Stores <a name="hub-stores"></a>
 
@@ -77,7 +72,7 @@ The **Hub** is responsible for dispatching actions to the store(s) registered to
 
 ### Effects<a name="effects"></a>
 
-When initializing a hub we can declare effects. The hub can listen for various actions and perform side-effects as needed. Stores that are registered to the hub will be listening to these effects as well the `dispatcher$`.
+When initializing a hub we can declare effects. The hub can listen for various actions and perform side effects as needed. Stores that are registered to the hub will be listening to these effects as well the `dispatcher$`.
 
 <img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/SlideTwoEffect.jpg" width="600" />
 
@@ -100,7 +95,7 @@ Avoid [tapping](https://rxjs.dev/api/operators/tap) your streams. This prevents 
 
 ### Basic Counter <a name="basic-counter-example"></a>
 
-Basic counter example. Button clicks dispatches actions to increment or reset the counter.
+Basic counter example. Button clicks dispatch actions to increment or reset the counter.
 
 Basic Counter             |  Design Diagram           | Try it out on StackBlitz.<br /> Choose your framework
 :-------------------------:|:-------------------------:|:-------------------------:
@@ -116,7 +111,7 @@ Todo Status Updates             |  Design Diagram           | Try it out on Stac
 
 ### Connecting Multiple Hubs - Event Prices  <a name="connecting-hub-example"></a>
 
-This examples shows two sets of hub & stores. The first set is responsible for updating state of the user controls. The second set fetches prices based on input from the first set.
+This examples shows two sets of hubs & stores. The first set is responsible for updating state of the user controls. The second set fetches prices based on input from the first set.
 
 Event Prices             |  Design Diagram           | Try it out on StackBlitz.<br /> Choose your framework
 :-------------------------:|:-------------------------:|:-------------------------:
@@ -146,101 +141,51 @@ export interface ActionMap {
 
 ### RxBuilder <a name="rx-builder"></a>
 
-RxBuilder provides utilities to help build [Reactables](#reactable)
-
-#### `createSlice` <a name="create-slice"></a>
-Generates a reducer and actions for state updates. Inspired by [`@reduxjs/toolkit/createSlice`](https://redux-toolkit.js.org/api/createSlice). 
+RxBuilder factory help build [Reactables](#reactable). Accepts a [RxConfig](#rx-confg) configuration object
 
 ```typescript
-type createSlice <T, S extends Cases<T>>(config: SliceConfig<T, S>) => Slice<T>
+type RxBuilder = <T, S extends Cases<T>>(config: RxConfig<T, S>) => Reactable<T, unknown>
 
-export interface SliceConfig<T, S extends Cases<T>> {
+```
+
+#### RxConfig <a name="rx-config"></a>
+
+Configuration object for creating Reactables.
+
+```typescript
+interface RxConfig <T, S extends Cases<T>>{
   initialState: T;
   reducers: S;
-  name?: string; // for namespacing if your slice is part of a larger state
-}
-
-interface Slice<T> {
-  actions: { [key: string]: ActionCreator<unknown> };
-  reducer: Reducer<T>;
-}
-```
-
-#### `addEffects` <a name="add-effects"></a>
-
-Decorator function that accepts an action creator and extends the behaviour with a [ScopedEffects](#scoped-effects) for triggering side effects. 
-
-
-```typescript
-type addEffects = <T>(
-  actionCreator: ActionCreator<T>,
-  scopedEffects: (payload: T) => ScopedEffects<T>
-) => ActionCreator<T>
-```
-
-#### `createHub` <a name="create-hub">
-
-Creates a [Hub](#hub)
-
-```typescript
-type createHub = (config?: HubConfig) => Hub;
-
-```
-
-#### HubConfig <a name="hub-config"></a>
-
-```typescript
-interface HubConfig {
+  debug?: boolean;
   effects?: Effect<unknown, unknown>[];
   sources?: Observable<Action<unknown>>[];
 }
-```
-| Property | Description |
-| -------- | ----------- |
-| effects (optional) | Array of [Effects](#api-effects) to be registered to the Hub |
-| sources (optional) <a name="hub-sources"></a> | Additional [Action](#api-actions) Observables the Hub is listening to |
 
-
-
-### Hub <a name="hub"></a>
-```typescript
-interface Hub {
-  messages$: Observable<Action<unknown>>;
-  store: <T>(config: StoreConfig<T>) => Observable<T>;
-  dispatch: (...actions: Action<unknown>[]) => void;
+interface Cases<T> {
+  [key: string]: SingleActionReducer<T, unknown>
+    | {
+        reducer: SingleActionReducer<T, unknown>
+        effects?: (payload?: unknown) => ScopedEffects<unknown>
+      };
 }
+
+type SingleActionReducer<T, S> = (state: T, action: Action<S>) => T;
 ```
 | Property | Description |
 | -------- | ----------- |
-| messages$ <a name="hub-messages"></a> | Observable of all [Actions](#api-actions) sent to store(s) listening to the hub |
-
-| Method | Description |
-| -------- | ----------- |
-| store | creates a store that will receive actions emitted from the hub via `messages$`. Accepts a configuration object (see [StoreConfig](#store-config)) |
-| dispatch | dispatches [Action(s)](#api-actions) to the store(s) and effects (if any) |
-
-#### Store Config <a name="store-config"></a>
-
-```typescript
-export interface StoreConfig<T> {
-  reducer: Reducer<T>;
-  initialState?: T;
-  name?: string;
-  debug?: boolean;
-}
-```
-| Property | Description |
-| -------- | ----------- |
-| reducer | [Reducer](#api-reducer) function handle state updates in store |
-| intitialState (optional) | for seeding an initial state |
-| name (optional) | name of stream to show up during debugging |
+| initialState | Initial state of the Reactable |
+| reducers | Dictionary of cases for the Reactable to handle. Each case can be a reducer function or a configuration object. RxBuilder will use this to generate Actions, Reducers, and add [ScopedEffects](#api-scoped-effects). |
 | debug (optional) | to turn on debugging to console.log all messages received by the store and state changes |
+| effects (optional) | Array of [Effects](#api-effects) to be registered to the Reactable |
+| sources (optional) <a name="hub-sources"></a> | Additional [Action](#api-actions) Observables the Reactable is listening to |
 
 Debug Example:
 
 <img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/SlideSixDebug.jpg" width="500" />
 
-### Effect <a name="api-effect"></a>
+### Other Interfaces <a name="interfaces"></a>
+
+#### Effect <a name="api-effect"></a>
 
 Effects are expressed as [RxJS Operator Functions](https://rxjs.dev/api/index/interface/OperatorFunction). They pipe the [dispatcher$](#hub-dispatcher) stream and run side effects on incoming [Actions](#api-action).
 
@@ -248,7 +193,7 @@ Effects are expressed as [RxJS Operator Functions](https://rxjs.dev/api/index/in
 type Effect<T, S> = OperatorFunction<Action<T>, Action<S>>;
 ```
 
-### ScopedEffects <a name="api-scoped-effects"></a>
+#### ScopedEffects <a name="api-scoped-effects"></a>
 
 Scoped Effects are declared in [Actions](#api-action). They are dynamically created stream(s) scoped to an Action `type` & `key` combination.
 
@@ -288,7 +233,7 @@ const updateTodo = ({ id, message }, todoService: TodoService) => ({
 })
 ```
 
-### Action <a name="api-action"></a>
+#### Action <a name="api-action"></a>
 ```typescript
 interface Action<T = undefined> {
   type: string;
@@ -302,7 +247,7 @@ interface Action<T = undefined> {
 | payload (optional) | payload associated with Action |
 | scopedEffects (optional) | [See ScopedEffects](#api-scoped-effects) |
 
-### Reducer <a name="api-reducer"></a>
+#### Reducer <a name="api-reducer"></a>
 
 From [Redux Docs](https://redux.js.org/tutorials/fundamentals/part-3-state-actions-reducers)
 > Reducers are functions that take the current state and an action as arguments, and return a new state result
@@ -361,38 +306,3 @@ describe('Counter', () => {
 });
 
 ```
-
-### messages$ <a name="testing-messages"></a>
-
-You can test the Hub's [messages$](hub-messages) stream to see that dispatched actions and results from side effects are being handled correctly.
-
-
-Example of testing an effect:
-```typescript
-  it('should detect a generic effect', () => {
-    testScheduler.run(({ expectObservable, cold }) => {
-      const successAction = {
-        type: TEST_ACTION_SUCCESS,
-        payload: 'test action success',
-      };
-      const effect = (action$: Observable<unknown>) =>
-        action$.pipe(
-          switchMap(() => of(successAction).pipe(delay(2000))),
-        );
-
-      const { messages$, dispatch } = HubFactory({ effects: [effect] });
-      const action = { type: TEST_ACTION, payload: 'test' };
-
-      // Remember to unsubscribe this in your afterEach block
-      subscription = cold('a', { a: action }).subscribe(
-        dispatch,
-      );
-
-      expectObservable(messages$).toBe('a 1999ms b', {
-        a: action,
-        b: successAction,
-      });
-    });
-  });
-```
-

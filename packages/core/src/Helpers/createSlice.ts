@@ -1,5 +1,6 @@
-import { Action, ActionCreator } from '../Models/Action';
+import { Action, ActionCreator, ScopedEffects } from '../Models/Action';
 import { Reducer } from '../Models/Hub';
+import { addEffects } from './addEffects';
 
 export type SingleActionReducer<T, S> = (state: T, action: Action<S>) => T;
 
@@ -9,7 +10,11 @@ export interface Slice<T> {
 }
 
 export interface Cases<T> {
-  [key: string]: SingleActionReducer<T, unknown>;
+  [key: string]: SingleActionReducer<T, unknown>
+    | {
+        reducer: SingleActionReducer<T, unknown>
+        effects?: (payload?: unknown) => ScopedEffects<unknown>
+      };
 }
 
 export interface SliceConfig<T, S extends Cases<T>> {
@@ -22,10 +27,13 @@ export const createSlice = <T, S extends Cases<T>>(config: SliceConfig<T, S>) =>
   const { name, initialState, reducers } = config;
 
   const reducer: Reducer<T> = Object.entries(reducers).reduce(
-    (acc, [key, reducer]): Reducer<T> => {
+    (acc, [key, _case]): Reducer<T> => {
+
+      const _reducer = typeof _case === 'function' ? _case : _case.reducer;
+
       const newFunc = (state: T, action: Action<unknown>) => {
-        if (action && action.type === `${name ? `${name}/` : ''}}${key}`) {
-          return reducer(state, action);
+        if (action && action.type === `${name ? `${name}/` : ''}${key}`) {
+          return _reducer(state, action);
         }
 
         return acc(state, action);
@@ -36,11 +44,16 @@ export const createSlice = <T, S extends Cases<T>>(config: SliceConfig<T, S>) =>
     (state = initialState) => state,
   );
 
-  const actions = Object.entries(reducers).reduce((acc, [key]) => {
+  const actions = Object.entries(reducers).reduce((acc, [key , _case]) => {
     acc[key as keyof S] = (payload: unknown) => ({
-      type: `${name ? `${name}/` : ''}}${key}`,
+      type: `${name ? `${name}/` : ''}${key}`,
       payload,
     });
+
+    if (typeof _case !== 'function' && _case.effects) {
+      acc[key as keyof S] = addEffects(acc[key as keyof S], _case.effects)
+    }
+
     return acc;
   }, {} as { [K in keyof S]: ActionCreator<unknown> });
 

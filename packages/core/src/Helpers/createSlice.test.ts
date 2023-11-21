@@ -1,5 +1,5 @@
 import { createSlice } from './createSlice';
-import { Action } from '../Models';
+import { Action } from '../Models/Action';
 
 describe('createSlice', () => {
   it('should create the proper reducer and actions', () => {

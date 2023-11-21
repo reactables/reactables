@@ -4,7 +4,7 @@ import { switchMap, delay } from 'rxjs/operators';
 import { HubFactory } from './HubFactory';
 import { Action } from '../Models/Action';
 import { Hub, Reducer } from '../Models/Hub';
-import { TEST_ACTION, TEST_ACTION_SUCCESS } from '../Testing';
+import { TEST_ACTION, TEST_ACTION_SUCCESS } from '../Testing/Actions';
 import { ofType } from '../Operators/ofType';
 import { switchMapTestEffect, debounceTestEffect } from '../Testing/Effects';
 

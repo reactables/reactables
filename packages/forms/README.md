@@ -2,7 +2,7 @@
 
 ## Description
 
-State management for building a comprehensive form library using [Hubfx Core](https://github.com/hub-fx/hub-fx/tree/main/packages/core)
+State management for building a comprehensive form library using [Hubfx Core](https://github.com/hub-fx/hub-fx/tree/main/packages/core).
 
 ## Architecture (WIP see https://github.com/hub-fx/hub-fx/issues/8)
 

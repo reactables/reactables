@@ -1,7 +1,6 @@
-import { Action, Reactable, RxBuilder } from '@hub-fx/core';
+import { Action, Reactable, RxBuilder, ScopedEffects } from '@hub-fx/core';
 import { UpdateTodoPayload, UpdateTodoPayloadSuccess, Todo } from './Models/Todos';
 import { switchMap, map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
 import { ObservableOrPromise } from '../Models/ObservableOrPromise';
 
 interface TodoUpdatesState {
@@ -31,20 +30,35 @@ type TodoUpdatesActions = {
 
 export const RxTodoUpdates = (
   updateTodoApi: (payload: UpdateTodoPayload) => ObservableOrPromise<UpdateTodoPayloadSuccess>,
-): Reactable<TodoUpdatesState, TodoUpdatesActions> => {
-  // Create Slice to generate actions and reducers
-  const { reducer, actions } = RxBuilder.createSlice({
+): Reactable<TodoUpdatesState, TodoUpdatesActions> =>
+  RxBuilder({
     initialState,
     reducers: {
-      sendTodoStatusUpdate: (state, { payload }: Action<UpdateTodoPayload>) => ({
-        todos: state.todos.reduce((acc, todo) => {
-          const { todoId } = payload;
+      sendTodoStatusUpdate: {
+        reducer: (state, { payload }: Action<UpdateTodoPayload>) => ({
+          todos: state.todos.reduce((acc, todo) => {
+            const { todoId } = payload;
 
-          const newTodo = todo.id === todoId ? { ...todo, updating: true } : todo;
+            const newTodo = todo.id === todoId ? { ...todo, updating: true } : todo;
 
-          return acc.concat(newTodo);
-        }, [] as Todo[]),
-      }),
+            return acc.concat(newTodo);
+          }, [] as Todo[]),
+        }),
+        effects: (payload: UpdateTodoPayload): ScopedEffects<UpdateTodoPayload> => ({
+          key: payload.todoId,
+          effects: [
+            (actions$) => {
+              return actions$.pipe(
+                // Call todo API Service - switchMap operator cancels previous pending call if a new one is initiated
+                switchMap(({ payload }) => updateTodoApi(payload)),
+
+                // Map success response to appropriate action
+                map((payload) => ({ type: 'todoStatusUpdateSuccess', payload })),
+              );
+            },
+          ],
+        }),
+      },
       todoStatusUpdateSuccess: (state, { payload }: Action<UpdateTodoPayload>) => ({
         todos: state.todos.reduce((acc, todo) => {
           const { todoId, status } = payload;
@@ -56,34 +70,3 @@ export const RxTodoUpdates = (
       }),
     },
   });
-
-  // Add effect to action for calling Api
-  const sendTodoStatusUpdate = RxBuilder.addEffects(
-    actions.sendTodoStatusUpdate,
-    (payload: UpdateTodoPayload) => ({
-      key: payload.todoId,
-      effects: [
-        (actions$: Observable<Action<UpdateTodoPayload>>) => {
-          return actions$.pipe(
-            // Call todo API Service - switchMap operator cancels previous pending call if a new one is initiated
-            switchMap(({ payload }) => updateTodoApi(payload)),
-
-            // Map success response to appropriate action
-            map((payload) => actions.todoStatusUpdateSuccess(payload)),
-          );
-        },
-      ],
-    }),
-  );
-
-  // Create hub and initialize store
-  const hub = RxBuilder.createHub();
-
-  return {
-    state$: hub.store({ reducer }),
-    actions: {
-      sendTodoStatusUpdate: (payload: UpdateTodoPayload) =>
-        hub.dispatch(sendTodoStatusUpdate(payload)),
-    },
-  };
-};

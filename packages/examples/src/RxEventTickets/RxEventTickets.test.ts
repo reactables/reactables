@@ -3,11 +3,15 @@ import { Subscription, of, Observable } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { delay } from 'rxjs/operators';
 import { FetchPricePayload, EventTypes } from './Models/EventTypes';
-import { initialControlState } from './controlsSlice';
 
 describe('EventTickets', () => {
   let testScheduler: TestScheduler;
   let subscription: Subscription;
+
+  const initialControlState = {
+    selectedEvent: EventTypes.ChiliCookOff,
+    qty: 0,
+  };
 
   beforeEach(() => {
     testScheduler = new TestScheduler((actual, expected) => {
