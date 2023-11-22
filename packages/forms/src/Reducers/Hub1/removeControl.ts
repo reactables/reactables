@@ -1,5 +1,5 @@
 import { Action } from '@hub-fx/core';
-import { BaseForm } from '../../Models/Controls';
+import { BaseForm, BaseFormState } from '../../Models/Controls';
 import { ControlRef } from '../../Models/ControlRef';
 import { getControl } from '../../Helpers/getControl';
 import { updateAncestorValues, UPDATE_ANCESTOR_VALUES } from './updateAncestorValues';
@@ -8,15 +8,17 @@ import { updateDirty } from './updateDirty';
 import { getFormKey } from '../../Helpers/getFormKey';
 
 export const removeControl = <T>(
-  form: BaseForm<T>,
-  { payload: controlRef }: Action<ControlRef>,
-): BaseForm<T> => {
+  { form }: BaseFormState<T>,
+  action: Action<ControlRef>,
+): BaseFormState<T> => {
+  const { payload: controlRef } = action;
+
   if (!getControl(controlRef, form)) {
     throw 'Control not found';
   }
 
   // Can't remove the root of the form
-  if (!controlRef.length) return form;
+  if (!controlRef.length) return { form, action };
 
   const parentRef = controlRef.slice(0, -1);
 
@@ -61,12 +63,15 @@ export const removeControl = <T>(
       return { ...acc, [key]: control };
     }, {});
 
-  return syncValidate(
-    updateDirty(
-      updateAncestorValues(controlRemoved, {
-        type: UPDATE_ANCESTOR_VALUES,
-        payload: controlRef,
-      }),
+  return {
+    form: syncValidate(
+      updateDirty(
+        updateAncestorValues(controlRemoved, {
+          type: UPDATE_ANCESTOR_VALUES,
+          payload: controlRef,
+        }),
+      ),
     ),
-  );
+    action,
+  };
 };

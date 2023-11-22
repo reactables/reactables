@@ -1,5 +1,5 @@
 import { Action } from '@hub-fx/core';
-import { BaseForm } from '../../Models/Controls';
+import { BaseForm, BaseFormState } from '../../Models/Controls';
 import { FormArrayConfig, FormGroupConfig } from '../../Models';
 import { ControlChange } from '../../Models/Payloads';
 import { getFormKey } from '../../Helpers/getFormKey';
@@ -43,9 +43,12 @@ const updateDescendants = <T>(
 // Will only update child controls that are present.
 // Use AddControl/RemoveControl action reducers to add/remove control
 export const updateValues = <T>(
-  form: BaseForm<T>,
-  { payload: { controlRef, value } }: Action<ControlChange<unknown>>,
-): BaseForm<T> => {
+  { form }: BaseFormState<T>,
+  action: Action<ControlChange<unknown>>,
+): BaseFormState<T> => {
+  const {
+    payload: { controlRef, value },
+  } = action;
   // Update its own value
   const ctrlKey = getFormKey(controlRef);
   let result: BaseForm<T> = {
@@ -77,5 +80,5 @@ export const updateValues = <T>(
     });
   }
 
-  return syncValidate(updateDirty(result));
+  return { form: syncValidate(updateDirty(result)), action };
 };

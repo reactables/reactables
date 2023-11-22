@@ -1,14 +1,17 @@
 import { Action } from '@hub-fx/core';
-import { BaseForm } from '../../Models/Controls';
+import { BaseForm, BaseFormState } from '../../Models/Controls';
 import { ControlRef } from '../../Models/ControlRef';
 import { getDescendantControls } from '../../Helpers/getDescendantControls';
 import { getFormKey } from '../../Helpers/getFormKey';
 
 export const markControlAsUntouched = <T>(
-  form: BaseForm<T>,
-  { payload: controlRef }: Action<ControlRef>,
-) => {
+  { form }: BaseFormState<T>,
+  action: Action<ControlRef>,
+): BaseFormState<T> => {
+  const { payload: controlRef } = action;
+
   const descendants = getDescendantControls(controlRef, form);
+
   let result = Object.entries(form).reduce(
     (acc, [key, control]) => ({
       ...acc,
@@ -36,5 +39,5 @@ export const markControlAsUntouched = <T>(
     };
   }
 
-  return result;
+  return { form: result, action };
 };

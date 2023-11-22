@@ -1,3 +1,4 @@
+import { Action } from '@hub-fx/core';
 import { AbstractControlConfig } from './Configs';
 import { FormErrors } from './FormErrors';
 import { ControlRef } from './ControlRef';
@@ -29,6 +30,11 @@ interface ValidatedFields {
 export interface Hub2Fields extends AsyncFields, ValidatedFields {}
 
 export interface FormControl<T> extends BaseControl<T>, Hub2Fields {}
+
+export interface BaseFormState<T> {
+  form: BaseForm<T>;
+  action: Action<unknown>;
+}
 
 export interface BaseForm<T> {
   root?: BaseControl<T>;

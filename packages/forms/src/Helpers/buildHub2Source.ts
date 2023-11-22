@@ -1,32 +1,26 @@
 import { Observable, of } from 'rxjs';
-import { map, mergeMap, withLatestFrom } from 'rxjs/operators';
-import { Action, Hub, Reducer } from '@hub-fx/core';
+import { map, mergeMap } from 'rxjs/operators';
+import { Action, Reactable } from '@hub-fx/core';
 import { getControlBranch } from './getControlBranch';
 import { getAncestorControls } from './getAncestorControls';
 import { getControl } from './getControl';
-import { BaseForm, BaseControl } from '../Models/Controls';
+import { BaseForm, BaseControl, BaseFormState } from '../Models/Controls';
 import { ControlRef } from '../Models/ControlRef';
 import { getAsyncValidationActions } from './addAsyncValidationEffects';
 import { ControlChange } from '../Models/Payloads';
 import { AddControl } from '../Models/Payloads';
-import { hub2Slice } from '../RxForm/hub2Slice';
 
-export const buildHub2Source = <T extends BaseForm<unknown>>(
-  reducer: Reducer<T>,
-  hub: Hub,
+export const buildHub2Source = <T, S>(
+  rx: Reactable<BaseFormState<T>, S>,
 ): Observable<Action<T>> => {
-  const { messages$ } = hub;
-
-  const {
-    actions: { formChange },
-  } = hub2Slice;
-
-  const hub1StateMapped$ = hub.store({ reducer }).pipe(map((form) => formChange(form)));
+  const hub1StateMapped$ = rx.state$.pipe(map((payload) => ({ type: 'formChange', payload })));
 
   const sourceForHub2$ = hub1StateMapped$.pipe(
-    withLatestFrom(messages$),
-    mergeMap(([formChangeAction, action]) => {
-      const newForm = formChangeAction.payload as BaseForm<unknown>;
+    mergeMap((formChangeAction) => {
+      const {
+        payload: { form, action },
+      } = formChangeAction;
+      const newForm = form as BaseForm<unknown>;
 
       let controlsToCheck: BaseControl<unknown>[];
 
