@@ -579,17 +579,18 @@ describe('RxForm', () => {
             },
           },
           j: {
-            // root: { pending: true,
-            //   asyncValidateInProgress: { 0: false },
-            //   asyncValidationErrors: { uniqueFirstAndLastName: true },
-            // },
+            root: {
+              pending: true,
+              asyncValidateInProgress: { 0: false },
+              asyncValidatorErrors: { uniqueFirstAndLastName: true },
+            },
           },
           k: {
-            // 'emergencyContacts.0': {
-            //   pending: false,
-            //   asyncValidateInProgress: { 0: false },
-            //   asyncValidationErrors: { uniqueFirstAndLastName: true },
-            // },
+            'emergencyContacts.0': {
+              pending: false,
+              asyncValidateInProgress: { 0: false },
+              asyncValidatorErrors: { uniqueFirstAndLastName: true },
+            },
           },
         });
       });

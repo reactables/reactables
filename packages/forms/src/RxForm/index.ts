@@ -1,1 +1,1 @@
-export { RxForm } from './RxForm';
+export { RxForm, RxFormActions } from './RxForm';

@@ -26,6 +26,10 @@ export const asyncValidationResponseSuccess = <T>(
 ): Form<T> => {
   const control = getControlByKey(key, form);
 
+  if (!control) {
+    return form;
+  }
+
   const controlUpdated: Form<T> = {
     ...form,
     [getFormKey(control.controlRef)]: {

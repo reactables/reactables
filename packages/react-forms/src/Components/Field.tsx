@@ -1,18 +1,5 @@
-import React, {
-  useContext,
-  ChangeEvent,
-  DragEvent,
-  FocusEvent,
-  FormEvent,
-} from 'react';
-import {
-  ControlChange,
-  controlChange,
-  ControlRef,
-  getControl,
-  markControlAsTouched,
-  ControlModels,
-} from '@hub-fx/forms';
+import React, { useContext, ChangeEvent, DragEvent, FocusEvent, FormEvent } from 'react';
+import { ControlModels } from '@hub-fx/forms';
 import { FormContext } from './Form';
 
 export type EventHandler<Event> = (event: Event, name?: string) => void;
@@ -42,34 +29,31 @@ export interface WrappedFieldProps {
 
 export interface FieldProps {
   component: React.JSXElementConstructor<WrappedFieldProps>;
-  controlRef: ControlRef;
+  name?: string;
   [key: string]: unknown;
 }
 
-export const Field = ({
-  component: Component,
-  controlRef,
-  ...props
-}: FieldProps) => {
-  const { state, dispatch } = useContext(FormContext);
-  const control = getControl(
-    controlRef,
+export const Field = ({ component: Component, name = 'root', ...props }: FieldProps) => {
+  const {
     state,
-  ) as ControlModels.AbstractControl<unknown>;
+    actions: { markControlAsTouched, updateValues },
+  } = useContext(FormContext);
+
+  const { controlRef, touched, value } = state[name];
+
   const inputProps = {
-    name: controlRef.join('.'),
-    value: control.value,
+    name,
+    value,
     onBlur: () => {
-      if (!control.touched) dispatch(markControlAsTouched(controlRef));
+      if (!touched) markControlAsTouched({ controlRef });
     },
     onChange: (event: FormEvent<HTMLInputElement>) => {
-      const change: ControlChange<unknown> = {
+      updateValues({
         controlRef,
         value: event.currentTarget.value,
-      };
-      dispatch(controlChange(change));
+      });
     },
   };
 
-  return <Component input={inputProps} meta={control} {...props} />;
+  return <Component input={inputProps} meta={state[name]} {...props} />;
 };

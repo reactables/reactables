@@ -1,0 +1,1 @@
+export { getControl } from './getControl';

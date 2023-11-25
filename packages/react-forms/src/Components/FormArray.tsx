@@ -1,16 +1,13 @@
 import React, { useContext } from 'react';
-import {
-  AbstractControlConfig,
-  ControlRef,
-  ControlModels,
-  getControl,
-  addFormArrayControl,
-  removeControl,
-} from '@hub-fx/forms';
+import { AbstractControlConfig, ControlRef, ControlModels, getControl } from '@hub-fx/forms';
 import { FormContext } from './Form';
 
+// Take a name
+// find the children sorted
+// expose array methods
+
 export interface FormArrayChildrenProps {
-  formArray: ControlModels.FormArray<unknown>;
+  formArray: ControlModels.FormControl<unknown>;
   addControl: (config: AbstractControlConfig) => void;
   removeControl: (controlRef: ControlRef) => void;
 }
@@ -21,19 +18,19 @@ export interface FormArrayProps {
 }
 
 export const FormArray = ({ controlRef, children }: FormArrayProps) => {
-  const { state, dispatch } = useContext(FormContext);
-  const formArray = getControl(
-    controlRef,
+  const {
     state,
-  ) as ControlModels.FormArray<unknown>;
+    actions: { addControl, removeControl },
+  } = useContext(FormContext);
+  const formArray = getControl(controlRef, state) as ControlModels.FormControl<unknown>;
 
   const formArrayChildrenProps: FormArrayChildrenProps = {
     formArray,
     addControl: (config: AbstractControlConfig) => {
-      dispatch(addFormArrayControl({ controlRef, config }));
+      addControl({ controlRef, config });
     },
-    removeControl: (controlRef: ControlRef) => {
-      dispatch(removeControl(controlRef));
+    removeControl: (arrayItemCtrlRef: ControlRef) => {
+      removeControl(arrayItemCtrlRef);
     },
   };
 

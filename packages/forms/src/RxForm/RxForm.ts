@@ -48,7 +48,7 @@ const array = (config: FormArrayConfig) => config;
 const group = (config: FormGroupConfig) => config;
 
 // Building Reactable
-type RxFormActions = {
+export type RxFormActions = {
   updateValues: <T>(payload: ControlChange<T>) => void;
   addControl: (payload: AddControl) => void;
   removeControl: (payload: ControlRef) => void;

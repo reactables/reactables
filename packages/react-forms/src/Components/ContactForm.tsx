@@ -1,29 +1,17 @@
 import React from 'react';
-import { ControlModels } from '@hub-fx/forms';
 import { Input } from './Input';
-import { Contact } from '../Testing/Models/Contact';
 import { Field } from './Field';
 
 export interface ContactFormProps {
-  formGroup: ControlModels.FormGroup<Contact>;
+  name?: string;
 }
 
-export const ContactForm = ({
-  formGroup: { controlRef },
-}: ContactFormProps) => (
+export const ContactForm = ({ name }: ContactFormProps) => (
   <div className="form-group">
+    <Field name={`${name ? `${name}.` : ''}firstName`} component={Input} label="First Name" />
+    <Field name={`${name ? `${name}.` : ''}lastName`} component={Input} label="Last Name" />
     <Field
-      controlRef={controlRef.concat('firstName')}
-      component={Input}
-      label="First Name"
-    />
-    <Field
-      controlRef={controlRef.concat('lastName')}
-      component={Input}
-      label="Last Name"
-    />
-    <Field
-      controlRef={controlRef.concat('email')}
+      name={`${name ? `${name}.` : ''}email`}
       component={Input}
       label={
         <span>

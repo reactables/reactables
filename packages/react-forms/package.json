@@ -17,7 +17,8 @@
   "license": "ISC",
   "dependencies": {
     "@hub-fx/core": "*",
-    "@hub-fx/forms": "*"
+    "@hub-fx/forms": "*",
+    "@hub-fx/react-helpers": "*"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0",
