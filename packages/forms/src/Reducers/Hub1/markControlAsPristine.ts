@@ -1,5 +1,5 @@
 import { Action } from '@hub-fx/core';
-import { BaseForm } from '../../Models/Controls';
+import { BaseForm, BaseFormState } from '../../Models/Controls';
 import { ControlRef } from '../../Models/ControlRef';
 import { getDescendantControls } from '../../Helpers/getDescendantControls';
 import {
@@ -9,9 +9,11 @@ import {
 import { updateDirty } from './updateDirty';
 
 export const markControlAsPristine = <T>(
-  form: BaseForm<T>,
-  { payload: controlRef }: Action<ControlRef>,
-) => {
+  { form }: BaseFormState<T>,
+  action: Action<ControlRef>,
+): BaseFormState<T> => {
+  const { payload: controlRef } = action;
+
   const descendants = getDescendantControls(controlRef, form);
   let result = Object.entries(form).reduce((acc, [key, control]) => {
     const isDescendant = descendants.includes(control);
@@ -35,5 +37,5 @@ export const markControlAsPristine = <T>(
     });
   }
 
-  return updateDirty(result);
+  return { form: updateDirty(result), action };
 };

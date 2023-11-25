@@ -1,11 +1,10 @@
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { Action, Effect } from '@hub-fx/core';
-import { BaseControl } from '../../Models/Controls';
-import { asyncValidationResponseSuccess } from './asyncValidationResponseSuccess';
-import { ControlAsyncValidationResponse } from '../../Models/Payloads';
+import { map } from 'rxjs/operators';
+import { BaseControl } from '../Models/Controls';
+import { ControlAsyncValidationResponse } from '../Models/Payloads';
 
-const getScopedEffectsForControl = <T>(
+export const getScopedEffectsForControl = <T>(
   formControl: BaseControl<T>,
 ): Effect<BaseControl<T>, ControlAsyncValidationResponse>[] => {
   const { config, key } = formControl;
@@ -26,13 +25,14 @@ const getScopedEffectsForControl = <T>(
           return actions$.pipe(
             map(({ payload: control }) => control),
             validator,
-            map((errors) =>
-              asyncValidationResponseSuccess({
+            map((errors) => ({
+              type: 'asyncValidationResponseSuccess',
+              payload: {
                 key,
                 errors,
                 validatorIndex,
-              }),
-            ),
+              },
+            })),
           );
         };
 
@@ -44,19 +44,13 @@ const getScopedEffectsForControl = <T>(
   return scopedEffects;
 };
 
-export const FORMS_ASYNC_VALIDATE_CONTROL = 'FORMS_ASYNC_VALIDATE_CONTROL';
-
 export const getAsyncValidationActions = (formControls: BaseControl<unknown>[]) =>
   formControls.reduce((acc: Action<BaseControl<unknown>>[], control) => {
     const effects = getScopedEffectsForControl(control);
+
     if (!effects.length) return acc;
 
-    return acc.concat({
-      type: FORMS_ASYNC_VALIDATE_CONTROL,
-      payload: control,
-      scopedEffects: {
-        key: control.key,
-        effects,
-      },
-    });
+    const action = { type: 'asyncValidation', payload: control };
+
+    return acc.concat(action);
   }, []);

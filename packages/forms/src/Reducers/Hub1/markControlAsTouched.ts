@@ -1,25 +1,32 @@
 import { Action } from '@hub-fx/core';
-import { BaseForm } from '../../Models/Controls';
+import { BaseForm, BaseFormState } from '../../Models/Controls';
 import { MarkTouched } from '../../Models/Payloads';
 import { getAncestorControls } from '../../Helpers/getAncestorControls';
 import { getControlBranch } from '../../Helpers/getControlBranch';
 
 export const markControlAsTouched = <T>(
-  form: BaseForm<T>,
-  { payload: { controlRef, markAll } }: Action<MarkTouched>,
-) => {
+  { form }: BaseFormState<T>,
+  action: Action<MarkTouched>,
+): BaseFormState<T> => {
+  const {
+    payload: { controlRef, markAll },
+  } = action;
+
   const controls = markAll
     ? getControlBranch(controlRef, form)
     : getAncestorControls(controlRef, form);
 
-  return Object.entries(form).reduce(
-    (acc, [key, control]) => ({
-      ...acc,
-      [key]: {
-        ...control,
-        touched: controls.includes(control) ? true : control.touched,
-      },
-    }),
-    {} as BaseForm<T>,
-  );
+  return {
+    form: Object.entries(form).reduce(
+      (acc, [key, control]) => ({
+        ...acc,
+        [key]: {
+          ...control,
+          touched: controls.includes(control) ? true : control.touched,
+        },
+      }),
+      {} as BaseForm<T>,
+    ),
+    action,
+  };
 };

@@ -2,14 +2,11 @@ import { updateDirty } from './updateDirty';
 import { updateValues } from './updateValues';
 import { buildFormState } from '../../Helpers/buildFormState';
 import { config, emergencyContactConfigs } from '../../Testing/config';
-import { BaseForm } from '../../Models/Controls';
-import { Contact } from '../../Testing/Models/Contact';
 import { FormArrayConfig } from '../../Models/Configs';
-import { controlChange } from '../../Actions/Hub1/controlChange';
 
 describe('updateDirty', () => {
   it('should verify intitial state is not dirty', () => {
-    const initialState: BaseForm<Contact> = buildFormState(config);
+    const initialState = buildFormState(config).form;
     expect(updateDirty(initialState)).toEqual(initialState);
   });
 
@@ -19,7 +16,7 @@ describe('updateDirty', () => {
       controls: emergencyContactConfigs,
     } as FormArrayConfig;
 
-    const initialState: BaseForm<Contact> = buildFormState({
+    const initialState = buildFormState({
       ...config,
       controls: {
         ...config.controls,
@@ -30,13 +27,13 @@ describe('updateDirty', () => {
     const value = 'Moe first name changed';
 
     const result = updateDirty(
-      updateValues(
-        initialState,
-        controlChange({
+      updateValues(initialState, {
+        type: 'updateValues',
+        payload: {
           controlRef: ['emergencyContacts', 1, 'firstName'],
           value,
-        }),
-      ),
+        },
+      }).form,
     );
 
     expect(result.root.dirty).toBe(true);

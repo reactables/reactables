@@ -1,14 +1,12 @@
 import { syncValidate } from './syncValidate';
 import { buildFormState } from '../../Helpers/buildFormState';
 import { config } from '../../Testing/config';
-import { BaseForm } from '../../Models/Controls';
-import { Contact } from '../../Testing/Models/Contact';
-import { FormBuilder } from '../../Helpers/FormBuilder';
 import { required } from '../../Validators';
+import { RxForm } from '../../RxForm/RxForm';
 
 describe('syncValidate', () => {
   it('should verify intitial state is not valid', () => {
-    const initialState: BaseForm<Contact> = buildFormState(config);
+    const initialState = buildFormState(config).form;
     const result = syncValidate(initialState);
 
     expect(result.root.validatorsValid).toBe(false);
@@ -57,16 +55,16 @@ describe('syncValidate', () => {
   });
 
   it('should ancestor control validatorsValid should be false if a descendant as an error', () => {
-    const config = FormBuilder.group({
+    const config = RxForm.group({
       controls: {
-        name: FormBuilder.control({ initialValue: '', validators: [required] }),
-        nameList: FormBuilder.array({
-          controls: [FormBuilder.control({ initialValue: '', validators: [required] })],
+        name: RxForm.control({ initialValue: '', validators: [required] }),
+        nameList: RxForm.array({
+          controls: [RxForm.control({ initialValue: '', validators: [required] })],
         }),
       },
     });
 
-    const initialState = buildFormState(config);
+    const initialState = buildFormState(config).form;
     const result = syncValidate(initialState);
 
     expect(result.root.validatorsValid).toBe(false);

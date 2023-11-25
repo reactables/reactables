@@ -1,5 +1,11 @@
 import { FormControlConfig, FormArrayConfig, FormGroupConfig } from '../Models/Configs';
 import { required, email, phoneNumber } from '../Validators/Validators';
+import {
+  uniqueFirstAndLastName,
+  uniqueEmail,
+  blacklistedEmail,
+  arrayLengthError,
+} from './AsyncValidators';
 
 interface FullName {
   firstName: string;
@@ -12,10 +18,10 @@ export const firstNameNotSameAsLast = (value: FullName) => {
   };
 };
 
-export const emergencyContactConfigs: FormGroupConfig[] = [
+export const asyncEmergencyContactConfigs: FormGroupConfig[] = [
   {
     validators: [firstNameNotSameAsLast],
-    // asyncValidators: [uniqueFirstAndLastName],
+    asyncValidators: [uniqueFirstAndLastName],
     controls: {
       firstName: {
         initialValue: 'Homer',
@@ -28,7 +34,7 @@ export const emergencyContactConfigs: FormGroupConfig[] = [
       email: {
         initialValue: 'homer@homer.com',
         validators: [required, email],
-        // asyncValidators: [uniqueEmail, blacklistedEmail],
+        asyncValidators: [uniqueEmail, blacklistedEmail],
       } as FormControlConfig<string>,
       relation: {
         initialValue: 'friend',
@@ -38,7 +44,7 @@ export const emergencyContactConfigs: FormGroupConfig[] = [
   },
   {
     validators: [firstNameNotSameAsLast],
-    // asyncValidators: [uniqueFirstAndLastName],
+    asyncValidators: [uniqueFirstAndLastName],
     controls: {
       firstName: {
         initialValue: 'moe',
@@ -51,7 +57,7 @@ export const emergencyContactConfigs: FormGroupConfig[] = [
       email: {
         initialValue: 'moe@moe.com',
         validators: [required, email],
-        // asyncValidators: [uniqueEmail, blacklistedEmail],
+        asyncValidators: [uniqueEmail, blacklistedEmail],
       } as FormControlConfig<string>,
       relation: {
         initialValue: 'friend',
@@ -61,9 +67,9 @@ export const emergencyContactConfigs: FormGroupConfig[] = [
   },
 ];
 
-export const config: FormGroupConfig = {
+export const asyncConfig: FormGroupConfig = {
   validators: [firstNameNotSameAsLast],
-  // asyncValidators: [uniqueFirstAndLastName],
+  asyncValidators: [uniqueFirstAndLastName],
   controls: {
     firstName: {
       initialValue: '',
@@ -76,7 +82,7 @@ export const config: FormGroupConfig = {
     email: {
       initialValue: '',
       validators: [required, email],
-      // asyncValidators: [uniqueEmail],
+      asyncValidators: [uniqueEmail],
     } as FormControlConfig<string>,
     phone: {
       initialValue: '',
@@ -84,12 +90,12 @@ export const config: FormGroupConfig = {
     } as FormControlConfig<string>,
     emergencyContacts: {
       validators: [required],
-      // asyncValidators: [arrayLengthError],
+      asyncValidators: [arrayLengthError],
       controls: [],
     } as FormArrayConfig,
     doctorInfo: {
       validators: [firstNameNotSameAsLast],
-      // asyncValidators: [uniqueFirstAndLastName],
+      asyncValidators: [uniqueFirstAndLastName],
       controls: {
         firstName: {
           initialValue: '',
@@ -102,7 +108,7 @@ export const config: FormGroupConfig = {
         email: {
           initialValue: '',
           validators: [required, email],
-          // asyncValidators: [uniqueEmail, blacklistedEmail],
+          asyncValidators: [uniqueEmail, blacklistedEmail],
         } as FormControlConfig<string>,
       },
     } as FormGroupConfig,

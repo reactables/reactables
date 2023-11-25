@@ -1,5 +1,5 @@
 import { Reducer, Action } from '@hub-fx/core';
-import { BaseForm, Form, Hub2Fields } from '../../Models/Controls';
+import { BaseFormState, Form, Hub2Fields } from '../../Models/Controls';
 import { mergeErrors } from './mergeErrors';
 
 export const DEFAULT_HUB2_FIELDS: Hub2Fields = {
@@ -13,10 +13,10 @@ export const DEFAULT_HUB2_FIELDS: Hub2Fields = {
 
 export const formChange: Reducer<Form<unknown>> = <T>(
   state: Form<T> = null,
-  { payload }: Action<BaseForm<T>>,
+  { payload: { form } }: Action<BaseFormState<T>>,
 ) =>
   mergeErrors(
-    Object.entries(payload).reduce(
+    Object.entries(form).reduce(
       (acc, [key, baseControl]) => ({
         ...acc,
         [key]: {

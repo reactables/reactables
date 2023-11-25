@@ -9,7 +9,7 @@ describe('getDescendantControls', () => {
     const clonedConfig: FormGroupConfig = cloneDeep(config);
     (<FormArrayConfig>clonedConfig.controls.emergencyContacts).controls = emergencyContactConfigs;
 
-    const form = buildFormState(clonedConfig);
+    const { form } = buildFormState(clonedConfig);
 
     const childControlRefs = getDescendantControls(['emergencyContacts'], form).map(
       (control) => control.controlRef,
