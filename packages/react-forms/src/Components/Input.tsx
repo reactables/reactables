@@ -5,19 +5,12 @@ export interface InputProps extends WrappedFieldProps {
   label?: string | React.ReactElement;
 }
 
-export const Input = ({
-  input,
-  meta: { touched, errors, pending, valid },
-  label,
-}: InputProps) => {
+export const Input = ({ input, meta: { touched, errors, pending, valid }, label }: InputProps) => {
+  console.log(pending);
   return (
     <div className="mb-3">
       {label && (
-        <label
-          className={`form-label ${touched && !valid ? 'text-danger' : ''}`}
-        >
-          {label}
-        </label>
+        <label className={`form-label ${touched && !valid ? 'text-danger' : ''}`}>{label}</label>
       )}
       <input
         {...input}
@@ -38,9 +31,7 @@ export const Input = ({
       )}
       {errors.blacklistedEmail && (
         <div>
-          <small className="text-danger">
-            This email has been blacklisted.
-          </small>
+          <small className="text-danger">This email has been blacklisted.</small>
         </div>
       )}
       {pending && (

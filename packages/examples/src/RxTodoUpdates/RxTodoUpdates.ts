@@ -35,14 +35,11 @@ export const RxTodoUpdates = (
     initialState,
     reducers: {
       sendTodoStatusUpdate: {
-        reducer: (state, { payload }: Action<UpdateTodoPayload>) => ({
-          todos: state.todos.reduce((acc, todo) => {
-            const { todoId } = payload;
-
-            const newTodo = todo.id === todoId ? { ...todo, updating: true } : todo;
-
-            return acc.concat(newTodo);
-          }, [] as Todo[]),
+        reducer: (state, { payload: { todoId } }: Action<UpdateTodoPayload>) => ({
+          todos: state.todos.reduce(
+            (acc, todo) => acc.concat(todo.id === todoId ? { ...todo, updating: true } : todo),
+            [] as Todo[],
+          ),
         }),
         effects: (payload: UpdateTodoPayload): ScopedEffects<UpdateTodoPayload> => ({
           key: payload.todoId,
@@ -59,14 +56,15 @@ export const RxTodoUpdates = (
           ],
         }),
       },
-      todoStatusUpdateSuccess: (state, { payload }: Action<UpdateTodoPayload>) => ({
-        todos: state.todos.reduce((acc, todo) => {
-          const { todoId, status } = payload;
-
-          const newTodo = todo.id === todoId ? { ...todo, status, updating: false } : todo;
-
-          return acc.concat(newTodo);
-        }, [] as Todo[]),
+      todoStatusUpdateSuccess: (
+        state,
+        { payload: { todoId, status } }: Action<UpdateTodoPayload>,
+      ) => ({
+        todos: state.todos.reduce(
+          (acc, todo) =>
+            acc.concat(todo.id === todoId ? { ...todo, status, updating: false } : todo),
+          [] as Todo[],
+        ),
       }),
     },
   });

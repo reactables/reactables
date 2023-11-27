@@ -1,0 +1,1 @@
+export { getArrayItems } from './getArrayItems';

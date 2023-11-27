@@ -13,7 +13,7 @@ const config: StorybookConfig = {
     const newConfig = {
       ...config,
       optimizeDeps: {
-        include: ['@hub-fx/core', '@hub-fx/forms'],
+        include: ['@hub-fx/core', '@hub-fx/forms', '@hub-fx/react-helpers'],
       },
     };
 

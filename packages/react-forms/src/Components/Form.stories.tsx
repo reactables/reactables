@@ -1,6 +1,6 @@
 import React from 'react';
 import { Meta, StoryObj } from '@storybook/react';
-import { Validators, FormConfig, ControlModels } from '@hub-fx/forms';
+import { Validators, RxForm } from '@hub-fx/forms';
 import { Form } from './Form';
 import { Field } from './Field';
 import { Input } from './Input';
@@ -20,16 +20,16 @@ type Story = StoryObj<typeof Form>;
 export const BasicControl: Story = {
   render: () => (
     <Form
-      formConfig={FormConfig.control({
+      formConfig={RxForm.control({
         initialValue: 'john',
       })}
     >
       {({ state }) => {
         return (
           <>
-            <Field controlRef={[]} component={Input} />
+            <Field component={Input} />
             <div>
-              First Name: <span>{state.value as string}</span>
+              First Name: <span>{state.root.value as string}</span>
             </div>
           </>
         );
@@ -41,13 +41,13 @@ export const BasicControl: Story = {
 export const Validation: Story = {
   render: () => (
     <Form
-      formConfig={FormConfig.group({
+      formConfig={RxForm.group({
         controls: {
-          firstName: FormConfig.control({
+          firstName: RxForm.control({
             initialValue: 'John',
             validators: [Validators.required],
           }),
-          lastName: FormConfig.control({
+          lastName: RxForm.control({
             initialValue: '',
             validators: [Validators.required],
           }),
@@ -57,16 +57,8 @@ export const Validation: Story = {
       {() => {
         return (
           <div className="form-group">
-            <Field
-              controlRef={['firstName']}
-              component={Input}
-              label="First Name (required)"
-            />
-            <Field
-              controlRef={['lastName']}
-              component={Input}
-              label="Last Name (required)"
-            />
+            <Field name="firstName" component={Input} label="First Name (required)" />
+            <Field name="lastName" component={Input} label="Last Name (required)" />
           </div>
         );
       }}
@@ -74,18 +66,18 @@ export const Validation: Story = {
   ),
 };
 
-const contactFormConfig = ({ firstName, lastName, email }: Contact) =>
-  FormConfig.group({
+const contactRxForm = ({ firstName, lastName, email }: Contact) =>
+  RxForm.group({
     controls: {
-      firstName: FormConfig.control({
+      firstName: RxForm.control({
         initialValue: firstName,
         validators: [Validators.required],
       }),
-      lastName: FormConfig.control({
+      lastName: RxForm.control({
         initialValue: lastName,
         validators: [Validators.required],
       }),
-      email: FormConfig.control({
+      email: RxForm.control({
         initialValue: email,
         validators: [Validators.required, Validators.email],
         asyncValidators: [blacklistedEmail],
@@ -96,16 +88,14 @@ const contactFormConfig = ({ firstName, lastName, email }: Contact) =>
 export const AsyncValidation: Story = {
   render: () => (
     <Form
-      formConfig={contactFormConfig({
+      formConfig={contactRxForm({
         firstName: 'John',
         lastName: 'Doe',
         email: '',
       })}
     >
-      {({ state }) => {
-        return (
-          <ContactForm formGroup={state as ControlModels.FormGroup<Contact>} />
-        );
+      {() => {
+        return <ContactForm />;
       }}
     </Form>
   ),
@@ -114,9 +104,9 @@ export const AsyncValidation: Story = {
 export const FormArrays: Story = {
   render: () => (
     <Form
-      formConfig={FormConfig.group({
+      formConfig={RxForm.group({
         controls: {
-          emergencyContacts: FormConfig.array({
+          emergencyContacts: RxForm.array({
             validators: [arrayLengthRequired],
             controls: [
               {
@@ -124,44 +114,31 @@ export const FormArrays: Story = {
                 lastName: 'Simpson',
                 email: 'homer@homer.com',
               },
-            ].map(contactFormConfig),
+            ].map(contactRxForm),
           }),
         },
       })}
     >
-      {() => {
+      {({ state }) => {
         return (
           <div className="form-group">
             <p>
               <b>Emergency Contacts:</b>
             </p>
-            <FormArray controlRef={['emergencyContacts']}>
-              {({
-                formArray: {
-                  controls,
-                  errors: { arrayLengthRequired },
-                },
-                addControl,
-                removeControl,
-              }) => (
+            <FormArray name="emergencyContacts">
+              {({ items, addControl, removeControl }) => (
                 <>
-                  {arrayLengthRequired && (
-                    <p className="text-danger">
-                      At least one emergency contact required.
-                    </p>
+                  {state.emergencyContacts.errors.arrayLengthRequired && (
+                    <p className="text-danger">At least one emergency contact required.</p>
                   )}
-                  {controls.map((control, index) => {
+                  {items.map((control, index) => {
                     return (
                       <div key={control.controlRef.join(',')}>
                         <p>
                           <b>Contact #{index + 1}:</b>
                         </p>
                         <div className="d-flex align-items-center">
-                          <ContactForm
-                            formGroup={
-                              control as ControlModels.FormGroup<Contact>
-                            }
-                          />
+                          <ContactForm name={`emergencyContacts.${index}`} />
                           <button
                             className="ml-5"
                             type="button"
@@ -179,7 +156,7 @@ export const FormArrays: Story = {
                     type="button"
                     onClick={() => {
                       addControl(
-                        contactFormConfig({
+                        contactRxForm({
                           firstName: '',
                           lastName: '',
                           email: '',
@@ -202,25 +179,25 @@ export const FormArrays: Story = {
 export const ResetForm: Story = {
   render: () => (
     <Form
-      formConfig={FormConfig.group(
-        contactFormConfig({
+      formConfig={RxForm.group(
+        contactRxForm({
           firstName: 'Bart',
           lastName: 'Simpson',
           email: 'bart@man.com',
         }),
       )}
     >
-      {({ state, resetControl }) => (
+      {({ state, actions: { resetControl } }) => (
         <>
-          <ContactForm formGroup={state as ControlModels.FormGroup<Contact>} />
           <button
             type="button"
             onClick={() => {
-              resetControl(state.controlRef);
+              resetControl(state.root.controlRef);
             }}
           >
             Reset Form
           </button>
+          <ContactForm />
         </>
       )}
     </Form>
