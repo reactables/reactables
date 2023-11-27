@@ -13,19 +13,23 @@ export const DEFAULT_HUB2_FIELDS: Hub2Fields = {
 
 export const formChange: Reducer<Form<unknown>> = <T>(
   state: Form<T> = null,
-  { payload: { form } }: Action<BaseFormState<T>>,
+  { payload: { form, action } }: Action<BaseFormState<T>>,
 ) =>
   mergeErrors(
-    Object.entries(form).reduce(
-      (acc, [key, baseControl]) => ({
+    Object.entries(form).reduce((acc, [dictKey, baseControl]) => {
+      const existingControl =
+        action?.type === 'removeControl'
+          ? state && Object.values(state).find((control) => baseControl.key === control.key)
+          : state && state[dictKey];
+
+      return {
         ...acc,
-        [key]: {
-          ...(state && state[key]
-            ? state[key]
+        [dictKey]: {
+          ...(existingControl
+            ? existingControl
             : (structuredClone(DEFAULT_HUB2_FIELDS) as Hub2Fields)),
           ...baseControl,
         },
-      }),
-      {} as Form<T>,
-    ),
+      };
+    }, {} as Form<T>),
   );

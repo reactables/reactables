@@ -6,7 +6,6 @@ export interface InputProps extends WrappedFieldProps {
 }
 
 export const Input = ({ input, meta: { touched, errors, pending, valid }, label }: InputProps) => {
-  console.log(pending);
   return (
     <div className="mb-3">
       {label && (
