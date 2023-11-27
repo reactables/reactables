@@ -1,6 +1,6 @@
 import React from 'react';
 import { Meta, StoryObj } from '@storybook/react';
-import { Validators, RxForm, ControlModels } from '@hub-fx/forms';
+import { Validators, RxForm } from '@hub-fx/forms';
 import { Form } from './Form';
 import { Field } from './Field';
 import { Input } from './Input';
@@ -101,87 +101,80 @@ export const AsyncValidation: Story = {
   ),
 };
 
-// export const FormArrays: Story = {
-//   render: () => (
-//     <Form
-//       formConfig={RxForm.group({
-//         controls: {
-//           emergencyContacts: RxForm.array({
-//             validators: [arrayLengthRequired],
-//             controls: [
-//               {
-//                 firstName: 'Homer',
-//                 lastName: 'Simpson',
-//                 email: 'homer@homer.com',
-//               },
-//             ].map(contactRxForm),
-//           }),
-//         },
-//       })}
-//     >
-//       {() => {
-//         return (
-//           <div className="form-group">
-//             <p>
-//               <b>Emergency Contacts:</b>
-//             </p>
-//             <FormArray controlRef={['emergencyContacts']}>
-//               {({
-//                 formArray: {
-//                   controls,
-//                   errors: { arrayLengthRequired },
-//                 },
-//                 addControl,
-//                 removeControl,
-//               }) => (
-//                 <>
-//                   {arrayLengthRequired && (
-//                     <p className="text-danger">At least one emergency contact required.</p>
-//                   )}
-//                   {controls.map((control, index) => {
-//                     return (
-//                       <div key={control.controlRef.join(',')}>
-//                         <p>
-//                           <b>Contact #{index + 1}:</b>
-//                         </p>
-//                         <div className="d-flex align-items-center">
-//                           <ContactForm formGroup={control as ControlModels.FormGroup<Contact>} />
-//                           <button
-//                             className="ml-5"
-//                             type="button"
-//                             onClick={() => {
-//                               removeControl(control.controlRef);
-//                             }}
-//                           >
-//                             Remove Contact
-//                           </button>
-//                         </div>
-//                       </div>
-//                     );
-//                   })}
-//                   <button
-//                     type="button"
-//                     onClick={() => {
-//                       addControl(
-//                         contactRxForm({
-//                           firstName: '',
-//                           lastName: '',
-//                           email: '',
-//                         }),
-//                       );
-//                     }}
-//                   >
-//                     Add Contact
-//                   </button>
-//                 </>
-//               )}
-//             </FormArray>
-//           </div>
-//         );
-//       }}
-//     </Form>
-//   ),
-// };
+export const FormArrays: Story = {
+  render: () => (
+    <Form
+      formConfig={RxForm.group({
+        controls: {
+          emergencyContacts: RxForm.array({
+            validators: [arrayLengthRequired],
+            controls: [
+              {
+                firstName: 'Homer',
+                lastName: 'Simpson',
+                email: 'homer@homer.com',
+              },
+            ].map(contactRxForm),
+          }),
+        },
+      })}
+    >
+      {({ state }) => {
+        return (
+          <div className="form-group">
+            <p>
+              <b>Emergency Contacts:</b>
+            </p>
+            <FormArray name="emergencyContacts">
+              {({ items, addControl, removeControl }) => (
+                <>
+                  {state.emergencyContacts.errors.arrayLengthRequired && (
+                    <p className="text-danger">At least one emergency contact required.</p>
+                  )}
+                  {items.map((control, index) => {
+                    return (
+                      <div key={control.controlRef.join(',')}>
+                        <p>
+                          <b>Contact #{index + 1}:</b>
+                        </p>
+                        <div className="d-flex align-items-center">
+                          <ContactForm name={`emergencyContacts.${index}`} />
+                          <button
+                            className="ml-5"
+                            type="button"
+                            onClick={() => {
+                              removeControl(control.controlRef);
+                            }}
+                          >
+                            Remove Contact
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      addControl(
+                        contactRxForm({
+                          firstName: '',
+                          lastName: '',
+                          email: '',
+                        }),
+                      );
+                    }}
+                  >
+                    Add Contact
+                  </button>
+                </>
+              )}
+            </FormArray>
+          </div>
+        );
+      }}
+    </Form>
+  ),
+};
 
 export const ResetForm: Story = {
   render: () => (

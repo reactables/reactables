@@ -241,100 +241,84 @@ const MyForm = () => {
   );
 };`}/>
 
-{/* ### Form Arrays <a name="form-arrays"></a>
+### Form Arrays <a name="form-arrays"></a>
 <Story of={FormStories.FormArrays} />
 <Source of={FormStories.FormArrays} language="tsx" code={`
-import { Form, FormArray, FormBuilder } from '@hub-fx/react-forms';
+import { Form, FormArray, RxForm } from '@hub-fx/react-forms';
 import { arrayLengthRequired } from './Validators';
-import { contactFormConfig } from './contactFormConfig';
 
-const MyForm = () => {
-  const formConfig = FormBuilder.group({
-    controls: {
-      emergencyContacts: FormBuilder.array({
-        validators: [arrayLengthRequired],
-        controls: [
-          {
-            firstName: 'Homer',
-            lastName: 'Simpson',
-            email: 'homer@homer.com',
-          },
-        ].map(contactFormConfig),
-      }),
-    },
-  });
-
-  return (
-    <Form
-      formConfig={formConfig}
-    >
-      {() => {
-        return (
-          <div className="form-group">
-            <p>
-              <b>Emergency Contacts:</b>
-            </p>
-            <FormArray controlRef={['emergencyContacts']}>
-              {({
-                formArray: {
-                  controls,
-                  errors: { arrayLengthRequired },
-                },
-                addControl,
-                removeControl,
-              }) => (
-                <>
-                  {arrayLengthRequired && (
-                    <p className="text-danger">
-                      At least one emergency contact required.
-                    </p>
-                  )}
-                  {controls.map((control, index) => {
-                    return (
-                      <div key={control.controlRef.join(',')}>
-                        <p>
-                          <b>Contact #{index + 1}:</b>
-                        </p>
-                        <div className="d-flex align-items-center">
-                          <ContactForm
-                            formGroup={control as FormGroup<Contact>}
-                          />
-                          <button
-                            className="ml-5"
-                            type="button"
-                            onClick={() => {
-                              removeControl(control.controlRef);
-                            }}
-                          >
-                            Remove Contact
-                          </button>
-                        </div>
+const MyForm = () => 
+  <Form
+    formConfig={RxForm.group({
+      controls: {
+        emergencyContacts: RxForm.array({
+          validators: [arrayLengthRequired],
+          controls: [
+            {
+              firstName: 'Homer',
+              lastName: 'Simpson',
+              email: 'homer@homer.com',
+            },
+          ].map(contactRxForm),
+        }),
+      },
+    })}
+  >
+    {({ state }) => {
+      return (
+        <div className="form-group">
+          <p>
+            <b>Emergency Contacts:</b>
+          </p>
+          <FormArray name="emergencyContacts">
+            {({ items, addControl, removeControl }) => (
+              <>
+                {state.emergencyContacts.errors.arrayLengthRequired && (
+                  <p className="text-danger">At least one emergency contact required.</p>
+                )}
+                {items.map((control, index) => {
+                  return (
+                    <div key={control.controlRef.join(',')}>
+                      <p>
+                        <b>Contact #{index + 1}:</b>
+                      </p>
+                      <div className="d-flex align-items-center">
+                        <ContactForm name={\`emergencyContacts.\${index}\`} />
+                        <button
+                          className="ml-5"
+                          type="button"
+                          onClick={() => {
+                            removeControl(control.controlRef);
+                          }}
+                        >
+                          Remove Contact
+                        </button>
                       </div>
+                    </div>
+                  );
+                })}
+                <button
+                  type="button"
+                  onClick={() => {
+                    addControl(
+                      contactRxForm({
+                        firstName: '',
+                        lastName: '',
+                        email: '',
+                      }),
                     );
-                  })}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      addControl(
-                        contactFormConfig({
-                          firstName: '',
-                          lastName: '',
-                          email: '',
-                        }),
-                      );
-                    }}
-                  >
-                    Add Contact
-                  </button>
-                </>
-              )}
-            </FormArray>
-          </div>
-        );
-      }}
-    </Form>
-  );
-};`}/> */}
+                  }}
+                >
+                  Add Contact
+                </button>
+              </>
+            )}
+          </FormArray>
+        </div>
+      );
+    }}
+  </Form>
+`}/>
 
 ### Resetting Controls <a name="resetting-forms"></a>
 <Story of={FormStories.ResetForm} />

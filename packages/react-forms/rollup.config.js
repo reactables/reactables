@@ -16,6 +16,7 @@ export default {
     'rxjs/operators',
     '@hub-fx/core',
     '@hub-fx/forms',
+    '@hub-fx/react-helpers',
     'react',
   ],
 };

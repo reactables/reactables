@@ -1,1 +1,1 @@
-export { getControl } from './getControl';
+export { getArrayItems } from './getArrayItems';
