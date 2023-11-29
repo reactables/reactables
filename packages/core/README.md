@@ -1,4 +1,4 @@
-# Hubfx Core (WIP)
+# Reactables Core
 
 ## Description
 
@@ -9,14 +9,14 @@ Reactive state management with RxJS.
 1. [Installation](#installation)
 1. [Core concepts](#core-concepts)
     1. [Reactables](#reactable-concept)
-    1. [Hub and Stores](#hub-stores)
+    1. [Hub and Store](#hub-stores)
     1. [Effects](#effects)
     1. [Scoped Effects](#scoped-effects)
     1. [Flow & Containment](#flow-containment)
 1. [Examples](#examples)
     1. [Basic Counter](#basic-counter-example)
     1. [Scoped Effects - Updating Todos](#scoped-effects-example)
-    1. [Connecting Multiple Hubs - Event Prices](#connecting-hub-example)
+    1. [Connecting Multiple Reactables - Event Prices](#connecting-hub-example)
 1. [API](#api)
     1. [Reactable](#reactable)
     1. [RxBuilder](#rx-builder)
@@ -31,7 +31,7 @@ Reactive state management with RxJS.
 
 ## Installation <a name="installation"></a>
 
-`npm i @hub-fx/core`
+`npm i @reactables/core`
 
 ## Core concepts <a name="core-concepts"></a>
 
@@ -44,7 +44,7 @@ In this documentation the term *stream* will refer to an RxJS observable stream.
 [Reactables](#reactable) (prefixed with Rx) are objects that encapulate all the logic required for state management. They expose a `state$` observable and `actions` methods. Applications can subscribe to `state$` to receive state changes and call action methods to trigger them.
 
 ```javascript
-import { RxCounter } from '@hub-fx/examples';
+import { RxCounter } from '@reactables/examples';
 
 const counterReactable = RxCounter();
 
@@ -62,25 +62,25 @@ document.getElementById('reset').addEventListener('click', reset);
 ```
 For a full example, see [Basic Counter Example](#basic-counter-example).
 
-### Hub and Stores <a name="hub-stores"></a>
+### Hub and Store <a name="hub-stores"></a>
 
-[Reactables](#reactable-concept) are composed of Hubs & Stores.
+Internally, [Reactables](#reactable-concept) are composed of a hub and store.
 
-The **Hub** is responsible for dispatching actions to the store(s) registered to the hub. It is also responsible for handling side effects. The main stream that initiates all actions and effects is the `dispatcher$` 
+The hub is responsible for dispatching actions to the store. It is also responsible for handling side effects.
 
-<img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/SlideOneHubStore.jpg" width="600" />
+<img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/SlideOneHubStore.jpg" width="600" />
 
 ### Effects<a name="effects"></a>
 
-When initializing a hub we can declare effects. The hub can listen for various actions and perform side effects as needed. Stores that are registered to the hub will be listening to these effects as well the `dispatcher$`.
+When initializing a [Reactable](#reactable-concept) we can declare effects. The hub will listen for various actions and perform side effects as needed. The store will receive actions resulting from these effects.
 
-<img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/SlideTwoEffect.jpg" width="600" />
+<img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/SlideTwoEffect.jpg" width="600" />
 
 ### Scoped Effects <a name="scoped-effects"></a>
 
 Scoped Effects are dynamically created streams scoped to a particular action & key combination when an action is dispatch.
 
-<img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/SlideThreeScopedEffects.jpg" width="600" />
+<img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/SlideThreeScopedEffects.jpg" width="600" />
 
 ### Flow & Containment <a name="flow-containment"></a>
 Actions and logic flow through the App in one direction and are **contained** in their respective streams. This makes state updates more predictable and traceable during debugging.
@@ -89,7 +89,7 @@ Avoid [tapping](https://rxjs.dev/api/operators/tap) your streams. This prevents 
 
   - i.e do not [tap](https://rxjs.dev/api/operators/tap) stream A to trigger an action on stream B. Instead consider declaring stream A as a [source](#hub-sources) for stream B so the dependency is explicit.
 
-<img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/SlideSevenEightUnidirectionalFlow.jpg" />
+<img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/SlideSevenEightUnidirectionalFlow.jpg" />
 
 ## Examples <a name="examples"></a>
 
@@ -99,7 +99,7 @@ Basic counter example. Button clicks dispatch actions to increment or reset the 
 
 Basic Counter             |  Design Diagram           | Try it out on StackBlitz.<br /> Choose your framework
 :-------------------------:|:-------------------------:|:-------------------------:
-<img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/BasicCounterExamplePic.jpg" width="200" />  | <img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/Slide11BasicCounterExample.jpg" width="400" />  |  <a href="https://stackblitz.com/edit/github-qtpo1k?file=src%2Findex.js"><img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/VanillaJS.jpg" width="50" /></a><br /><a href="https://stackblitz.com/edit/github-hfk1t1?file=src%2FCounter.tsx"><img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/React.png" width="60" /></a><br /><a href="https://stackblitz.com/edit/github-98unub?file=src%2Fapp%2Fcounter%2Fcounter.component.ts"><img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/Angular.png" width="60" /></a>
+<img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/BasicCounterExamplePic.jpg" width="200" />  | <img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/Slide11BasicCounterExample.jpg" width="400" />  |  <a href="https://stackblitz.com/edit/github-qtpo1k?file=src%2Findex.js"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/VanillaJS.jpg" width="50" /></a><br /><a href="https://stackblitz.com/edit/github-hfk1t1?file=src%2FCounter.tsx"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/React.png" width="60" /></a><br /><a href="https://stackblitz.com/edit/github-98unub?file=src%2Fapp%2Fcounter%2Fcounter.component.ts"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/Angular.png" width="60" /></a>
 
 ### Scoped Effects - Updating Todos <a name="scoped-effects-example"></a>
 
@@ -107,15 +107,15 @@ Updating statuses of todo items shows scoped effects in action. An 'update todo'
 
 Todo Status Updates             |  Design Diagram           | Try it out on StackBlitz.<br /> Choose your framework
 :-------------------------:|:-------------------------:|:-------------------------:
-<img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/ScopedEffectsTodosPic.jpg" width="200" />  | <img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/Slide12ScopedEffectsExampleTodos.jpg" width="400" />  |  <a href="https://stackblitz.com/edit/github-6pgtev?file=src%2Findex.js"><img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/VanillaJS.jpg" width="50" /></a><br /><a href="https://stackblitz.com/edit/github-1r6pki?file=src%2FTodoUpdates.tsx"><img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/React.png" width="60" /><br /><a href="https://stackblitz.com/edit/github-zfmupm?file=src%2Fapp%2Fapp.component.ts,src%2Fapp%2Ftodos%2Ftodos.component.ts"><img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/Angular.png" width="60" /></a>
+<img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/ScopedEffectsTodosPic.jpg" width="200" />  | <img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/Slide12ScopedEffectsExampleTodos.jpg" width="400" />  |  <a href="https://stackblitz.com/edit/github-6pgtev?file=src%2Findex.js"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/VanillaJS.jpg" width="50" /></a><br /><a href="https://stackblitz.com/edit/github-1r6pki?file=src%2FTodoUpdates.tsx"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/React.png" width="60" /><br /><a href="https://stackblitz.com/edit/github-zfmupm?file=src%2Fapp%2Fapp.component.ts,src%2Fapp%2Ftodos%2Ftodos.component.ts"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/Angular.png" width="60" /></a>
 
-### Connecting Multiple Hubs - Event Prices  <a name="connecting-hub-example"></a>
+### Connecting Multiple Reactables - Event Prices  <a name="connecting-hub-example"></a>
 
-This examples shows two sets of hubs & stores. The first set is responsible for updating state of the user controls. The second set fetches prices based on input from the first set.
+This examples shows two set reactables. The first is responsible for updating state of the user controls. The second fetches prices based on input from the first set.
 
 Event Prices             |  Design Diagram           | Try it out on StackBlitz.<br /> Choose your framework
 :-------------------------:|:-------------------------:|:-------------------------:
-<img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/ConnectingHubsEventPricesPic.jpg" width="200" />  | <img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/Slide13ConnectingHubsExampleEventPrices.jpg" width="400" />  | <a href="https://stackblitz.com/edit/github-pgpwly?file=src%2findex.js"><img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/VanillaJS.jpg" width="50" /></a><br /><a href="https://stackblitz.com/edit/github-eypqvc?file=src%2FEventTickets.tsx"><img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/React.png" width="60" /></a><br /><a href="https://stackblitz.com/edit/github-66mbtu?file=src%2Fapp%2Fevent-tickets%2Fevent-tickets.component.ts"><img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/Angular.png" width="60" /></a>
+<img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/ConnectingHubsEventPricesPic.jpg" width="200" />  | <img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/Slide13ConnectingHubsExampleEventPrices.jpg" width="400" />  | <a href="https://stackblitz.com/edit/github-pgpwly?file=src%2findex.js"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/VanillaJS.jpg" width="50" /></a><br /><a href="https://stackblitz.com/edit/github-eypqvc?file=src%2FEventTickets.tsx"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/React.png" width="60" /></a><br /><a href="https://stackblitz.com/edit/github-66mbtu?file=src%2Fapp%2Fevent-tickets%2Fevent-tickets.component.ts"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/Angular.png" width="60" /></a>
 
 
 ## API <a name="api"></a>
@@ -156,7 +156,7 @@ Configuration object for creating Reactables.
 interface RxConfig <T, S extends Cases<T>>{
   initialState: T;
   reducers: S;
-  store?: boolean;
+  storeValue?: boolean;
   debug?: boolean;
   effects?: Effect<unknown, unknown>[];
   sources?: Observable<Action<unknown>>[];
@@ -177,13 +177,13 @@ type SingleActionReducer<T, S> = (state: T, action: Action<S>) => T;
 | initialState | Initial state of the Reactable |
 | reducers | Dictionary of cases for the Reactable to handle. Each case can be a reducer function or a configuration object. RxBuilder will use this to generate Actions, Reducers, and add [ScopedEffects](#api-scoped-effects). |
 | debug (optional) | to turn on debugging to console.log all messages received by the store and state changes |
-| store (optional) | Option to store value if Reactable is used to persist application state. Subsequent subscriptions will received the latest stored value. Default to false |
+| storeValue (optional) | Option to store value if Reactable is used to persist application state. Subsequent subscriptions will receive the latest stored value. Default to false |
 | effects (optional) | Array of [Effects](#api-effects) to be registered to the Reactable |
 | sources (optional) <a name="hub-sources"></a> | Additional [Action](#api-actions) Observables the Reactable is listening to |
 
 Debug Example:
 
-<img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/SlideSixDebug.jpg" width="500" />
+<img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/SlideSixDebug.jpg" width="500" />
 
 ### Other Interfaces <a name="interfaces"></a>
 
@@ -265,7 +265,7 @@ We can use RxJS's built in [Marble Testing](https://rxjs.dev/guide/testing/marbl
 ### Reactables <a name="testing-reactables"></a>
 
 ```typescript
-// https://github.com/hub-fx/hub-fx/blob/main/packages/examples/src/Counter/Counter.test.ts
+// https://github.com/reactables/reactables/blob/main/packages/examples/src/Counter/Counter.test.ts
 import { Counter } from './Counter';
 import { Subscription } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';

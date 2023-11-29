@@ -1,4 +1,4 @@
-# Hubfx (WIP)
+# Reactables
 
 ## Description
 
@@ -10,9 +10,9 @@ Reactive state management with RxJS.
 
 Developers can follow a standardized reactive pattern for managing state in any UI Framework for greater consistency.  
 
-<img src="https://github.com/hub-fx/hub-fx/blob/main/documentation/SlideNineStandardPattern.jpg?raw=true" height="300" />
+<img src="https://github.com/reactables/reactables/blob/main/documentation/SlideNineStandardPattern.jpg?raw=true" height="300" />
 
-### Decoupling state management from UI components for:
+### Separation of Concerns - state management from UI components for:
 
 1. Improved testability
 
@@ -22,44 +22,48 @@ Developers can follow a standardized reactive pattern for managing state in any 
 
       > With components, the distinction between a “unit” and “integration” test can be blurry. If you’re testing a form, should its test also test the buttons inside of it? Or should a button component have its own test suite? Should refactoring a button ever break the form test?
     
-    - With Hubfx developers can develop and test their state logic independently without rendering any UI providing greater flexibility and speed in unit testing. 
+    - With Reactables developers can develop and test their state logic independently without rendering any UI providing greater flexibility and speed in unit testing.
+
+1. Faster development
+
+    - Presentation concerns from UI Components and State Logic are decoupled - more team members can work on each aspect without creating conflicts.
 
 1. Reusability and Framework agnostic
 
-    - Hubfx pattern is highly composable, reusable and can easily integrate with any UI framework/library or vanilla JS.
+    - Reactables pattern is highly composable, reusable and can easily integrate with any UI framework/library or vanilla JS.
 
 ### Predictable State Updates 
 
-All Hubfx Actions flow in one direction contained in streams, making state updates highly predictable and traceable in debugging.
+All Reactables Actions flow in one direction contained in streams, making state updates highly predictable and traceable in debugging.
 
-<img src="https://github.com/hub-fx/hub-fx/blob/main/documentation/SlideThreeScopedEffects.jpg?raw=true" width="600" />
+<img src="https://github.com/reactables/reactables/blob/main/documentation/SlideThreeScopedEffects.jpg?raw=true" width="600" />
 
-### Learn more! -> [See the docs](https://github.com/hub-fx/hub-fx/tree/main/packages/core) 
+### Learn more! -> [See the docs](https://github.com/reactables/reactables/tree/main/packages/core) 
 
 ## Packages
 
-[Hubfx Core](https://github.com/hub-fx/hub-fx/tree/main/packages/core) 
+[Reactables Core](https://github.com/reactables/reactables/tree/main/packages/core) 
 
 - Core `Hub` used to model state as reactive streams.
 
-- `npm i @hub-fx/core`
+- `npm i @reactables/core`
 
-[Hubfx Forms](https://github.com/hub-fx/hub-fx/tree/main/packages/forms)
+[Reactable Forms](https://github.com/reactables/reactables/tree/main/packages/forms)
 
-- Actions & Reducers for building a comprehensive form library using [Hubfx Core](https://github.com/hub-fx/hub-fx/tree/main/packages/core)
+- Library for building reactive forms based on [Reactables Core](https://github.com/reactables/reactables/tree/main/packages/core)
 
-- `npm i @hub-fx/forms`
+- `npm i @reactables/forms`
 
-[Hubfx React Forms](https://github.com/hub-fx/hub-fx/tree/main/packages/react-forms)
+[Reactable React Forms](https://github.com/reactables/reactables/tree/main/packages/react-forms)
 
-- See Storybook Demo [here](https://hub-fx.github.io/hub-fx/)
+- See Storybook Demo [here](https://reactables.github.io/reactables/)
 
-- React Form Library built on [Hubfx Forms](https://github.com/hub-fx/hub-fx/tree/main/packages/forms)
+- React Form Library built on [Reactables Forms](https://github.com/reactables/reactables/tree/main/packages/forms)
 
-- `npm i @hub-fx/react-forms`
+- `npm i @reactables/react-forms`
 
-[Hubfx Examples](https://github.com/hub-fx/hub-fx/tree/main/packages/examples) 
+[Reactable Examples](https://github.com/reactables/reactables/tree/main/packages/examples) 
 
-- Examples of Hubfx. See [Hubfx Examples](https://github.com/hub-fx/hub-fx/tree/main/packages/core#examples).
+- Examples of Reactables. See [Reactables Examples](https://github.com/reactables/reactables/tree/main/packages/core#examples).
 
-- `npm i @hub-fx/examples`
+- `npm i @reactables/examples`

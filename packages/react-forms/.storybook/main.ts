@@ -13,13 +13,13 @@ const config: StorybookConfig = {
     const newConfig = {
       ...config,
       optimizeDeps: {
-        include: ['@hub-fx/core', '@hub-fx/forms', '@hub-fx/react-helpers'],
+        include: ['@reactables/core', '@reactables/forms', '@reactables/react-helpers'],
       },
     };
 
     if (newConfig.build) {
       newConfig.build.commonjsOptions = {
-        include: [/hub-fx/, /node_modules/],
+        include: [/reactables/, /node_modules/],
       };
     }
 

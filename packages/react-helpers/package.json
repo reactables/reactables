@@ -1,6 +1,6 @@
 {
-  "name": "@hub-fx/react-helpers",
-  "description": "React Helpers for Hub-fx",
+  "name": "@reactables/react-helpers",
+  "description": "React Helpers for reactables",
   "main": "dist/index.js",
   "files": [
     "dist"

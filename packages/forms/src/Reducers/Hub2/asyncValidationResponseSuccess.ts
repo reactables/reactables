@@ -1,4 +1,4 @@
-import { Action } from '@hub-fx/core';
+import { Action } from '@reactables/core';
 import { Form, FormControl } from '../../Models/Controls';
 import { ControlAsyncValidationResponse } from '../../Models/Payloads';
 import { getAncestorControls } from '../../Helpers/getAncestorControls';

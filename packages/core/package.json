@@ -1,5 +1,5 @@
 {
-  "name": "@hub-fx/core",
+  "name": "@reactables/core",
   "description": "State management with rxjs",
   "main": "dist/index.js",
   "files": [

@@ -11,5 +11,5 @@ export default {
     },
   ],
   plugins: [typescript()],
-  external: ['rxjs', 'rxjs/operators', '@hub-fx/core'],
+  external: ['rxjs', 'rxjs/operators', '@reactables/core'],
 };

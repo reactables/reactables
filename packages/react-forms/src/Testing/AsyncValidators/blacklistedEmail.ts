@@ -1,6 +1,6 @@
 import { of } from 'rxjs';
 import { mergeMap, delay, debounceTime } from 'rxjs/operators';
-import { ValidatorAsyncFn } from '@hub-fx/forms';
+import { ValidatorAsyncFn } from '@reactables/forms';
 export const blacklistedEmail: ValidatorAsyncFn = (control$) => {
   const blacklisted = ['not@allowed.com'];
   return control$.pipe(

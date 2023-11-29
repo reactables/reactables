@@ -1,6 +1,6 @@
 import { Observable, of } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
-import { Action, Reactable } from '@hub-fx/core';
+import { Action, Reactable } from '@reactables/core';
 import { getControlBranch } from './getControlBranch';
 import { getAncestorControls } from './getAncestorControls';
 import { getControl } from './getControl';

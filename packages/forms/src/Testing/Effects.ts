@@ -1,6 +1,6 @@
 import { Observable, of } from 'rxjs';
 import { switchMap, delay, debounceTime, mergeMap } from 'rxjs/operators';
-import { Action, TEST_ACTION_SUCCESS } from '@hub-fx/core';
+import { Action, TEST_ACTION_SUCCESS } from '@reactables/core';
 
 export const switchMapEffect = (action$: Observable<Action<string>>) =>
   action$.pipe(

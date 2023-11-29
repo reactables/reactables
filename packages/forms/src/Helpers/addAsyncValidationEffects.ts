@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { Action, Effect } from '@hub-fx/core';
+import { Action, Effect } from '@reactables/core';
 import { map } from 'rxjs/operators';
 import { BaseControl } from '../Models/Controls';
 import { ControlAsyncValidationResponse } from '../Models/Payloads';
