@@ -57,8 +57,7 @@ export const HubFactory = ({ effects, sources = [] }: HubConfig = {}): Hub => {
 
   const messages$ = merge(inputStream$, mergedScopedEffects, ...genericEffects).pipe(share());
 
-  const store = <T>(config: StoreConfig<T>) => {
-    const { reducer, name, debug, initialState } = config;
+  const store = <T>({ reducer, name, debug, initialState, store = false }: StoreConfig<T>) => {
     const debugName = `[Stream Name] ${name || 'undefined'}`;
 
     const seedState = initialState !== undefined ? initialState : reducer();
@@ -88,6 +87,14 @@ export const HubFactory = ({ effects, sources = [] }: HubConfig = {}): Hub => {
       }),
       map((pair) => pair[1] as T),
     );
+
+    if (store) {
+      const replaySubject = new ReplaySubject<T>(1);
+
+      state$.subscribe((state) => replaySubject.next(state));
+
+      return replaySubject;
+    }
 
     return state$;
   };
