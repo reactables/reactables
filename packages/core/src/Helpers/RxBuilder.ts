@@ -6,12 +6,14 @@ import { Reactable } from '../Models/Reactable';
 
 export interface RxConfig<T, S extends Cases<T>> extends SliceConfig<T, S>, HubConfig {
   debug?: boolean;
+  store?: boolean;
 }
 
 export const RxBuilder = <T, S extends Cases<T>>({
   effects,
   sources = [],
   debug = false,
+  store = false,
   ...sliceConfig
 }: RxConfig<T, S>) => {
   const { reducer, actions } = createSlice(sliceConfig);
@@ -46,7 +48,7 @@ export const RxBuilder = <T, S extends Cases<T>>({
   ) as { [K in keyof S]: (payload: unknown) => void };
 
   return {
-    state$: hub.store({ reducer, debug }),
+    state$: hub.store({ reducer, debug, store }),
     actions: actionsResult,
   } as Reactable<T, { [K in keyof S]: (payload?: unknown) => void }>;
 };

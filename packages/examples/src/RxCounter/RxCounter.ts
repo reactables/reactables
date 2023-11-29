@@ -9,11 +9,12 @@ type CounterActions = {
   reset: () => void;
 };
 
-export const RxCounter = (): Reactable<CounterState, CounterActions> =>
+export const RxCounter = (store: boolean): Reactable<CounterState, CounterActions> =>
   RxBuilder({
     initialState: { count: 0 } as CounterState,
     reducers: {
       increment: (state) => ({ count: state.count + 1 }),
       reset: () => ({ count: 0 }),
     },
+    store,
   });

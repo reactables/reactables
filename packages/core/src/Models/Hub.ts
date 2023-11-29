@@ -9,6 +9,7 @@ export interface StoreConfig<T> {
   initialState?: T;
   name?: string;
   debug?: boolean;
+  store?: boolean;
 }
 
 export type Dispatcher = <T>(...actions: Action<T>[]) => void;
