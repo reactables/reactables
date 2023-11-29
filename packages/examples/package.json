@@ -1,6 +1,6 @@
 {
-  "name": "@hub-fx/examples",
-  "description": "Examples with hub-fx",
+  "name": "@reactables/examples",
+  "description": "Examples with reactables",
   "main": "dist/index.js",
   "files": [
     "dist"
@@ -14,7 +14,7 @@
   "author": "David Lai",
   "license": "ISC",
   "dependencies": {
-    "@hub-fx/core": "*"
+    "@reactables/core": "*"
   },
   "peerDependencies": {
     "rxjs": "^6.0.0 || ^7.0.0"

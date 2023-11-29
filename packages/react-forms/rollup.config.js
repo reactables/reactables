@@ -14,9 +14,9 @@ export default {
   external: [
     'rxjs',
     'rxjs/operators',
-    '@hub-fx/core',
-    '@hub-fx/forms',
-    '@hub-fx/react-helpers',
+    '@reactables/core',
+    '@reactables/forms',
+    '@reactables/react-helpers',
     'react',
   ],
 };

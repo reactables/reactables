@@ -1,4 +1,4 @@
-import { Reducer, Action } from '@hub-fx/core';
+import { Reducer, Action } from '@reactables/core';
 import { BaseFormState, Form, Hub2Fields } from '../../Models/Controls';
 import { mergeErrors } from './mergeErrors';
 

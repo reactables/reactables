@@ -1,6 +1,6 @@
 {
-  "name": "@hub-fx/react-forms",
-  "description": "React forms with hub-fx",
+  "name": "@reactables/react-forms",
+  "description": "React forms with reactables",
   "main": "dist/index.js",
   "files": [
     "dist"
@@ -16,9 +16,9 @@
   "author": "David Lai",
   "license": "ISC",
   "dependencies": {
-    "@hub-fx/core": "*",
-    "@hub-fx/forms": "*",
-    "@hub-fx/react-helpers": "*"
+    "@reactables/core": "*",
+    "@reactables/forms": "*",
+    "@reactables/react-helpers": "*"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0",

@@ -4,7 +4,7 @@ import {
   FormGroupConfig,
   AbstractControlConfig,
 } from '../Models/Configs';
-import { HubFactory } from '@hub-fx/core';
+import { HubFactory } from '@reactables/core';
 import { buildHub2Source } from './buildHub2Source';
 import { buildHub1Reducer } from '../Reducers';
 import { hub2Reducer } from '../Reducers/Hub2/hub2Reducer';

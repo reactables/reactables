@@ -1,4 +1,4 @@
-import { RxBuilder, Reactable } from '@hub-fx/core';
+import { RxBuilder, Reactable } from '@reactables/core';
 
 interface CounterState {
   count: number;

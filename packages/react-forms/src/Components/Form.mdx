@@ -12,7 +12,7 @@ import * as FormStories from './Form.stories';
   padding: 16,
   background: 'white',
   borderLeft: '1px solid black'}}>
-  [Hubfx on Github](https://github.com/hub-fx/hub-fx)
+  [Reactables on Github](https://github.com/reactables/reactables)
   ## Contents
 
   1. [Architecture](#architecture)
@@ -25,25 +25,25 @@ import * as FormStories from './Form.stories';
 </div>
 <div className="container">
 
-# Hubfx React Forms (WIP)
+# Reactables React Forms (WIP)
 
 ## Description
 
-Reactive React Forms powerd by [Hubfx](https://github.com/hub-fx/hub-fx)
+Reactive React Forms powerd by [Reactables](https://github.com/reactables/reactables)
 
-## Architecture (WIP [Ref:](https://github.com/hub-fx/hub-fx/issues/8)) <a name="architecture"></a>
+## Architecture (WIP [Ref:](https://github.com/reactables/reactables/issues/8)) <a name="architecture"></a>
 
-Hubfx React Forms built on [Hubfx Forms](https://github.com/hub-fx/hub-fx/tree/main/packages/forms) - a state management model for building reactive forms.
+Reactables React Forms built on [Reactables Forms](https://github.com/reactables/reactables/tree/main/packages/forms) - a state management model for building reactive forms.
 
-The following diagram visualizes the architecture of [Hubfx Forms](https://github.com/hub-fx/hub-fx/tree/main/packages/forms).
+The following diagram visualizes the architecture of [Reactables Forms](https://github.com/reactables/reactables/tree/main/packages/forms).
 
 There are two sets of hub and stores. The first set is responsible for handling user input and updating the form.
 
 The second set is responsible for reacting to the form change in the first store and asynchronous validation.
 
-<a href="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/Slide10HubfxForms.jpg" target="_blank"><img src="https://raw.githubusercontent.com/hub-fx/hub-fx/main/documentation/Slide10HubfxForms.jpg" width="700" />
+<a href="https://raw.githubusercontent.com/reactables/reactables/main/documentation/Slide10ReactablesForms.jpg" target="_blank"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/Slide10ReactablesForms.jpg" width="700" />
 </a>
-See [Hubfx Forms](https://github.com/hub-fx/hub-fx/tree/main/packages/forms) for more details.
+See [Reactables Forms](https://github.com/reactables/reactables/tree/main/packages/forms) for more details.
 
 ## Examples <a name="examples"></a>
 <br/>
@@ -51,8 +51,8 @@ See [Hubfx Forms](https://github.com/hub-fx/hub-fx/tree/main/packages/forms) for
 ### Basic Control <a name="basic-control"></a>
 <Story of={FormStories.BasicControl} />
 <Source of={FormStories.BasicControl} language="tsx" code={`
-import { FormGroup, FormBuilder } from '@hub-fx/forms';
-import { Form, FormBuilder } from '@hub-fx/react-forms';
+import { FormGroup, FormBuilder } from '@reactables/forms';
+import { Form, FormBuilder } from '@reactables/react-forms';
 
 const MyForm = () => {
   const formConfig = FormBuilder.control({
@@ -79,7 +79,7 @@ const MyForm = () => {
 <Story of={FormStories.Validation} />
 <Source of={FormStories.Validation} language="tsx" code={`
 import React from 'react';
-import { Form, FormBuilder, Validators } from '@hub-fx/react-forms';
+import { Form, FormBuilder, Validators } from '@reactables/react-forms';
 
 const Input = ({
   input,
@@ -169,7 +169,7 @@ const MyForm = () => {
 ### Async Validation <a name="async-validation"></a>
 <Story of={FormStories.AsyncValidation} />
 <Source of={FormStories.AsyncValidation} language="tsx" code={`
-import { Form, FormBuilder, Validators, ValidatorAsyncFn } from '@hub-fx/react-forms';
+import { Form, FormBuilder, Validators, ValidatorAsyncFn } from '@reactables/react-forms';
 import { of } from 'rxjs';
 import { mergeMap, delay, debounceTime } from 'rxjs/operators';
 
@@ -244,7 +244,7 @@ const MyForm = () => {
 ### Form Arrays <a name="form-arrays"></a>
 <Story of={FormStories.FormArrays} />
 <Source of={FormStories.FormArrays} language="tsx" code={`
-import { Form, FormArray, RxForm } from '@hub-fx/react-forms';
+import { Form, FormArray, RxForm } from '@reactables/react-forms';
 import { arrayLengthRequired } from './Validators';
 
 const MyForm = () => 
@@ -323,7 +323,7 @@ const MyForm = () =>
 ### Resetting Controls <a name="resetting-forms"></a>
 <Story of={FormStories.ResetForm} />
 <Source of={FormStories.ResetForm} language="tsx" code={`
-import { Form, FormArray, FormBuilder } from '@hub-fx/react-forms';
+import { Form, FormArray, FormBuilder } from '@reactables/react-forms';
 import { arrayLengthRequired } from './Validators';
 import { contactFormConfig } from './contactFormConfig';
 

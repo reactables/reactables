@@ -1,4 +1,4 @@
-import { Action } from '@hub-fx/core';
+import { Action } from '@reactables/core';
 import { BaseForm, BaseFormState } from '../../Models/Controls';
 import { ControlRef } from '../../Models/ControlRef';
 import { getControl } from '../../Helpers/getControl';

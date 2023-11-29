@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { Reactable, ActionMap } from '@hub-fx/core';
+import { Reactable, ActionMap } from '@reactables/core';
 
 // React Strict Mode has bugs with clean up with refs so it breaks the useReactable hook as of now
 // See Bug: https://github.com/facebook/react/issues/26315

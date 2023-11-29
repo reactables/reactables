@@ -1,4 +1,4 @@
-import { Action } from '@hub-fx/core';
+import { Action } from '@reactables/core';
 import { AbstractControlConfig } from './Configs';
 import { FormErrors } from './FormErrors';
 import { ControlRef } from './ControlRef';

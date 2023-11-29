@@ -1,5 +1,5 @@
 import React, { useContext, ChangeEvent, DragEvent, FocusEvent, FormEvent } from 'react';
-import { ControlModels } from '@hub-fx/forms';
+import { ControlModels } from '@reactables/forms';
 import { FormContext } from './Form';
 
 export type EventHandler<Event> = (event: Event, name?: string) => void;

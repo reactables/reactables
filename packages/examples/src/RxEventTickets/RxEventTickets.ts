@@ -1,5 +1,5 @@
 import { switchMap, map } from 'rxjs/operators';
-import { Action, Reactable, RxBuilder } from '@hub-fx/core';
+import { Action, Reactable, RxBuilder } from '@reactables/core';
 import { EventTypes, FetchPricePayload } from './Models/EventTypes';
 import { ObservableOrPromise } from '../Models/ObservableOrPromise';
 

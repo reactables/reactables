@@ -1,4 +1,4 @@
-import { RxBuilder, Reactable } from '@hub-fx/core';
+import { RxBuilder, Reactable } from '@reactables/core';
 import { filter } from 'rxjs/operators';
 import { buildFormState } from '../Helpers/buildFormState';
 import { ControlChange, AddControl, MarkTouched } from '../Models/Payloads';

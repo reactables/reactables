@@ -1,4 +1,4 @@
-import { Action, Reactable, RxBuilder, ScopedEffects } from '@hub-fx/core';
+import { Action, Reactable, RxBuilder, ScopedEffects } from '@reactables/core';
 import { UpdateTodoPayload, UpdateTodoPayloadSuccess, Todo } from './Models/Todos';
 import { switchMap, map } from 'rxjs/operators';
 import { ObservableOrPromise } from '../Models/ObservableOrPromise';

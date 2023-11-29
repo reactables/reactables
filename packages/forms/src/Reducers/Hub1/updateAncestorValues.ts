@@ -1,4 +1,4 @@
-import { Action } from '@hub-fx/core';
+import { Action } from '@reactables/core';
 import { BaseForm } from '../../Models/Controls';
 import { getFormKey } from '../../Helpers/getFormKey';
 import { getDescendantControls } from '../../Helpers/getDescendantControls';

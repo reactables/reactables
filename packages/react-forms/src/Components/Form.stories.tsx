@@ -1,6 +1,6 @@
 import React from 'react';
 import { Meta, StoryObj } from '@storybook/react';
-import { Validators, RxForm } from '@hub-fx/forms';
+import { Validators, RxForm } from '@reactables/forms';
 import { Form } from './Form';
 import { Field } from './Field';
 import { Input } from './Input';

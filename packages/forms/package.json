@@ -1,6 +1,6 @@
 {
-  "name": "@hub-fx/forms",
-  "description": "Form library with hub-fx",
+  "name": "@reactables/forms",
+  "description": "Form library with reactables",
   "main": "dist/index.js",
   "files": [
     "dist"
@@ -14,7 +14,7 @@
   "author": "David Lai",
   "license": "ISC",
   "dependencies": {
-    "@hub-fx/core": "*",
+    "@reactables/core": "*",
     "lodash.clonedeep": "^4.5.0",
     "lodash.isequal": "^4.5.0"
   },
