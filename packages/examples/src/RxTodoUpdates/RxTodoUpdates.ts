@@ -44,8 +44,8 @@ export const RxTodoUpdates = (
         effects: (payload: UpdateTodoPayload): ScopedEffects<UpdateTodoPayload> => ({
           key: payload.todoId,
           effects: [
-            (actions$) => {
-              return actions$.pipe(
+            (todoUpdates$) => {
+              return todoUpdates$.pipe(
                 // Call todo API Service - switchMap operator cancels previous pending call if a new one is initiated
                 switchMap(({ payload }) => updateTodoApi(payload)),
 
