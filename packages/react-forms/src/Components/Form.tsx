@@ -1,11 +1,12 @@
 import React from 'react';
-import { AbstractControlConfig, ControlModels, RxForm, RxFormActions } from '@reactables/forms';
-import { useReactable } from '@reactables/react-helpers';
+import { ControlModels, RxFormActions } from '@reactables/forms';
 
-export const FormContext = React.createContext(null) as React.Context<{
+interface HookedRxForm {
   state: ControlModels.Form<unknown>;
   actions: RxFormActions;
-}>;
+}
+
+export const FormContext = React.createContext(null) as React.Context<HookedRxForm>;
 
 export interface FormChildrenProps {
   state: ControlModels.Form<unknown>;
@@ -13,26 +14,10 @@ export interface FormChildrenProps {
 }
 
 interface FormProps {
-  formConfig: AbstractControlConfig;
-  children?: (props: FormChildrenProps) => React.ReactNode;
+  rxForm: HookedRxForm;
+  children?: React.ReactNode;
 }
 
-export const Form = ({ formConfig, children }: FormProps) => {
-  const { state, actions } = useReactable(RxForm.build(formConfig));
-
-  const formChildrenProps: FormChildrenProps = {
-    state,
-    actions,
-  };
-
-  return (
-    <FormContext.Provider
-      value={{
-        state,
-        actions,
-      }}
-    >
-      {state !== undefined && children && children(formChildrenProps)}
-    </FormContext.Provider>
-  );
+export const Form = ({ rxForm, children }: FormProps) => {
+  return <FormContext.Provider value={rxForm}>{rxForm.state && children}</FormContext.Provider>;
 };
