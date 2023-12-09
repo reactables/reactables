@@ -9,6 +9,7 @@ import { blacklistedEmail } from '../Testing/AsyncValidators/blacklistedEmail';
 import { arrayLengthRequired } from '../Testing/Validators/arrayLengthRequired';
 import { FormArray } from './FormArray';
 import { Contact } from '../Testing/Models/Contact';
+import { useForm } from '../Hooks/useForm';
 
 const meta: Meta<typeof Form> = {
   component: Form,
@@ -17,53 +18,55 @@ const meta: Meta<typeof Form> = {
 export default meta;
 type Story = StoryObj<typeof Form>;
 
-export const BasicControl: Story = {
-  render: () => (
-    <Form
-      formConfig={RxForm.control({
-        initialValue: 'john',
-      })}
-    >
-      {({ state }) => {
-        return (
-          <>
-            <Field component={Input} />
-            <div>
-              First Name: <span>{state.root.value as string}</span>
-            </div>
-          </>
-        );
-      }}
+const BasicControlExample = () => {
+  const rxForm = useForm(
+    RxForm.control({
+      initialValue: 'john',
+    }),
+  );
+
+  return (
+    <Form rxForm={rxForm}>
+      <Field component={Input} />
+      <div>
+        First Name: <span>{rxForm.state?.root.value as string}</span>
+      </div>
     </Form>
-  ),
+  );
+};
+
+export const BasicControl: Story = {
+  render: () => <BasicControlExample />,
+};
+
+const ValidationExample = () => {
+  const rxForm = useForm(
+    RxForm.group({
+      controls: {
+        firstName: RxForm.control({
+          initialValue: 'John',
+          validators: [Validators.required],
+        }),
+        lastName: RxForm.control({
+          initialValue: '',
+          validators: [Validators.required],
+        }),
+      },
+    }),
+  );
+
+  return (
+    <Form rxForm={rxForm}>
+      <div className="form-group">
+        <Field name="firstName" component={Input} label="First Name (required)" />
+        <Field name="lastName" component={Input} label="Last Name (required)" />
+      </div>
+    </Form>
+  );
 };
 
 export const Validation: Story = {
-  render: () => (
-    <Form
-      formConfig={RxForm.group({
-        controls: {
-          firstName: RxForm.control({
-            initialValue: 'John',
-            validators: [Validators.required],
-          }),
-          lastName: RxForm.control({
-            initialValue: '',
-            validators: [Validators.required],
-          }),
-        },
-      })}
-    >
-      {() => {
-        return (
-          <div className="form-group">
-            <Field name="firstName" component={Input} label="First Name (required)" />
-            <Field name="lastName" component={Input} label="Last Name (required)" />
-          </div>
-        );
-      }}
-    </Form>
-  ),
+  render: () => <ValidationExample />,
 };
 
 const contactRxForm = ({ firstName, lastName, email }: Contact) =>
@@ -85,121 +88,134 @@ const contactRxForm = ({ firstName, lastName, email }: Contact) =>
     },
   });
 
-export const AsyncValidation: Story = {
-  render: () => (
-    <Form
-      formConfig={contactRxForm({
-        firstName: 'John',
-        lastName: 'Doe',
-        email: '',
-      })}
-    >
-      {() => {
-        return <ContactForm />;
-      }}
+const AsyncValidationExample = () => {
+  const rxForm = useForm(
+    contactRxForm({
+      firstName: 'John',
+      lastName: 'Doe',
+      email: '',
+    }),
+  );
+
+  return (
+    <Form rxForm={rxForm}>
+      <ContactForm />
     </Form>
-  ),
+  );
+};
+
+export const AsyncValidation: Story = {
+  render: () => <AsyncValidationExample />,
+};
+
+const FormArraysExample = () => {
+  const rxForm = useForm(
+    RxForm.group({
+      controls: {
+        emergencyContacts: RxForm.array({
+          validators: [arrayLengthRequired],
+          controls: [
+            {
+              firstName: 'Homer',
+              lastName: 'Simpson',
+              email: 'homer@homer.com',
+            },
+          ].map(contactRxForm),
+        }),
+      },
+    }),
+  );
+
+  return (
+    <Form rxForm={rxForm}>
+      <div className="form-group">
+        <p>
+          <b>Emergency Contacts:</b>
+        </p>
+        <FormArray name="emergencyContacts">
+          {({ items, addControl, removeControl }) => (
+            <>
+              {rxForm.state.emergencyContacts.errors.arrayLengthRequired && (
+                <p className="text-danger">At least one emergency contact required.</p>
+              )}
+              {items.map((control, index) => {
+                return (
+                  <div key={control.controlRef.join(',')}>
+                    <p>
+                      <b>Contact #{index + 1}:</b>
+                    </p>
+                    <div className="d-flex align-items-center">
+                      <ContactForm name={`emergencyContacts.${index}`} />
+                      <button
+                        className="ml-5"
+                        type="button"
+                        onClick={() => {
+                          removeControl(control.controlRef);
+                        }}
+                      >
+                        Remove Contact
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+              <button
+                type="button"
+                onClick={() => {
+                  addControl(
+                    contactRxForm({
+                      firstName: '',
+                      lastName: '',
+                      email: '',
+                    }),
+                  );
+                }}
+              >
+                Add Contact
+              </button>
+            </>
+          )}
+        </FormArray>
+      </div>
+    </Form>
+  );
 };
 
 export const FormArrays: Story = {
-  render: () => (
-    <Form
-      formConfig={RxForm.group({
-        controls: {
-          emergencyContacts: RxForm.array({
-            validators: [arrayLengthRequired],
-            controls: [
-              {
-                firstName: 'Homer',
-                lastName: 'Simpson',
-                email: 'homer@homer.com',
-              },
-            ].map(contactRxForm),
-          }),
-        },
-      })}
-    >
-      {({ state }) => {
-        return (
-          <div className="form-group">
-            <p>
-              <b>Emergency Contacts:</b>
-            </p>
-            <FormArray name="emergencyContacts">
-              {({ items, addControl, removeControl }) => (
-                <>
-                  {state.emergencyContacts.errors.arrayLengthRequired && (
-                    <p className="text-danger">At least one emergency contact required.</p>
-                  )}
-                  {items.map((control, index) => {
-                    return (
-                      <div key={control.controlRef.join(',')}>
-                        <p>
-                          <b>Contact #{index + 1}:</b>
-                        </p>
-                        <div className="d-flex align-items-center">
-                          <ContactForm name={`emergencyContacts.${index}`} />
-                          <button
-                            className="ml-5"
-                            type="button"
-                            onClick={() => {
-                              removeControl(control.controlRef);
-                            }}
-                          >
-                            Remove Contact
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      addControl(
-                        contactRxForm({
-                          firstName: '',
-                          lastName: '',
-                          email: '',
-                        }),
-                      );
-                    }}
-                  >
-                    Add Contact
-                  </button>
-                </>
-              )}
-            </FormArray>
-          </div>
-        );
-      }}
+  render: () => <FormArraysExample />,
+};
+
+const ResetFormExample = () => {
+  const rxForm = useForm(
+    RxForm.group(
+      contactRxForm({
+        firstName: 'Bart',
+        lastName: 'Simpson',
+        email: 'bart@man.com',
+      }),
+    ),
+  );
+
+  const {
+    state,
+    actions: { resetControl },
+  } = rxForm;
+
+  return (
+    <Form rxForm={rxForm}>
+      <button
+        type="button"
+        onClick={() => {
+          resetControl(state.root.controlRef);
+        }}
+      >
+        Reset Form
+      </button>
+      <ContactForm />
     </Form>
-  ),
+  );
 };
 
 export const ResetForm: Story = {
-  render: () => (
-    <Form
-      formConfig={RxForm.group(
-        contactRxForm({
-          firstName: 'Bart',
-          lastName: 'Simpson',
-          email: 'bart@man.com',
-        }),
-      )}
-    >
-      {({ state, actions: { resetControl } }) => (
-        <>
-          <button
-            type="button"
-            onClick={() => {
-              resetControl(state.root.controlRef);
-            }}
-          >
-            Reset Form
-          </button>
-          <ContactForm />
-        </>
-      )}
-    </Form>
-  ),
+  render: () => <ResetFormExample />,
 };

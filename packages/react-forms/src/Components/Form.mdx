@@ -51,27 +51,25 @@ See [Reactables Forms](https://github.com/reactables/reactables/tree/main/packag
 ### Basic Control <a name="basic-control"></a>
 <Story of={FormStories.BasicControl} />
 <Source of={FormStories.BasicControl} language="tsx" code={`
-import { FormGroup, FormBuilder } from '@reactables/forms';
-import { Form, FormBuilder } from '@reactables/react-forms';
+import { RxForm } from '@reactables/forms';
+import { Form, useForm } from '@reactables/react-forms';
 
-const MyForm = () => {
-  const formConfig = FormBuilder.control({
-    initialValue: 'john',
-  });
+const BasicControlExample = () => {
+  const rxForm = useForm(
+    RxForm.control({
+      initialValue: 'john',
+    }),
+  );
 
   return (
-    <Form formConfig={formConfig}>
-      {({ state }) => {
-        return (
-          <>
-            <Field controlRef={[]} component={Input} />
-            <div>
-              First Name: <span>{state.value as string}</span>
-            </div>
-          </>
-        );
-      }}
-    </Form>
+    rxForm.state && (
+      <Form rxForm={rxForm}>
+        <Field component={Input} />
+        <div>
+          First Name: <span>{rxForm.state.root.value as string}</span>
+        </div>
+      </Form>
+    )
   );
 };`}/>
 
