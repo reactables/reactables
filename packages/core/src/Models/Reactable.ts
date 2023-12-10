@@ -6,5 +6,5 @@ export interface Reactable<T, S = ActionMap> {
 }
 
 export interface ActionMap {
-  [key: string | number]: (payload?: unknown) => void;
+  [key: string | number]: (payload?: unknown) => void | ActionMap;
 }
