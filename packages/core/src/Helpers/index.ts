@@ -1,1 +1,1 @@
-export { RxBuilder } from './RxBuilder';
+export { RxBuilder, EffectsAndSources } from './RxBuilder';

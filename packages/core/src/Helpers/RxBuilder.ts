@@ -6,11 +6,14 @@ import { Reactable } from '../Models/Reactable';
 import { Effect } from '../Models/Effect';
 import { Action } from '../Models/Action';
 
-export interface RxConfig<T, S extends Cases<T>> extends SliceConfig<T, S> {
-  debug?: boolean;
-  storeValue?: boolean;
+export interface EffectsAndSources {
   effects?: Effect<unknown, unknown>[];
   sources?: Observable<Action<unknown>>[] | { [key: string]: Observable<unknown> };
+}
+
+export interface RxConfig<T, S extends Cases<T>> extends SliceConfig<T, S>, EffectsAndSources {
+  debug?: boolean;
+  storeValue?: boolean;
 }
 
 export const RxBuilder = <T, S extends Cases<T>>({

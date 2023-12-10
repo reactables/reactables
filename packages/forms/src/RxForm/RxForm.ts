@@ -1,4 +1,4 @@
-import { RxBuilder, Reactable } from '@reactables/core';
+import { RxBuilder, Reactable, EffectsAndSources } from '@reactables/core';
 import { filter } from 'rxjs/operators';
 import { buildFormState } from '../Helpers/buildFormState';
 import { ControlChange, AddControl, MarkTouched } from '../Models/Payloads';
@@ -58,7 +58,10 @@ export type RxFormActions = {
   resetControl: (payload: ControlRef) => void;
 };
 
-const build = (config: AbstractControlConfig): Reactable<Form<unknown>, RxFormActions> => {
+const build = (
+  config: AbstractControlConfig,
+  options?: EffectsAndSources,
+): Reactable<Form<unknown>, RxFormActions> => {
   const initialState = buildFormState(config);
 
   const rxHub1 = RxBuilder({
@@ -72,6 +75,7 @@ const build = (config: AbstractControlConfig): Reactable<Form<unknown>, RxFormAc
       markControlAsUntouched,
       resetControl,
     },
+    ...options,
   });
 
   const rxHub2 = RxBuilder({
