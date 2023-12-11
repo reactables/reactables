@@ -47,10 +47,24 @@ export const Field = ({ component: Component, name = 'root', ...props }: FieldPr
     onBlur: () => {
       if (!touched) markControlAsTouched({ controlRef });
     },
-    onChange: (event: FormEvent<HTMLInputElement>) => {
+    onChange: (event: FormEvent<HTMLInputElement> | unknown) => {
+      let value: unknown;
+      if ((event as FormEvent<HTMLInputElement>).currentTarget) {
+        switch ((event as FormEvent<HTMLInputElement>).currentTarget.type) {
+          case 'checkbox':
+            value = (event as FormEvent<HTMLInputElement>).currentTarget.checked;
+          case 'email':
+          case 'text':
+          default:
+            value = (event as FormEvent<HTMLInputElement>).currentTarget.value;
+        }
+      } else {
+        value = event;
+      }
+
       updateValues({
         controlRef,
-        value: event.currentTarget.value,
+        value,
       });
     },
   };
