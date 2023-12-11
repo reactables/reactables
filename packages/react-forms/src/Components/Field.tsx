@@ -53,6 +53,7 @@ export const Field = ({ component: Component, name = 'root', ...props }: FieldPr
         switch ((event as FormEvent<HTMLInputElement>).currentTarget.type) {
           case 'checkbox':
             value = (event as FormEvent<HTMLInputElement>).currentTarget.checked;
+            break;
           case 'email':
           case 'text':
           default:
