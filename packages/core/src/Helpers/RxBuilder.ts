@@ -4,7 +4,7 @@ import { createSlice, SliceConfig, Cases } from './createSlice';
 import { HubFactory } from '../Factories/HubFactory';
 import { Reactable } from '../Models/Reactable';
 import { Effect } from '../Models/Effect';
-import { Action } from '../Models/Action';
+import { Action, ScopedEffects } from '../Models/Action';
 
 export interface EffectsAndSources {
   effects?: Effect<unknown, unknown>[];
@@ -38,9 +38,16 @@ export const RxBuilder = <T, S extends Cases<T>>({
         const _case = sliceConfig.reducers[action.type];
 
         if (typeof _case !== 'function' && _case.effects) {
+          const effects =
+            typeof _case.effects === 'function'
+              ? _case.effects
+              : ((() => ({ effects: _case.effects })) as (
+                  payload?: unknown,
+                ) => ScopedEffects<unknown>);
+
           return {
             ...action,
-            scopedEffects: _case.effects(action.payload),
+            scopedEffects: effects(action.payload),
           };
         }
 

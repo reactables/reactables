@@ -58,20 +58,17 @@ export const RxEventTickets = (
           controls: payload,
           calculating: true,
         }),
-        effects: () => ({
-          // Add effect for fetching price on controlChange
-          effects: [
-            (controlChange$) =>
-              controlChange$.pipe(
-                switchMap(({ payload: { selectedEvent: event, qty } }: Action<ControlState>) =>
-                  getPriceApi({ event, qty }),
-                ),
-
-                // Map success response to success action
-                map((price) => ({ type: 'fetchPriceSuccess', payload: price })),
+        effects: [
+          (controlChange$) =>
+            controlChange$.pipe(
+              switchMap(({ payload: { selectedEvent: event, qty } }: Action<ControlState>) =>
+                getPriceApi({ event, qty }),
               ),
-          ],
-        }),
+
+              // Map success response to success action
+              map((price) => ({ type: 'fetchPriceSuccess', payload: price })),
+            ),
+        ],
       },
       fetchPriceSuccess: (state, { payload }: Action<number>) => ({
         ...state,

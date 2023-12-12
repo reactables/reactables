@@ -1,3 +1,4 @@
+import { Effect } from '../Models/Effect';
 import { Action, ActionCreator, ScopedEffects } from '../Models/Action';
 import { Reducer } from '../Models/Hub';
 import { addEffects } from './addEffects';
@@ -10,10 +11,11 @@ export interface Slice<T> {
 }
 
 export interface Cases<T> {
-  [key: string]: SingleActionReducer<T, unknown>
+  [key: string]:
+    | SingleActionReducer<T, unknown>
     | {
-        reducer: SingleActionReducer<T, unknown>
-        effects?: (payload?: unknown) => ScopedEffects<unknown>
+        reducer: SingleActionReducer<T, unknown>;
+        effects?: ((payload?: unknown) => ScopedEffects<unknown>) | Effect<unknown, unknown>[];
       };
 }
 
@@ -28,7 +30,6 @@ export const createSlice = <T, S extends Cases<T>>(config: SliceConfig<T, S>) =>
 
   const reducer: Reducer<T> = Object.entries(reducers).reduce(
     (acc, [key, _case]): Reducer<T> => {
-
       const _reducer = typeof _case === 'function' ? _case : _case.reducer;
 
       const newFunc = (state: T, action: Action<unknown>) => {
@@ -44,14 +45,18 @@ export const createSlice = <T, S extends Cases<T>>(config: SliceConfig<T, S>) =>
     (state = initialState) => state,
   );
 
-  const actions = Object.entries(reducers).reduce((acc, [key , _case]) => {
+  const actions = Object.entries(reducers).reduce((acc, [key, _case]) => {
     acc[key as keyof S] = (payload: unknown) => ({
       type: `${name ? `${name}/` : ''}${key}`,
       payload,
     });
 
     if (typeof _case !== 'function' && _case.effects) {
-      acc[key as keyof S] = addEffects(acc[key as keyof S], _case.effects)
+      const effects =
+        typeof _case.effects === 'function'
+          ? _case.effects
+          : ((() => ({ effects: _case.effects })) as (payload?: unknown) => ScopedEffects<unknown>);
+      acc[key as keyof S] = addEffects(acc[key as keyof S], effects);
     }
 
     return acc;
