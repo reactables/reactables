@@ -1,37 +1,56 @@
 import { Form } from '../../Models/Controls';
 import { FormErrors } from '../../Models';
-import { getDescendantControls } from '../../Helpers/getDescendantControls';
+import { getFormKey } from '../../Helpers/getFormKey';
+
 const hasErrors = (errors: FormErrors) => {
   return Object.values(errors).some((hasError) => hasError);
 };
 
+// TODO: update merge errors to not do the entire form but just a subset of it
+
+// TODO: separation of concern to update validity of control and ancestors
+
 export const mergeErrors = <T>(form: Form<T>): Form<T> => {
-  const errorsMerged = Object.entries(form).reduce((acc, [key, control]) => {
-    const errors = {
-      ...control.validatorErrors,
-      ...control.asyncValidatorErrors,
-    };
-    return {
-      ...acc,
-      [key]: {
-        ...control,
-        errors,
-        valid: !hasErrors(errors),
-      },
-    };
-  }, {} as Form<T>);
+  const errorsMerged = Object.entries(form)
+    .reverse()
+    .reduce((acc, [key, control]) => {
+      const errors = {
+        ...control.validatorErrors,
+        ...control.asyncValidatorErrors,
+      };
 
-  const childrenErrorsChecked = Object.entries(errorsMerged).reduce((acc, [key, control]) => {
-    return {
-      ...acc,
-      [key]: {
-        ...control,
-        valid:
-          control.valid &&
-          getDescendantControls(control.controlRef, errorsMerged).every((control) => control.valid),
-      },
-    };
-  }, {} as Form<T>);
+      const selfValid = !hasErrors(errors);
 
-  return childrenErrorsChecked;
+      let childrenValid = true;
+
+      if (Array.isArray(control.config.controls)) {
+        // If control is a FormArray
+        childrenValid = (control.value as unknown[]).every(
+          (item, index) => acc[getFormKey(control.controlRef.concat(index))].valid,
+        );
+      } else if (control.config.controls) {
+        // If control is a FormGroup
+        childrenValid = Object.keys(control.value).every(
+          (childKey) => acc[getFormKey(control.controlRef.concat(childKey))].valid,
+        );
+      }
+
+      return {
+        ...acc,
+        [key]: {
+          ...control,
+          errors,
+          valid: selfValid && childrenValid,
+        },
+      };
+    }, {} as Form<T>);
+
+  const restoredOrder = Object.keys(errorsMerged)
+    .reverse()
+    .reduce((acc, key) => {
+      acc[key] = errorsMerged[key];
+      return acc;
+    }, {}) as Form<T>;
+
+  return restoredOrder;
 };

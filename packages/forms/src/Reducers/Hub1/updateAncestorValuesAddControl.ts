@@ -3,11 +3,12 @@ import { BaseForm } from '../../Models/Controls';
 import { ControlChange } from '../../Models/Payloads';
 import { getControl } from '../../Helpers/getControl';
 import { getFormKey } from '../../Helpers/getFormKey';
+import { updateAncestorValues, UPDATE_ANCESTOR_VALUES } from './updateAncestorValues';
 import { getErrors } from './getErrors';
 import isEqual from 'lodash.isequal';
 
-export const UPDATE_ANCESTOR_VALUES = 'UPDATE_ANCESTOR_VALUES';
-export const updateAncestorValues = <T>(
+export const UPDATE_ANCESTOR_VALUES_ADD_CONTROL = 'UPDATE_ANCESTOR_VALUES_ADD_CONTROL';
+export const updateAncestorValuesAddControl = <T>(
   form: BaseForm<T>,
   { payload: { controlRef, value } }: Action<ControlChange<unknown>>,
 ): BaseForm<T> => {
@@ -21,21 +22,19 @@ export const updateAncestorValues = <T>(
 
     // If parent is a Form Array
     if (Array.isArray(parentControl.value)) {
-      newValue = parentControl.value.map((item: unknown, index) =>
-        index === childKey ? value : item,
-      );
+      newValue = parentControl.value.concat(value);
     } else {
       // If parent is a Form Group
       newValue = {
-        ...(parentControl.value as object),
+        ...(form[parentFormKey].value as object),
         [childKey]: value,
       };
     }
 
     const newParentControl = {
       ...parentControl,
-      validatorErrors: getErrors(parentControl, newValue),
       value: newValue,
+      validatorErrors: getErrors(parentControl, newValue),
       dirty: !isEqual(newValue, parentControl.pristineValue),
     };
 

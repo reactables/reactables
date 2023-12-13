@@ -43,7 +43,6 @@ describe('RxForm', () => {
               config: config.controls.firstName,
               touched: false,
               validatorErrors: { required: true },
-              validatorsValid: false,
             },
           },
         });
@@ -69,7 +68,6 @@ describe('RxForm', () => {
               config: config.controls.doctorInfo,
               touched: false,
               validatorErrors: {},
-              validatorsValid: false,
             },
             firstName: {
               value: initialValue.firstName,
@@ -77,7 +75,6 @@ describe('RxForm', () => {
               config: (config.controls.doctorInfo as FormGroupConfig).controls.firstName,
               touched: false,
               validatorErrors: { required: true },
-              validatorsValid: false,
             },
             lastName: {
               value: initialValue.lastName,
@@ -85,7 +82,6 @@ describe('RxForm', () => {
               config: (config.controls.doctorInfo as FormGroupConfig).controls.lastName,
               touched: false,
               validatorErrors: { required: true },
-              validatorsValid: false,
             },
             email: {
               value: initialValue.email,
@@ -93,7 +89,6 @@ describe('RxForm', () => {
               config: (config.controls.doctorInfo as FormGroupConfig).controls.email,
               touched: false,
               validatorErrors: { required: true },
-              validatorsValid: false,
             },
           },
         });
@@ -137,7 +132,6 @@ describe('RxForm', () => {
               config: testConfig,
               touched: false,
               validatorErrors: {},
-              validatorsValid: false,
             },
             firstName: {
               value: initialValue.firstName,
@@ -145,7 +139,6 @@ describe('RxForm', () => {
               config: testConfig.controls.firstName,
               touched: false,
               validatorErrors: { required: false },
-              validatorsValid: true,
             },
             lastName: {
               value: initialValue.lastName,
@@ -153,7 +146,6 @@ describe('RxForm', () => {
               config: testConfig.controls.lastName,
               touched: false,
               validatorErrors: { required: false },
-              validatorsValid: true,
             },
             email: {
               value: initialValue.email,
@@ -161,7 +153,6 @@ describe('RxForm', () => {
               config: testConfig.controls.email,
               touched: false,
               validatorErrors: { required: false, email: true },
-              validatorsValid: false,
             },
           },
         });
@@ -183,7 +174,6 @@ describe('RxForm', () => {
               config: config.controls.emergencyContacts,
               touched: false,
               validatorErrors: { required: true },
-              validatorsValid: false,
             },
           },
         });
@@ -243,7 +233,6 @@ describe('RxForm', () => {
               config: mainConfig,
               touched: false,
               validatorErrors: {},
-              validatorsValid: false,
             },
             emergencyContacts: {
               value: expectedFormValue.emergencyContacts,
@@ -252,7 +241,6 @@ describe('RxForm', () => {
               config: mainConfig.controls['emergencyContacts'],
               touched: false,
               validatorErrors: {},
-              validatorsValid: true,
             },
             'emergencyContacts.0': {
               value: expectedFormValue.emergencyContacts[0],
@@ -261,7 +249,6 @@ describe('RxForm', () => {
               config: mainConfig.controls['emergencyContacts'].controls[0],
               touched: false,
               validatorErrors: {},
-              validatorsValid: true,
             },
             'emergencyContacts.1': {
               value: expectedFormValue.emergencyContacts[1],
@@ -270,7 +257,6 @@ describe('RxForm', () => {
               config: mainConfig.controls['emergencyContacts'].controls[1],
               touched: false,
               validatorErrors: {},
-              validatorsValid: true,
             },
           },
         });
@@ -345,20 +331,11 @@ describe('RxForm', () => {
             'emergencyContacts.2': {
               value: newControlValue,
               dirty: false,
-              validatorsValid: false,
             },
-            'emergencyContacts.2.firstName': {
-              validatorsValid: true,
-            },
-            'emergencyContacts.2.lastName': {
-              validatorsValid: true,
-            },
-            'emergencyContacts.2.relation': {
-              validatorsValid: true,
-            },
-            'emergencyContacts.2.email': {
-              validatorsValid: false,
-            },
+            'emergencyContacts.2.firstName': {},
+            'emergencyContacts.2.lastName': {},
+            'emergencyContacts.2.relation': {},
+            'emergencyContacts.2.email': {},
           },
         });
       });
@@ -464,13 +441,12 @@ describe('RxForm', () => {
             },
           },
           h: {
-            root: { pending: false, asyncValidatorsValid: false },
-            doctorInfo: { pending: false, asyncValidatorsValid: false },
+            root: { pending: false },
+            doctorInfo: { pending: false },
             'doctorInfo.type': {
               pending: false,
               asyncValidateInProgress: { 0: false },
               asyncValidatorErrors: { blacklistedDoctorType: true },
-              asyncValidatorsValid: false,
             },
           },
         });
@@ -1007,15 +983,15 @@ describe('RxForm', () => {
         expectObservable(state$).toBe('ab', {
           a: {},
           b: {
-            root: { value: { doctorInfo: newValue }, dirty: true, validatorsValid: false },
-            doctorInfo: { value: newValue, dirty: true, validatorsValid: false },
+            root: { value: { doctorInfo: newValue }, dirty: true },
+            doctorInfo: { value: newValue, dirty: true },
             'doctorInfo.firstName': { value: newValue.firstName, dirty: true },
             'doctorInfo.lastName': { value: newValue.lastName, dirty: true },
             'doctorInfo.email': {
               value: newValue.email,
               dirty: true,
-              validatorsValid: false,
               validatorErrors: { email: true },
+              errors: { email: true },
             },
           },
         });
@@ -1230,20 +1206,18 @@ describe('RxForm', () => {
         expectObservable(state$).toBe('abc', {
           a: {},
           b: {
-            root: { value: { doctorInfo: newValue }, dirty: true, validatorsValid: false },
-            doctorInfo: { value: newValue, dirty: true, validatorsValid: true },
+            root: { value: { doctorInfo: newValue }, dirty: true },
+            doctorInfo: { value: newValue, dirty: true },
             'doctorInfo.firstName': { value: newValue.firstName, dirty: true },
             'doctorInfo.lastName': { value: newValue.lastName, dirty: true },
             'doctorInfo.email': {
               value: newValue.email,
               dirty: true,
-              validatorsValid: true,
             },
           },
           c: {
             'doctorInfo.firstName': {
               pristineValue: 'Dr',
-              validatorsValid: true,
               dirty: false,
             },
           },
@@ -1268,7 +1242,7 @@ describe('RxForm', () => {
           a: {},
           b: {
             root: { value: { doctorInfo: newValue }, dirty: true },
-            doctorInfo: { value: newValue, dirty: true, validatorsValid: true },
+            doctorInfo: { value: newValue, dirty: true },
             'doctorInfo.firstName': { value: newValue.firstName, dirty: true },
             'doctorInfo.lastName': { value: newValue.lastName, dirty: true },
             'doctorInfo.email': {

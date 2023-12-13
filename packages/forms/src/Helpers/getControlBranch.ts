@@ -10,5 +10,5 @@ export const getControlBranch = <T extends BaseForm<unknown> | Form<unknown>>(
   const ancestors = getAncestorControls(controlRef, form);
   const childControls = getDescendantControls(controlRef, form).slice(1);
 
-  return ancestors.concat(childControls);
+  return ancestors.concat(childControls).sort((a, b) => a.controlRef.length - b.controlRef.length);
 };

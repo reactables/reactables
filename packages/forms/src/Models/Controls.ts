@@ -10,13 +10,11 @@ export interface BaseControl<T> {
   dirty: boolean;
   touched: boolean;
   validatorErrors: FormErrors;
-  validatorsValid: boolean;
   config: AbstractControlConfig;
   key: string;
 }
 
 interface AsyncFields {
-  asyncValidatorsValid: boolean;
   asyncValidatorErrors: FormErrors;
   asyncValidateInProgress: { [key: string | number]: boolean };
   pending?: boolean;
@@ -42,6 +40,6 @@ export interface BaseForm<T> {
 }
 
 export interface Form<T> {
-  root: FormControl<T>;
+  root?: FormControl<T>;
   [key: string]: FormControl<unknown>;
 }

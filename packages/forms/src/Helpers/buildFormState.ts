@@ -20,7 +20,6 @@ export const buildState = <T>(
     value,
     controlRef,
     validatorErrors: {},
-    validatorsValid: null,
     config,
     key: generateKey(5),
   };
@@ -48,7 +47,7 @@ export const buildState = <T>(
     );
   }
 
-  return syncValidate(newForm);
+  return newForm;
 };
 
 export const buildFormState = <T>(
@@ -57,7 +56,7 @@ export const buildFormState = <T>(
   controlRef: ControlRef = [],
 ): BaseFormState<T> => {
   return {
-    form: buildState(config, form, controlRef),
+    form: syncValidate(buildState(config, form, controlRef)),
     action: null,
   };
 };
