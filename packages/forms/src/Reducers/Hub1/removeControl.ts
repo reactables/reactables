@@ -2,10 +2,11 @@ import { Action } from '@reactables/core';
 import { BaseForm, BaseFormState } from '../../Models/Controls';
 import { ControlRef } from '../../Models/ControlRef';
 import { getControl } from '../../Helpers/getControl';
-import { updateAncestorValues, UPDATE_ANCESTOR_VALUES } from './updateAncestorValues';
-import { syncValidate } from './syncValidate';
-import { updateDirty } from './updateDirty';
 import { getFormKey } from '../../Helpers/getFormKey';
+import {
+  updateAncestorValuesRemoveControl,
+  UPDATE_ANCESTOR_VALUES_REMOVE_CONTROL,
+} from './updateAncestorValuesRemoveControl';
 
 export const removeControl = <T>(
   { form }: BaseFormState<T>,
@@ -64,14 +65,10 @@ export const removeControl = <T>(
     }, {});
 
   return {
-    form: syncValidate(
-      updateDirty(
-        updateAncestorValues(controlRemoved, {
-          type: UPDATE_ANCESTOR_VALUES,
-          payload: controlRef,
-        }),
-      ),
-    ),
+    form: updateAncestorValuesRemoveControl(controlRemoved, {
+      type: UPDATE_ANCESTOR_VALUES_REMOVE_CONTROL,
+      payload: controlRef,
+    }),
     action,
   };
 };

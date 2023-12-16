@@ -1,15 +1,16 @@
 import { Action } from '@reactables/core';
 import { BaseForm } from '../../Models/Controls';
-import { ControlChange } from '../../Models/Payloads';
 import { getControl } from '../../Helpers/getControl';
 import { getFormKey } from '../../Helpers/getFormKey';
+import { updateAncestorValues, UPDATE_ANCESTOR_VALUES } from './updateAncestorValues';
+import { ControlRef } from '../../Models/ControlRef';
 import { getErrors } from './getErrors';
 import isEqual from 'lodash.isequal';
 
-export const UPDATE_ANCESTOR_VALUES = 'UPDATE_ANCESTOR_VALUES';
-export const updateAncestorValues = <T>(
+export const UPDATE_ANCESTOR_VALUES_REMOVE_CONTROL = 'UPDATE_ANCESTOR_VALUES_REMOVE_CONTROL';
+export const updateAncestorValuesRemoveControl = <T>(
   form: BaseForm<T>,
-  { payload: { controlRef, value } }: Action<ControlChange<unknown>>,
+  { payload: controlRef }: Action<ControlRef>,
 ): BaseForm<T> => {
   if (controlRef.length) {
     const parentRef = controlRef.slice(0, -1);
@@ -21,21 +22,20 @@ export const updateAncestorValues = <T>(
 
     // If parent is a Form Array
     if (Array.isArray(parentControl.value)) {
-      newValue = parentControl.value.map((item: unknown, index) =>
-        index === childKey ? value : item,
-      );
+      newValue = parentControl.value.filter((item, index) => index !== childKey);
     } else {
       // If parent is a Form Group
       newValue = {
         ...(parentControl.value as object),
-        [childKey]: value,
       };
+
+      delete newValue[childKey];
     }
 
     const newParentControl = {
       ...parentControl,
-      validatorErrors: getErrors(parentControl, newValue),
       value: newValue,
+      validatorErrors: getErrors(parentControl, newValue),
       dirty: !isEqual(newValue, parentControl.pristineValue),
     };
 

@@ -9,6 +9,8 @@ describe('getDescendantControls', () => {
     const clonedConfig: FormGroupConfig = cloneDeep(config);
     (<FormArrayConfig>clonedConfig.controls.emergencyContacts).controls = emergencyContactConfigs;
 
+    //TODOS: getDescendants is used in syncValidate which is used in buildFormState
+    // should not use the method in the test set up?
     const { form } = buildFormState(clonedConfig);
 
     const childControlRefs = getDescendantControls(['emergencyContacts'], form).map(

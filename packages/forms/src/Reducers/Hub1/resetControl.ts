@@ -3,8 +3,6 @@ import { BaseForm, BaseFormState } from '../../Models/Controls';
 import { ControlRef } from '../../Models/ControlRef';
 import { getControl } from '../../Helpers/getControl';
 import { updateAncestorValues, UPDATE_ANCESTOR_VALUES } from './updateAncestorValues';
-import { syncValidate } from './syncValidate';
-import { updateDirty } from './updateDirty';
 import { getDescendantControls } from '../../Helpers/getDescendantControls';
 import { buildState } from '../../Helpers/buildFormState';
 
@@ -33,15 +31,13 @@ export const resetControl = <T>(
     controlToReset.controlRef,
   ) as BaseForm<T>;
 
+  const restoredControlValue = getControl(controlRef, restoredControls).value;
+
   return {
-    form: updateDirty(
-      syncValidate(
-        updateAncestorValues(restoredControls, {
-          type: UPDATE_ANCESTOR_VALUES,
-          payload: controlRef,
-        }),
-      ),
-    ),
+    form: updateAncestorValues(restoredControls, {
+      type: UPDATE_ANCESTOR_VALUES,
+      payload: { controlRef, value: restoredControlValue },
+    }),
     action,
   };
 };

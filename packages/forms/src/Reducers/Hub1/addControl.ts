@@ -4,10 +4,11 @@ import { AddControl } from '../../Models/Payloads';
 import { ControlRef } from '../../Models';
 import { FormArrayConfig } from '../../Models';
 import { buildState } from '../../Helpers/buildFormState';
-import { UPDATE_ANCESTOR_VALUES, updateAncestorValues } from './updateAncestorValues';
 import { getControl } from '../../Helpers/getControl';
-import { syncValidate } from './syncValidate';
-import { updateDirty } from './updateDirty';
+import {
+  updateAncestorValuesAddControl,
+  UPDATE_ANCESTOR_VALUES_ADD_CONTROL,
+} from './updateAncestorValuesAddControl';
 
 export const addControl = <T>(
   state: BaseFormState<T>,
@@ -35,11 +36,12 @@ export const addControl = <T>(
   }
 
   const newForm = buildState(config, state.form, newControlRef);
+  const newValue = getControl(newControlRef, newForm).value;
 
-  const ancestorsUpdated = updateAncestorValues(newForm, {
-    type: UPDATE_ANCESTOR_VALUES,
-    payload: newControlRef,
+  const ancestorsUpdated = updateAncestorValuesAddControl(newForm, {
+    type: UPDATE_ANCESTOR_VALUES_ADD_CONTROL,
+    payload: { controlRef: newControlRef, value: newValue },
   });
 
-  return { form: syncValidate(updateDirty(ancestorsUpdated)), action };
+  return { form: ancestorsUpdated, action };
 };

@@ -4,9 +4,10 @@ import { FormArrayConfig, FormGroupConfig } from '../../Models';
 import { ControlChange } from '../../Models/Payloads';
 import { getFormKey } from '../../Helpers/getFormKey';
 import { updateAncestorValues, UPDATE_ANCESTOR_VALUES } from './updateAncestorValues';
-import { updateDirty } from './updateDirty';
-import { syncValidate } from './syncValidate';
 import { isChildRef } from '../../Helpers/isChildRef';
+import { FormErrors } from '../../Models';
+import isEqual from 'lodash.isequal';
+import { getErrors } from './getErrors';
 
 const UPDATE_DESCENDANT_VALUES = 'UPDATE_DESCENDANT_VALUES';
 const updateDescendants = <T>(
@@ -16,11 +17,15 @@ const updateDescendants = <T>(
   const result = Object.entries(form).reduce((acc, [key, control]) => {
     if (isChildRef(control.controlRef, controlRef)) {
       const childValue = value[control.controlRef.at(-1)] as unknown;
+      const validatorErrors: FormErrors = getErrors(control, value);
+
       acc = {
         ...acc,
         [key]: {
           ...control,
           value: childValue,
+          validatorErrors,
+          dirty: !isEqual(childValue, control.pristineValue),
         },
       };
 
@@ -51,10 +56,15 @@ export const updateValues = <T>(
   } = action;
   // Update its own value
   const ctrlKey = getFormKey(controlRef);
+
+  const validatorErrors: FormErrors = getErrors(form[ctrlKey], value);
+
   let result: BaseForm<T> = {
     ...form,
     [ctrlKey]: {
       ...form[ctrlKey],
+      validatorErrors,
+      dirty: !isEqual(value, form[ctrlKey].pristineValue),
       value,
     },
   };
@@ -76,9 +86,9 @@ export const updateValues = <T>(
   if (controlRef.length) {
     result = updateAncestorValues(result, {
       type: UPDATE_ANCESTOR_VALUES,
-      payload: controlRef,
+      payload: { controlRef, value },
     });
   }
 
-  return { form: syncValidate(updateDirty(result)), action };
+  return { form: result, action };
 };

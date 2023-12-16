@@ -1,6 +1,6 @@
 import { BaseControl, FormControl, BaseForm, Form } from '../Models/Controls';
 import { ControlRef } from '../Models/ControlRef';
-import { getFormKey } from './getFormKey';
+import { getControl } from './getControl';
 
 // Includes the original control of interest unless excludeSelf === true
 export const getDescendantControls = <T extends BaseForm<unknown> | Form<unknown>>(
@@ -8,21 +8,41 @@ export const getDescendantControls = <T extends BaseForm<unknown> | Form<unknown
   form: T,
   excludeSelf = false,
 ): (T extends Form<unknown> ? FormControl<unknown> : BaseControl<unknown>)[] => {
-  const result = Object.entries(form)
-    .filter(([key]) => {
-      if (!controlRef.length) return true;
+  if (!controlRef.length) {
+    return Object.values(form).filter(({ controlRef }) =>
+      excludeSelf ? controlRef.length !== 0 : true,
+    ) as (T extends Form<unknown> ? FormControl<unknown> : BaseControl<unknown>)[];
+  }
 
-      const childRef = key.split('.');
+  const control = getControl(controlRef, form);
+  const { value, config } = control;
+  let descendants: (T extends Form<unknown> ? FormControl<unknown> : BaseControl<unknown>)[];
 
-      return controlRef.every((refKey, index) => {
-        return refKey == childRef[index];
-      });
-    })
-    .map((entry) => entry[1]) as (T extends Form<unknown>
-    ? FormControl<unknown>
-    : BaseControl<unknown>)[];
+  if (Array.isArray(config.controls)) {
+    // If control is a Form Array
+    descendants = (value as unknown[]).reduce(
+      (
+        acc: (T extends Form<unknown> ? FormControl<unknown> : BaseControl<unknown>)[],
+        item,
+        index,
+      ) => {
+        return acc.concat(getDescendantControls(controlRef.concat(index), form));
+      },
+      [],
+    ) as (T extends Form<unknown> ? FormControl<unknown> : BaseControl<unknown>)[];
+  } else if (config.controls) {
+    // If control is a Form Group
+    descendants = Object.keys(value).reduce(
+      (acc: (T extends Form<unknown> ? FormControl<unknown> : BaseControl<unknown>)[], key) => {
+        return acc.concat(getDescendantControls(controlRef.concat(key), form));
+      },
+      [],
+    ) as (T extends Form<unknown> ? FormControl<unknown> : BaseControl<unknown>)[];
+  }
 
-  return result.filter((control) =>
-    excludeSelf ? getFormKey(control.controlRef) !== getFormKey(controlRef) : true,
-  );
+  if (excludeSelf) return descendants;
+
+  return (
+    [control] as (T extends Form<unknown> ? FormControl<unknown> : BaseControl<unknown>)[]
+  ).concat(descendants || []);
 };

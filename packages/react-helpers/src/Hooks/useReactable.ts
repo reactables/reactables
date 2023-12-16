@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Reactable } from '@reactables/core';
 
 // React Strict Mode has bugs with clean up with refs so it breaks the useReactable hook as of now
@@ -6,7 +6,7 @@ import { Reactable } from '@reactables/core';
 // See Bug: https://github.com/facebook/react/issues/24670
 
 export const useReactable = <T, S>(reactable: Reactable<T, S>) => {
-  const { state$, actions } = useRef(reactable).current;
+  const { state$, actions } = useMemo(() => reactable, []);
   const [state, setState] = useState<T>();
 
   useEffect(() => {
