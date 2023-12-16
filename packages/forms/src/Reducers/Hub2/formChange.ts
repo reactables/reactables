@@ -1,10 +1,11 @@
 import { Reducer, Action } from '@reactables/core';
-import { BaseFormState, Form, Hub2Fields, FormControl } from '../../Models/Controls';
+import { BaseFormState, Form, Hub2Fields } from '../../Models/Controls';
 import { mergeErrors } from './mergeErrors';
-import { getControlBranch } from '../../Helpers/getControlBranch';
-import { ControlChange } from '../../Models/Payloads';
-import { getFormKey } from '../../Helpers/getFormKey';
+import { ControlChange, MarkTouched } from '../../Models/Payloads';
 import { mergeValueUpdated } from './mergeValueUpdated';
+import { mergeRemoveControl } from './mergeRemoveControl';
+import { mergeTouchUpdated } from './mergeTouchUpdated';
+import { ControlRef } from '../../Models/ControlRef';
 
 export const DEFAULT_HUB2_FIELDS: Hub2Fields = {
   asyncValidatorErrors: {},
@@ -34,11 +35,20 @@ export const formChange: Reducer<Form<unknown>> = <T>(
 
   switch (action?.type) {
     case 'updateValues':
+    case 'addControl':
       return mergeValueUpdated(
         state,
         form,
         (action as Action<ControlChange<unknown>>).payload.controlRef,
       );
+    case 'resetControl':
+    case 'removeControl':
+      return mergeRemoveControl(state, form, action.payload as ControlRef);
+    case 'markControlAsPristine':
+    case 'markControlAsUntouched':
+      return mergeTouchUpdated(state, form, action.payload as ControlRef);
+    case 'markControlAsTouched':
+      return mergeTouchUpdated(state, form, (action.payload as MarkTouched).controlRef);
     default:
       return mergeErrors(
         Object.entries(form).reduce((acc, [dictKey, baseControl]) => {

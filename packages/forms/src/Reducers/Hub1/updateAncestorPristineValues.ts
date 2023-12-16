@@ -3,6 +3,7 @@ import { BaseForm, BaseControl } from '../../Models/Controls';
 import { getFormKey } from '../../Helpers/getFormKey';
 import { getDescendantControls } from '../../Helpers/getDescendantControls';
 import { ControlRef } from '../../Models/ControlRef';
+import isEqual from 'lodash.isequal';
 
 // Same implementation as updateAncestor values except updating pristine values
 export const UPDATE_ANCESTOR_PRISTINE_VALUES = 'UPDATE_ANCESTOR_PRISTINE_VALUES';
@@ -40,6 +41,7 @@ export const updateAncestorPristineValues = <T>(
     const newParentControl: BaseControl<unknown> = {
       ...form[parentKey],
       pristineValue: newValue,
+      dirty: isEqual(form[parentKey].value, newValue),
     };
 
     return updateAncestorPristineValues(
