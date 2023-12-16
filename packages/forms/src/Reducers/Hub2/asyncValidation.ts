@@ -8,34 +8,27 @@ export const asyncValidation = <T>(
   form: Form<T>,
   { payload: { controlRef } }: Action<BaseControl<unknown>>,
 ): Form<T> => {
-  const ancestors = getAncestorControls(controlRef, form);
-
-  const result = Object.entries(form).reduce((acc, [key, control]) => {
-    if (ancestors.includes(control)) {
-      const isChangedControl = getFormKey(control.controlRef) === getFormKey(controlRef);
-
-      return {
-        ...acc,
-        [key]: {
-          ...control,
-          pending: true,
-          asyncValidateInProgress: isChangedControl
-            ? {
-                ...control.config.asyncValidators.reduce(
-                  (acc, _, index) => ({ ...acc, [index]: true }),
-                  {},
-                ),
-              }
-            : control.asyncValidateInProgress,
-        },
-      };
-    }
-
+  const updatedSelfAndAncestors = getAncestorControls(controlRef, form).reduce((acc, control) => {
+    const isChangedControl = getFormKey(control.controlRef) === getFormKey(controlRef);
     return {
       ...acc,
-      [key]: control,
+      [getFormKey(control.controlRef)]: {
+        ...control,
+        pending: true,
+        asyncValidateInProgress: isChangedControl
+          ? {
+              ...control.config.asyncValidators.reduce(
+                (acc, _, index) => ({ ...acc, [index]: true }),
+                {},
+              ),
+            }
+          : control.asyncValidateInProgress,
+      },
     };
-  }, {} as Form<T>);
+  }, {});
 
-  return result;
+  return {
+    ...form,
+    ...updatedSelfAndAncestors,
+  };
 };
