@@ -43,3 +43,11 @@ export interface Form<T> {
   root?: FormControl<T>;
   [key: string]: FormControl<unknown>;
 }
+
+export const DEFAULT_HUB2_FIELDS: Hub2Fields = {
+  asyncValidatorErrors: {},
+  asyncValidateInProgress: {},
+  pending: false,
+  valid: null,
+  errors: null,
+};
