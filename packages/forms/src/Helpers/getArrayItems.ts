@@ -1,25 +1,20 @@
 import { FormControl, Form, BaseForm, BaseControl } from '../Models/Controls';
 import { ControlRef } from '../Models/ControlRef';
 import { getControl } from './getControl';
+import { getFormKey } from './getFormKey';
 
 export const getArrayItems = <T extends BaseForm<unknown> | Form<unknown>>(
   controlRef: ControlRef,
   form: T,
 ): T extends BaseForm<unknown> ? BaseControl<unknown>[] : FormControl<unknown>[] => {
-  if (!Array.isArray(getControl(controlRef, form).config.controls)) {
+  const control = getControl(controlRef, form);
+  if (!Array.isArray(control.config.controls)) {
     throw `${controlRef.join('.')} is not a Form Array control`;
   }
 
-  return Object.values(form)
-    .filter((control) => {
-      const isItem =
-        controlRef.every((key, index) => key === control.controlRef[index]) &&
-        control.controlRef.length === controlRef.length + 1 &&
-        typeof control.controlRef[controlRef.length] === 'number';
+  const result = (control.value as unknown[]).map(
+    (_, index) => form[getFormKey(controlRef.concat(index))],
+  );
 
-      return isItem;
-    })
-    .sort(
-      (a, b) => +a.controlRef.slice(-1) - +b.controlRef.slice(-1),
-    ) as T extends BaseForm<unknown> ? BaseControl<unknown>[] : FormControl<unknown>[];
+  return result as T extends BaseForm<unknown> ? BaseControl<unknown>[] : FormControl<unknown>[];
 };
