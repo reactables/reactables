@@ -7,6 +7,7 @@ import {
   updateAncestorValuesRemoveControl,
   UPDATE_ANCESTOR_VALUES_REMOVE_CONTROL,
 } from './updateAncestorValuesRemoveControl';
+import { getDescendantControls } from '../../Helpers/getDescendantControls';
 
 export const removeControl = <T>(
   { form }: BaseFormState<T>,
@@ -25,15 +26,19 @@ export const removeControl = <T>(
 
   const parentIsFormArray = Array.isArray(getControl(parentRef, form).config.controls);
 
+  const descendantkeys = getDescendantControls(controlRef, form).map(({ controlRef }) =>
+    getFormKey(controlRef),
+  );
+
+  const controlsRemoved = { ...form };
+
+  descendantkeys.forEach((key) => {
+    delete controlsRemoved[key];
+  });
+
   // Remove control and all descendants
-  const controlRemoved: BaseForm<T> = Object.entries(form)
-    .filter(([_, control]) => {
-      return !(
-        control.controlRef.length > parentRef.length &&
-        controlRef.every((key, index) => key === control.controlRef[index])
-      );
-    })
-    .reduce((acc, [key, control]) => {
+  const controlRemoved: BaseForm<T> = Object.entries(controlsRemoved).reduce(
+    (acc, [key, control]) => {
       // May need to reindex array items of removed control
       // if it was part of a Form Array.
       if (parentIsFormArray) {
@@ -62,7 +67,9 @@ export const removeControl = <T>(
       }
 
       return { ...acc, [key]: control };
-    }, {});
+    },
+    {},
+  );
 
   return {
     form: updateAncestorValuesRemoveControl(controlRemoved, {

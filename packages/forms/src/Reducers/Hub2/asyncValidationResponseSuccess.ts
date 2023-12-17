@@ -4,16 +4,12 @@ import { ControlAsyncValidationResponse } from '../../Models/Payloads';
 import { getAncestorControls } from '../../Helpers/getAncestorControls';
 import { getFormKey } from '../../Helpers/getFormKey';
 import { getDescendantControls } from '../../Helpers/getDescendantControls';
-import { mergeErrors } from './mergeErrors';
+import { mergeBranchErrors } from './mergeBranchErrors';
 
 const isControlValidating = (control: FormControl<unknown>): boolean => {
   if (!control.asyncValidateInProgress) return false;
 
   return Object.values(control.asyncValidateInProgress).some((pending) => pending);
-};
-
-const isControlAsyncValid = (control: FormControl<unknown>): boolean => {
-  return !Object.values(control.asyncValidatorErrors).some((error) => error);
 };
 
 const getControlByKey = (key: string, form: Form<unknown>) => {
@@ -66,5 +62,5 @@ export const asyncValidationResponseSuccess = <T>(
     };
   }, {} as Form<T>);
 
-  return mergeErrors(ancestorsUpdated);
+  return mergeBranchErrors(ancestorsUpdated, control.controlRef);
 };

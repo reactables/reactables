@@ -10,18 +10,21 @@ export const markControlAsUntouched = <T>(
 ): BaseFormState<T> => {
   const { payload: controlRef } = action;
 
-  const descendants = getDescendantControls(controlRef, form);
-
-  let result = Object.entries(form).reduce(
-    (acc, [key, control]) => ({
+  let result = getDescendantControls(controlRef, form).reduce(
+    (acc, control) => ({
       ...acc,
-      [key]: {
+      [getFormKey(control.controlRef)]: {
         ...control,
-        touched: descendants.includes(control) ? false : control.touched,
+        touched: false,
       },
     }),
-    {} as BaseForm<T>,
-  );
+    {},
+  ) as BaseForm<unknown>;
+
+  result = {
+    ...form,
+    ...result,
+  };
 
   // Update ancestors
   let currentRef = controlRef;
@@ -39,5 +42,5 @@ export const markControlAsUntouched = <T>(
     };
   }
 
-  return { form: result, action };
+  return { form: result as BaseForm<T>, action };
 };

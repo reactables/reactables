@@ -1,12 +1,12 @@
 import { Action } from '@reactables/core';
-import { BaseForm, BaseFormState } from '../../Models/Controls';
+import { BaseFormState } from '../../Models/Controls';
 import { ControlRef } from '../../Models/ControlRef';
 import { getDescendantControls } from '../../Helpers/getDescendantControls';
 import {
   updateAncestorPristineValues,
   UPDATE_ANCESTOR_PRISTINE_VALUES,
 } from './updateAncestorPristineValues';
-import { updateDirty } from './updateDirty';
+import { getFormKey } from '../../Helpers/getFormKey';
 
 export const markControlAsPristine = <T>(
   { form }: BaseFormState<T>,
@@ -14,21 +14,21 @@ export const markControlAsPristine = <T>(
 ): BaseFormState<T> => {
   const { payload: controlRef } = action;
 
-  const descendants = getDescendantControls(controlRef, form);
-  let result = Object.entries(form).reduce((acc, [key, control]) => {
-    const isDescendant = descendants.includes(control);
-
-    return {
+  const descendants = getDescendantControls(controlRef, form).reduce(
+    (acc, control) => ({
       ...acc,
-      [key]: isDescendant
-        ? {
-            ...control,
-            pristineValue: control.value,
-            dirty: false,
-          }
-        : control,
-    };
-  }, {} as BaseForm<T>);
+      [getFormKey(control.controlRef)]: {
+        ...control,
+        dirty: false,
+        pristineValue: control.value,
+      },
+    }),
+    {},
+  );
+  let result = {
+    ...form,
+    ...descendants,
+  };
 
   if (controlRef.length) {
     result = updateAncestorPristineValues(result, {
@@ -37,5 +37,5 @@ export const markControlAsPristine = <T>(
     });
   }
 
-  return { form: updateDirty(result), action };
+  return { form: result, action };
 };
