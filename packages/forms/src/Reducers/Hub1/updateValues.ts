@@ -1,5 +1,5 @@
 import { Action } from '@reactables/core';
-import { BaseForm, BaseFormState } from '../../Models/Controls';
+import { BaseForm, BaseFormState, BaseControl } from '../../Models/Controls';
 import { FormArrayConfig, FormGroupConfig } from '../../Models';
 import { ControlChange } from '../../Models/Payloads';
 import { getFormKey } from '../../Helpers/getFormKey';
@@ -8,13 +8,18 @@ import { isChildRef } from '../../Helpers/isChildRef';
 import { FormErrors } from '../../Models';
 import isEqual from 'lodash.isequal';
 import { getErrors } from './getErrors';
+import { getDescendantControls } from '../../Helpers/getDescendantControls';
 
 const UPDATE_DESCENDANT_VALUES = 'UPDATE_DESCENDANT_VALUES';
 const updateDescendants = <T>(
   form: BaseForm<T>,
   { payload: { controlRef, value } }: Action<ControlChange<unknown>>,
 ): BaseForm<T> => {
-  const result = Object.entries(form).reduce((acc, [key, control]) => {
+  const descendants = getDescendantControls(controlRef, form, true).map(
+    (control) => [getFormKey(control.controlRef), control] as [string, BaseControl<unknown>],
+  );
+
+  const result = descendants.reduce((acc, [key, control]) => {
     if (isChildRef(control.controlRef, controlRef)) {
       const childValue = value[control.controlRef.at(-1)] as unknown;
       const validatorErrors: FormErrors = getErrors(control, value);
