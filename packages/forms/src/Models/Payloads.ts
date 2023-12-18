@@ -12,6 +12,11 @@ export interface AddControl {
   controlRef: ControlRef;
 }
 
+export interface PushControl {
+  config: AbstractControlConfig;
+  controlRef: ControlRef;
+}
+
 export interface ControlAsyncValidationResponse {
   key: string;
   validatorIndex: number;

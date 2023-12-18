@@ -5,7 +5,6 @@ import { FormArrayConfig, FormGroupConfig } from '../Models/Configs';
 import { getValueFromControlConfig } from './getValueFromControlConfig';
 import { getFormKey } from './getFormKey';
 import { generateKey } from './generateKey';
-import { syncValidate } from '../Reducers/Hub1/syncValidate';
 import { getErrors } from '../Reducers/Hub1/getErrors';
 
 export const buildState = <T>(
