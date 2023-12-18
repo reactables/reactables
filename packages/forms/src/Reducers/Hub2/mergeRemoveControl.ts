@@ -16,11 +16,8 @@ export const mergeRemoveControl = <T>(
 ) => {
   const parentRef = controlRef.slice(0, -1);
   const existingBranch = getControlBranch(parentRef, state);
-  const descendants = existingBranch.filter(
-    (control) => control.controlRef.length < parentRef.length,
-  );
 
-  const controlBranch = getControlBranch(parentRef, form)
+  const updatedControlBranch = getControlBranch(parentRef, form)
     .reverse()
     .reduce((acc: Form<unknown>, baseControl) => {
       const key = getFormKey(baseControl.controlRef);
@@ -66,14 +63,20 @@ export const mergeRemoveControl = <T>(
       };
     }, {}) as { [key: string]: FormControl<unknown> };
 
+  const descendants = existingBranch.filter(
+    (control) => control.controlRef.length < parentRef.length,
+  );
+
   const removedControls = { ...state };
 
   descendants.forEach((control) => {
     delete removedControls[getFormKey(control.controlRef)];
   });
 
+  delete removedControls[getFormKey(controlRef)];
+
   return {
     ...removedControls,
-    ...controlBranch,
+    ...updatedControlBranch,
   };
 };
