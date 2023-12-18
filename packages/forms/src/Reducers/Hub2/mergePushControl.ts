@@ -42,7 +42,7 @@ export const mergePushControl = <T>(state: Form<T>, form: BaseForm<T>, controlRe
       const formKey = getFormKey(control.controlRef);
 
       const errors = {
-        ...control.validatorErrors,
+        ...form[formKey].validatorErrors,
         ...control.asyncValidatorErrors,
       };
 
