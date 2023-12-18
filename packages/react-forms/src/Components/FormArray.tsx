@@ -4,7 +4,7 @@ import { FormContext } from './Form';
 
 export interface FormArrayChildrenProps {
   items: ControlModels.FormControl<unknown>[];
-  addControl: (config: AbstractControlConfig) => void;
+  pushControl: (config: AbstractControlConfig) => void;
   removeControl: (controlRef: ControlRef) => void;
 }
 
@@ -16,7 +16,7 @@ export interface FormArrayProps {
 export const FormArray = ({ name = 'root', children }: FormArrayProps) => {
   const {
     state,
-    actions: { addControl, removeControl },
+    actions: { pushControl, removeControl },
   } = useContext(FormContext);
 
   const { controlRef } = state[name];
@@ -25,8 +25,8 @@ export const FormArray = ({ name = 'root', children }: FormArrayProps) => {
 
   const formArrayChildrenProps: FormArrayChildrenProps = {
     items,
-    addControl: (config: AbstractControlConfig) => {
-      addControl({ controlRef, config });
+    pushControl: (config: AbstractControlConfig) => {
+      pushControl({ controlRef, config });
     },
     removeControl,
   };

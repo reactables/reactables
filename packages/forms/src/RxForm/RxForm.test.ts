@@ -264,7 +264,7 @@ describe('RxForm', () => {
     });
   });
 
-  describe('on addControl', () => {
+  describe('on pushControl', () => {
     it('should add a control to a Form Array control and update ancestor values', () => {
       testScheduler.run(({ expectObservable, cold }) => {
         const nonEmptyConfig = {
@@ -303,7 +303,7 @@ describe('RxForm', () => {
 
         const {
           state$,
-          actions: { addControl },
+          actions: { pushControl },
         } = RxForm.build({
           ...config,
           controls: {
@@ -312,8 +312,8 @@ describe('RxForm', () => {
           },
         });
 
-        subscription = cold('-b', { b: addControl }).subscribe((addControl) =>
-          addControl({
+        subscription = cold('-b', { b: pushControl }).subscribe((pushControl) =>
+          pushControl({
             controlRef: ['emergencyContacts'],
             config: newControlConfig,
           }),
@@ -341,6 +341,127 @@ describe('RxForm', () => {
       });
     });
 
+    it('should emit async validation for an added array control and all ancestors', () => {
+      testScheduler.run(({ expectObservable, cold }) => {
+        const {
+          state$,
+          actions: { pushControl },
+        } = RxForm.build(asyncConfig);
+
+        subscription = cold('-b', {
+          b: () =>
+            pushControl({
+              controlRef: ['emergencyContacts'],
+              config: RxForm.group({
+                validators: [firstNameNotSameAsLast],
+                asyncValidators: [uniqueFirstAndLastName],
+                controls: {
+                  firstName: RxForm.control(['Barney', required]),
+                  lastName: RxForm.control(['Gumble', required]),
+                  email: RxForm.control([
+                    'barney@gumble.com',
+                    [required, email],
+                    [uniqueEmail, blacklistedEmail],
+                  ]),
+                  relation: RxForm.control(['astronaut friend', required]),
+                },
+              }),
+            }),
+        }).subscribe((action) => action());
+
+        expectObservable(state$).toBe('a(bcdef)  243ms g 49ms h 49ms i 49ms (jk) ', {
+          a: {},
+          b: {
+            root: {
+              value: {
+                emergencyContacts: [
+                  {
+                    firstName: 'Barney',
+                    lastName: 'Gumble',
+                    email: 'barney@gumble.com',
+                    relation: 'astronaut friend',
+                  },
+                ],
+              },
+              dirty: true,
+            },
+            emergencyContacts: {
+              value: [
+                {
+                  firstName: 'Barney',
+                  lastName: 'Gumble',
+                  email: 'barney@gumble.com',
+                  relation: 'astronaut friend',
+                },
+              ],
+              dirty: true,
+            },
+            'emergencyContacts.0': {
+              value: {
+                firstName: 'Barney',
+                lastName: 'Gumble',
+                email: 'barney@gumble.com',
+                relation: 'astronaut friend',
+              },
+              dirty: false,
+            },
+          },
+          c: {
+            root: { pending: true, asyncValidateInProgress: { 0: true } },
+          },
+          d: {
+            emergencyContacts: { pending: true, asyncValidateInProgress: { 0: true } },
+          },
+          e: {
+            'emergencyContacts.0': { pending: true, asyncValidateInProgress: { 0: true } },
+          },
+          f: {
+            'emergencyContacts.0.email': {
+              pending: true,
+              asyncValidateInProgress: { 0: true, 1: true },
+            },
+          },
+          g: {
+            'emergencyContacts.0.email': {
+              pending: true,
+              asyncValidateInProgress: { 0: false, 1: true },
+              asyncValidatorErrors: { uniqueEmail: true },
+            },
+          },
+          h: {
+            'emergencyContacts.0.email': {
+              pending: false,
+              asyncValidateInProgress: { 0: false, 1: false },
+              asyncValidatorErrors: { uniqueEmail: true, blacklistedEmail: true },
+            },
+          },
+          i: {
+            emergencyContacts: {
+              pending: true,
+              asyncValidateInProgress: { 0: false },
+              asyncValidatorErrors: { arrayLengthError: true },
+            },
+          },
+          j: {
+            root: {
+              pending: true,
+              asyncValidateInProgress: { 0: false },
+              asyncValidatorErrors: { uniqueFirstAndLastName: true },
+            },
+          },
+          k: {
+            'emergencyContacts.0': {
+              pending: false,
+              asyncValidateInProgress: { 0: false },
+              asyncValidatorErrors: { uniqueFirstAndLastName: true },
+            },
+          },
+        });
+      });
+    });
+  });
+
+  describe('on addControl', () => {
     it('should add a control to a Form Group control and update ancestor values', () => {
       testScheduler.run(({ expectObservable, cold }) => {
         const {
@@ -447,125 +568,6 @@ describe('RxForm', () => {
               pending: false,
               asyncValidateInProgress: { 0: false },
               asyncValidatorErrors: { blacklistedDoctorType: true },
-            },
-          },
-        });
-      });
-    });
-
-    it('should emit async validation for an added array control and all ancestors', () => {
-      testScheduler.run(({ expectObservable, cold }) => {
-        const {
-          state$,
-          actions: { addControl },
-        } = RxForm.build(asyncConfig);
-
-        subscription = cold('-b', {
-          b: () =>
-            addControl({
-              controlRef: ['emergencyContacts'],
-              config: RxForm.group({
-                validators: [firstNameNotSameAsLast],
-                asyncValidators: [uniqueFirstAndLastName],
-                controls: {
-                  firstName: RxForm.control(['Barney', required]),
-                  lastName: RxForm.control(['Gumble', required]),
-                  email: RxForm.control([
-                    'barney@gumble.com',
-                    [required, email],
-                    [uniqueEmail, blacklistedEmail],
-                  ]),
-                  relation: RxForm.control(['astronaut friend', required]),
-                },
-              }),
-            }),
-        }).subscribe((action) => action());
-
-        expectObservable(state$).toBe('a(bcdef)  243ms g 49ms h 49ms i 49ms (jk) ', {
-          a: {},
-          b: {
-            root: {
-              value: {
-                emergencyContacts: [
-                  {
-                    firstName: 'Barney',
-                    lastName: 'Gumble',
-                    email: 'barney@gumble.com',
-                    relation: 'astronaut friend',
-                  },
-                ],
-              },
-              dirty: true,
-            },
-            emergencyContacts: {
-              value: [
-                {
-                  firstName: 'Barney',
-                  lastName: 'Gumble',
-                  email: 'barney@gumble.com',
-                  relation: 'astronaut friend',
-                },
-              ],
-              dirty: true,
-            },
-            'emergencyContacts.0': {
-              value: {
-                firstName: 'Barney',
-                lastName: 'Gumble',
-                email: 'barney@gumble.com',
-                relation: 'astronaut friend',
-              },
-              dirty: false,
-            },
-          },
-          c: {
-            root: { pending: true, asyncValidateInProgress: { 0: true } },
-          },
-          d: {
-            emergencyContacts: { pending: true, asyncValidateInProgress: { 0: true } },
-          },
-          e: {
-            'emergencyContacts.0': { pending: true, asyncValidateInProgress: { 0: true } },
-          },
-          f: {
-            'emergencyContacts.0.email': {
-              pending: true,
-              asyncValidateInProgress: { 0: true, 1: true },
-            },
-          },
-          g: {
-            'emergencyContacts.0.email': {
-              pending: true,
-              asyncValidateInProgress: { 0: false, 1: true },
-              asyncValidatorErrors: { uniqueEmail: true },
-            },
-          },
-          h: {
-            'emergencyContacts.0.email': {
-              pending: false,
-              asyncValidateInProgress: { 0: false, 1: false },
-              asyncValidatorErrors: { uniqueEmail: true, blacklistedEmail: true },
-            },
-          },
-          i: {
-            emergencyContacts: {
-              pending: true,
-              asyncValidateInProgress: { 0: false },
-              asyncValidatorErrors: { arrayLengthError: true },
-            },
-          },
-          j: {
-            root: {
-              pending: true,
-              asyncValidateInProgress: { 0: false },
-              asyncValidatorErrors: { uniqueFirstAndLastName: true },
-            },
-          },
-          k: {
-            'emergencyContacts.0': {
-              pending: false,
-              asyncValidateInProgress: { 0: false },
-              asyncValidatorErrors: { uniqueFirstAndLastName: true },
             },
           },
         });

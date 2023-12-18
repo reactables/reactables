@@ -1,10 +1,11 @@
 import { Reducer, Action } from '@reactables/core';
 import { BaseFormState, Form, Hub2Fields } from '../../Models/Controls';
 import { mergeErrors } from './mergeErrors';
-import { ControlChange, MarkTouched, AddControl } from '../../Models/Payloads';
+import { ControlChange, MarkTouched, AddControl, PushControl } from '../../Models/Payloads';
 import { mergeValueUpdated } from './mergeValueUpdated';
 import { mergeRemoveControl } from './mergeRemoveControl';
 import { mergeTouchUpdated } from './mergeTouchUpdated';
+import { mergePushControl } from './mergePushControl';
 import { ControlRef } from '../../Models/ControlRef';
 import { DEFAULT_HUB2_FIELDS } from '../../Models/Controls';
 
@@ -27,6 +28,8 @@ export const formChange: Reducer<Form<unknown>> = <T>(
   }
 
   switch (action?.type) {
+    case 'pushControl':
+      return mergePushControl(state, form, (action as Action<PushControl>).payload.controlRef);
     case 'addControl':
     case 'updateValues':
       return mergeValueUpdated(

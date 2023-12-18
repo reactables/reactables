@@ -31,6 +31,7 @@ export const buildHub2Source = <T, S>(
             newForm,
           );
           break;
+        case 'pushControl':
         case 'addControl':
           const changedControl = getControl(
             (<Action<AddControl>>action).payload.controlRef,

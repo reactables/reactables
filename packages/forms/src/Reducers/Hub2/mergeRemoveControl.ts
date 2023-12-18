@@ -61,6 +61,7 @@ export const mergeRemoveControl = <T>(
           ...baseControl,
           errors,
           valid: selfValid && childrenValid,
+          childrenValid,
         },
       };
     }, {}) as { [key: string]: FormControl<unknown> };

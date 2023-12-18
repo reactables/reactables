@@ -5,7 +5,7 @@ import { FormArrayConfig, FormGroupConfig } from '../Models/Configs';
 import { getValueFromControlConfig } from './getValueFromControlConfig';
 import { getFormKey } from './getFormKey';
 import { generateKey } from './generateKey';
-import { syncValidate } from '../Reducers/Hub1/syncValidate';
+import { getErrors } from '../Reducers/Hub1/getErrors';
 
 export const buildState = <T>(
   config: AbstractControlConfig,
@@ -26,7 +26,10 @@ export const buildState = <T>(
 
   let newForm: BaseForm<T> = {
     ...form,
-    [getFormKey(controlRef)]: control,
+    [getFormKey(controlRef)]: {
+      ...control,
+      validatorErrors: getErrors(control, value),
+    },
   };
 
   const controls = (<FormGroupConfig | FormArrayConfig>config).controls;
@@ -56,7 +59,7 @@ export const buildFormState = <T>(
   controlRef: ControlRef = [],
 ): BaseFormState<T> => {
   return {
-    form: syncValidate(buildState(config, form, controlRef)),
+    form: buildState(config, form, controlRef),
     action: null,
   };
 };

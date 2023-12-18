@@ -50,6 +50,7 @@ export const mergeBranchErrors = <T>(form: Form<T>, controlRef: ControlRef): For
           ...control,
           errors,
           valid: selfValid && childrenValid,
+          childrenValid,
         },
       };
     }, {} as Form<T>);

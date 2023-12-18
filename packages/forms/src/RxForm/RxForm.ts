@@ -1,7 +1,7 @@
 import { RxBuilder, Reactable, EffectsAndSources } from '@reactables/core';
 import { filter } from 'rxjs/operators';
 import { buildFormState } from '../Helpers/buildFormState';
-import { ControlChange, AddControl, MarkTouched } from '../Models/Payloads';
+import { ControlChange, AddControl, MarkTouched, PushControl } from '../Models/Payloads';
 import { ControlRef } from '../Models';
 import {
   FormControlConfig,
@@ -14,6 +14,7 @@ import { ValidatorFn, ValidatorAsyncFn } from '../Models/Validators';
 import { updateValues } from '../Reducers/Hub1/updateValues';
 import { removeControl } from '../Reducers/Hub1/removeControl';
 import { addControl } from '../Reducers/Hub1/addControl';
+import { pushControl } from '../Reducers/Hub1/pushControl';
 import { markControlAsPristine } from '../Reducers/Hub1/markControlAsPristine';
 import { markControlAsTouched } from '../Reducers/Hub1/markControlAsTouched';
 import { markControlAsUntouched } from '../Reducers/Hub1/markControlAsUntouched';
@@ -51,6 +52,7 @@ const group = (config: FormGroupConfig) => config;
 export type RxFormActions = {
   updateValues: <T>(payload: ControlChange<T>) => void;
   addControl: (payload: AddControl) => void;
+  pushControl: (payload: PushControl) => void;
   removeControl: (payload: ControlRef) => void;
   markControlAsPristine: (payload: ControlRef) => void;
   markControlAsTouched: (payload: MarkTouched) => void;
@@ -70,6 +72,7 @@ const build = (
       updateValues,
       removeControl,
       addControl,
+      pushControl,
       markControlAsPristine,
       markControlAsTouched,
       markControlAsUntouched,
