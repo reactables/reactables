@@ -10,7 +10,7 @@ const hasErrors = (errors: FormErrors) => {
   return Object.values(errors).some((hasError) => hasError);
 };
 
-export const mergeAddControl = <T>(state: Form<T>, form: BaseForm<T>, controlRef: ControlRef) => {
+export const mergePushControl = <T>(state: Form<T>, form: BaseForm<T>, controlRef: ControlRef) => {
   //If Form Array
   // use the added control  (last index)
   // merge descendants with default stuff
