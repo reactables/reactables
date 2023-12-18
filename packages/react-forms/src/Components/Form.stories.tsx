@@ -133,7 +133,7 @@ const FormArraysExample = () => {
           <b>Emergency Contacts:</b>
         </p>
         <FormArray name="emergencyContacts">
-          {({ items, addControl, removeControl }) => (
+          {({ items, pushControl, removeControl }) => (
             <>
               {rxForm.state.emergencyContacts.errors.arrayLengthRequired && (
                 <p className="text-danger">At least one emergency contact required.</p>
@@ -162,7 +162,7 @@ const FormArraysExample = () => {
               <button
                 type="button"
                 onClick={() => {
-                  addControl(
+                  pushControl(
                     contactRxForm({
                       firstName: '',
                       lastName: '',
