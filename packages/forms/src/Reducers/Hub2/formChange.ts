@@ -45,10 +45,7 @@ export const formChange: Reducer<Form<unknown>> = <T>(
     default:
       return mergeErrors(
         Object.entries(form).reduce((acc, [dictKey, baseControl]) => {
-          const existingControl =
-            action?.type === 'removeControl'
-              ? state && Object.values(state).find((control) => baseControl.key === control.key)
-              : state && state[dictKey];
+          const existingControl = state && state[dictKey];
 
           return {
             ...acc,
