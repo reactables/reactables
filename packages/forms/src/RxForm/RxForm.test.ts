@@ -20,7 +20,6 @@ describe('RxForm', () => {
 
   beforeEach(() => {
     testScheduler = new TestScheduler((actual, expected) => {
-      console.log(actual);
       expect(actual).toMatchObject(expected);
     });
   });
@@ -266,7 +265,7 @@ describe('RxForm', () => {
   });
 
   describe('on pushControl', () => {
-    fit('should add a control to a Form Array control and update ancestor values', () => {
+    it('should add a control to a Form Array control and update ancestor values', () => {
       testScheduler.run(({ expectObservable, cold }) => {
         const nonEmptyConfig = {
           ...(config.controls.emergencyContacts as FormArrayConfig),

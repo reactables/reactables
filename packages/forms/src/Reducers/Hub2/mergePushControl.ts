@@ -46,10 +46,26 @@ export const mergePushControl = <T>(state: Form<T>, form: BaseForm<T>, controlRe
         ...control.asyncValidatorErrors,
       };
 
-      const selfValid = !hasErrors(errors) && control.valid;
+      if (!control.childrenValid)
+        // If the ancestor control's children were not valid, pushing an item won't change its valid status
+        return {
+          ...acc,
+          [formKey]: {
+            ...control,
+            ...form[formKey],
+            errors,
+          },
+        };
+
+      const selfValid = !hasErrors(errors);
 
       let childrenValid = true;
       if (index === 0) {
+        childrenValid =
+          control.childrenValid &&
+          mergedDescendants[getFormKey(controlRef.concat(newItemIndex))].valid;
+      } else {
+        childrenValid = control.childrenValid && arr[index - 1].valid;
       }
 
       return {
@@ -57,6 +73,9 @@ export const mergePushControl = <T>(state: Form<T>, form: BaseForm<T>, controlRe
         [formKey]: {
           ...control,
           ...form[formKey],
+          errors,
+          valid: selfValid && childrenValid,
+          childrenValid,
         },
       };
     }, {});

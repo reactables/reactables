@@ -23,6 +23,7 @@ interface AsyncFields {
 interface ValidatedFields {
   valid: boolean;
   errors: FormErrors;
+  childrenValid: boolean;
 }
 
 export interface Hub2Fields extends AsyncFields, ValidatedFields {}
@@ -49,5 +50,6 @@ export const DEFAULT_HUB2_FIELDS: Hub2Fields = {
   asyncValidateInProgress: {},
   pending: false,
   valid: null,
+  childrenValid: null,
   errors: null,
 };

@@ -41,6 +41,7 @@ export const mergeErrors = <T>(form: Form<T>): Form<T> => {
           ...control,
           errors,
           valid: selfValid && childrenValid,
+          childrenValid,
         },
       };
     }, {} as Form<T>);

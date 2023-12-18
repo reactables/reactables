@@ -49,6 +49,7 @@ export const mergeValueUpdated = <T>(state: Form<T>, form: BaseForm<T>, controlR
           ...control,
           errors,
           valid: selfValid && childrenValid,
+          childrenValid,
         },
       };
     }, {}) as { [key: string]: FormControl<unknown> };
