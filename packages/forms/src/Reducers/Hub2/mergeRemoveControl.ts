@@ -64,7 +64,7 @@ export const mergeRemoveControl = <T>(
     }, {}) as { [key: string]: FormControl<unknown> };
 
   const descendants = existingBranch.filter(
-    (control) => control.controlRef.length < parentRef.length,
+    (control) => control.controlRef.length > parentRef.length,
   );
 
   const removedControls = { ...state };
