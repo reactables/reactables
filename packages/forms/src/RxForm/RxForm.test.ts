@@ -1,4 +1,4 @@
-import { RxForm } from './RxForm';
+import { build, group, array, control } from './RxForm';
 import { Subscription } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { FormGroupConfig, FormControlConfig, FormArrayConfig } from '../Models/Configs';
@@ -31,7 +31,7 @@ describe('RxForm', () => {
   describe('on initialization', () => {
     it('should build the control state for for type field', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const { state$ } = RxForm.build(config.controls.firstName);
+        const { state$ } = build(config.controls.firstName);
 
         subscription = cold('-').subscribe();
 
@@ -51,7 +51,7 @@ describe('RxForm', () => {
 
     it('should build the control state for type group with empty value', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const { state$ } = RxForm.build(config.controls.doctorInfo);
+        const { state$ } = build(config.controls.doctorInfo);
 
         subscription = cold('-').subscribe();
         const initialValue = {
@@ -120,7 +120,7 @@ describe('RxForm', () => {
             } as FormControlConfig<string>,
           },
         };
-        const { state$ } = RxForm.build(testConfig);
+        const { state$ } = build(testConfig);
 
         subscription = cold('-').subscribe();
 
@@ -161,7 +161,7 @@ describe('RxForm', () => {
 
     it('should build the control state for for type array with empty initial value', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const { state$ } = RxForm.build(config.controls.emergencyContacts);
+        const { state$ } = build(config.controls.emergencyContacts);
 
         subscription = cold('-').subscribe();
 
@@ -194,7 +194,7 @@ describe('RxForm', () => {
             emergencyContacts: nonEmptyConfig,
           },
         };
-        const { state$ } = RxForm.build(mainConfig);
+        const { state$ } = build(mainConfig);
 
         subscription = cold('-').subscribe();
 
@@ -279,7 +279,7 @@ describe('RxForm', () => {
           relation: 'third wheel',
         };
 
-        const newControlConfig = RxForm.group({
+        const newControlConfig = group({
           validators: [firstNameNotSameAsLast],
           controls: {
             firstName: {
@@ -304,7 +304,7 @@ describe('RxForm', () => {
         const {
           state$,
           actions: { pushControl },
-        } = RxForm.build({
+        } = build({
           ...config,
           controls: {
             ...config.controls,
@@ -346,24 +346,24 @@ describe('RxForm', () => {
         const {
           state$,
           actions: { pushControl },
-        } = RxForm.build(asyncConfig);
+        } = build(asyncConfig);
 
         subscription = cold('-b', {
           b: () =>
             pushControl({
               controlRef: ['emergencyContacts'],
-              config: RxForm.group({
+              config: group({
                 validators: [firstNameNotSameAsLast],
                 asyncValidators: [uniqueFirstAndLastName],
                 controls: {
-                  firstName: RxForm.control(['Barney', required]),
-                  lastName: RxForm.control(['Gumble', required]),
-                  email: RxForm.control([
+                  firstName: control(['Barney', required]),
+                  lastName: control(['Gumble', required]),
+                  email: control([
                     'barney@gumble.com',
                     [required, email],
                     [uniqueEmail, blacklistedEmail],
                   ]),
-                  relation: RxForm.control(['astronaut friend', required]),
+                  relation: control(['astronaut friend', required]),
                 },
               }),
             }),
@@ -467,12 +467,12 @@ describe('RxForm', () => {
         const {
           state$,
           actions: { addControl },
-        } = RxForm.build(config);
+        } = build(config);
 
         subscription = cold('-b', { b: addControl }).subscribe((addControl) =>
           addControl({
             controlRef: ['doctorInfo', 'type'],
-            config: RxForm.control({
+            config: control({
               initialValue: 'proctologist',
             }),
           }),
@@ -507,7 +507,7 @@ describe('RxForm', () => {
         const {
           state$,
           actions: { addControl },
-        } = RxForm.build(asyncConfig);
+        } = build(asyncConfig);
 
         subscription = cold('-b', {
           b: () =>
@@ -581,13 +581,13 @@ describe('RxForm', () => {
         const {
           state$,
           actions: { removeControl },
-        } = RxForm.build({
+        } = build({
           controls: {
-            firstName: RxForm.control({ initialValue: '' }),
-            lastName: RxForm.control({ initialValue: '' }),
-            emergencyContact: RxForm.group({
+            firstName: control({ initialValue: '' }),
+            lastName: control({ initialValue: '' }),
+            emergencyContact: group({
               controls: {
-                nextOfKin: RxForm.control({ initialValue: '' }),
+                nextOfKin: control({ initialValue: '' }),
               },
             }),
           },
@@ -643,13 +643,13 @@ describe('RxForm', () => {
         const {
           state$,
           actions: { removeControl },
-        } = RxForm.build({
+        } = build({
           controls: {
-            firstName: RxForm.control({ initialValue: '' }),
-            lastName: RxForm.control({ initialValue: '' }),
-            emergencyContact: RxForm.group({
+            firstName: control({ initialValue: '' }),
+            lastName: control({ initialValue: '' }),
+            emergencyContact: group({
               controls: {
-                nextOfKin: RxForm.control({ initialValue: '' }),
+                nextOfKin: control({ initialValue: '' }),
               },
             }),
           },
@@ -700,14 +700,14 @@ describe('RxForm', () => {
         const {
           state$,
           actions: { removeControl },
-        } = RxForm.build(
-          RxForm.group({
+        } = build(
+          group({
             controls: {
-              emergencyContacts: RxForm.array({
+              emergencyContacts: array({
                 controls: [
-                  RxForm.control({ initialValue: 'Homer' }),
-                  RxForm.control({ initialValue: 'Moe' }),
-                  RxForm.control({ initialValue: 'Barney' }),
+                  control({ initialValue: 'Homer' }),
+                  control({ initialValue: 'Moe' }),
+                  control({ initialValue: 'Barney' }),
                 ],
               }),
             },
@@ -751,8 +751,8 @@ describe('RxForm', () => {
         const {
           state$,
           actions: { removeControl },
-        } = RxForm.build(
-          RxForm.group({
+        } = build(
+          group({
             ...asyncConfig,
             controls: {
               ...asyncConfig.controls,
@@ -806,7 +806,7 @@ describe('RxForm', () => {
         const {
           state$,
           actions: { updateValues, resetControl },
-        } = RxForm.build(config);
+        } = build(config);
 
         subscription = cold('-bc', {
           b: () => updateValues({ controlRef: ['firstName'], value: 'Changed first name' }),
@@ -837,7 +837,7 @@ describe('RxForm', () => {
         const {
           state$,
           actions: { updateValues, resetControl },
-        } = RxForm.build(config);
+        } = build(config);
 
         subscription = cold('-bc', {
           b: () => updateValues({ controlRef: ['doctorInfo'], value: newValue }),
@@ -881,8 +881,8 @@ describe('RxForm', () => {
         const {
           state$,
           actions: { resetControl },
-        } = RxForm.build(
-          RxForm.group({
+        } = build(
+          group({
             ...asyncConfig,
             controls: {
               ...asyncConfig.controls,
@@ -968,7 +968,7 @@ describe('RxForm', () => {
         const {
           state$,
           actions: { updateValues },
-        } = RxForm.build(config);
+        } = build(config);
 
         const newValue = {
           firstName: 'Dr',
@@ -1010,7 +1010,7 @@ describe('RxForm', () => {
         const {
           state$,
           actions: { updateValues },
-        } = RxForm.build({
+        } = build({
           ...config,
           controls: {
             ...config.controls,
@@ -1049,7 +1049,7 @@ describe('RxForm', () => {
         const {
           state$,
           actions: { updateValues },
-        } = RxForm.build(RxForm.control(['', null, uniqueEmail]));
+        } = build(control(['', null, uniqueEmail]));
 
         subscription = cold('-b', {
           b: () =>
@@ -1091,7 +1091,7 @@ describe('RxForm', () => {
         const {
           state$,
           actions: { updateValues },
-        } = RxForm.build({
+        } = build({
           ...asyncConfig,
           controls: {
             ...asyncConfig.controls,
@@ -1196,7 +1196,7 @@ describe('RxForm', () => {
         const {
           state$,
           actions: { updateValues, markControlAsPristine },
-        } = RxForm.build(config);
+        } = build(config);
 
         subscription = cold('-bc', {
           b: () => updateValues({ controlRef: ['doctorInfo'], value: newValue }),
@@ -1232,7 +1232,7 @@ describe('RxForm', () => {
         const {
           state$,
           actions: { updateValues, markControlAsPristine },
-        } = RxForm.build(config);
+        } = build(config);
         subscription = cold('-bc', {
           b: () => updateValues({ controlRef: ['doctorInfo'], value: newValue }),
           c: () => markControlAsPristine(['doctorInfo']),
@@ -1281,7 +1281,7 @@ describe('RxForm', () => {
         const {
           state$,
           actions: { markControlAsTouched, markControlAsUntouched },
-        } = RxForm.build(config);
+        } = build(config);
         subscription = cold('-bc', {
           b: () =>
             markControlAsTouched({
