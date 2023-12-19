@@ -4,7 +4,7 @@ import { TestScheduler } from 'rxjs/testing';
 import { delay } from 'rxjs/operators';
 import { FetchPricePayload, EventTypes } from './Models/EventTypes';
 
-describe('EventTickets', () => {
+describe('RxEventTickets', () => {
   let testScheduler: TestScheduler;
   let subscription: Subscription;
 

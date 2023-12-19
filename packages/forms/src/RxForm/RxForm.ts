@@ -27,7 +27,7 @@ import { getScopedEffectsForControl } from '../Helpers/addAsyncValidationEffects
 
 // Config Builders
 type FbControl<T> = [T, (ValidatorFn | ValidatorFn[])?, (ValidatorAsyncFn | ValidatorAsyncFn[])?];
-const control = <T>(config: FormControlConfig<T> | FbControl<T>) => {
+export const control = <T>(config: FormControlConfig<T> | FbControl<T>) => {
   if (Array.isArray(config)) {
     return (config as FbControl<T>).reduce((acc, item, index) => {
       const indexMap = {
@@ -45,8 +45,8 @@ const control = <T>(config: FormControlConfig<T> | FbControl<T>) => {
   return config;
 };
 
-const array = (config: FormArrayConfig) => config;
-const group = (config: FormGroupConfig) => config;
+export const array = (config: FormArrayConfig) => config;
+export const group = (config: FormGroupConfig) => config;
 
 // Building Reactable
 export type RxFormActions = {
@@ -60,7 +60,7 @@ export type RxFormActions = {
   resetControl: (payload: ControlRef) => void;
 };
 
-const build = (
+export const build = (
   config: AbstractControlConfig,
   options?: EffectsAndSources,
 ): Reactable<Form<unknown>, RxFormActions> => {
@@ -101,11 +101,4 @@ const build = (
     state$: rxHub2.state$.pipe(filter((form) => form !== null)),
     actions: rxHub1.actions,
   };
-};
-
-export const RxForm = {
-  group,
-  array,
-  control,
-  build,
 };

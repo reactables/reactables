@@ -14,7 +14,15 @@ Developers can follow a standardized reactive pattern for managing state in any 
 
 ### Separation of Concerns - state management from UI components for:
 
-1. Improved testability
+1. Faster development
+
+    - Presentation concerns from UI Components and State Logic are decoupled - more team members can implement and test each aspect independently without creating conflicts.
+
+1. Scalability
+
+    - Reactables can start small, then later combine with others to make larger more complex ones - making them highly scalable.
+
+1. Improved Testability
 
     - UI components can be very complex, engaged in state management and asynchronous side-effects. Isolating units of logic for testing is often difficult because components as a whole need to be rendered for testing.
 
@@ -24,13 +32,9 @@ Developers can follow a standardized reactive pattern for managing state in any 
     
     - With Reactables developers can develop and test their state logic independently without rendering any UI providing greater flexibility and speed in unit testing.
 
-1. Faster development
-
-    - Presentation concerns from UI Components and State Logic are decoupled - more team members can work on each aspect without creating conflicts.
-
 1. Reusability and Framework agnostic
 
-    - Reactables pattern is highly composable, reusable and can easily integrate with any UI framework/library or vanilla JS.
+    - Reactables can easily integrate with any UI framework/library or vanilla JS - making them highly reusuable.
 
 ### Predictable State Updates 
 

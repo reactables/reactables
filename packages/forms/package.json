@@ -15,10 +15,12 @@
   "license": "ISC",
   "dependencies": {
     "@reactables/core": "*",
-    "lodash.clonedeep": "^4.5.0",
     "lodash.isequal": "^4.5.0"
   },
   "peerDependencies": {
     "rxjs": "^6.0.0 || ^7.0.0"
+  },
+  "devDependencies": {
+    "lodash.clonedeep": "^4.5.0"
   }
 }

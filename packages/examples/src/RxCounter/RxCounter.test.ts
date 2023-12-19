@@ -2,7 +2,7 @@ import { RxCounter } from './RxCounter';
 import { Subscription } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 
-describe('Counter', () => {
+describe('RxCounter', () => {
   let testScheduler: TestScheduler;
   let subscription: Subscription;
 

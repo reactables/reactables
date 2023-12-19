@@ -4,7 +4,7 @@ import { delay, map } from 'rxjs/operators';
 import { TestScheduler } from 'rxjs/testing';
 import { UpdateTodoPayload } from './Models/Todos';
 
-describe('TodoUpdates', () => {
+describe('RxTodoUpdates', () => {
   let testScheduler: TestScheduler;
   let subscription: Subscription;
 

@@ -26,12 +26,13 @@ Reactive state management with RxJS.
         1. [ScopedEffects](#api-scoped-effects)
         1. [Action](#api-action)
         1. [Reducer](#api-reducer)
-1. [Testing](#testing)
-    1. [Reactables](#testing-reactables)
+1. [Testing Reactables](#testing)
 
 ## Installation <a name="installation"></a>
 
-`npm i @reactables/core`
+Installation will require [RxJS](https://rxjs.dev/) if not already installed.
+
+`npm i rxjs @reactables/core`
 
 ## Core concepts <a name="core-concepts"></a>
 
@@ -131,17 +132,17 @@ export interface Reactable<T, S = ActionMap> {
 }
 
 export interface ActionMap {
-  [key: string | number]: (payload?: unknown) => void;
+  [key: string | number]: (payload?: unknown) => void | ActionMap;
 }
 ```
 | Property | Description |
 | -------- | ----------- |
 | state$ | Observable that emit state changes |
-| actions (optional) | Dictionary of methods that dispatches actions to update state |
+| actions | Dictionary of methods that dispatches actions to update state |
 
 ### RxBuilder <a name="rx-builder"></a>
 
-RxBuilder factory help build [Reactables](#reactable). Accepts a [RxConfig](#rx-confg) configuration object
+Factory function for building [Reactables](#reactable). Accepts a [RxConfig](#rx-confg) configuration object
 
 ```typescript
 type RxBuilder = <T, S extends Cases<T>>(config: RxConfig<T, S>) => Reactable<T, unknown>
@@ -197,7 +198,7 @@ type Effect<T, S> = OperatorFunction<Action<T>, Action<S>>;
 
 #### ScopedEffects <a name="api-scoped-effects"></a>
 
-Scoped Effects are declared in [Actions](#api-action). They are dynamically created stream(s) scoped to an Action `type` & `key` combination.
+Scoped Effects are declared when defining reducers in [RxConfig](#rx-config). They are dynamically created stream(s) scoped to an Action `type` & `key` combination.
 
 ```typescript
 interface ScopedEffects<T> {
@@ -210,30 +211,6 @@ interface ScopedEffects<T> {
 | key (optional) | key to be combined with the Action `type` to generate a unique signature for the effect stream(s). Example: An id for the entity the action is being performed on. |
 | effects | Array of [Effects](#api-effects) scoped to the Action `type` & `key` |
 
-Example:
-
-```typescript
-
-const UPDATE_TODO = 'UPDATE_TODO';
-const UPDATE_TODO_SUCCESS = 'UPDATE_TODO_SUCCESS';
-const updateTodo = ({ id, message }, todoService: TodoService) => ({
-  type: UPDATE_TODO,
-  payload: { id, message },
-  scopedEffects: {
-    key: id,
-    effects: [
-      (updateTodoActions$: Observable<Action<string>>) =>
-        updateTodoActions$.pipe(
-          mergeMap(({ payload: { id, message } }) => todoService.updateTodo(id, message))
-          map(({ data }) => ({
-            type: UPDATE_TODO_SUCCESS,
-            payload: data
-          }))
-        )
-    ]
-  }
-})
-```
 
 #### Action <a name="api-action"></a>
 ```typescript
@@ -258,19 +235,18 @@ From [Redux Docs](https://redux.js.org/tutorials/fundamentals/part-3-state-actio
 type Reducer<T> = (state?: T, action?: Action<unknown>) => T;
 ```
 
-## Testing <a name="testing"></a>
+## Testing Reactables<a name="testing"></a>
 
 We can use RxJS's built in [Marble Testing](https://rxjs.dev/guide/testing/marble-testing) for testing [Reactables](#reactable).
 
-### Reactables <a name="testing-reactables"></a>
+[Test for RxCounter](https://github.com/reactables/reactables/blob/main/packages/examples/src/RxCounter/RxCounter.test.ts)
 
 ```typescript
-// https://github.com/reactables/reactables/blob/main/packages/examples/src/Counter/Counter.test.ts
-import { Counter } from './Counter';
+import { RxCounter } from './RxCounter';
 import { Subscription } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 
-describe('Counter', () => {
+describe('RxCounter', () => {
   let testScheduler: TestScheduler;
   let subscription: Subscription;
 
@@ -289,7 +265,7 @@ describe('Counter', () => {
       const {
         state$,
         actions: { increment, reset },
-      } = Counter();
+      } = RxCounter();
 
       // Call actions
       subscription = cold('--b-c', {
@@ -306,5 +282,4 @@ describe('Counter', () => {
     });
   });
 });
-
 ```
