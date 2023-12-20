@@ -38,24 +38,13 @@ export const mergePushControl = <T>(state: Form<T>, form: BaseForm<T>, controlRe
 
   const ancestors = getAncestorControls(controlRef, state)
     .reverse()
-    .reduce((acc, control, index, arr) => {
+    .reduce((acc: Form<unknown>, control, index, arr) => {
       const formKey = getFormKey(control.controlRef);
 
       const errors = {
         ...form[formKey].validatorErrors,
         ...control.asyncValidatorErrors,
       };
-
-      if (!control.childrenValid)
-        // If the ancestor control's children were not valid, pushing an item won't change its valid status
-        return {
-          ...acc,
-          [formKey]: {
-            ...control,
-            ...form[formKey],
-            errors,
-          },
-        };
 
       const selfValid = !hasErrors(errors);
 
@@ -65,7 +54,21 @@ export const mergePushControl = <T>(state: Form<T>, form: BaseForm<T>, controlRe
           control.childrenValid &&
           mergedDescendants[getFormKey(controlRef.concat(newItemIndex))].valid;
       } else {
-        childrenValid = control.childrenValid && arr[index - 1].valid;
+        if (Array.isArray(control.config.controls)) {
+          // If control is a FormArray
+          childrenValid = (control.value as unknown[]).every((item, index) => {
+            const formKey = getFormKey(control.controlRef.concat(index));
+            const valid = acc[formKey] === undefined ? state[formKey].valid : acc[formKey].valid;
+            return valid;
+          });
+        } else if (control.config.controls) {
+          // If control is a FormGroup
+          childrenValid = Object.keys(control.value).every((childKey) => {
+            const formKey = getFormKey(control.controlRef.concat(childKey));
+            const valid = acc[formKey] === undefined ? state[formKey].valid : acc[formKey].valid;
+            return valid;
+          });
+        }
       }
 
       return {
