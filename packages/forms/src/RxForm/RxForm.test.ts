@@ -265,6 +265,82 @@ describe('RxForm', () => {
   });
 
   describe('on pushControl', () => {
+    it('should add a control to a Form Array control and update ALL ancestor valid states', () => {
+      testScheduler.run(({ expectObservable, cold }) => {
+        const newControlValue: EmergencyContact = {
+          firstName: 'Third',
+          lastName: 'Guy',
+          email: 'third@guy.com',
+          relation: 'third wheel',
+        };
+
+        const newControlConfig = group({
+          validators: [firstNameNotSameAsLast],
+          controls: {
+            firstName: {
+              initialValue: newControlValue.firstName,
+              validators: [required],
+            } as FormControlConfig<string>,
+            lastName: {
+              initialValue: newControlValue.lastName,
+              validators: [required],
+            } as FormControlConfig<string>,
+            email: {
+              initialValue: newControlValue.email,
+              validators: [required, email],
+            } as FormControlConfig<string>,
+            relation: {
+              initialValue: newControlValue.relation,
+              validators: [required],
+            } as FormControlConfig<string>,
+          },
+        });
+
+        const {
+          state$,
+          actions: { pushControl },
+        } = build(
+          group({
+            controls: {
+              emergencyContacts: array({
+                validators: [required],
+                controls: [],
+              }),
+            },
+          }),
+        );
+
+        subscription = cold('-b', { b: pushControl }).subscribe((pushControl) =>
+          pushControl({
+            controlRef: ['emergencyContacts'],
+            config: newControlConfig,
+          }),
+        );
+
+        expectObservable(state$).toBe('ab', {
+          a: {
+            root: {
+              dirty: false,
+              valid: false,
+            },
+            emergencyContacts: {
+              dirty: false,
+              valid: false,
+            },
+          },
+          b: {
+            root: {
+              dirty: true,
+              valid: true,
+            },
+            emergencyContacts: {
+              dirty: true,
+              valid: true,
+            },
+          },
+        });
+      });
+    });
     it('should add a control to a Form Array control and update ancestor values', () => {
       testScheduler.run(({ expectObservable, cold }) => {
         const nonEmptyConfig = {
