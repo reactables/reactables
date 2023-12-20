@@ -1,6 +1,6 @@
 import React from 'react';
 import { Meta, StoryObj } from '@storybook/react';
-import { Validators, RxForm } from '@reactables/forms';
+import { Validators, group, control, array } from '@reactables/forms';
 import { Form } from './Form';
 import { Field } from './Field';
 import { Input } from './Input';
@@ -20,7 +20,7 @@ type Story = StoryObj<typeof Form>;
 
 const BasicControlExample = () => {
   const rxForm = useForm(
-    RxForm.control({
+    control({
       initialValue: 'john',
     }),
   );
@@ -41,13 +41,13 @@ export const BasicControl: Story = {
 
 const ValidationExample = () => {
   const rxForm = useForm(
-    RxForm.group({
+    group({
       controls: {
-        firstName: RxForm.control({
+        firstName: control({
           initialValue: 'John',
           validators: [Validators.required],
         }),
-        lastName: RxForm.control({
+        lastName: control({
           initialValue: '',
           validators: [Validators.required],
         }),
@@ -70,17 +70,17 @@ export const Validation: Story = {
 };
 
 const contactRxForm = ({ firstName, lastName, email }: Contact) =>
-  RxForm.group({
+  group({
     controls: {
-      firstName: RxForm.control({
+      firstName: control({
         initialValue: firstName,
         validators: [Validators.required],
       }),
-      lastName: RxForm.control({
+      lastName: control({
         initialValue: lastName,
         validators: [Validators.required],
       }),
-      email: RxForm.control({
+      email: control({
         initialValue: email,
         validators: [Validators.required, Validators.email],
         asyncValidators: [blacklistedEmail],
@@ -110,9 +110,9 @@ export const AsyncValidation: Story = {
 
 const FormArraysExample = () => {
   const rxForm = useForm(
-    RxForm.group({
+    group({
       controls: {
-        emergencyContacts: RxForm.array({
+        emergencyContacts: array({
           validators: [arrayLengthRequired],
           controls: [
             {
@@ -187,7 +187,7 @@ export const FormArrays: Story = {
 
 const ResetFormExample = () => {
   const rxForm = useForm(
-    RxForm.group(
+    group(
       contactRxForm({
         firstName: 'Bart',
         lastName: 'Simpson',
