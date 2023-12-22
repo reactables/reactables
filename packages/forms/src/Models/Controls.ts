@@ -32,7 +32,14 @@ export interface FormControl<T> extends BaseControl<T>, Hub2Fields {}
 
 export interface BaseFormState<T> {
   form: BaseForm<T>;
-  action: Action<unknown>;
+  // controls that have changed including new ones added
+  changedControls?: {
+    [key: string]: BaseControl<unknown>;
+  };
+  // controls removed from removeControl or resetControl - only the target control ref, not descendants
+  removedControls?: {
+    [key: string]: BaseControl<unknown>;
+  };
 }
 
 export interface BaseForm<T> {

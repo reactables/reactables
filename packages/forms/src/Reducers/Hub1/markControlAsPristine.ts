@@ -7,11 +7,14 @@ import {
   UPDATE_ANCESTOR_PRISTINE_VALUES,
 } from './updateAncestorPristineValues';
 import { getFormKey } from '../../Helpers/getFormKey';
+import { getControlBranch } from '../../Helpers/getControlBranch';
 
 export const markControlAsPristine = <T>(
-  { form }: BaseFormState<T>,
+  state: BaseFormState<T>,
   action: Action<ControlRef>,
+  mergeChanges = false,
 ): BaseFormState<T> => {
+  const { form } = state;
   const { payload: controlRef } = action;
 
   const descendants = getDescendantControls(controlRef, form).reduce(
@@ -37,5 +40,17 @@ export const markControlAsPristine = <T>(
     });
   }
 
-  return { form: result, action };
+  const changedControls = getControlBranch(controlRef, result).reduce(
+    (acc, control) => ({ ...acc, [control.key]: control }),
+    {},
+  );
+
+  return {
+    form: result,
+    changedControls: {
+      ...(mergeChanges ? state.changedControls || {} : undefined),
+      ...changedControls,
+    },
+    removedControls: mergeChanges ? state.removedControls || {} : undefined,
+  };
 };

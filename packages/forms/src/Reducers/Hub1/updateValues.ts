@@ -1,5 +1,5 @@
 import { Action } from '@reactables/core';
-import { BaseForm, BaseFormState, BaseControl } from '../../Models/Controls';
+import { BaseFormState, BaseControl } from '../../Models/Controls';
 import { FormArrayConfig, FormGroupConfig } from '../../Models';
 import { ControlChange } from '../../Models/Payloads';
 import { getFormKey } from '../../Helpers/getFormKey';
@@ -9,52 +9,68 @@ import { FormErrors } from '../../Models';
 import isEqual from 'lodash.isequal';
 import { getErrors } from './getErrors';
 import { getDescendantControls } from '../../Helpers/getDescendantControls';
+import { getAncestorControls } from '../../Helpers/getAncestorControls';
 
 const UPDATE_DESCENDANT_VALUES = 'UPDATE_DESCENDANT_VALUES';
-const updateDescendants = <T>(
-  form: BaseForm<T>,
+const updateDescendants = (
+  state: BaseFormState<unknown>,
   { payload: { controlRef, value } }: Action<ControlChange<unknown>>,
-): BaseForm<T> => {
-  const descendants = getDescendantControls(controlRef, form, true).map(
+): BaseFormState<unknown> => {
+  const descendants = getDescendantControls(controlRef, state.form, true).map(
     (control) => [getFormKey(control.controlRef), control] as [string, BaseControl<unknown>],
   );
 
-  const result = descendants.reduce((acc, [key, control]) => {
-    if (isChildRef(control.controlRef, controlRef)) {
-      const childValue = value[control.controlRef.at(-1)] as unknown;
-      const validatorErrors: FormErrors = getErrors(control, value);
+  const result = descendants.reduce(
+    (acc: BaseFormState<unknown>, [key, control]) => {
+      if (isChildRef(control.controlRef, controlRef)) {
+        const childValue = value[control.controlRef.at(-1)] as unknown;
+        const validatorErrors: FormErrors = getErrors(control, value);
 
-      acc = {
-        ...acc,
-        [key]: {
+        const newControl = {
           ...control,
           value: childValue,
           validatorErrors,
           dirty: !isEqual(childValue, control.pristineValue),
-        },
-      };
+        };
 
-      const { controls: configControls } = control.config as FormArrayConfig | FormGroupConfig;
+        acc = {
+          form: {
+            ...acc.form,
+            [key]: newControl,
+          },
+          changedControls: {
+            ...acc.changedControls,
+            [newControl.key]: newControl,
+          },
+        };
 
-      if (configControls) {
-        acc = updateDescendants(acc, {
-          type: UPDATE_DESCENDANT_VALUES,
-          payload: { controlRef: control.controlRef, value: childValue },
-        });
+        const { controls: configControls } = control.config as FormArrayConfig | FormGroupConfig;
+
+        if (configControls) {
+          acc = updateDescendants(acc, {
+            type: UPDATE_DESCENDANT_VALUES,
+            payload: { controlRef: control.controlRef, value: childValue },
+          });
+        }
       }
-    }
 
-    return acc;
-  }, form);
+      return acc;
+    },
+    { form: {}, changedControls: {} },
+  );
 
-  return result;
+  return {
+    form: { ...state.form, ...result.form },
+    changedControls: { ...result.changedControls },
+  };
 };
 
 // Will only update child controls that are present.
 // Use AddControl/RemoveControl action reducers to add/remove control
 export const updateValues = <T>(
-  { form }: BaseFormState<T>,
+  { form, changedControls = {}, removedControls = {} }: BaseFormState<T>,
   action: Action<ControlChange<unknown>>,
+  mergeChanges = false,
 ): BaseFormState<T> => {
   const {
     payload: { controlRef, value },
@@ -64,14 +80,19 @@ export const updateValues = <T>(
 
   const validatorErrors: FormErrors = getErrors(form[ctrlKey], value);
 
-  let result: BaseForm<T> = {
-    ...form,
-    [ctrlKey]: {
-      ...form[ctrlKey],
-      validatorErrors,
-      dirty: !isEqual(value, form[ctrlKey].pristineValue),
-      value,
+  const newControl = {
+    ...form[ctrlKey],
+    validatorErrors,
+    dirty: !isEqual(value, form[ctrlKey].pristineValue),
+    value,
+  };
+
+  let result: BaseFormState<T> = {
+    form: {
+      ...form,
+      [ctrlKey]: newControl,
     },
+    changedControls: { [newControl.key]: newControl },
   };
 
   const { controls: configControls } = form[ctrlKey].config as FormArrayConfig | FormGroupConfig;
@@ -84,16 +105,37 @@ export const updateValues = <T>(
         controlRef,
         value,
       },
-    });
+    }) as BaseFormState<T>;
   }
 
   // Update its Ancestors
   if (controlRef.length) {
-    result = updateAncestorValues(result, {
-      type: UPDATE_ANCESTOR_VALUES,
-      payload: { controlRef, value },
-    });
+    result = {
+      ...result,
+      form: updateAncestorValues(result.form, {
+        type: UPDATE_ANCESTOR_VALUES,
+        payload: { controlRef, value },
+      }),
+    };
   }
 
-  return { form: result, action };
+  const changedAncestorControls = getAncestorControls(controlRef, result.form).reduce(
+    (acc: { [key: string]: BaseControl<unknown> }, control) => ({
+      ...acc,
+      [control.key]: control,
+    }),
+    {},
+  );
+
+  const mergedResult = {
+    ...result,
+    changedControls: {
+      ...(mergeChanges ? changedControls : undefined),
+      ...changedAncestorControls,
+      ...result.changedControls,
+    },
+    removedControls: mergeChanges ? removedControls : undefined,
+  };
+
+  return mergedResult;
 };

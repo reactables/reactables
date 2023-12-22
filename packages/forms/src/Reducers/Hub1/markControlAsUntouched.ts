@@ -2,12 +2,15 @@ import { Action } from '@reactables/core';
 import { BaseForm, BaseFormState } from '../../Models/Controls';
 import { ControlRef } from '../../Models/ControlRef';
 import { getDescendantControls } from '../../Helpers/getDescendantControls';
+import { getControlBranch } from '../../Helpers/getControlBranch';
 import { getFormKey } from '../../Helpers/getFormKey';
 
 export const markControlAsUntouched = <T>(
-  { form }: BaseFormState<T>,
+  state: BaseFormState<T>,
   action: Action<ControlRef>,
+  mergeChanges = false,
 ): BaseFormState<T> => {
+  const { form } = state;
   const { payload: controlRef } = action;
 
   let result = getDescendantControls(controlRef, form).reduce(
@@ -42,5 +45,17 @@ export const markControlAsUntouched = <T>(
     };
   }
 
-  return { form: result as BaseForm<T>, action };
+  const changedControls = getControlBranch(controlRef, result).reduce(
+    (acc, control) => ({ ...acc, [control.key]: control }),
+    {},
+  );
+
+  return {
+    form: result as BaseForm<T>,
+    changedControls: {
+      ...(mergeChanges ? state.changedControls || {} : undefined),
+      ...changedControls,
+    },
+    removedControls: mergeChanges ? state.removedControls || {} : undefined,
+  };
 };

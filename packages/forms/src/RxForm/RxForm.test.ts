@@ -1,3 +1,4 @@
+import { Action } from '@reactables/core';
 import { build, group, array, control } from './RxForm';
 import { Subscription } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
@@ -13,6 +14,7 @@ import {
   blacklistedEmail,
 } from '../Testing/AsyncValidators';
 import { asyncConfig, asyncEmergencyContactConfigs } from '../Testing/asyncConfig';
+import { BaseFormState } from '../Models/Controls';
 
 describe('RxForm', () => {
   let testScheduler: TestScheduler;
@@ -1381,6 +1383,551 @@ describe('RxForm', () => {
             root: { touched: false },
             doctorInfo: { touched: false },
             'doctorInfo.firstName': { touched: false },
+          },
+        });
+      });
+    });
+  });
+
+  describe('custom reducers', () => {
+    const addressSearchConfig = ({ streetAddress, city } = { streetAddress: '', city: '' }) =>
+      group({
+        controls: {
+          streetAddress: control([streetAddress]),
+          city: control([city]),
+        },
+      });
+
+    const nameSearchConfig = ({ firstName, lastName } = { firstName: '', lastName: '' }) =>
+      group({
+        controls: {
+          firstName: control([firstName]),
+          lastName: control([lastName]),
+        },
+      });
+
+    it('custom toggleSearchType reducer should toggle controls, and update values for a group control', () => {
+      testScheduler.run(({ expectObservable, cold }) => {
+        const { state$, actions } = build(
+          group({
+            controls: {
+              searchTypeOne: control(['']),
+            },
+          }),
+          {
+            reducers: {
+              toggleSearchType: ({ addControl, removeControl, updateValues }, state) => {
+                const { form } = state;
+                let newState: BaseFormState<unknown>;
+
+                if (form.searchTypeOne) {
+                  newState = updateValues(state, {
+                    payload: { controlRef: ['searchTypeOne'], value: 'Hello' },
+                  });
+                  newState = removeControl(newState, { payload: ['searchTypeOne'] });
+                  newState = addControl(newState, {
+                    payload: { controlRef: ['searchTypeTwo'], config: control(['hello wo']) },
+                  });
+                  newState = updateValues(newState, {
+                    payload: { controlRef: ['searchTypeTwo'], value: 'HelloTrhee' },
+                  });
+                } else {
+                  newState = removeControl(state, { payload: ['searchTypeTwo'] });
+                  newState = addControl(newState, {
+                    payload: { controlRef: ['searchTypeOne'], config: control(['']) },
+                  });
+                  newState = updateValues(newState, {
+                    payload: { controlRef: [], value: { searchTypeOne: 'group changed test!' } },
+                  });
+                  newState = updateValues(newState, {
+                    payload: { controlRef: ['searchTypeOne'], value: 'Hello in new one' },
+                  });
+                }
+
+                return newState;
+              },
+            },
+          },
+        );
+
+        subscription = cold('-bc', {
+          b: actions.toggleSearchType,
+          c: actions.toggleSearchType,
+        }).subscribe((action) => {
+          action();
+        });
+
+        expectObservable(state$).toBe('abc', {
+          a: {
+            root: { value: { searchTypeOne: '' } },
+            searchTypeOne: { value: '' },
+          },
+          b: {
+            root: { value: { searchTypeTwo: 'HelloTrhee' } },
+            searchTypeTwo: { value: 'HelloTrhee' },
+          },
+          c: {
+            root: { value: { searchTypeOne: 'Hello in new one' } },
+            searchTypeOne: { value: 'Hello in new one' },
+          },
+        });
+      });
+    });
+
+    it('custom toggleSearchType should work on array items', () => {
+      testScheduler.run(({ expectObservable, cold }) => {
+        const { state$, actions } = build(
+          group({
+            controls: {
+              searchItems: array({
+                controls: [
+                  group({
+                    controls: {
+                      addressSearch: addressSearchConfig({
+                        streetAddress: '123 any street',
+                        city: 'Toronto',
+                      }),
+                    },
+                  }),
+                  group({
+                    controls: {
+                      addressSearch: addressSearchConfig({
+                        streetAddress: '123 second street',
+                        city: 'Houston',
+                      }),
+                    },
+                  }),
+                  group({
+                    controls: {
+                      nameSearch: nameSearchConfig({ firstName: 'Homer', lastName: 'Simpson' }),
+                    },
+                  }),
+                ],
+              }),
+            },
+          }),
+          {
+            reducers: {
+              toggleSearchType: ({ removeControl, addControl }, state, action: Action<number>) => {
+                const { form } = state;
+
+                let newState: BaseFormState<unknown>;
+
+                if (form[`searchItems.${action.payload}.addressSearch`]) {
+                  newState = removeControl(state, {
+                    payload: ['searchItems', action.payload, 'addressSearch'],
+                  });
+                  newState = addControl(newState, {
+                    payload: {
+                      controlRef: ['searchItems', action.payload, 'nameSearch'],
+                      config: nameSearchConfig(),
+                    },
+                  });
+                } else {
+                  newState = removeControl(state, {
+                    payload: ['searchItems', action.payload, 'nameSearch'],
+                  });
+                  newState = addControl(newState, {
+                    payload: {
+                      controlRef: ['searchItems', action.payload, 'addressSearch'],
+                      config: addressSearchConfig(),
+                    },
+                  });
+                }
+
+                return newState;
+              },
+            },
+          },
+        );
+
+        subscription = cold('-bcdefghi', {
+          b: () => actions.toggleSearchType(1),
+          c: () => actions.toggleSearchType(2),
+          d: () =>
+            actions.updateValues({
+              controlRef: ['searchItems', 1, 'nameSearch'],
+              value: { firstName: 'new', lastName: 'guy' },
+            }),
+          e: () =>
+            actions.updateValues({
+              controlRef: ['searchItems', 2, 'addressSearch'],
+              value: { streetAddress: 'new street', city: 'new city' },
+            }),
+          f: () => actions.removeControl(['searchItems', 0]),
+          g: () => actions.toggleSearchType(0),
+          h: () =>
+            actions.updateValues({
+              controlRef: ['searchItems', 0, 'addressSearch'],
+              value: { streetAddress: 'final street', city: 'final city' },
+            }),
+          i: () =>
+            actions.updateValues({
+              controlRef: ['searchItems', 1, 'addressSearch'],
+              value: { streetAddress: 'next final street', city: 'next final city' },
+            }),
+        }).subscribe((action) => {
+          action();
+        });
+
+        expectObservable(state$).toBe('abcdefghi', {
+          // Initialized State
+          a: {
+            root: {
+              value: {
+                searchItems: [
+                  {
+                    addressSearch: {
+                      streetAddress: '123 any street',
+                      city: 'Toronto',
+                    },
+                  },
+                  {
+                    addressSearch: {
+                      streetAddress: '123 second street',
+                      city: 'Houston',
+                    },
+                  },
+                  {
+                    nameSearch: {
+                      firstName: 'Homer',
+                      lastName: 'Simpson',
+                    },
+                  },
+                ],
+              },
+            },
+            'searchItems.0': {
+              value: {
+                addressSearch: {
+                  streetAddress: '123 any street',
+                  city: 'Toronto',
+                },
+              },
+            },
+            'searchItems.1': {
+              value: {
+                addressSearch: {
+                  streetAddress: '123 second street',
+                  city: 'Houston',
+                },
+              },
+            },
+            'searchItems.2': {
+              value: {
+                nameSearch: {
+                  firstName: 'Homer',
+                  lastName: 'Simpson',
+                },
+              },
+            },
+          },
+          // Toggle search type for control 1
+          b: {
+            'searchItems.1': {
+              value: {
+                nameSearch: {
+                  firstName: '',
+                  lastName: '',
+                },
+              },
+            },
+          },
+          // Toggle search type for control 2
+          c: {
+            'searchItems.1': {
+              value: {
+                nameSearch: {
+                  firstName: '',
+                  lastName: '',
+                },
+              },
+            },
+            'searchItems.2': {
+              value: {
+                addressSearch: {
+                  streetAddress: '',
+                  city: '',
+                },
+              },
+            },
+          },
+          // Update searchItems.1.nameSearch
+          d: {
+            'searchItems.1': {
+              value: {
+                nameSearch: {
+                  firstName: 'new',
+                  lastName: 'guy',
+                },
+              },
+            },
+          },
+          // Update searchItems.2.addressSearch
+          e: {
+            'searchItems.2': {
+              value: {
+                addressSearch: {
+                  streetAddress: 'new street',
+                  city: 'new city',
+                },
+              },
+            },
+          },
+          // Remove searchItems.0
+          f: {
+            root: {
+              value: {
+                searchItems: [
+                  {
+                    nameSearch: {
+                      firstName: 'new',
+                      lastName: 'guy',
+                    },
+                  },
+                  {
+                    addressSearch: {
+                      streetAddress: 'new street',
+                      city: 'new city',
+                    },
+                  },
+                ],
+              },
+            },
+            'searchItems.0': {
+              value: {
+                nameSearch: {
+                  firstName: 'new',
+                  lastName: 'guy',
+                },
+              },
+            },
+            'searchItems.1': {
+              value: {
+                addressSearch: {
+                  streetAddress: 'new street',
+                  city: 'new city',
+                },
+              },
+            },
+          },
+          // Toggle searchItems.0
+          g: {
+            root: {
+              value: {
+                searchItems: [
+                  {
+                    addressSearch: {
+                      streetAddress: '',
+                      city: '',
+                    },
+                  },
+                  {
+                    addressSearch: {
+                      streetAddress: 'new street',
+                      city: 'new city',
+                    },
+                  },
+                ],
+              },
+            },
+            'searchItems.0': {
+              value: {
+                addressSearch: {
+                  streetAddress: '',
+                  city: '',
+                },
+              },
+            },
+            'searchItems.1': {
+              value: {
+                addressSearch: {
+                  streetAddress: 'new street',
+                  city: 'new city',
+                },
+              },
+            },
+          },
+          // Update searchItems.0.addressSearch
+          h: {
+            root: {
+              value: {
+                searchItems: [
+                  {
+                    addressSearch: {
+                      streetAddress: 'final street',
+                      city: 'final city',
+                    },
+                  },
+                  {
+                    addressSearch: {
+                      streetAddress: 'new street',
+                      city: 'new city',
+                    },
+                  },
+                ],
+              },
+            },
+            'searchItems.0': {
+              value: {
+                addressSearch: {
+                  streetAddress: 'final street',
+                  city: 'final city',
+                },
+              },
+            },
+            'searchItems.1': {
+              value: {
+                addressSearch: {
+                  streetAddress: 'new street',
+                  city: 'new city',
+                },
+              },
+            },
+          },
+          // Update searchItems.1.addressSearch
+          i: {
+            root: {
+              value: {
+                searchItems: [
+                  {
+                    addressSearch: {
+                      streetAddress: 'final street',
+                      city: 'final city',
+                    },
+                  },
+                  {
+                    addressSearch: {
+                      streetAddress: 'next final street',
+                      city: 'next final city',
+                    },
+                  },
+                ],
+              },
+            },
+            'searchItems.0': {
+              value: {
+                addressSearch: {
+                  streetAddress: 'final street',
+                  city: 'final city',
+                },
+              },
+            },
+            'searchItems.1': {
+              value: {
+                addressSearch: {
+                  streetAddress: 'next final street',
+                  city: 'next final city',
+                },
+              },
+            },
+          },
+        });
+      });
+    });
+
+    it('reindexReducer should reindex items and preserve updated values', () => {
+      testScheduler.run(({ expectObservable, cold }) => {
+        const { state$, actions } = build(
+          group({
+            controls: {
+              searchItems: array({
+                controls: [
+                  group({
+                    controls: {
+                      nameSearch: nameSearchConfig({
+                        firstName: 'firstName 1',
+                        lastName: 'lastName 1',
+                      }),
+                    },
+                  }),
+                  group({
+                    controls: {
+                      nameSearch: nameSearchConfig({
+                        firstName: 'firstName 2',
+                        lastName: 'lastName 2',
+                      }),
+                    },
+                  }),
+                  group({
+                    controls: {
+                      nameSearch: nameSearchConfig({
+                        firstName: 'firstName 3',
+                        lastName: 'lastName 3',
+                      }),
+                    },
+                  }),
+                  group({
+                    controls: {
+                      nameSearch: nameSearchConfig({
+                        firstName: 'firstName 4',
+                        lastName: 'lastName 4',
+                      }),
+                    },
+                  }),
+                ],
+              }),
+            },
+          }),
+          {
+            reducers: {
+              reindexReducer: ({ removeControl, updateValues }, state) => {
+                let newState: BaseFormState<unknown>;
+
+                newState = updateValues(state, {
+                  payload: {
+                    controlRef: ['searchItems', 1, 'nameSearch', 'firstName'],
+                    value: 'firstName 2 changed',
+                  },
+                });
+
+                newState = updateValues(newState, {
+                  payload: {
+                    controlRef: ['searchItems', 3, 'nameSearch', 'firstName'],
+                    value: 'firstName 4 changed',
+                  },
+                });
+
+                newState = removeControl(newState, { payload: ['searchItems', 2] });
+
+                return newState;
+              },
+            },
+          },
+        );
+
+        subscription = cold('-b', {
+          b: actions.reindexReducer,
+        }).subscribe((action) => {
+          action();
+        });
+
+        expectObservable(state$).toBe('ab', {
+          a: {
+            root: {
+              value: {
+                searchItems: [
+                  { nameSearch: { firstName: 'firstName 1', lastName: 'lastName 1' } },
+                  { nameSearch: { firstName: 'firstName 2', lastName: 'lastName 2' } },
+                  { nameSearch: { firstName: 'firstName 3', lastName: 'lastName 3' } },
+                  { nameSearch: { firstName: 'firstName 4', lastName: 'lastName 4' } },
+                ],
+              },
+            },
+          },
+          b: {
+            root: {
+              value: {
+                searchItems: [
+                  { nameSearch: { firstName: 'firstName 1', lastName: 'lastName 1' } },
+                  { nameSearch: { firstName: 'firstName 2 changed', lastName: 'lastName 2' } },
+                  { nameSearch: { firstName: 'firstName 4 changed', lastName: 'lastName 4' } },
+                ],
+              },
+            },
+            'searchItems.0.nameSearch.firstName': { value: 'firstName 1' },
+            'searchItems.1.nameSearch.firstName': { value: 'firstName 2 changed' },
+            'searchItems.2.nameSearch.firstName': { value: 'firstName 4 changed' },
           },
         });
       });
