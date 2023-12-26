@@ -103,12 +103,14 @@ const reducerTools: FormReducers = {
     resetControl(state, action, true),
 };
 
+type CustomReducer = (
+  reducers: FormReducers,
+  state: BaseFormState<unknown>,
+  action: Action<unknown>,
+) => BaseFormState<unknown>;
+
 export interface CustomReducers {
-  [key: string]: (
-    reducers: FormReducers,
-    state: BaseFormState<unknown>,
-    action: Action<unknown>,
-  ) => BaseFormState<unknown>;
+  [key: string]: CustomReducer;
 }
 
 export interface RxFormOptions<T extends CustomReducers> extends EffectsAndSources {
