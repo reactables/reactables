@@ -60,6 +60,5 @@ export const buildFormState = <T>(
 ): BaseFormState<T> => {
   return {
     form: buildState(config, form, controlRef),
-    action: null,
   };
 };

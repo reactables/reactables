@@ -6,9 +6,11 @@ import { getControlBranch } from '../../Helpers/getControlBranch';
 import { getFormKey } from '../../Helpers/getFormKey';
 
 export const markControlAsTouched = <T>(
-  { form }: BaseFormState<T>,
+  state: BaseFormState<T>,
   action: Action<MarkTouched>,
+  mergeChanges = false,
 ): BaseFormState<T> => {
+  const { form } = state;
   const {
     payload: { controlRef, markAll },
   } = action;
@@ -26,11 +28,28 @@ export const markControlAsTouched = <T>(
     {},
   );
 
-  return {
+  const result = {
     form: {
       ...form,
       ...controls,
     },
     action,
+  };
+
+  const changedControls = getControlBranch(controlRef, result.form).reduce(
+    (acc, control) => ({ ...acc, [control.key]: control }),
+    {},
+  );
+
+  return {
+    form: {
+      ...form,
+      ...controls,
+    },
+    changedControls: {
+      ...(mergeChanges ? state.changedControls || {} : undefined),
+      ...changedControls,
+    },
+    removedControls: mergeChanges ? state.removedControls || {} : undefined,
   };
 };

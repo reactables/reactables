@@ -1,4 +1,4 @@
-import { RxBuilder, Reactable, EffectsAndSources } from '@reactables/core';
+import { RxBuilder, Reactable, EffectsAndSources, Action, Reducer } from '@reactables/core';
 import { filter } from 'rxjs/operators';
 import { buildFormState } from '../Helpers/buildFormState';
 import { ControlChange, AddControl, MarkTouched, PushControl } from '../Models/Payloads';
@@ -22,7 +22,7 @@ import { resetControl } from '../Reducers/Hub1/resetControl';
 import { asyncValidation } from '../Reducers/Hub2/asyncValidation';
 import { asyncValidationResponseSuccess } from '../Reducers/Hub2/asyncValidationResponseSuccess';
 import { formChange } from '../Reducers/Hub2/formChange';
-import { BaseControl, Form } from '../Models/Controls';
+import { BaseControl, Form, BaseFormState } from '../Models/Controls';
 import { getScopedEffectsForControl } from '../Helpers/addAsyncValidationEffects';
 
 // Config Builders
@@ -60,11 +60,78 @@ export type RxFormActions = {
   resetControl: (payload: ControlRef) => void;
 };
 
-export const build = (
+// For building custom reducers
+export interface FormReducers {
+  updateValues: <T>(
+    state: BaseFormState<T>,
+    action: Action<ControlChange<unknown>>,
+  ) => BaseFormState<T>;
+  removeControl: <T>(state: BaseFormState<T>, action: Action<ControlRef>) => BaseFormState<T>;
+  pushControl: <T>(state: BaseFormState<T>, action: Action<PushControl>) => BaseFormState<T>;
+  addControl: <T>(state: BaseFormState<T>, action: Action<AddControl>) => BaseFormState<T>;
+  markControlAsPristine: <T>(
+    state: BaseFormState<T>,
+    action: Action<ControlRef>,
+  ) => BaseFormState<T>;
+  markControlAsTouched: <T>(
+    state: BaseFormState<T>,
+    action: Action<MarkTouched>,
+  ) => BaseFormState<T>;
+  markControlAsUntouched: <T>(
+    state: BaseFormState<T>,
+    action: Action<ControlRef>,
+  ) => BaseFormState<T>;
+  resetControl: <T>(state: BaseFormState<T>, action: Action<ControlRef>) => BaseFormState<T>;
+}
+
+const reducerTools: FormReducers = {
+  updateValues: <T>(state: BaseFormState<T>, action: Action<ControlChange<unknown>>) =>
+    updateValues(state, action, true),
+  removeControl: <T>(state: BaseFormState<T>, action: Action<ControlRef>) =>
+    removeControl(state, action, true),
+  pushControl: <T>(state: BaseFormState<T>, action: Action<PushControl>) =>
+    pushControl(state, action, true),
+  addControl: <T>(state: BaseFormState<T>, action: Action<AddControl>) =>
+    addControl(state, action, true),
+  markControlAsPristine: <T>(state: BaseFormState<T>, action: Action<ControlRef>) =>
+    markControlAsPristine(state, action, true),
+  markControlAsTouched: <T>(state: BaseFormState<T>, action: Action<MarkTouched>) =>
+    markControlAsTouched(state, action, true),
+  markControlAsUntouched: <T>(state: BaseFormState<T>, action: Action<ControlRef>) =>
+    markControlAsUntouched(state, action, true),
+  resetControl: <T>(state: BaseFormState<T>, action: Action<ControlRef>) =>
+    resetControl(state, action, true),
+};
+
+export interface CustomReducers {
+  [key: string]: (
+    reducers: FormReducers,
+    state: BaseFormState<unknown>,
+    action: Action<unknown>,
+  ) => BaseFormState<unknown>;
+}
+
+export interface RxFormOptions<T extends CustomReducers> extends EffectsAndSources {
+  reducers?: T;
+}
+
+export const build = <T extends CustomReducers>(
   config: AbstractControlConfig,
-  options?: EffectsAndSources,
-): Reactable<Form<unknown>, RxFormActions> => {
+  options: RxFormOptions<T> = {},
+): Reactable<Form<unknown>, { [K in keyof T]: (payload?) => void } & RxFormActions> => {
   const initialState = buildFormState(config);
+
+  const { reducers, ...otherOptions } = options;
+
+  const customReducers = Object.entries(reducers || ({} as T)).reduce(
+    (acc, [key, reducer]) => ({
+      ...acc,
+      [key as keyof T]: ({ form }: BaseFormState<unknown>, action: Action<unknown>) => {
+        return reducer(reducerTools, { form }, action);
+      },
+    }),
+    {} as { [K in keyof T]: Reducer<BaseFormState<unknown>> },
+  );
 
   const rxHub1 = RxBuilder({
     initialState,
@@ -77,8 +144,9 @@ export const build = (
       markControlAsTouched,
       markControlAsUntouched,
       resetControl,
+      ...customReducers,
     },
-    ...options,
+    ...otherOptions,
   });
 
   const rxHub2 = RxBuilder({
@@ -99,6 +167,6 @@ export const build = (
 
   return {
     state$: rxHub2.state$.pipe(filter((form) => form !== null)),
-    actions: rxHub1.actions,
+    actions: rxHub1.actions as { [K in keyof T]: (payload?) => void } & RxFormActions,
   };
 };

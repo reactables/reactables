@@ -1,5 +1,5 @@
 import { Action } from '@reactables/core';
-import { BaseFormState } from '../../Models/Controls';
+import { BaseFormState, BaseControl } from '../../Models/Controls';
 import { AddControl } from '../../Models/Payloads';
 import { ControlRef } from '../../Models';
 import { FormArrayConfig } from '../../Models';
@@ -9,10 +9,12 @@ import {
   updateAncestorValuesAddControl,
   UPDATE_ANCESTOR_VALUES_ADD_CONTROL,
 } from './updateAncestorValuesAddControl';
+import { getControlBranch } from '../../Helpers/getControlBranch';
 
 export const pushControl = <T>(
   state: BaseFormState<T>,
   action: Action<AddControl>,
+  mergeChanges = false,
 ): BaseFormState<T> => {
   let newControlRef: ControlRef;
 
@@ -39,5 +41,17 @@ export const pushControl = <T>(
     payload: { controlRef: newControlRef, value: newValue },
   });
 
-  return { form: ancestorsUpdated, action };
+  const changedControls = getControlBranch(newControlRef, ancestorsUpdated).reduce(
+    (acc: { [key: string]: BaseControl<unknown> }, control) => ({ ...acc, [control.key]: control }),
+    {},
+  );
+
+  return {
+    form: ancestorsUpdated,
+    changedControls: {
+      ...(mergeChanges ? state.changedControls || {} : undefined),
+      ...changedControls,
+    },
+    removedControls: mergeChanges ? state.removedControls || {} : undefined,
+  };
 };
