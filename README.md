@@ -4,6 +4,9 @@
 
 Reactive state management with RxJS.
 
+## Mission
+Provide simple, scalable and framework-agnostic state management that improves the UI development expierence for all.
+
 ## Motivation
 
 ### Consistent management of Application (Global) State and Component (Local) State.
