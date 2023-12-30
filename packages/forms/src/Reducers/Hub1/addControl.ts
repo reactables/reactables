@@ -1,6 +1,6 @@
 import { Action } from '@reactables/core';
 import { BaseFormState, BaseControl } from '../../Models/Controls';
-import { AddControl } from '../../Models/Payloads';
+import { AddControlPayload } from '../../Models/Payloads';
 import { buildState } from '../../Helpers/buildFormState';
 import { getControl } from '../../Helpers/getControl';
 import {
@@ -11,7 +11,7 @@ import { getControlBranch } from '../../Helpers/getControlBranch';
 
 export const addControl = <T>(
   state: BaseFormState<T>,
-  action: Action<AddControl>,
+  action: Action<AddControlPayload>,
   mergeChanges = false,
 ): BaseFormState<T> => {
   const {

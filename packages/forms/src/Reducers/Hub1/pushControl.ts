@@ -1,6 +1,6 @@
 import { Action } from '@reactables/core';
 import { BaseFormState, BaseControl } from '../../Models/Controls';
-import { AddControl } from '../../Models/Payloads';
+import { AddControlPayload } from '../../Models/Payloads';
 import { ControlRef } from '../../Models';
 import { FormArrayConfig } from '../../Models';
 import { buildState } from '../../Helpers/buildFormState';
@@ -13,7 +13,7 @@ import { getControlBranch } from '../../Helpers/getControlBranch';
 
 export const pushControl = <T>(
   state: BaseFormState<T>,
-  action: Action<AddControl>,
+  action: Action<AddControlPayload>,
   mergeChanges = false,
 ): BaseFormState<T> => {
   let newControlRef: ControlRef;

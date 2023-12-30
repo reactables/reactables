@@ -2,17 +2,17 @@ import { ControlRef } from './ControlRef';
 import { AbstractControlConfig } from './Configs';
 import { FormErrors } from './FormErrors';
 
-export interface ControlChange<T> {
+export interface UpdateValuesPayload<T> {
   value: T;
   controlRef: ControlRef;
 }
 
-export interface AddControl {
+export interface AddControlPayload {
   config: AbstractControlConfig;
   controlRef: ControlRef;
 }
 
-export interface PushControl {
+export interface PushControlPayload {
   config: AbstractControlConfig;
   controlRef: ControlRef;
 }
@@ -23,7 +23,7 @@ export interface ControlAsyncValidationResponse {
   errors: FormErrors;
 }
 
-export interface MarkTouched {
+export interface MarkTouchedPayload {
   controlRef: ControlRef;
   markAll?: boolean;
 }

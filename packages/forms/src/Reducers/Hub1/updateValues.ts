@@ -1,7 +1,7 @@
 import { Action } from '@reactables/core';
 import { BaseFormState, BaseControl } from '../../Models/Controls';
 import { FormArrayConfig, FormGroupConfig } from '../../Models';
-import { ControlChange } from '../../Models/Payloads';
+import { UpdateValuesPayload } from '../../Models/Payloads';
 import { getFormKey } from '../../Helpers/getFormKey';
 import { updateAncestorValues, UPDATE_ANCESTOR_VALUES } from './updateAncestorValues';
 import { isChildRef } from '../../Helpers/isChildRef';
@@ -14,7 +14,7 @@ import { getAncestorControls } from '../../Helpers/getAncestorControls';
 const UPDATE_DESCENDANT_VALUES = 'UPDATE_DESCENDANT_VALUES';
 const updateDescendants = (
   state: BaseFormState<unknown>,
-  { payload: { controlRef, value } }: Action<ControlChange<unknown>>,
+  { payload: { controlRef, value } }: Action<UpdateValuesPayload<unknown>>,
 ): BaseFormState<unknown> => {
   const descendants = getDescendantControls(controlRef, state.form, true).map(
     (control) => [getFormKey(control.controlRef), control] as [string, BaseControl<unknown>],
@@ -66,10 +66,10 @@ const updateDescendants = (
 };
 
 // Will only update child controls that are present.
-// Use AddControl/RemoveControl action reducers to add/remove control
+// Use AddControlPayload/RemoveControl action reducers to add/remove control
 export const updateValues = <T>(
   { form, changedControls = {}, removedControls = {} }: BaseFormState<T>,
-  action: Action<ControlChange<unknown>>,
+  action: Action<UpdateValuesPayload<unknown>>,
   mergeChanges = false,
 ): BaseFormState<T> => {
   const {
