@@ -1,13 +1,13 @@
 import { Action } from '@reactables/core';
 import { BaseFormState } from '../../Models/Controls';
-import { MarkTouched } from '../../Models/Payloads';
+import { MarkTouchedPayload } from '../../Models/Payloads';
 import { getAncestorControls } from '../../Helpers/getAncestorControls';
 import { getControlBranch } from '../../Helpers/getControlBranch';
 import { getFormKey } from '../../Helpers/getFormKey';
 
 export const markControlAsTouched = <T>(
   state: BaseFormState<T>,
-  action: Action<MarkTouched>,
+  action: Action<MarkTouchedPayload>,
   mergeChanges = false,
 ): BaseFormState<T> => {
   const { form } = state;

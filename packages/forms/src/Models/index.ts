@@ -8,6 +8,11 @@ export {
 export { ControlRef } from './ControlRef';
 export * as ControlModels from './Controls';
 export { FormErrors } from './FormErrors';
-export { ControlChange, AddControl, ControlAsyncValidationResponse, MarkTouched } from './Payloads';
+export {
+  UpdateValuesPayload,
+  AddControlPayload,
+  ControlAsyncValidationResponse,
+  MarkTouchedPayload,
+} from './Payloads';
 
 export { ValidatorAsyncFn, ValidatorFn } from './Validators';

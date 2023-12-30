@@ -1,6 +1,6 @@
 import { Action } from '@reactables/core';
 import { BaseForm } from '../../Models/Controls';
-import { ControlChange } from '../../Models/Payloads';
+import { UpdateValuesPayload } from '../../Models/Payloads';
 import { getControl } from '../../Helpers/getControl';
 import { getFormKey } from '../../Helpers/getFormKey';
 import { updateAncestorValues, UPDATE_ANCESTOR_VALUES } from './updateAncestorValues';
@@ -10,7 +10,7 @@ import isEqual from 'lodash.isequal';
 export const UPDATE_ANCESTOR_VALUES_ADD_CONTROL = 'UPDATE_ANCESTOR_VALUES_ADD_CONTROL';
 export const updateAncestorValuesAddControl = <T>(
   form: BaseForm<T>,
-  { payload: { controlRef, value } }: Action<ControlChange<unknown>>,
+  { payload: { controlRef, value } }: Action<UpdateValuesPayload<unknown>>,
 ): BaseForm<T> => {
   if (controlRef.length) {
     const parentRef = controlRef.slice(0, -1);

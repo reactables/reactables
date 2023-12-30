@@ -1,7 +1,12 @@
 import { RxBuilder, Reactable, EffectsAndSources, Action, Reducer } from '@reactables/core';
 import { filter } from 'rxjs/operators';
 import { buildFormState } from '../Helpers/buildFormState';
-import { ControlChange, AddControl, MarkTouched, PushControl } from '../Models/Payloads';
+import {
+  UpdateValuesPayload,
+  AddControlPayload,
+  MarkTouchedPayload,
+  PushControlPayload,
+} from '../Models/Payloads';
 import { ControlRef } from '../Models';
 import {
   FormControlConfig,
@@ -50,12 +55,12 @@ export const group = (config: FormGroupConfig) => config;
 
 // Building Reactable
 export type RxFormActions = {
-  updateValues: <T>(payload: ControlChange<T>) => void;
-  addControl: (payload: AddControl) => void;
-  pushControl: (payload: PushControl) => void;
+  updateValues: <T>(payload: UpdateValuesPayload<T>) => void;
+  addControl: (payload: AddControlPayload) => void;
+  pushControl: (payload: PushControlPayload) => void;
   removeControl: (payload: ControlRef) => void;
   markControlAsPristine: (payload: ControlRef) => void;
-  markControlAsTouched: (payload: MarkTouched) => void;
+  markControlAsTouched: (payload: MarkTouchedPayload) => void;
   markControlAsUntouched: (payload: ControlRef) => void;
   resetControl: (payload: ControlRef) => void;
 };
@@ -64,18 +69,18 @@ export type RxFormActions = {
 export interface FormReducers {
   updateValues: <T>(
     state: BaseFormState<T>,
-    action: Action<ControlChange<unknown>>,
+    action: Action<UpdateValuesPayload<unknown>>,
   ) => BaseFormState<T>;
   removeControl: <T>(state: BaseFormState<T>, action: Action<ControlRef>) => BaseFormState<T>;
-  pushControl: <T>(state: BaseFormState<T>, action: Action<PushControl>) => BaseFormState<T>;
-  addControl: <T>(state: BaseFormState<T>, action: Action<AddControl>) => BaseFormState<T>;
+  pushControl: <T>(state: BaseFormState<T>, action: Action<PushControlPayload>) => BaseFormState<T>;
+  addControl: <T>(state: BaseFormState<T>, action: Action<AddControlPayload>) => BaseFormState<T>;
   markControlAsPristine: <T>(
     state: BaseFormState<T>,
     action: Action<ControlRef>,
   ) => BaseFormState<T>;
   markControlAsTouched: <T>(
     state: BaseFormState<T>,
-    action: Action<MarkTouched>,
+    action: Action<MarkTouchedPayload>,
   ) => BaseFormState<T>;
   markControlAsUntouched: <T>(
     state: BaseFormState<T>,
@@ -85,17 +90,17 @@ export interface FormReducers {
 }
 
 const reducerTools: FormReducers = {
-  updateValues: <T>(state: BaseFormState<T>, action: Action<ControlChange<unknown>>) =>
+  updateValues: <T>(state: BaseFormState<T>, action: Action<UpdateValuesPayload<unknown>>) =>
     updateValues(state, action, true),
   removeControl: <T>(state: BaseFormState<T>, action: Action<ControlRef>) =>
     removeControl(state, action, true),
-  pushControl: <T>(state: BaseFormState<T>, action: Action<PushControl>) =>
+  pushControl: <T>(state: BaseFormState<T>, action: Action<PushControlPayload>) =>
     pushControl(state, action, true),
-  addControl: <T>(state: BaseFormState<T>, action: Action<AddControl>) =>
+  addControl: <T>(state: BaseFormState<T>, action: Action<AddControlPayload>) =>
     addControl(state, action, true),
   markControlAsPristine: <T>(state: BaseFormState<T>, action: Action<ControlRef>) =>
     markControlAsPristine(state, action, true),
-  markControlAsTouched: <T>(state: BaseFormState<T>, action: Action<MarkTouched>) =>
+  markControlAsTouched: <T>(state: BaseFormState<T>, action: Action<MarkTouchedPayload>) =>
     markControlAsTouched(state, action, true),
   markControlAsUntouched: <T>(state: BaseFormState<T>, action: Action<ControlRef>) =>
     markControlAsUntouched(state, action, true),
