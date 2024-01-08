@@ -33,7 +33,7 @@ describe('RxForm', () => {
   describe('on initialization', () => {
     it('should build the control state for for type field', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const { state$ } = build(config.controls.firstName);
+        const [state$] = build(config.controls.firstName);
 
         subscription = cold('-').subscribe();
 
@@ -53,7 +53,7 @@ describe('RxForm', () => {
 
     it('should build the control state for type group with empty value', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const { state$ } = build(config.controls.doctorInfo);
+        const [state$] = build(config.controls.doctorInfo);
 
         subscription = cold('-').subscribe();
         const initialValue = {
@@ -122,7 +122,7 @@ describe('RxForm', () => {
             } as FormControlConfig<string>,
           },
         };
-        const { state$ } = build(testConfig);
+        const [state$] = build(testConfig);
 
         subscription = cold('-').subscribe();
 
@@ -163,7 +163,7 @@ describe('RxForm', () => {
 
     it('should build the control state for for type array with empty initial value', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const { state$ } = build(config.controls.emergencyContacts);
+        const [state$] = build(config.controls.emergencyContacts);
 
         subscription = cold('-').subscribe();
 
@@ -196,7 +196,7 @@ describe('RxForm', () => {
             emergencyContacts: nonEmptyConfig,
           },
         };
-        const { state$ } = build(mainConfig);
+        const [state$] = build(mainConfig);
 
         subscription = cold('-').subscribe();
 
@@ -298,10 +298,7 @@ describe('RxForm', () => {
           },
         });
 
-        const {
-          state$,
-          actions: { pushControl },
-        } = build(
+        const [state$, { pushControl }] = build(
           group({
             controls: {
               emergencyContacts: array({
@@ -379,10 +376,7 @@ describe('RxForm', () => {
           },
         });
 
-        const {
-          state$,
-          actions: { pushControl },
-        } = build({
+        const [state$, { pushControl }] = build({
           ...config,
           controls: {
             ...config.controls,
@@ -421,10 +415,7 @@ describe('RxForm', () => {
 
     it('should emit async validation for an added array control and all ancestors', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const {
-          state$,
-          actions: { pushControl },
-        } = build(asyncConfig);
+        const [state$, { pushControl }] = build(asyncConfig);
 
         subscription = cold('-b', {
           b: () =>
@@ -542,10 +533,7 @@ describe('RxForm', () => {
   describe('on addControl', () => {
     it('should add a control to a Form Group control and update ancestor values', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const {
-          state$,
-          actions: { addControl },
-        } = build(config);
+        const [state$, { addControl }] = build(config);
 
         subscription = cold('-b', { b: addControl }).subscribe((addControl) =>
           addControl({
@@ -582,10 +570,7 @@ describe('RxForm', () => {
 
     it('should emit async validation for an added group control and all ancestors', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const {
-          state$,
-          actions: { addControl },
-        } = build(asyncConfig);
+        const [state$, { addControl }] = build(asyncConfig);
 
         subscription = cold('-b', {
           b: () =>
@@ -656,10 +641,7 @@ describe('RxForm', () => {
   describe('on removeControl', () => {
     it('should remove a formGroup control', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const {
-          state$,
-          actions: { removeControl },
-        } = build({
+        const [state$, { removeControl }] = build({
           controls: {
             firstName: control({ initialValue: '' }),
             lastName: control({ initialValue: '' }),
@@ -718,10 +700,7 @@ describe('RxForm', () => {
 
     it('should remove a formGroup control and its descendants', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const {
-          state$,
-          actions: { removeControl },
-        } = build({
+        const [state$, { removeControl }] = build({
           controls: {
             firstName: control({ initialValue: '' }),
             lastName: control({ initialValue: '' }),
@@ -775,10 +754,7 @@ describe('RxForm', () => {
 
     it('should remove an array control item', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const {
-          state$,
-          actions: { removeControl },
-        } = build(
+        const [state$, { removeControl }] = build(
           group({
             controls: {
               emergencyContacts: array({
@@ -826,10 +802,7 @@ describe('RxForm', () => {
 
     it('should emit async validation when removing a control', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const {
-          state$,
-          actions: { removeControl },
-        } = build(
+        const [state$, { removeControl }] = build(
           group({
             ...asyncConfig,
             controls: {
@@ -881,10 +854,7 @@ describe('RxForm', () => {
   describe('on resetControl', () => {
     it('should reset a Form Control, and update ancestor values and dirty status', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const {
-          state$,
-          actions: { updateValues, resetControl },
-        } = build(config);
+        const [state$, { updateValues, resetControl }] = build(config);
 
         subscription = cold('-bc', {
           b: () => updateValues({ controlRef: ['firstName'], value: 'Changed first name' }),
@@ -912,10 +882,7 @@ describe('RxForm', () => {
           lastName: 'Ho',
           email: 'dr@ho.com',
         };
-        const {
-          state$,
-          actions: { updateValues, resetControl },
-        } = build(config);
+        const [state$, { updateValues, resetControl }] = build(config);
 
         subscription = cold('-bc', {
           b: () => updateValues({ controlRef: ['doctorInfo'], value: newValue }),
@@ -956,10 +923,7 @@ describe('RxForm', () => {
 
     it('should emit async validation when resetting a control', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const {
-          state$,
-          actions: { resetControl },
-        } = build(
+        const [state$, { resetControl }] = build(
           group({
             ...asyncConfig,
             controls: {
@@ -1043,10 +1007,7 @@ describe('RxForm', () => {
   describe('on updateValues', () => {
     it('should update value and dirty status for control and its descendants/ancestors for FormGroup control', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const {
-          state$,
-          actions: { updateValues },
-        } = build(config);
+        const [state$, { updateValues }] = build(config);
 
         const newValue = {
           firstName: 'Dr',
@@ -1085,10 +1046,7 @@ describe('RxForm', () => {
           controls: emergencyContactConfigs,
         } as FormArrayConfig;
 
-        const {
-          state$,
-          actions: { updateValues },
-        } = build({
+        const [state$, { updateValues }] = build({
           ...config,
           controls: {
             ...config.controls,
@@ -1124,10 +1082,7 @@ describe('RxForm', () => {
 
     it('should perform async validation on FC', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const {
-          state$,
-          actions: { updateValues },
-        } = build(control(['', null, uniqueEmail]));
+        const [state$, { updateValues }] = build(control(['', null, uniqueEmail]));
 
         subscription = cold('-b', {
           b: () =>
@@ -1166,10 +1121,7 @@ describe('RxForm', () => {
 
     it('should emit async validation actions for multiple form controls and all ancestors', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const {
-          state$,
-          actions: { updateValues },
-        } = build({
+        const [state$, { updateValues }] = build({
           ...asyncConfig,
           controls: {
             ...asyncConfig.controls,
@@ -1271,10 +1223,7 @@ describe('RxForm', () => {
 
     it('should mark a control as pristine for a FC -> FG', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const {
-          state$,
-          actions: { updateValues, markControlAsPristine },
-        } = build(config);
+        const [state$, { updateValues, markControlAsPristine }] = build(config);
 
         subscription = cold('-bc', {
           b: () => updateValues({ controlRef: ['doctorInfo'], value: newValue }),
@@ -1307,10 +1256,7 @@ describe('RxForm', () => {
 
     it('should mark a control as pristine for a FG -> FG', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const {
-          state$,
-          actions: { updateValues, markControlAsPristine },
-        } = build(config);
+        const [state$, { updateValues, markControlAsPristine }] = build(config);
         subscription = cold('-bc', {
           b: () => updateValues({ controlRef: ['doctorInfo'], value: newValue }),
           c: () => markControlAsPristine(['doctorInfo']),
@@ -1356,10 +1302,7 @@ describe('RxForm', () => {
   describe('on markControlAsTouched and markControlAsUntouched', () => {
     it('should mark control and all anscestors as touched', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const {
-          state$,
-          actions: { markControlAsTouched, markControlAsUntouched },
-        } = build(config);
+        const [state$, { markControlAsTouched, markControlAsUntouched }] = build(config);
         subscription = cold('-bc', {
           b: () =>
             markControlAsTouched({
@@ -1408,7 +1351,7 @@ describe('RxForm', () => {
 
     it('custom toggleSearchType reducer should toggle controls, and update values for a group control', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const { state$, actions } = build(
+        const [state$, actions] = build(
           group({
             controls: {
               searchTypeOne: control(['']),
@@ -1476,7 +1419,7 @@ describe('RxForm', () => {
 
     it('custom toggleSearchType should work on array items', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const { state$, actions } = build(
+        const [state$, actions] = build(
           group({
             controls: {
               searchItems: array({
@@ -1828,7 +1771,7 @@ describe('RxForm', () => {
 
     it('reindexReducer should reindex items and preserve updated values', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const { state$, actions } = build(
+        const [state$, actions] = build(
           group({
             controls: {
               searchItems: array({

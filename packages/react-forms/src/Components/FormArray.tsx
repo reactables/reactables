@@ -14,10 +14,7 @@ export interface FormArrayProps {
 }
 
 export const FormArray = ({ name = 'root', children }: FormArrayProps) => {
-  const {
-    state,
-    actions: { pushControl, removeControl },
-  } = useContext(FormContext);
+  const [state, { pushControl, removeControl }] = useContext(FormContext);
 
   const { controlRef } = state[name];
 

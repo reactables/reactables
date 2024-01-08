@@ -22,10 +22,7 @@ describe('RxTodoUpdates', () => {
       const mockApi = (payload: UpdateTodoPayload): Observable<UpdateTodoPayload> =>
         of(payload).pipe(delay(2));
 
-      const {
-        state$,
-        actions: { sendTodoStatusUpdate },
-      } = RxTodoUpdates(mockApi);
+      const [state$, { sendTodoStatusUpdate }] = RxTodoUpdates(mockApi);
 
       subscription = cold('--a---b', {
         a: () =>

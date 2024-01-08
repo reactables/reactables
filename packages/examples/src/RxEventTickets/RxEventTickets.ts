@@ -29,7 +29,7 @@ export const RxEventTickets = (
   getPriceApi: (payload: FetchPricePayload) => ObservableOrPromise<number>,
 ): Reactable<EventTicketsState, EventTicketsActions> => {
   // Create a reactable for the controls
-  const rxControls = RxBuilder({
+  const [rxControlsState$, rxControlsActions] = RxBuilder({
     initialState: {
       selectedEvent: EventTypes.ChiliCookOff,
       qty: 0,
@@ -47,9 +47,9 @@ export const RxEventTickets = (
   });
 
   // Create reactable for combining controls and price info.
-  const { state$ }: Reactable<EventTicketsState, unknown> = RxBuilder({
+  const [state$]: Reactable<EventTicketsState, unknown> = RxBuilder({
     // Add control changes as a source for second reactable
-    sources: { controlChange: rxControls.state$ },
+    sources: { controlChange: rxControlsState$ },
     initialState,
     reducers: {
       controlChange: {
@@ -78,8 +78,5 @@ export const RxEventTickets = (
     },
   });
 
-  return {
-    state$,
-    actions: rxControls.actions,
-  };
+  return [state$, rxControlsActions];
 };

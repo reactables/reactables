@@ -26,10 +26,7 @@ describe('RxEventTickets', () => {
     testScheduler.run(({ expectObservable, cold }) => {
       const mockApi = ({ qty }: FetchPricePayload): Observable<number> =>
         of(qty * 100).pipe(delay(4));
-      const {
-        state$,
-        actions: { setQty, selectEvent },
-      } = RxEventTickets(mockApi);
+      const [state$, { setQty, selectEvent }] = RxEventTickets(mockApi);
 
       subscription = cold('-------a---b', {
         a: () => setQty(1),
