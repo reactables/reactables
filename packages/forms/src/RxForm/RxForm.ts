@@ -140,7 +140,7 @@ export const build = <T extends CustomReducers>(
     {} as { [K in keyof T]: Reducer<BaseFormState<unknown>> },
   );
 
-  const rxHub1 = RxBuilder({
+  const [hub1State$, hub1Actions] = RxBuilder({
     initialState,
     reducers: {
       updateValues,
@@ -156,8 +156,8 @@ export const build = <T extends CustomReducers>(
     ...otherOptions,
   });
 
-  const rxHub2 = RxBuilder({
-    sources: [buildHub2Source(rxHub1)],
+  const [state$] = RxBuilder({
+    sources: [buildHub2Source(hub1State$)],
     initialState: null as Form<unknown>,
     reducers: {
       formChange,
@@ -172,8 +172,8 @@ export const build = <T extends CustomReducers>(
     },
   });
 
-  return {
-    state$: rxHub2.state$.pipe(filter((form) => form !== null)),
-    actions: rxHub1.actions as { [K in keyof T]: (payload?) => void } & RxFormActions,
-  };
+  return [
+    state$.pipe(filter((form) => form !== null)),
+    hub1Actions as { [K in keyof T]: (payload?) => void } & RxFormActions,
+  ];
 };

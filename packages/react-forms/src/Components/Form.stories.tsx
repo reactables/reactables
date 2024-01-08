@@ -24,12 +24,13 @@ const BasicControlExample = () => {
       initialValue: 'john',
     }),
   );
+  const [state] = rxForm;
 
   return (
     <Form rxForm={rxForm}>
       <Field component={Input} />
       <div>
-        First Name: <span>{rxForm.state?.root.value as string}</span>
+        First Name: <span>{state?.root.value as string}</span>
       </div>
     </Form>
   );
@@ -126,6 +127,8 @@ const FormArraysExample = () => {
     }),
   );
 
+  const [state] = rxForm;
+
   return (
     <Form rxForm={rxForm}>
       <div className="form-group">
@@ -135,7 +138,7 @@ const FormArraysExample = () => {
         <FormArray name="emergencyContacts">
           {({ items, pushControl, removeControl }) => (
             <>
-              {rxForm.state.emergencyContacts.errors.arrayLengthRequired && (
+              {state.emergencyContacts.errors.arrayLengthRequired && (
                 <p className="text-danger">At least one emergency contact required.</p>
               )}
               {items.map((control, index) => {
@@ -196,10 +199,7 @@ const ResetFormExample = () => {
     ),
   );
 
-  const {
-    state,
-    actions: { resetControl },
-  } = rxForm;
+  const [state, { resetControl }] = rxForm;
 
   return (
     <Form rxForm={rxForm}>

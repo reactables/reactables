@@ -6,7 +6,7 @@ import { Reactable } from '@reactables/core';
 // See Bug: https://github.com/facebook/react/issues/24670
 
 export const useReactable = <T, S>(reactable: Reactable<T, S>) => {
-  const { state$, actions } = useMemo(() => reactable, []);
+  const [state$, actions] = useMemo(() => reactable, []);
   const [state, setState] = useState<T>();
 
   useEffect(() => {
@@ -19,5 +19,5 @@ export const useReactable = <T, S>(reactable: Reactable<T, S>) => {
     return unsubscribe;
   }, [state$]);
 
-  return { state, actions };
+  return [state, actions];
 };

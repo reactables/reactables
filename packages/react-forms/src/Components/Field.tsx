@@ -34,10 +34,7 @@ export interface FieldProps {
 }
 
 export const Field = ({ component: Component, name = 'root', ...props }: FieldProps) => {
-  const {
-    state,
-    actions: { markControlAsTouched, updateValues },
-  } = useContext(FormContext);
+  const [state, { markControlAsTouched, updateValues }] = useContext(FormContext);
 
   const { controlRef, touched, value } = state[name];
 

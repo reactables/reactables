@@ -47,9 +47,9 @@ In this documentation the term *stream* will refer to an RxJS observable stream.
 ```javascript
 import { RxCounter } from '@reactables/examples';
 
-const counterReactable = RxCounter();
+const [state$, actions] = RxCounter();
 
-const { state$, actions: { increment, reset } } = counterReactable;
+const { increment, reset } = actions;
 
 state$.subscribe(({ count }) => {
   // Update the count when state changes.
@@ -86,10 +86,6 @@ Scoped Effects are dynamically created streams scoped to a particular action & k
 ### Flow & Containment <a name="flow-containment"></a>
 Actions and logic flow through the App in one direction and are **contained** in their respective streams. This makes state updates more predictable and traceable during debugging.
 
-Avoid [tapping](https://rxjs.dev/api/operators/tap) your streams. This prevents **logic leaking** from the stream(s).
-
-  - i.e do not [tap](https://rxjs.dev/api/operators/tap) stream A to trigger an action on stream B. Instead consider declaring stream A as a [source](#hub-sources) for stream B so the dependency is explicit.
-
 <img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/SlideSevenEightUnidirectionalFlow.jpg" />
 
 ## Examples <a name="examples"></a>
@@ -98,25 +94,25 @@ Avoid [tapping](https://rxjs.dev/api/operators/tap) your streams. This prevents 
 
 Basic counter example. Button clicks dispatch actions to increment or reset the counter.
 
-Basic Counter             |  Design Diagram           |  Reactable           | Try it out on StackBlitz.<br /> Choose your framework
-:-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:
-<img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/BasicCounterExamplePic.jpg" width="200" />  | <img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/Slide11BasicCounterExample.jpg" width="400" />  | [See Code for RxCounter](https://github.com/reactables/reactables/tree/main/packages/examples/src/RxCounter) |  <a href="https://stackblitz.com/edit/github-qtpo1k?file=src%2Findex.js"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/VanillaJS.jpg" width="50" /></a><br /><a href="https://stackblitz.com/edit/github-hfk1t1?file=src%2FCounter.tsx"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/React.png" width="60" /></a><br /><a href="https://stackblitz.com/edit/github-98unub?file=src%2Fapp%2Fcounter%2Fcounter.component.ts"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/Angular.png" width="60" /></a>
+Design Diagram           |  Reactable           | Try it out on StackBlitz.<br /> Choose your framework
+:-------------------------:|:-------------------------:|:-------------------------:
+<img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/Slide11BasicCounterExample.jpg" width="400" />  | [See Code for RxCounter](https://github.com/reactables/reactables/tree/main/packages/examples/src/RxCounter/RxCounter.ts) |  <a href="https://stackblitz.com/edit/github-qtpo1k?file=src%2Findex.js"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/VanillaJS.jpg" width="50" /></a><br /><a href="https://stackblitz.com/edit/github-hfk1t1?file=src%2FCounter.tsx"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/React.png" width="60" /></a><br /><a href="https://stackblitz.com/edit/github-98unub?file=src%2Fapp%2Fcounter%2Fcounter.component.ts"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/Angular.png" width="60" /></a>
 
 ### Scoped Effects - Updating Todos <a name="scoped-effects-example"></a>
 
 Updating statuses of todo items shows scoped effects in action. An 'update todo' stream is created for each todo during update. Pending async calls in their respective stream are cancelled if a new request comes in with RxJS [switchMap](https://www.learnrxjs.io/learn-rxjs/operators/transformation/switchmap) operator.
 
-Todo Status Updates             |  Design Diagram           | Reactable      | Try it out on StackBlitz.<br /> Choose your framework
-:-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:
-<img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/ScopedEffectsTodosPic.jpg" width="200" />  | <img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/Slide12ScopedEffectsExampleTodos.jpg" width="400" /> | [See Code for RxTodoUpdates](https://github.com/reactables/reactables/tree/main/packages/examples/src/RxTodoUpdates) |  <a href="https://stackblitz.com/edit/github-6pgtev?file=src%2Findex.js"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/VanillaJS.jpg" width="50" /></a><br /><a href="https://stackblitz.com/edit/github-1r6pki?file=src%2FTodoUpdates.tsx"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/React.png" width="60" /><br /><a href="https://stackblitz.com/edit/github-zfmupm?file=src%2Fapp%2Fapp.component.ts,src%2Fapp%2Ftodos%2Ftodos.component.ts"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/Angular.png" width="60" /></a>
+Design Diagram           | Reactable      | Try it out on StackBlitz.<br /> Choose your framework
+:-------------------------:|:-------------------------:|:-------------------------:
+<img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/Slide12ScopedEffectsExampleTodos.jpg" width="400" /> | [See Code for RxTodoUpdates](https://github.com/reactables/reactables/tree/main/packages/examples/src/RxTodoUpdates/RxTodoUpdates.ts) |  <a href="https://stackblitz.com/edit/github-6pgtev?file=src%2Findex.js"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/VanillaJS.jpg" width="50" /></a><br /><a href="https://stackblitz.com/edit/github-1r6pki?file=src%2FTodoUpdates.tsx"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/React.png" width="60" /><br /><a href="https://stackblitz.com/edit/github-zfmupm?file=src%2Fapp%2Fapp.component.ts,src%2Fapp%2Ftodos%2Ftodos.component.ts"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/Angular.png" width="60" /></a>
 
-### Connecting Multiple Reactables - Event Prices  <a name="connecting-hub-example"></a>
+### Connecting Multiple Reactables - Event Tickets  <a name="connecting-hub-example"></a>
 
 This examples shows two set reactables. The first is responsible for updating state of the user controls. The second fetches prices based on input from the first set.
 
-Event Prices             |  Design Diagram           | Reactable     | Try it out on StackBlitz.<br /> Choose your framework
-:-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:
-<img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/ConnectingHubsEventPricesPic.jpg" width="200" />  | <img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/Slide13ConnectingHubsExampleEventPrices.jpg" width="400" />|  [See Code for RxEventTickets](https://github.com/reactables/reactables/tree/main/packages/examples/src/RxEventTickets) | <a href="https://stackblitz.com/edit/github-pgpwly?file=src%2findex.js"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/VanillaJS.jpg" width="50" /></a><br /><a href="https://stackblitz.com/edit/github-eypqvc?file=src%2FEventTickets.tsx"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/React.png" width="60" /></a><br /><a href="https://stackblitz.com/edit/github-66mbtu?file=src%2Fapp%2Fevent-tickets%2Fevent-tickets.component.ts"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/Angular.png" width="60" /></a>
+Design Diagram           | Reactable     | Try it out on StackBlitz.<br /> Choose your framework
+:-------------------------:|:-------------------------:|:-------------------------:
+<img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/Slide13ConnectingHubsExampleEventPrices.jpg" width="400" />|  [See Code for RxEventTickets](https://github.com/reactables/reactables/tree/main/packages/examples/src/RxEventTickets/RxEventTickets.ts) | <a href="https://stackblitz.com/edit/github-pgpwly?file=src%2findex.js"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/VanillaJS.jpg" width="50" /></a><br /><a href="https://stackblitz.com/edit/github-eypqvc?file=src%2FEventTickets.tsx"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/React.png" width="60" /></a><br /><a href="https://stackblitz.com/edit/github-66mbtu?file=src%2Fapp%2Fevent-tickets%2Fevent-tickets.component.ts"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/Angular.png" width="60" /></a>
 
 
 ## API <a name="api"></a>
@@ -125,20 +121,15 @@ Event Prices             |  Design Diagram           | Reactable     | Try it ou
 
 Reactables provide the API for applications and UI components to receive and trigger state updates.
 
+It is a tuple with the first item being an Observable emitting state changes and the second item is a dictionary of action methods for triggering state updates. 
+
 ```typescript
-export interface Reactable<T, S = ActionMap> {
-  state$: Observable<T>;
-  actions?: S;
-}
+export type Reactable<T, S = ActionMap> = [Observable<T>, S];
 
 export interface ActionMap {
   [key: string | number]: (payload?: unknown) => void | ActionMap;
 }
 ```
-| Property | Description |
-| -------- | ----------- |
-| state$ | Observable that emit state changes |
-| actions | Dictionary of methods that dispatches actions to update state |
 
 ### RxBuilder <a name="rx-builder"></a>
 
@@ -262,10 +253,10 @@ describe('RxCounter', () => {
   it('should increment and reset', () => {
     testScheduler.run(({ expectObservable, cold }) => {
       // Create Counter Reactable
-      const {
+      const [
         state$,
-        actions: { increment, reset },
-      } = RxCounter();
+        { increment, reset },
+      ] = RxCounter();
 
       // Call actions
       subscription = cold('--b-c', {

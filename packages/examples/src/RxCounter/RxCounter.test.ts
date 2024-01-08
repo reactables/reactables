@@ -18,10 +18,7 @@ describe('RxCounter', () => {
   it('should increment and reset', () => {
     testScheduler.run(({ expectObservable, cold }) => {
       // Create Counter Reactable
-      const {
-        state$,
-        actions: { increment, reset },
-      } = RxCounter();
+      const [state$, { increment, reset }] = RxCounter();
 
       // Call actions
       subscription = cold('--b-c', {
