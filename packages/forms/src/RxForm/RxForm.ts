@@ -1,4 +1,12 @@
-import { RxBuilder, Reactable, EffectsAndSources, Action, Reducer } from '@reactables/core';
+import {
+  RxBuilder,
+  Reactable,
+  EffectsAndSources,
+  Action,
+  Reducer,
+  Effect,
+  ScopedEffects,
+} from '@reactables/core';
 import { filter } from 'rxjs/operators';
 import { buildFormState } from '../Helpers/buildFormState';
 import {
@@ -69,43 +77,37 @@ export type RxFormActions = {
 export interface FormReducers {
   updateValues: <T>(
     state: BaseFormState<T>,
-    action: Action<UpdateValuesPayload<unknown>>,
+    payload: UpdateValuesPayload<unknown>,
   ) => BaseFormState<T>;
-  removeControl: <T>(state: BaseFormState<T>, action: Action<ControlRef>) => BaseFormState<T>;
-  pushControl: <T>(state: BaseFormState<T>, action: Action<PushControlPayload>) => BaseFormState<T>;
-  addControl: <T>(state: BaseFormState<T>, action: Action<AddControlPayload>) => BaseFormState<T>;
-  markControlAsPristine: <T>(
-    state: BaseFormState<T>,
-    action: Action<ControlRef>,
-  ) => BaseFormState<T>;
+  removeControl: <T>(state: BaseFormState<T>, payload: ControlRef) => BaseFormState<T>;
+  pushControl: <T>(state: BaseFormState<T>, payload: PushControlPayload) => BaseFormState<T>;
+  addControl: <T>(state: BaseFormState<T>, payload: AddControlPayload) => BaseFormState<T>;
+  markControlAsPristine: <T>(state: BaseFormState<T>, payload: ControlRef) => BaseFormState<T>;
   markControlAsTouched: <T>(
     state: BaseFormState<T>,
-    action: Action<MarkTouchedPayload>,
+    payload: MarkTouchedPayload,
   ) => BaseFormState<T>;
-  markControlAsUntouched: <T>(
-    state: BaseFormState<T>,
-    action: Action<ControlRef>,
-  ) => BaseFormState<T>;
-  resetControl: <T>(state: BaseFormState<T>, action: Action<ControlRef>) => BaseFormState<T>;
+  markControlAsUntouched: <T>(state: BaseFormState<T>, payload: ControlRef) => BaseFormState<T>;
+  resetControl: <T>(state: BaseFormState<T>, payload: ControlRef) => BaseFormState<T>;
 }
 
 const reducerTools: FormReducers = {
-  updateValues: <T>(state: BaseFormState<T>, action: Action<UpdateValuesPayload<unknown>>) =>
-    updateValues(state, action, true),
-  removeControl: <T>(state: BaseFormState<T>, action: Action<ControlRef>) =>
-    removeControl(state, action, true),
-  pushControl: <T>(state: BaseFormState<T>, action: Action<PushControlPayload>) =>
-    pushControl(state, action, true),
-  addControl: <T>(state: BaseFormState<T>, action: Action<AddControlPayload>) =>
-    addControl(state, action, true),
-  markControlAsPristine: <T>(state: BaseFormState<T>, action: Action<ControlRef>) =>
-    markControlAsPristine(state, action, true),
-  markControlAsTouched: <T>(state: BaseFormState<T>, action: Action<MarkTouchedPayload>) =>
-    markControlAsTouched(state, action, true),
-  markControlAsUntouched: <T>(state: BaseFormState<T>, action: Action<ControlRef>) =>
-    markControlAsUntouched(state, action, true),
-  resetControl: <T>(state: BaseFormState<T>, action: Action<ControlRef>) =>
-    resetControl(state, action, true),
+  updateValues: <T>(state: BaseFormState<T>, payload: UpdateValuesPayload<unknown>) =>
+    updateValues(state, { payload }, true),
+  removeControl: <T>(state: BaseFormState<T>, payload: ControlRef) =>
+    removeControl(state, { payload }, true),
+  pushControl: <T>(state: BaseFormState<T>, payload: PushControlPayload) =>
+    pushControl(state, { payload }, true),
+  addControl: <T>(state: BaseFormState<T>, payload: AddControlPayload) =>
+    addControl(state, { payload }, true),
+  markControlAsPristine: <T>(state: BaseFormState<T>, payload: ControlRef) =>
+    markControlAsPristine(state, { payload }, true),
+  markControlAsTouched: <T>(state: BaseFormState<T>, payload: MarkTouchedPayload) =>
+    markControlAsTouched(state, { payload }, true),
+  markControlAsUntouched: <T>(state: BaseFormState<T>, payload: ControlRef) =>
+    markControlAsUntouched(state, { payload }, true),
+  resetControl: <T>(state: BaseFormState<T>, payload: ControlRef) =>
+    resetControl(state, { payload }, true),
 };
 
 type CustomReducer = (
@@ -115,7 +117,12 @@ type CustomReducer = (
 ) => BaseFormState<unknown>;
 
 export interface CustomReducers {
-  [key: string]: CustomReducer;
+  [key: string]:
+    | CustomReducer
+    | {
+        reducer: CustomReducer;
+        effects?: ((payload?: unknown) => ScopedEffects<unknown>) | Effect<unknown, unknown>[];
+      };
 }
 
 export interface RxFormOptions<T extends CustomReducers> extends EffectsAndSources {
@@ -130,15 +137,20 @@ export const build = <T extends CustomReducers>(
 
   const { reducers, ...otherOptions } = options;
 
-  const customReducers = Object.entries(reducers || ({} as T)).reduce(
-    (acc, [key, reducer]) => ({
+  const customReducers = Object.entries(reducers || ({} as T)).reduce((acc, [key, _case]) => {
+    const _reducer = typeof _case === 'function' ? _case : _case.reducer;
+    const effects = typeof _case === 'function' ? [] : _case.effects;
+
+    return {
       ...acc,
-      [key as keyof T]: ({ form }: BaseFormState<unknown>, action: Action<unknown>) => {
-        return reducer(reducerTools, { form }, action);
+      [key as keyof T]: {
+        reducer: ({ form }: BaseFormState<unknown>, action: Action<unknown>) => {
+          return _reducer(reducerTools, { form }, action);
+        },
+        effects,
       },
-    }),
-    {} as { [K in keyof T]: Reducer<BaseFormState<unknown>> },
-  );
+    };
+  }, {} as { [K in keyof T]: Reducer<BaseFormState<unknown>> });
 
   const [hub1State$, hub1Actions] = RxBuilder({
     initialState,
