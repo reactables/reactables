@@ -281,15 +281,15 @@ Built in reducers to be used to update state of form tree. Payload and behaviour
 ```typescript
 
 export interface FormReducers {
-  updateValues: <T>(state: BaseFormState<T>,action: Action<UpdateValuesPayload<unknown>>,
+  updateValues: <T>(state: BaseFormState<T>, payload: UpdateValuesPayload<unknown>,
   ) => BaseFormState<T>;
-  removeControl: <T>(state: BaseFormState<T>, action: Action<ControlRef>) => BaseFormState<T>;
-  pushControl: <T>(state: BaseFormState<T>, action: Action<PushControlPayload>) => BaseFormState<T>;
-  addControl: <T>(state: BaseFormState<T>, action: Action<AddControlPayload>) => BaseFormState<T>;
-  markControlAsPristine: <T>(state: BaseFormState<T>, action: Action<ControlRef>) => BaseFormState<T>;
-  markControlAsTouched: <T>(state: BaseFormState<T>, action: Action<MarkTouchedPayload>) => BaseFormState<T>;
-  markControlAsUntouched: <T>(state: BaseFormState<T>, action: Action<ControlRef>,
+  removeControl: <T>(state: BaseFormState<T>, payload: ControlRef) => BaseFormState<T>;
+  pushControl: <T>(state: BaseFormState<T>, payload: PushControlPayload) => BaseFormState<T>;
+  addControl: <T>(state: BaseFormState<T>, payload: AddControlPayload) => BaseFormState<T>;
+  markControlAsPristine: <T>(state: BaseFormState<T>, payload: ControlRef) => BaseFormState<T>;
+  markControlAsTouched: <T>(state: BaseFormState<T>, payload: MarkTouchedPayload) => BaseFormState<T>;
+  markControlAsUntouched: <T>(state: BaseFormState<T>, payload: ControlRef,
   ) => BaseFormState<T>;
-  resetControl: <T>(state: BaseFormState<T>, action: Action<ControlRef>) => BaseFormState<T>;
+  resetControl: <T>(state: BaseFormState<T>, payload: ControlRef) => BaseFormState<T>;
 }
 ```
