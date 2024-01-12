@@ -1,6 +1,6 @@
 import { Action } from '@reactables/core';
 import { BaseFormState, BaseControl } from '../../Models/Controls';
-import { FormArrayConfig, FormGroupConfig } from '../../Models';
+import { FormArrayConfig, FormControlConfig, FormGroupConfig } from '../../Models';
 import { UpdateValuesPayload } from '../../Models/Payloads';
 import { getFormKey } from '../../Helpers/getFormKey';
 import { updateAncestorValues, UPDATE_ANCESTOR_VALUES } from './updateAncestorValues';
@@ -78,13 +78,24 @@ export const updateValues = <T>(
   // Update its own value
   const ctrlKey = getFormKey(controlRef);
 
-  const validatorErrors: FormErrors = getErrors(form[ctrlKey], value);
+  let newValue = value;
+
+  const { config } = form[ctrlKey];
+
+  if ((config as FormControlConfig<unknown>).normalizers) {
+    newValue = (config as FormControlConfig<unknown>).normalizers.reduce(
+      (acc: unknown, normalizer) => normalizer(acc),
+      value,
+    );
+  }
+
+  const validatorErrors: FormErrors = getErrors(form[ctrlKey], newValue);
 
   const newControl = {
     ...form[ctrlKey],
     validatorErrors,
     dirty: !isEqual(value, form[ctrlKey].pristineValue),
-    value,
+    value: newValue,
   };
 
   let result: BaseFormState<T> = {
@@ -95,7 +106,7 @@ export const updateValues = <T>(
     changedControls: { [newControl.key]: newControl },
   };
 
-  const { controls: configControls } = form[ctrlKey].config as FormArrayConfig | FormGroupConfig;
+  const { controls: configControls } = config as FormArrayConfig | FormGroupConfig;
 
   // Update its children
   if (configControls) {
@@ -103,7 +114,7 @@ export const updateValues = <T>(
       type: UPDATE_DESCENDANT_VALUES,
       payload: {
         controlRef,
-        value,
+        value: newValue,
       },
     }) as BaseFormState<T>;
   }
@@ -114,7 +125,7 @@ export const updateValues = <T>(
       ...result,
       form: updateAncestorValues(result.form, {
         type: UPDATE_ANCESTOR_VALUES,
-        payload: { controlRef, value },
+        payload: { controlRef, value: newValue },
       }),
     };
   }

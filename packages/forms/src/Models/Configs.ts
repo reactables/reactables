@@ -15,6 +15,7 @@ export interface FormArrayConfig extends ValidatorConfigs {
 
 export interface FormControlConfig<T> extends ValidatorConfigs {
   initialValue: T;
+  normalizers?: ((value: T) => T)[];
 }
 
 export type AbstractControlConfig = (
