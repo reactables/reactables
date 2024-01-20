@@ -5,11 +5,13 @@ import { getControl } from '../../Helpers/getControl';
 import { getFormKey } from '../../Helpers/getFormKey';
 import { getErrors } from './getErrors';
 import isEqual from 'lodash.isequal';
+import { RxFormProviders } from '../../RxForm/RxForm';
 
 export const UPDATE_ANCESTOR_VALUES = 'UPDATE_ANCESTOR_VALUES';
 export const updateAncestorValues = <T>(
   form: BaseForm<T>,
   { payload: { controlRef, value } }: Action<UpdateValuesPayload<unknown>>,
+  providers: RxFormProviders,
 ): BaseForm<T> => {
   if (controlRef.length) {
     const parentRef = controlRef.slice(0, -1);
@@ -34,7 +36,7 @@ export const updateAncestorValues = <T>(
 
     const newParentControl = {
       ...parentControl,
-      validatorErrors: getErrors(parentControl, newValue),
+      validatorErrors: getErrors(parentControl, newValue, providers),
       value: newValue,
       dirty: !isEqual(newValue, parentControl.pristineValue),
     };
@@ -48,6 +50,7 @@ export const updateAncestorValues = <T>(
         type: UPDATE_ANCESTOR_VALUES,
         payload: { controlRef: parentRef, value: newValue },
       },
+      providers,
     );
   }
 

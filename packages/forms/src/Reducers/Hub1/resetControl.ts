@@ -7,10 +7,12 @@ import { getDescendantControls } from '../../Helpers/getDescendantControls';
 import { buildState } from '../../Helpers/buildFormState';
 import { getControlBranch } from '../../Helpers/getControlBranch';
 import { getFormKey } from '../../Helpers/getFormKey';
+import { RxFormProviders } from '../../RxForm/RxForm';
 
 export const resetControl = <T>(
   state: BaseFormState<T>,
   action: Action<ControlRef>,
+  providers: RxFormProviders,
   mergeChanges = false,
 ): BaseFormState<T> => {
   const { form } = state;
@@ -32,14 +34,19 @@ export const resetControl = <T>(
     controlToReset.config,
     descendantsRemoved,
     controlToReset.controlRef,
+    providers,
   );
 
   const restoredControlValue = getControl(controlRef, restoredControls).value;
 
-  const result = updateAncestorValues(restoredControls, {
-    type: UPDATE_ANCESTOR_VALUES,
-    payload: { controlRef, value: restoredControlValue },
-  });
+  const result = updateAncestorValues(
+    restoredControls,
+    {
+      type: UPDATE_ANCESTOR_VALUES,
+      payload: { controlRef, value: restoredControlValue },
+    },
+    providers,
+  );
 
   const changedControls = {
     ...(mergeChanges ? state.changedControls || {} : undefined),

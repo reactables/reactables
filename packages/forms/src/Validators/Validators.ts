@@ -18,8 +18,3 @@ export const required: ValidatorFn = (value: unknown) => {
 
 export const email: ValidatorFn = (value: string): FormErrors =>
   value && !/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(value) ? { email: true } : { email: false };
-
-export const phoneNumber: ValidatorFn = (value: string): FormErrors =>
-  value && !/^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/.test(value)
-    ? { phoneNumber: true }
-    : { phoneNumber: false };

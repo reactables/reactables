@@ -2,6 +2,8 @@ import { build } from '../RxForm';
 import { Subscription } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { config } from '../../Testing/config';
+import * as Validators from '../../Testing/Validators';
+import * as AsyncValidators from '../../Testing/AsyncValidators';
 
 describe('RxForm', () => {
   let testScheduler: TestScheduler;
@@ -20,7 +22,12 @@ describe('RxForm', () => {
   describe('on markControlAsTouched and markControlAsUntouched', () => {
     it('should mark control and all anscestors as touched', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const [state$, { markControlAsTouched, markControlAsUntouched }] = build(config);
+        const [state$, { markControlAsTouched, markControlAsUntouched }] = build(config, {
+          providers: {
+            validators: Validators,
+            asyncValidators: AsyncValidators,
+          },
+        });
         subscription = cold('-bc', {
           b: () =>
             markControlAsTouched({

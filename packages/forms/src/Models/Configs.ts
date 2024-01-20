@@ -1,8 +1,6 @@
-import { ValidatorFn, ValidatorAsyncFn } from './Validators';
-
 interface ValidatorConfigs {
-  validators?: ValidatorFn[];
-  asyncValidators?: ValidatorAsyncFn[];
+  validators?: string[];
+  asyncValidators?: string[];
 }
 
 export interface FormGroupConfig extends ValidatorConfigs {
@@ -15,7 +13,7 @@ export interface FormArrayConfig extends ValidatorConfigs {
 
 export interface FormControlConfig<T> extends ValidatorConfigs {
   initialValue: T;
-  normalizers?: ((value: T) => T)[];
+  normalizers?: string[];
 }
 
 export type AbstractControlConfig = (

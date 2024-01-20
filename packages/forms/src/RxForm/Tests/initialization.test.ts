@@ -3,8 +3,8 @@ import { Subscription } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { FormGroupConfig, FormControlConfig, FormArrayConfig } from '../../Models/Configs';
 import { DoctorInfo } from '../../Testing/Models/DoctorInfo';
-import { config, firstNameNotSameAsLast, emergencyContactConfigs } from '../../Testing/config';
-import { required, email } from '../../Validators/Validators';
+import { config, emergencyContactConfigs } from '../../Testing/config';
+import * as Validators from '../../Testing/Validators';
 
 describe('RxForm', () => {
   let testScheduler: TestScheduler;
@@ -43,7 +43,9 @@ describe('RxForm', () => {
 
     it('should build the control state for type group with empty value', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const [state$] = build(config.controls.doctorInfo);
+        const [state$] = build(config.controls.doctorInfo, {
+          providers: { validators: Validators },
+        });
 
         subscription = cold('-').subscribe();
         const initialValue = {
@@ -96,23 +98,23 @@ describe('RxForm', () => {
         };
 
         const testConfig: FormGroupConfig = {
-          validators: [firstNameNotSameAsLast],
+          validators: ['firstNameNotSameAsLast'],
           controls: {
             firstName: {
               initialValue: initialValue.firstName,
-              validators: [required],
+              validators: ['required'],
             } as FormControlConfig<string>,
             lastName: {
               initialValue: initialValue.lastName,
-              validators: [required],
+              validators: ['required'],
             } as FormControlConfig<string>,
             email: {
               initialValue: initialValue.email,
-              validators: [required, email],
+              validators: ['required', 'email'],
             } as FormControlConfig<string>,
           },
         };
-        const [state$] = build(testConfig);
+        const [state$] = build(testConfig, { providers: { validators: Validators } });
 
         subscription = cold('-').subscribe();
 
@@ -186,7 +188,7 @@ describe('RxForm', () => {
             emergencyContacts: nonEmptyConfig,
           },
         };
-        const [state$] = build(mainConfig);
+        const [state$] = build(mainConfig, { providers: { validators: Validators } });
 
         subscription = cold('-').subscribe();
 

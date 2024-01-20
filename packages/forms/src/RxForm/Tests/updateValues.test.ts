@@ -5,6 +5,8 @@ import { FormArrayConfig } from '../../Models/Configs';
 import { config, emergencyContactConfigs } from '../../Testing/config';
 import { uniqueEmail } from '../../Testing/AsyncValidators';
 import { asyncConfig, asyncEmergencyContactConfigs } from '../../Testing/asyncConfig';
+import * as Validators from '../../Testing/Validators';
+import * as AsyncValidators from '../../Testing/AsyncValidators';
 
 describe('RxForm', () => {
   let testScheduler: TestScheduler;
@@ -23,7 +25,9 @@ describe('RxForm', () => {
   describe('on updateValues', () => {
     it('should update value and dirty status for control and its descendants/ancestors for FormGroup control', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const [state$, { updateValues }] = build(config);
+        const [state$, { updateValues }] = build(config, {
+          providers: { validators: Validators, asyncValidators: AsyncValidators },
+        });
 
         const newValue = {
           firstName: 'Dr',
@@ -62,13 +66,18 @@ describe('RxForm', () => {
           controls: emergencyContactConfigs,
         } as FormArrayConfig;
 
-        const [state$, { updateValues }] = build({
-          ...config,
-          controls: {
-            ...config.controls,
-            emergencyContacts: nonEmptyConfig,
+        const [state$, { updateValues }] = build(
+          {
+            ...config,
+            controls: {
+              ...config.controls,
+              emergencyContacts: nonEmptyConfig,
+            },
           },
-        });
+          {
+            providers: { validators: Validators, asyncValidators: AsyncValidators },
+          },
+        );
 
         const value = 'Moe first name changed';
         subscription = cold('-b', {
@@ -98,7 +107,9 @@ describe('RxForm', () => {
 
     it('should perform async validation on FC', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const [state$, { updateValues }] = build(control(['', null, uniqueEmail]));
+        const [state$, { updateValues }] = build(control(['', null, 'uniqueEmail']), {
+          providers: { validators: Validators, asyncValidators: AsyncValidators },
+        });
 
         subscription = cold('-b', {
           b: () =>
@@ -137,16 +148,21 @@ describe('RxForm', () => {
 
     it('should emit async validation actions for multiple form controls and all ancestors', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const [state$, { updateValues }] = build({
-          ...asyncConfig,
-          controls: {
-            ...asyncConfig.controls,
-            emergencyContacts: {
-              ...asyncConfig.controls.emergencyContacts,
-              controls: asyncEmergencyContactConfigs,
+        const [state$, { updateValues }] = build(
+          {
+            ...asyncConfig,
+            controls: {
+              ...asyncConfig.controls,
+              emergencyContacts: {
+                ...asyncConfig.controls.emergencyContacts,
+                controls: asyncEmergencyContactConfigs,
+              },
             },
           },
-        });
+          {
+            providers: { validators: Validators, asyncValidators: AsyncValidators },
+          },
+        );
 
         subscription = cold('-b', {
           b: () =>
@@ -208,10 +224,17 @@ describe('RxForm', () => {
             controls: {
               numbersOnly: control({
                 initialValue: '',
-                normalizers: [(value: string) => value.replace(/\D/g, '')],
+                normalizers: ['numbersOnly'],
               }),
             },
           }),
+          {
+            providers: {
+              validators: Validators,
+              asyncValidators: AsyncValidators,
+              normalizers: { numbersOnly: (value: string) => value.replace(/\D/g, '') },
+            },
+          },
         );
 
         subscription = cold('-b', {

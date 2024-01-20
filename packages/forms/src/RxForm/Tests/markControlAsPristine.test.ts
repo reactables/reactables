@@ -3,6 +3,8 @@ import { Subscription } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { DoctorInfo } from '../../Testing/Models/DoctorInfo';
 import { config } from '../../Testing/config';
+import * as Validators from '../../Testing/Validators';
+import * as AsyncValidators from '../../Testing/AsyncValidators';
 
 describe('RxForm', () => {
   let testScheduler: TestScheduler;
@@ -27,7 +29,12 @@ describe('RxForm', () => {
 
     it('should mark a control as pristine for a FC -> FG', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const [state$, { updateValues, markControlAsPristine }] = build(config);
+        const [state$, { updateValues, markControlAsPristine }] = build(config, {
+          providers: {
+            validators: Validators,
+            asyncValidators: AsyncValidators,
+          },
+        });
 
         subscription = cold('-bc', {
           b: () => updateValues({ controlRef: ['doctorInfo'], value: newValue }),
@@ -60,7 +67,12 @@ describe('RxForm', () => {
 
     it('should mark a control as pristine for a FG -> FG', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const [state$, { updateValues, markControlAsPristine }] = build(config);
+        const [state$, { updateValues, markControlAsPristine }] = build(config, {
+          providers: {
+            validators: Validators,
+            asyncValidators: AsyncValidators,
+          },
+        });
         subscription = cold('-bc', {
           b: () => updateValues({ controlRef: ['doctorInfo'], value: newValue }),
           c: () => markControlAsPristine(['doctorInfo']),

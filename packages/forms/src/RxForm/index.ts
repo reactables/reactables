@@ -1,1 +1,11 @@
-export { build, group, array, control, RxFormActions, FormReducers } from './RxForm';
+export {
+  build,
+  load,
+  group,
+  array,
+  control,
+  RxFormActions,
+  FormReducers,
+  RxFormOptions,
+  RxFormProviders,
+} from './RxForm';

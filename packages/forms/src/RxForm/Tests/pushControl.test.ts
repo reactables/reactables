@@ -2,15 +2,12 @@ import { build, group, array, control } from '../RxForm';
 import { Subscription } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { FormControlConfig, FormArrayConfig } from '../../Models/Configs';
-import { config, firstNameNotSameAsLast, emergencyContactConfigs } from '../../Testing/config';
+import { config, emergencyContactConfigs } from '../../Testing/config';
 import { required, email } from '../../Validators/Validators';
 import { EmergencyContact } from '../../Testing/Models/EmergencyContact';
-import {
-  uniqueEmail,
-  uniqueFirstAndLastName,
-  blacklistedEmail,
-} from '../../Testing/AsyncValidators';
 import { asyncConfig } from '../../Testing/asyncConfig';
+import * as Validators from '../../Testing/Validators';
+import * as AsyncValidators from '../../Testing/AsyncValidators';
 
 describe('RxForm', () => {
   let testScheduler: TestScheduler;
@@ -37,23 +34,23 @@ describe('RxForm', () => {
         };
 
         const newControlConfig = group({
-          validators: [firstNameNotSameAsLast],
+          validators: ['firstNameNotSameAsLast'],
           controls: {
             firstName: {
               initialValue: newControlValue.firstName,
-              validators: [required],
+              validators: ['required'],
             } as FormControlConfig<string>,
             lastName: {
               initialValue: newControlValue.lastName,
-              validators: [required],
+              validators: ['required'],
             } as FormControlConfig<string>,
             email: {
               initialValue: newControlValue.email,
-              validators: [required, email],
+              validators: ['required', 'email'],
             } as FormControlConfig<string>,
             relation: {
               initialValue: newControlValue.relation,
-              validators: [required],
+              validators: ['required'],
             } as FormControlConfig<string>,
           },
         });
@@ -62,11 +59,12 @@ describe('RxForm', () => {
           group({
             controls: {
               emergencyContacts: array({
-                validators: [required],
+                validators: ['required'],
                 controls: [],
               }),
             },
           }),
+          { providers: { validators: Validators, asyncValidators: AsyncValidators } },
         );
 
         subscription = cold('-b', { b: pushControl }).subscribe((pushControl) =>
@@ -115,34 +113,37 @@ describe('RxForm', () => {
         };
 
         const newControlConfig = group({
-          validators: [firstNameNotSameAsLast],
+          validators: ['firstNameNotSameAsLast'],
           controls: {
             firstName: {
               initialValue: newControlValue.firstName,
-              validators: [required],
+              validators: ['required'],
             } as FormControlConfig<string>,
             lastName: {
               initialValue: newControlValue.lastName,
-              validators: [required],
+              validators: ['required'],
             } as FormControlConfig<string>,
             email: {
               initialValue: newControlValue.email,
-              validators: [required, email],
+              validators: ['required', 'email'],
             } as FormControlConfig<string>,
             relation: {
               initialValue: newControlValue.relation,
-              validators: [required],
+              validators: ['required'],
             } as FormControlConfig<string>,
           },
         });
 
-        const [state$, { pushControl }] = build({
-          ...config,
-          controls: {
-            ...config.controls,
-            emergencyContacts: nonEmptyConfig,
+        const [state$, { pushControl }] = build(
+          {
+            ...config,
+            controls: {
+              ...config.controls,
+              emergencyContacts: nonEmptyConfig,
+            },
           },
-        });
+          { providers: { validators: Validators, asyncValidators: AsyncValidators } },
+        );
 
         subscription = cold('-b', { b: pushControl }).subscribe((pushControl) =>
           pushControl({
@@ -175,24 +176,26 @@ describe('RxForm', () => {
 
     it('should emit async validation for an added array control and all ancestors', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const [state$, { pushControl }] = build(asyncConfig);
+        const [state$, { pushControl }] = build(asyncConfig, {
+          providers: { validators: Validators, asyncValidators: AsyncValidators },
+        });
 
         subscription = cold('-b', {
           b: () =>
             pushControl({
               controlRef: ['emergencyContacts'],
               config: group({
-                validators: [firstNameNotSameAsLast],
-                asyncValidators: [uniqueFirstAndLastName],
+                validators: ['firstNameNotSameAsLast'],
+                asyncValidators: ['uniqueFirstAndLastName'],
                 controls: {
-                  firstName: control(['Barney', required]),
-                  lastName: control(['Gumble', required]),
+                  firstName: control(['Barney', 'required']),
+                  lastName: control(['Gumble', 'required']),
                   email: control([
                     'barney@gumble.com',
-                    [required, email],
-                    [uniqueEmail, blacklistedEmail],
+                    ['required', 'email'],
+                    ['uniqueEmail', 'blacklistedEmail'],
                   ]),
-                  relation: control(['astronaut friend', required]),
+                  relation: control(['astronaut friend', 'required']),
                 },
               }),
             }),

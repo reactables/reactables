@@ -3,6 +3,8 @@ import { Subscription } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { config } from '../../Testing/config';
 import { asyncConfig, asyncEmergencyContactConfigs } from '../../Testing/asyncConfig';
+import * as Validators from '../../Testing/Validators';
+import * as AsyncValidators from '../../Testing/AsyncValidators';
 
 describe('RxForm', () => {
   let testScheduler: TestScheduler;
@@ -21,7 +23,9 @@ describe('RxForm', () => {
   describe('on resetControl', () => {
     it('should reset a Form Control, and update ancestor values and dirty status', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const [state$, { updateValues, resetControl }] = build(config);
+        const [state$, { updateValues, resetControl }] = build(config, {
+          providers: { validators: Validators, asyncValidators: AsyncValidators },
+        });
 
         subscription = cold('-bc', {
           b: () => updateValues({ controlRef: ['firstName'], value: 'Changed first name' }),
@@ -49,7 +53,9 @@ describe('RxForm', () => {
           lastName: 'Ho',
           email: 'dr@ho.com',
         };
-        const [state$, { updateValues, resetControl }] = build(config);
+        const [state$, { updateValues, resetControl }] = build(config, {
+          providers: { validators: Validators, asyncValidators: AsyncValidators },
+        });
 
         subscription = cold('-bc', {
           b: () => updateValues({ controlRef: ['doctorInfo'], value: newValue }),
@@ -101,6 +107,9 @@ describe('RxForm', () => {
               },
             },
           }),
+          {
+            providers: { validators: Validators, asyncValidators: AsyncValidators },
+          },
         );
 
         subscription = cold('-b', { b: resetControl }).subscribe((resetControl) =>

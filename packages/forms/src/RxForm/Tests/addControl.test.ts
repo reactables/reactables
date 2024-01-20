@@ -2,11 +2,11 @@ import { build, control } from '../RxForm';
 import { Subscription } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { config } from '../../Testing/config';
-import { required } from '../../Validators/Validators';
-import { blacklistedDoctorType } from '../../Testing/AsyncValidators';
 import { asyncConfig } from '../../Testing/asyncConfig';
+import * as Validators from '../../Testing/Validators';
+import * as AsyncValidators from '../../Testing/AsyncValidators';
 
-describe('RxForm', () => {
+fdescribe('RxForm', () => {
   let testScheduler: TestScheduler;
   let subscription: Subscription;
 
@@ -23,7 +23,9 @@ describe('RxForm', () => {
   describe('on addControl', () => {
     it('should add a control to a Form Group control and update ancestor values', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const [state$, { addControl }] = build(config);
+        const [state$, { addControl }] = build(config, {
+          providers: { validators: Validators, asyncValidators: AsyncValidators },
+        });
 
         subscription = cold('-b', { b: addControl }).subscribe((addControl) =>
           addControl({
@@ -60,7 +62,9 @@ describe('RxForm', () => {
 
     it('should emit async validation for an added group control and all ancestors', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const [state$, { addControl }] = build(asyncConfig);
+        const [state$, { addControl }] = build(asyncConfig, {
+          providers: { validators: Validators, asyncValidators: AsyncValidators },
+        });
 
         subscription = cold('-b', {
           b: () =>
@@ -68,8 +72,8 @@ describe('RxForm', () => {
               controlRef: ['doctorInfo', 'type'],
               config: {
                 initialValue: 'proctologist',
-                validators: [required],
-                asyncValidators: [blacklistedDoctorType],
+                validators: ['required'],
+                asyncValidators: ['blacklistedDoctorType'],
               },
             }),
         }).subscribe((action) => action());

@@ -2,6 +2,8 @@ import { build, group, array, control } from '../RxForm';
 import { Subscription } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { asyncConfig, asyncEmergencyContactConfigs } from '../../Testing/asyncConfig';
+import * as AsyncValidators from '../../Testing/AsyncValidators';
+import * as Validators from '../../Testing/Validators';
 
 describe('RxForm', () => {
   let testScheduler: TestScheduler;
@@ -192,6 +194,12 @@ describe('RxForm', () => {
               },
             },
           }),
+          {
+            providers: {
+              validators: Validators,
+              asyncValidators: AsyncValidators,
+            },
+          },
         );
 
         subscription = cold('-b', { b: removeControl }).subscribe((removeControl) =>
