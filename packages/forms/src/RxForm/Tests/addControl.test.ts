@@ -1,12 +1,13 @@
-import { build, control } from '../RxForm';
+import { build, control, group } from '../RxForm';
 import { Subscription } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { config } from '../../Testing/config';
 import { asyncConfig } from '../../Testing/asyncConfig';
 import * as Validators from '../../Testing/Validators';
 import * as AsyncValidators from '../../Testing/AsyncValidators';
+import { tap, map } from 'rxjs/operators';
 
-fdescribe('RxForm', () => {
+describe('RxForm', () => {
   let testScheduler: TestScheduler;
   let subscription: Subscription;
 
@@ -127,6 +128,39 @@ fdescribe('RxForm', () => {
               asyncValidatorErrors: { blacklistedDoctorType: true },
             },
           },
+        });
+      });
+    });
+
+    it('should add a form group and have keys in correct order', () => {
+      const rootConfig = group({ controls: {} });
+
+      testScheduler.run(({ expectObservable, cold }) => {
+        const [state$, { addControl }] = build(rootConfig, {
+          providers: { validators: Validators, asyncValidators: AsyncValidators },
+        });
+
+        subscription = cold('-b', { b: addControl }).subscribe((addControl) =>
+          addControl({
+            controlRef: ['doctorInfo'],
+            config: group({
+              controls: {
+                firstName: control(['']),
+                lastName: control(['']),
+                email: control(['']),
+              },
+            }),
+          }),
+        );
+        expectObservable(state$.pipe(map((state) => Object.keys(state)))).toBe('ab', {
+          a: ['root'],
+          b: [
+            'root',
+            'doctorInfo',
+            'doctorInfo.firstName',
+            'doctorInfo.lastName',
+            'doctorInfo.email',
+          ],
         });
       });
     });

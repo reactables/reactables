@@ -4,6 +4,7 @@ import { getControlBranch } from '../../Helpers/getControlBranch';
 import { ControlRef } from '../../Models/ControlRef';
 import { FormErrors } from '../../Models';
 import { DEFAULT_HUB2_FIELDS } from '../../Models/Controls';
+import { reverseObjectKeys } from '../../Helpers/reverseObjectKeys';
 
 const hasErrors = (errors: FormErrors) => {
   return Object.values(errors).some((hasError) => hasError);
@@ -63,6 +64,8 @@ export const mergeRemoveControl = <T>(
       };
     }, {}) as { [key: string]: FormControl<unknown> };
 
+  const updatedControlBranchOrderRestored = reverseObjectKeys(updatedControlBranch);
+
   const descendants = existingBranch.filter(
     (control) => control.controlRef.length > parentRef.length,
   );
@@ -77,6 +80,6 @@ export const mergeRemoveControl = <T>(
 
   return {
     ...removedControls,
-    ...updatedControlBranch,
+    ...updatedControlBranchOrderRestored,
   };
 };
