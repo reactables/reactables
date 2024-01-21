@@ -1,6 +1,7 @@
 import { Form } from '../../Models/Controls';
 import { FormErrors } from '../../Models';
 import { getFormKey } from '../../Helpers/getFormKey';
+import { reverseObjectKeys } from '../../Helpers/reverseObjectKeys';
 
 const hasErrors = (errors: FormErrors) => {
   return Object.values(errors).some((hasError) => hasError);
@@ -46,12 +47,7 @@ export const mergeErrors = <T>(form: Form<T>): Form<T> => {
       };
     }, {} as Form<T>);
 
-  const restoredOrder = Object.keys(errorsMerged)
-    .reverse()
-    .reduce((acc, key) => {
-      acc[key] = errorsMerged[key];
-      return acc;
-    }, {}) as Form<T>;
+  const restoredOrder = reverseObjectKeys(errorsMerged);
 
   return restoredOrder;
 };

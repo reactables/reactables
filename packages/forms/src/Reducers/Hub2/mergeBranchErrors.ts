@@ -3,6 +3,7 @@ import { FormErrors } from '../../Models';
 import { getFormKey } from '../../Helpers/getFormKey';
 import { ControlRef } from '../../Models';
 import { getControlBranch } from '../../Helpers/getControlBranch';
+import { reverseObjectKeys } from '../../Helpers/reverseObjectKeys';
 
 const hasErrors = (errors: FormErrors) => {
   return Object.values(errors).some((hasError) => hasError);
@@ -55,8 +56,10 @@ export const mergeBranchErrors = <T>(form: Form<T>, controlRef: ControlRef): For
       };
     }, {} as Form<T>);
 
+  const errorsMergedOrderRestored = reverseObjectKeys(errorsMerged);
+
   return {
     ...form,
-    ...errorsMerged,
+    ...errorsMergedOrderRestored,
   };
 };
