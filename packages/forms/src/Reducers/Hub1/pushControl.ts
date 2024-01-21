@@ -10,10 +10,12 @@ import {
   UPDATE_ANCESTOR_VALUES_ADD_CONTROL,
 } from './updateAncestorValuesAddControl';
 import { getControlBranch } from '../../Helpers/getControlBranch';
+import { RxFormProviders } from '../../RxForm/RxForm';
 
 export const pushControl = <T>(
   state: BaseFormState<T>,
   action: Action<AddControlPayload>,
+  providers: RxFormProviders,
   mergeChanges = false,
 ): BaseFormState<T> => {
   let newControlRef: ControlRef;
@@ -33,13 +35,17 @@ export const pushControl = <T>(
     throw 'You are attempting to push to a control that is not a Form Array';
   }
 
-  const newForm = buildState(config, state.form, newControlRef);
+  const newForm = buildState(config, state.form, newControlRef, providers);
   const newValue = getControl(newControlRef, newForm).value;
 
-  const ancestorsUpdated = updateAncestorValuesAddControl(newForm, {
-    type: UPDATE_ANCESTOR_VALUES_ADD_CONTROL,
-    payload: { controlRef: newControlRef, value: newValue },
-  });
+  const ancestorsUpdated = updateAncestorValuesAddControl(
+    newForm,
+    {
+      type: UPDATE_ANCESTOR_VALUES_ADD_CONTROL,
+      payload: { controlRef: newControlRef, value: newValue },
+    },
+    providers,
+  );
 
   const changedControls = getControlBranch(newControlRef, ancestorsUpdated).reduce(
     (acc: { [key: string]: BaseControl<unknown> }, control) => ({ ...acc, [control.key]: control }),

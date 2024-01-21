@@ -1,114 +1,96 @@
 import { FormControlConfig, FormArrayConfig, FormGroupConfig } from '../Models/Configs';
-import { required, email, phoneNumber } from '../Validators/Validators';
-import {
-  uniqueFirstAndLastName,
-  uniqueEmail,
-  blacklistedEmail,
-  arrayLengthError,
-} from './AsyncValidators';
-
-interface FullName {
-  firstName: string;
-  lastName: string;
-}
-
-export const firstNameNotSameAsLast = (value: FullName) => {
-  return {
-    firstNameNotSameAsLast: value.firstName === value.lastName,
-  };
-};
 
 export const asyncEmergencyContactConfigs: FormGroupConfig[] = [
   {
-    validators: [firstNameNotSameAsLast],
-    asyncValidators: [uniqueFirstAndLastName],
+    validators: ['firstNameNotSameAsLast'],
+    asyncValidators: ['uniqueFirstAndLastName'],
     controls: {
       firstName: {
         initialValue: 'Homer',
-        validators: [required],
+        validators: ['required'],
       } as FormControlConfig<string>,
       lastName: {
         initialValue: 'Simpson',
-        validators: [required],
+        validators: ['required'],
       } as FormControlConfig<string>,
       email: {
         initialValue: 'homer@homer.com',
-        validators: [required, email],
-        asyncValidators: [uniqueEmail, blacklistedEmail],
+        validators: ['required', 'email'],
+        asyncValidators: ['uniqueEmail', 'blacklistedEmail'],
       } as FormControlConfig<string>,
       relation: {
         initialValue: 'friend',
-        validators: [required],
+        validators: ['required'],
       } as FormControlConfig<string>,
     },
   },
   {
-    validators: [firstNameNotSameAsLast],
-    asyncValidators: [uniqueFirstAndLastName],
+    validators: ['firstNameNotSameAsLast'],
+    asyncValidators: ['uniqueFirstAndLastName'],
     controls: {
       firstName: {
         initialValue: 'moe',
-        validators: [required],
+        validators: ['required'],
       } as FormControlConfig<string>,
       lastName: {
         initialValue: 'syzlak',
-        validators: [required],
+        validators: ['required'],
       } as FormControlConfig<string>,
       email: {
         initialValue: 'moe@moe.com',
-        validators: [required, email],
-        asyncValidators: [uniqueEmail, blacklistedEmail],
+        validators: ['required', 'email'],
+        asyncValidators: ['uniqueEmail', 'blacklistedEmail'],
       } as FormControlConfig<string>,
       relation: {
         initialValue: 'friend',
-        validators: [required],
+        validators: ['required'],
       } as FormControlConfig<string>,
     },
   },
 ];
 
 export const asyncConfig: FormGroupConfig = {
-  validators: [firstNameNotSameAsLast],
-  asyncValidators: [uniqueFirstAndLastName],
+  validators: ['firstNameNotSameAsLast'],
+  asyncValidators: ['uniqueFirstAndLastName'],
   controls: {
     firstName: {
       initialValue: '',
-      validators: [required],
+      validators: ['required'],
     } as FormControlConfig<string>,
     lastName: {
       initialValue: '',
-      validators: [required],
+      validators: ['required'],
     } as FormControlConfig<string>,
     email: {
       initialValue: '',
-      validators: [required, email],
-      asyncValidators: [uniqueEmail],
+      validators: ['required', 'email'],
+      asyncValidators: ['uniqueEmail'],
     } as FormControlConfig<string>,
     phone: {
       initialValue: '',
-      validators: [required, phoneNumber],
+      validators: ['required', 'phoneNumber'],
     } as FormControlConfig<string>,
     emergencyContacts: {
-      validators: [required],
-      asyncValidators: [arrayLengthError],
+      validators: ['required'],
+      asyncValidators: ['arrayLengthError'],
       controls: [],
     } as FormArrayConfig,
     doctorInfo: {
-      validators: [firstNameNotSameAsLast],
-      asyncValidators: [uniqueFirstAndLastName],
+      validators: ['firstNameNotSameAsLast'],
+      asyncValidators: ['uniqueFirstAndLastName'],
       controls: {
         firstName: {
           initialValue: '',
-          validators: [required],
+          validators: ['required'],
         } as FormControlConfig<string>,
         lastName: {
           initialValue: '',
-          validators: [required],
+          validators: ['required'],
         } as FormControlConfig<string>,
         email: {
           initialValue: '',
-          validators: [required, email],
-          asyncValidators: [uniqueEmail, blacklistedEmail],
+          validators: ['required', 'email'],
+          asyncValidators: ['uniqueEmail', 'blacklistedEmail'],
         } as FormControlConfig<string>,
       },
     } as FormGroupConfig,

@@ -10,11 +10,13 @@ import isEqual from 'lodash.isequal';
 import { getErrors } from './getErrors';
 import { getDescendantControls } from '../../Helpers/getDescendantControls';
 import { getAncestorControls } from '../../Helpers/getAncestorControls';
+import { RxFormProviders } from '../../RxForm/RxForm';
 
 const UPDATE_DESCENDANT_VALUES = 'UPDATE_DESCENDANT_VALUES';
 const updateDescendants = (
   state: BaseFormState<unknown>,
   { payload: { controlRef, value } }: Action<UpdateValuesPayload<unknown>>,
+  providers: RxFormProviders,
 ): BaseFormState<unknown> => {
   const descendants = getDescendantControls(controlRef, state.form, true).map(
     (control) => [getFormKey(control.controlRef), control] as [string, BaseControl<unknown>],
@@ -24,7 +26,7 @@ const updateDescendants = (
     (acc: BaseFormState<unknown>, [key, control]) => {
       if (isChildRef(control.controlRef, controlRef)) {
         const childValue = value[control.controlRef.at(-1)] as unknown;
-        const validatorErrors: FormErrors = getErrors(control, value);
+        const validatorErrors: FormErrors = getErrors(control, value, providers);
 
         const newControl = {
           ...control,
@@ -47,10 +49,14 @@ const updateDescendants = (
         const { controls: configControls } = control.config as FormArrayConfig | FormGroupConfig;
 
         if (configControls) {
-          acc = updateDescendants(acc, {
-            type: UPDATE_DESCENDANT_VALUES,
-            payload: { controlRef: control.controlRef, value: childValue },
-          });
+          acc = updateDescendants(
+            acc,
+            {
+              type: UPDATE_DESCENDANT_VALUES,
+              payload: { controlRef: control.controlRef, value: childValue },
+            },
+            providers,
+          );
         }
       }
 
@@ -70,8 +76,10 @@ const updateDescendants = (
 export const updateValues = <T>(
   { form, changedControls = {}, removedControls = {} }: BaseFormState<T>,
   action: Action<UpdateValuesPayload<unknown>>,
+  providers: RxFormProviders,
   mergeChanges = false,
 ): BaseFormState<T> => {
+  const { normalizers } = providers;
   const {
     payload: { controlRef, value },
   } = action;
@@ -84,12 +92,17 @@ export const updateValues = <T>(
 
   if ((config as FormControlConfig<unknown>).normalizers) {
     newValue = (config as FormControlConfig<unknown>).normalizers.reduce(
-      (acc: unknown, normalizer) => normalizer(acc),
+      (acc: unknown, normalizer) => {
+        if (!normalizers[normalizer]) {
+          throw `You have not provided a normalizer for "${normalizer}"`;
+        }
+        return normalizers[normalizer](acc);
+      },
       value,
     );
   }
 
-  const validatorErrors: FormErrors = getErrors(form[ctrlKey], newValue);
+  const validatorErrors: FormErrors = getErrors(form[ctrlKey], newValue, providers);
 
   const newControl = {
     ...form[ctrlKey],
@@ -110,23 +123,31 @@ export const updateValues = <T>(
 
   // Update its children
   if (configControls) {
-    result = updateDescendants(result, {
-      type: UPDATE_DESCENDANT_VALUES,
-      payload: {
-        controlRef,
-        value: newValue,
+    result = updateDescendants(
+      result,
+      {
+        type: UPDATE_DESCENDANT_VALUES,
+        payload: {
+          controlRef,
+          value: newValue,
+        },
       },
-    }) as BaseFormState<T>;
+      providers,
+    ) as BaseFormState<T>;
   }
 
   // Update its Ancestors
   if (controlRef.length) {
     result = {
       ...result,
-      form: updateAncestorValues(result.form, {
-        type: UPDATE_ANCESTOR_VALUES,
-        payload: { controlRef, value: newValue },
-      }),
+      form: updateAncestorValues(
+        result.form,
+        {
+          type: UPDATE_ANCESTOR_VALUES,
+          payload: { controlRef, value: newValue },
+        },
+        providers,
+      ),
     };
   }
 

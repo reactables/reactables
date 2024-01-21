@@ -3,9 +3,11 @@ import { Action, Effect } from '@reactables/core';
 import { map } from 'rxjs/operators';
 import { BaseControl } from '../Models/Controls';
 import { ControlAsyncValidationResponse } from '../Models/Payloads';
+import { RxFormProviders } from '../RxForm/RxForm';
 
 export const getScopedEffectsForControl = <T>(
   formControl: BaseControl<T>,
+  providers: RxFormProviders,
 ): Effect<BaseControl<T>, ControlAsyncValidationResponse>[] => {
   const { config, key } = formControl;
   const { asyncValidators } = config;
@@ -16,15 +18,18 @@ export const getScopedEffectsForControl = <T>(
     scopedEffects = asyncValidators.reduce(
       (
         acc: Effect<BaseControl<T>, ControlAsyncValidationResponse>[],
-        validator,
+        asyncValidator,
         validatorIndex,
       ) => {
         const effect: Effect<BaseControl<T>, ControlAsyncValidationResponse> = (
           actions$: Observable<Action<BaseControl<T>>>,
         ) => {
+          if (!providers.asyncValidators[asyncValidator]) {
+            throw `You have not provided an asyncValidator for "${asyncValidator}"`;
+          }
           return actions$.pipe(
             map(({ payload: control }) => control),
-            validator,
+            providers.asyncValidators[asyncValidator],
             map((errors) => ({
               type: 'asyncValidationResponseSuccess',
               payload: {
@@ -46,9 +51,7 @@ export const getScopedEffectsForControl = <T>(
 
 export const getAsyncValidationActions = (formControls: BaseControl<unknown>[]) =>
   formControls.reduce((acc: Action<BaseControl<unknown>>[], control) => {
-    const effects = getScopedEffectsForControl(control);
-
-    if (!effects.length) return acc;
+    if (!control.config.asyncValidators?.length) return acc;
 
     const action = { type: 'asyncValidation', payload: control };
 

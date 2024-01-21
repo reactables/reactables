@@ -9,10 +9,12 @@ import {
 } from './updateAncestorValuesRemoveControl';
 import { getDescendantControls } from '../../Helpers/getDescendantControls';
 import { getAncestorControls } from '../../Helpers/getAncestorControls';
+import { RxFormProviders } from '../../RxForm/RxForm';
 
 export const removeControl = <T>(
   state: BaseFormState<T>,
   action: Action<ControlRef>,
+  providers: RxFormProviders,
   mergeChanges = false,
 ): BaseFormState<T> => {
   const { form } = state;
@@ -75,10 +77,14 @@ export const removeControl = <T>(
     {},
   );
 
-  const result = updateAncestorValuesRemoveControl(controlRemoved, {
-    type: UPDATE_ANCESTOR_VALUES_REMOVE_CONTROL,
-    payload: controlRef,
-  });
+  const result = updateAncestorValuesRemoveControl(
+    controlRemoved,
+    {
+      type: UPDATE_ANCESTOR_VALUES_REMOVE_CONTROL,
+      payload: controlRef,
+    },
+    providers,
+  );
 
   let changedControls = {
     ...(mergeChanges ? state.changedControls || {} : undefined),
