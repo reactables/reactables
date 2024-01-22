@@ -112,19 +112,21 @@ const reducerTools = (providers: RxFormProviders): FormReducers => ({
     markControlAsUntouched(state, { payload }, true),
 });
 
-export type CustomReducer = (
+export type CustomReducerFunc = (
   reducers: FormReducers,
   state: BaseFormState<unknown>,
   action: Action<unknown>,
 ) => BaseFormState<unknown>;
 
+export type CustomReducer =
+  | CustomReducerFunc
+  | {
+      reducer: CustomReducerFunc;
+      effects?: ((payload?: unknown) => ScopedEffects<unknown>) | Effect<unknown, unknown>[];
+    };
+
 export interface CustomReducers {
-  [key: string]:
-    | CustomReducer
-    | {
-        reducer: CustomReducer;
-        effects?: ((payload?: unknown) => ScopedEffects<unknown>) | Effect<unknown, unknown>[];
-      };
+  [key: string]: CustomReducer;
 }
 
 export interface RxFormOptions<T extends CustomReducers> extends EffectsAndSources {
