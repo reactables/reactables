@@ -5,6 +5,7 @@ export {
   array,
   control,
   RxFormActions,
+  CustomReducer,
   FormReducers,
   RxFormOptions,
   RxFormProviders,
