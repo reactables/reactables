@@ -112,7 +112,7 @@ const reducerTools = (providers: RxFormProviders): FormReducers => ({
     markControlAsUntouched(state, { payload }, true),
 });
 
-type CustomReducer = (
+export type CustomReducer = (
   reducers: FormReducers,
   state: BaseFormState<unknown>,
   action: Action<unknown>,
