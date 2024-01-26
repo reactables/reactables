@@ -1,3 +1,3 @@
 export { Form } from './Form';
-export { Field } from './Field';
+export { Field, WrappedFieldInputProps, WrappedFieldProps, FieldProps } from './Field';
 export { FormArray } from './FormArray';
