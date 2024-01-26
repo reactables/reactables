@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs';
 import { useEffect, useState, useMemo } from 'react';
 import { Reactable } from '@reactables/core';
 
@@ -5,7 +6,7 @@ import { Reactable } from '@reactables/core';
 // See Bug: https://github.com/facebook/react/issues/26315
 // See Bug: https://github.com/facebook/react/issues/24670
 
-export const useReactable = <T, S>(reactable: Reactable<T, S>): [T, S] => {
+export const useReactable = <T, S>(reactable: Reactable<T, S>): [T, S, Observable<T>] => {
   const [state$, actions] = useMemo(() => reactable, []);
   const [state, setState] = useState<T>();
 
@@ -19,5 +20,5 @@ export const useReactable = <T, S>(reactable: Reactable<T, S>): [T, S] => {
     return unsubscribe;
   }, [state$]);
 
-  return [state, actions];
+  return [state, actions, state$];
 };
