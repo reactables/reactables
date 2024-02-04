@@ -58,7 +58,7 @@ export const HubFactory = ({ effects, sources = [] }: HubConfig = {}): Hub => {
   const messages$ = merge(inputStream$, mergedScopedEffects, ...genericEffects).pipe(share());
 
   const store = <T>({ reducer, name, debug, initialState, storeValue = false }: StoreConfig<T>) => {
-    const debugName = `[Stream Name] ${name || 'undefined'}`;
+    const debugName = `[Rx Name] ${name || 'undefined'} - `;
 
     const seedState = initialState !== undefined ? initialState : reducer();
 

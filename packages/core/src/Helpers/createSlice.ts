@@ -26,14 +26,14 @@ export interface SliceConfig<T, S extends Cases<T>> {
 }
 
 export const createSlice = <T, S extends Cases<T>>(config: SliceConfig<T, S>) => {
-  const { name, initialState, reducers } = config;
+  const { initialState, reducers } = config;
 
   const reducer: Reducer<T> = Object.entries(reducers).reduce(
     (acc, [key, _case]): Reducer<T> => {
       const _reducer = typeof _case === 'function' ? _case : _case.reducer;
 
       const newFunc = (state: T, action: Action<unknown>) => {
-        if (action && action.type === `${name ? `${name}/` : ''}${key}`) {
+        if (action && action.type === key) {
           return _reducer(state, action);
         }
 
@@ -47,7 +47,7 @@ export const createSlice = <T, S extends Cases<T>>(config: SliceConfig<T, S>) =>
 
   const actions = Object.entries(reducers).reduce((acc, [key, _case]) => {
     acc[key as keyof S] = (payload: unknown) => ({
-      type: `${name ? `${name}/` : ''}${key}`,
+      type: key,
       payload,
     });
 
