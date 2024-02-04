@@ -6,8 +6,11 @@ import { Reactable } from '@reactables/core';
 // See Bug: https://github.com/facebook/react/issues/26315
 // See Bug: https://github.com/facebook/react/issues/24670
 
-export const useReactable = <T, S>(reactable: Reactable<T, S>): [T, S, Observable<T>] => {
-  const [state$, actions] = useMemo(() => reactable, []);
+export const useReactable = <T, S, U extends unknown[]>(
+  reactableFactory: (...props: U) => Reactable<T, S>,
+  ...props: U
+): [T, S, Observable<T>] => {
+  const [state$, actions] = useMemo(() => reactableFactory(...props), []);
   const [state, setState] = useState<T>();
 
   useEffect(() => {

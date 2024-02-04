@@ -73,13 +73,7 @@ export const HubFactory = ({ effects, sources = [] }: HubConfig = {}): Hub => {
         if (debug) {
           const hasDiff = prevState !== newState;
           if (hasDiff) {
-            console.log(
-              debugName,
-              '[State changed] Prev State:',
-              prevState,
-              'New State:',
-              newState,
-            );
+            console.log(debugName, '[State changed] State:', newState);
           } else {
             console.log(debugName, '[State unchanged] State:', newState);
           }
