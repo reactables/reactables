@@ -36,6 +36,10 @@ export interface FieldProps {
 export const Field = ({ component: Component, name = 'root', ...props }: FieldProps) => {
   const [state, { markControlAsTouched, updateValues }] = useContext(FormContext);
 
+  if (!state[name]) {
+    throw `Control '${name}' can not be found`;
+  }
+
   const { controlRef, touched, value } = state[name];
 
   const inputProps = {
