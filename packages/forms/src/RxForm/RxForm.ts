@@ -132,6 +132,7 @@ export interface CustomReducers {
 export interface RxFormOptions<T extends CustomReducers> extends EffectsAndSources {
   reducers?: T;
   providers?: RxFormProviders;
+  name?: string;
 }
 
 type NormalizerFunction<T> = (value: T) => T;
