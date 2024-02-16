@@ -28,7 +28,7 @@ export interface WrappedFieldProps {
 }
 
 export interface FieldProps {
-  component: React.JSXElementConstructor<WrappedFieldProps>;
+  component: React.JSXElementConstructor<any>;
   name?: string;
   [key: string]: unknown;
 }
