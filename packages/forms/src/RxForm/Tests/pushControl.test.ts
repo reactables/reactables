@@ -59,7 +59,7 @@ describe('RxForm', () => {
           group({
             controls: {
               emergencyContacts: array({
-                validators: ['required'],
+                validators: ['arrayNotEmpty'],
                 controls: [],
               }),
             },

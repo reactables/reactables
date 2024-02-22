@@ -253,7 +253,7 @@ describe('RxForm', () => {
       });
     });
 
-    fit('should validate descendant control validators when the group value is set', () => {
+    it('should validate descendant control validators when the group value is set', () => {
       testScheduler.run(({ expectObservable, cold }) => {
         const [state$, { updateValues }] = build(
           group({

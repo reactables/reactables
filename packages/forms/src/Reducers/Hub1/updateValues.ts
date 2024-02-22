@@ -26,7 +26,7 @@ const updateDescendants = (
     (acc: BaseFormState<unknown>, [key, control]) => {
       if (isChildRef(control.controlRef, controlRef)) {
         const childValue = value[control.controlRef.at(-1)] as unknown;
-        const validatorErrors: FormErrors = getErrors(control, value, providers);
+        const validatorErrors: FormErrors = getErrors(control, childValue, providers);
 
         const newControl = {
           ...control,
