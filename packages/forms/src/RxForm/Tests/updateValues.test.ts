@@ -3,7 +3,6 @@ import { Subscription } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { FormArrayConfig } from '../../Models/Configs';
 import { config, emergencyContactConfigs } from '../../Testing/config';
-import { uniqueEmail } from '../../Testing/AsyncValidators';
 import { asyncConfig, asyncEmergencyContactConfigs } from '../../Testing/asyncConfig';
 import * as Validators from '../../Testing/Validators';
 import * as AsyncValidators from '../../Testing/AsyncValidators';
@@ -250,6 +249,51 @@ describe('RxForm', () => {
         expectObservable(state$).toBe('ab', {
           a: { root: { value: { numbersOnly: '' } }, numbersOnly: { value: '' } },
           b: { root: { value: { numbersOnly: '12345' } }, numbersOnly: { value: '12345' } },
+        });
+      });
+    });
+
+    it('should validate descendant control validators when the group value is set', () => {
+      testScheduler.run(({ expectObservable, cold }) => {
+        const [state$, { updateValues }] = build(
+          group({
+            controls: {
+              person: group({
+                controls: {
+                  firstName: control(['Homer', 'required']),
+                  lastName: control(['Simpson', 'required']),
+                },
+              }),
+            },
+          }),
+        );
+
+        subscription = cold('-b', {
+          b: () =>
+            updateValues({
+              controlRef: ['person'],
+              value: {
+                firstName: '',
+                lastName: '',
+              },
+            }),
+        }).subscribe((action) => {
+          action();
+        });
+
+        expectObservable(state$).toBe('ab', {
+          a: {
+            root: { value: { person: { firstName: 'Homer', lastName: 'Simpson' } }, valid: true },
+            person: { value: { firstName: 'Homer', lastName: 'Simpson' }, valid: true },
+            ['person.firstName']: { value: 'Homer', valid: true, errors: { required: false } },
+            ['person.lastName']: { value: 'Simpson', valid: true, errors: { required: false } },
+          },
+          b: {
+            root: { value: { person: { firstName: '', lastName: '' } }, valid: false },
+            person: { value: { firstName: '', lastName: '' }, valid: false },
+            ['person.firstName']: { value: '', valid: false, errors: { required: true } },
+            ['person.lastName']: { value: '', valid: false, errors: { required: true } },
+          },
         });
       });
     });

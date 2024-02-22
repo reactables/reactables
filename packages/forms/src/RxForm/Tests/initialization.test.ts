@@ -167,7 +167,7 @@ describe('RxForm', () => {
               pristineValue: [],
               config: config.controls.emergencyContacts,
               touched: false,
-              validatorErrors: { required: true },
+              validatorErrors: { arrayNotEmpty: true },
             },
           },
         });

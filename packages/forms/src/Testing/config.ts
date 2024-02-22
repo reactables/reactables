@@ -71,7 +71,7 @@ export const config: FormGroupConfig = {
       validators: ['required', 'phoneNumber'],
     } as FormControlConfig<string>,
     emergencyContacts: {
-      validators: ['required'],
+      validators: ['arrayNotEmpty'],
       // asyncValidators: [arrayLengthError],
       controls: [],
     } as FormArrayConfig,
