@@ -25,7 +25,7 @@ export const FormArray = ({ name = 'root', children }: FormArrayProps) => {
     pushControl: (config: AbstractControlConfig) => {
       pushControl({ controlRef, config });
     },
-    removeControl,
+    removeControl: (index) => removeControl(controlRef.concat(index)),
   };
 
   return <div>{children && children(formArrayChildrenProps)}</div>;
