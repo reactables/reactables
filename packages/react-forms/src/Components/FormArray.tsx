@@ -5,7 +5,7 @@ import { FormContext } from './Form';
 export interface FormArrayChildrenProps {
   items: ControlModels.FormControl<unknown>[];
   pushControl: (config: AbstractControlConfig) => void;
-  removeControl: (controlRef: ControlRef) => void;
+  removeControl: (index: number) => void;
 }
 
 export interface FormArrayProps {
