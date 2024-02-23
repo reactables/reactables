@@ -298,6 +298,53 @@ describe('RxForm', () => {
       });
     });
 
+    fit('should update group value and nested descendants', () => {
+      testScheduler.run(({ expectObservable, cold }) => {
+        const [state$, { updateValues }] = build(
+          group({
+            controls: {
+              person: group({
+                controls: {
+                  name: control(['']),
+                  address: group({
+                    controls: {
+                      address: control(['']),
+                      city: control(['']),
+                      state: control(['']),
+                      zip: control(['']),
+                    },
+                  }),
+                },
+              }),
+            },
+          }),
+        );
+
+        subscription = cold('-b', {
+          b: () =>
+            updateValues({
+              controlRef: ['person'],
+              value: {
+                name: 'some guy',
+                address: {
+                  address: '123 any street',
+                  city: 'some city',
+                  state: 'some state',
+                  zip: '12345',
+                },
+              },
+            }),
+        }).subscribe((action) => {
+          action();
+        });
+
+        expectObservable(state$).toBe('ab', {
+          a: {},
+          b: {},
+        });
+      });
+    });
+
     // TODO: More cases to handle
     // it('should throw an error if trying to update a FG key that does not exist', () => {
     //   const initialState: BaseForm<Contact> = buildFormState(config);
