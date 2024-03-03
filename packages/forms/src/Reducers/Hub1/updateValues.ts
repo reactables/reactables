@@ -35,7 +35,6 @@ const updateDescendantValues = <T>(
       };
 
       acc = {
-        ...form,
         ...acc,
         [key]: newControl,
       };
@@ -55,7 +54,7 @@ const updateDescendantValues = <T>(
     }
 
     return acc;
-  }, {});
+  }, form);
 
   return result;
 };
