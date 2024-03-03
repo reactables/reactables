@@ -345,6 +345,20 @@ describe('RxForm', () => {
         expectObservable(state$).toBe('ab', {
           a: {},
           b: {
+            root: {
+              value: {
+                person: {
+                  name: 'some guy',
+                  address: {
+                    address: '123 any street',
+                    city: 'some city',
+                    state: 'some state',
+                    zip: '12345',
+                    addressContacts: [{ name: 'Dave' }],
+                  },
+                },
+              },
+            },
             person: {
               value: {
                 name: 'some guy',
@@ -359,6 +373,10 @@ describe('RxForm', () => {
             },
             'person.name': { value: 'some guy' },
             'person.address.address': { value: '123 any street' },
+            'person.address.city': { value: 'some city' },
+            'person.address.state': { value: 'some state' },
+            'person.address.zip': { value: '12345' },
+            'person.address.addressContacts.0.name': { value: 'Dave' },
           },
         });
       });
