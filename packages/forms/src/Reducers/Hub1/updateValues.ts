@@ -109,7 +109,7 @@ export const updateValues = <T>(
 
   const { controls: configControls } = config as FormArrayConfig | FormGroupConfig;
 
-  // Update its children
+  // Update its descendants
   if (configControls) {
     const updatedDescendants = updateDescendantValues(
       result.form,
