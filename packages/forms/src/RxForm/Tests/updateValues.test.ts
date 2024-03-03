@@ -313,7 +313,16 @@ describe('RxForm', () => {
                       state: control(['']),
                       zip: control(['']),
                       addressContacts: array({
-                        controls: [group({ controls: { name: control(['']) } })],
+                        controls: [
+                          group({
+                            controls: {
+                              email: control({
+                                initialValue: '',
+                                asyncValidators: ['uniqueEmail'],
+                              }),
+                            },
+                          }),
+                        ],
                       }),
                     },
                   }),
@@ -321,6 +330,9 @@ describe('RxForm', () => {
               }),
             },
           }),
+          {
+            providers: { asyncValidators: AsyncValidators },
+          },
         );
 
         subscription = cold('-b', {
@@ -334,7 +346,7 @@ describe('RxForm', () => {
                   city: 'some city',
                   state: 'some state',
                   zip: '12345',
-                  addressContacts: [{ name: 'Dave' }],
+                  addressContacts: [{ email: 'homer@homer.com' }],
                 },
               },
             }),
@@ -342,7 +354,7 @@ describe('RxForm', () => {
           action();
         });
 
-        expectObservable(state$).toBe('ab', {
+        expectObservable(state$).toBe('a(bc) 246ms d', {
           a: {},
           b: {
             root: {
@@ -354,7 +366,7 @@ describe('RxForm', () => {
                     city: 'some city',
                     state: 'some state',
                     zip: '12345',
-                    addressContacts: [{ name: 'Dave' }],
+                    addressContacts: [{ email: 'homer@homer.com' }],
                   },
                 },
               },
@@ -367,7 +379,7 @@ describe('RxForm', () => {
                   city: 'some city',
                   state: 'some state',
                   zip: '12345',
-                  addressContacts: [{ name: 'Dave' }],
+                  addressContacts: [{ email: 'homer@homer.com' }],
                 },
               },
             },
@@ -376,7 +388,23 @@ describe('RxForm', () => {
             'person.address.city': { value: 'some city' },
             'person.address.state': { value: 'some state' },
             'person.address.zip': { value: '12345' },
-            'person.address.addressContacts.0.name': { value: 'Dave' },
+            'person.address.addressContacts.0.email': { value: 'homer@homer.com' },
+          },
+          c: {
+            root: { pending: true },
+            'person.address.addressContacts.0.email': {
+              value: 'homer@homer.com',
+              pending: true,
+              asyncValidateInProgress: { 0: true },
+            },
+          },
+          d: {
+            root: { pending: false },
+            'person.address.addressContacts.0.email': {
+              value: 'homer@homer.com',
+              pending: false,
+              asyncValidateInProgress: { 0: false },
+            },
           },
         });
       });
