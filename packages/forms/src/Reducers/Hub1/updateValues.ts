@@ -1,5 +1,5 @@
 import { Action } from '@reactables/core';
-import { BaseFormState, BaseControl } from '../../Models/Controls';
+import { BaseFormState, BaseControl, BaseForm } from '../../Models/Controls';
 import { FormArrayConfig, FormControlConfig, FormGroupConfig } from '../../Models';
 import { UpdateValuesPayload } from '../../Models/Payloads';
 import { getFormKey } from '../../Helpers/getFormKey';
@@ -13,62 +13,50 @@ import { getAncestorControls } from '../../Helpers/getAncestorControls';
 import { RxFormProviders } from '../../RxForm/RxForm';
 
 const UPDATE_DESCENDANT_VALUES = 'UPDATE_DESCENDANT_VALUES';
-const updateDescendants = (
-  state: BaseFormState<unknown>,
+const updateDescendantValues = <T>(
+  form: BaseForm<T>,
   { payload: { controlRef, value } }: Action<UpdateValuesPayload<unknown>>,
   providers: RxFormProviders,
-): BaseFormState<unknown> => {
-  const descendants = getDescendantControls(controlRef, state.form, true).map(
+): BaseForm<T> => {
+  const descendants = getDescendantControls(controlRef, form, true).map(
     (control) => [getFormKey(control.controlRef), control] as [string, BaseControl<unknown>],
   );
 
-  const result = descendants.reduce(
-    (acc: BaseFormState<unknown>, [key, control]) => {
-      if (isChildRef(control.controlRef, controlRef)) {
-        const childValue = value[control.controlRef.at(-1)] as unknown;
-        const validatorErrors: FormErrors = getErrors(control, childValue, providers);
+  const result = descendants.reduce((acc: BaseForm<T>, [key, control]) => {
+    if (isChildRef(control.controlRef, controlRef)) {
+      const childValue = value[control.controlRef.at(-1)] as unknown;
+      const validatorErrors: FormErrors = getErrors(control, childValue, providers);
 
-        const newControl = {
-          ...control,
-          value: childValue,
-          validatorErrors,
-          dirty: !isEqual(childValue, control.pristineValue),
-        };
+      const newControl = {
+        ...control,
+        value: childValue,
+        validatorErrors,
+        dirty: !isEqual(childValue, control.pristineValue),
+      };
 
-        acc = {
-          form: {
-            ...acc.form,
-            [key]: newControl,
+      acc = {
+        ...acc,
+        [key]: newControl,
+      };
+
+      const { controls: configControls } = control.config as FormArrayConfig | FormGroupConfig;
+
+      if (configControls) {
+        acc = updateDescendantValues(
+          acc,
+          {
+            type: UPDATE_DESCENDANT_VALUES,
+            payload: { controlRef: control.controlRef, value: childValue },
           },
-          changedControls: {
-            ...acc.changedControls,
-            [newControl.key]: newControl,
-          },
-        };
-
-        const { controls: configControls } = control.config as FormArrayConfig | FormGroupConfig;
-
-        if (configControls) {
-          acc = updateDescendants(
-            acc,
-            {
-              type: UPDATE_DESCENDANT_VALUES,
-              payload: { controlRef: control.controlRef, value: childValue },
-            },
-            providers,
-          );
-        }
+          providers,
+        );
       }
+    }
 
-      return acc;
-    },
-    { form: {}, changedControls: {} },
-  );
+    return acc;
+  }, form);
 
-  return {
-    form: { ...state.form, ...result.form },
-    changedControls: { ...result.changedControls },
-  };
+  return result;
 };
 
 // Will only update child controls that are present.
@@ -121,10 +109,10 @@ export const updateValues = <T>(
 
   const { controls: configControls } = config as FormArrayConfig | FormGroupConfig;
 
-  // Update its children
+  // Update its descendants
   if (configControls) {
-    result = updateDescendants(
-      result,
+    const updatedDescendants = updateDescendantValues(
+      result.form,
       {
         type: UPDATE_DESCENDANT_VALUES,
         payload: {
@@ -133,7 +121,24 @@ export const updateValues = <T>(
         },
       },
       providers,
-    ) as BaseFormState<T>;
+    );
+
+    const changedDescendantControls = getDescendantControls(controlRef, updatedDescendants).reduce(
+      (acc: { [key: string]: BaseControl<unknown> }, control) => ({
+        ...acc,
+        [control.key]: control,
+      }),
+      {},
+    );
+
+    result = {
+      ...result,
+      form: updatedDescendants,
+      changedControls: {
+        ...result.changedControls,
+        ...changedDescendantControls,
+      },
+    };
   }
 
   // Update its Ancestors

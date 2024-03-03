@@ -1,4 +1,4 @@
-import { build, control, group } from '../RxForm';
+import { build, control, group, array } from '../RxForm';
 import { Subscription } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { FormArrayConfig } from '../../Models/Configs';
@@ -293,6 +293,118 @@ describe('RxForm', () => {
             person: { value: { firstName: '', lastName: '' }, valid: false },
             ['person.firstName']: { value: '', valid: false, errors: { required: true } },
             ['person.lastName']: { value: '', valid: false, errors: { required: true } },
+          },
+        });
+      });
+    });
+
+    it('should update group value and nested descendants', () => {
+      testScheduler.run(({ expectObservable, cold }) => {
+        const [state$, { updateValues }] = build(
+          group({
+            controls: {
+              person: group({
+                controls: {
+                  name: control(['']),
+                  address: group({
+                    controls: {
+                      address: control(['']),
+                      city: control(['']),
+                      state: control(['']),
+                      zip: control(['']),
+                      addressContacts: array({
+                        controls: [
+                          group({
+                            controls: {
+                              email: control({
+                                initialValue: '',
+                                asyncValidators: ['uniqueEmail'],
+                              }),
+                            },
+                          }),
+                        ],
+                      }),
+                    },
+                  }),
+                },
+              }),
+            },
+          }),
+          {
+            providers: { asyncValidators: AsyncValidators },
+          },
+        );
+
+        subscription = cold('-b', {
+          b: () =>
+            updateValues({
+              controlRef: ['person'],
+              value: {
+                name: 'some guy',
+                address: {
+                  address: '123 any street',
+                  city: 'some city',
+                  state: 'some state',
+                  zip: '12345',
+                  addressContacts: [{ email: 'homer@homer.com' }],
+                },
+              },
+            }),
+        }).subscribe((action) => {
+          action();
+        });
+
+        expectObservable(state$).toBe('a(bc) 246ms d', {
+          a: {},
+          b: {
+            root: {
+              value: {
+                person: {
+                  name: 'some guy',
+                  address: {
+                    address: '123 any street',
+                    city: 'some city',
+                    state: 'some state',
+                    zip: '12345',
+                    addressContacts: [{ email: 'homer@homer.com' }],
+                  },
+                },
+              },
+            },
+            person: {
+              value: {
+                name: 'some guy',
+                address: {
+                  address: '123 any street',
+                  city: 'some city',
+                  state: 'some state',
+                  zip: '12345',
+                  addressContacts: [{ email: 'homer@homer.com' }],
+                },
+              },
+            },
+            'person.name': { value: 'some guy' },
+            'person.address.address': { value: '123 any street' },
+            'person.address.city': { value: 'some city' },
+            'person.address.state': { value: 'some state' },
+            'person.address.zip': { value: '12345' },
+            'person.address.addressContacts.0.email': { value: 'homer@homer.com' },
+          },
+          c: {
+            root: { pending: true },
+            'person.address.addressContacts.0.email': {
+              value: 'homer@homer.com',
+              pending: true,
+              asyncValidateInProgress: { 0: true },
+            },
+          },
+          d: {
+            root: { pending: false },
+            'person.address.addressContacts.0.email': {
+              value: 'homer@homer.com',
+              pending: false,
+              asyncValidateInProgress: { 0: false },
+            },
           },
         });
       });
