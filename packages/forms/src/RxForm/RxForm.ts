@@ -125,12 +125,14 @@ export type CustomReducer =
       effects?: ((payload?: unknown) => ScopedEffects<unknown>) | Effect<unknown, unknown>[];
     };
 
-export interface CustomReducers {
-  [key: string]: CustomReducer;
-}
+export type CustomReducers<T> = {
+  [key in keyof (T & {
+    [key: string]: CustomReducer;
+  })]: CustomReducer;
+};
 
-export interface RxFormOptions<T extends CustomReducers> extends EffectsAndSources {
-  reducers?: T;
+export interface RxFormOptions extends EffectsAndSources {
+  reducers?: CustomReducers<unknown>;
   providers?: RxFormProviders;
   name?: string;
 }
@@ -143,9 +145,9 @@ export interface RxFormProviders {
   asyncValidators?: { [key: string]: ValidatorAsyncFn };
 }
 
-export const build = <T extends CustomReducers>(
+export const build = <T extends CustomReducers<S>, S>(
   config: AbstractControlConfig,
-  options: RxFormOptions<T> = {},
+  options: RxFormOptions = {},
 ): Reactable<Form<unknown>, { [K in keyof T]: (payload?) => void } & RxFormActions> => {
   const providers = {
     normalizers: { ...options.providers?.normalizers },
@@ -158,10 +160,7 @@ export const build = <T extends CustomReducers>(
   return createReactable(initialState, options);
 };
 
-export const load = <T extends CustomReducers>(
-  state: Form<unknown>,
-  options: RxFormOptions<T> = {},
-) => {
+export const load = (state: Form<unknown>, options: RxFormOptions = {}) => {
   const baseFormState = {
     form: Object.entries(state).reduce(
       (acc: { [key: string]: BaseControl<unknown> }, [key, control]) => {
@@ -182,9 +181,9 @@ export const load = <T extends CustomReducers>(
   return createReactable(baseFormState, options);
 };
 
-const createReactable = <T extends CustomReducers>(
+const createReactable = <T extends CustomReducers<S>, S>(
   initialBaseState: BaseFormState<unknown>,
-  options: RxFormOptions<T> = {},
+  options: RxFormOptions = {},
   initialFormState?: Form<unknown>,
 ): Reactable<Form<unknown>, { [K in keyof T]: (payload?) => void } & RxFormActions> => {
   const providers = {
