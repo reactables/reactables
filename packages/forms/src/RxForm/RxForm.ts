@@ -6,6 +6,7 @@ import {
   Reducer,
   Effect,
   ScopedEffects,
+  ActionMap,
 } from '@reactables/core';
 import { filter, skip } from 'rxjs/operators';
 import { buildFormState } from '../Helpers/buildFormState';
@@ -145,10 +146,10 @@ export interface RxFormProviders {
   asyncValidators?: { [key: string]: ValidatorAsyncFn };
 }
 
-export const build = <T extends CustomReducers<S>, S>(
+export const build = (
   config: AbstractControlConfig,
   options: RxFormOptions = {},
-): Reactable<Form<unknown>, { [K in keyof T]: (payload?) => void } & RxFormActions> => {
+): Reactable<Form<unknown>, ActionMap & RxFormActions> => {
   const providers = {
     normalizers: { ...options.providers?.normalizers },
     validators: { ...Validators, ...options.providers?.validators },
@@ -160,7 +161,10 @@ export const build = <T extends CustomReducers<S>, S>(
   return createReactable(initialState, options);
 };
 
-export const load = (state: Form<unknown>, options: RxFormOptions = {}) => {
+export const load = (
+  state: Form<unknown>,
+  options: RxFormOptions = {},
+): Reactable<Form<unknown>, ActionMap & RxFormActions> => {
   const baseFormState = {
     form: Object.entries(state).reduce(
       (acc: { [key: string]: BaseControl<unknown> }, [key, control]) => {
