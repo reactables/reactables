@@ -137,6 +137,7 @@ export interface RxFormOptions extends EffectsAndSources {
   providers?: RxFormProviders;
   name?: string;
   debug?: boolean;
+  storeValue?: boolean;
 }
 
 type NormalizerFunction<T> = (value: T) => T;
@@ -197,7 +198,7 @@ const createReactable = <T extends CustomReducers<S>, S>(
     asyncValidators: { ...options.providers?.asyncValidators },
   };
 
-  const { reducers, debug, name, ...otherOptions } = options;
+  const { reducers, debug, name, storeValue, ...otherOptions } = options;
 
   const customReducers = Object.entries(reducers || ({} as T)).reduce((acc, [key, _case]) => {
     const _reducer = typeof _case === 'function' ? _case : _case.reducer;
@@ -216,6 +217,9 @@ const createReactable = <T extends CustomReducers<S>, S>(
 
   const [hub1State$, hub1Actions] = RxBuilder({
     initialState: initialBaseState,
+    name: `Stage 1 ${name ? name : 'rxForm'}`,
+    debug,
+    storeValue,
     reducers: {
       updateValues: (state: BaseFormState<unknown>, action: Action, mergeChanges: boolean) =>
         updateValues(state, action, providers, mergeChanges),
@@ -238,8 +242,9 @@ const createReactable = <T extends CustomReducers<S>, S>(
   const [state$] = RxBuilder({
     sources: [buildHub2Source(hub1State$).pipe(skip(initialFormState ? 1 : 0))],
     initialState: initialFormState || (null as Form<unknown>),
-    name,
+    name: `Stage 2 ${name ? name : 'rxForm'}`,
     debug,
+    storeValue,
     reducers: {
       formChange,
       asyncValidation: {
