@@ -136,6 +136,7 @@ export interface RxFormOptions extends EffectsAndSources {
   reducers?: CustomReducers<unknown>;
   providers?: RxFormProviders;
   name?: string;
+  debug?: boolean;
 }
 
 type NormalizerFunction<T> = (value: T) => T;
@@ -196,7 +197,7 @@ const createReactable = <T extends CustomReducers<S>, S>(
     asyncValidators: { ...options.providers?.asyncValidators },
   };
 
-  const { reducers, ...otherOptions } = options;
+  const { reducers, debug, name, ...otherOptions } = options;
 
   const customReducers = Object.entries(reducers || ({} as T)).reduce((acc, [key, _case]) => {
     const _reducer = typeof _case === 'function' ? _case : _case.reducer;
@@ -237,6 +238,8 @@ const createReactable = <T extends CustomReducers<S>, S>(
   const [state$] = RxBuilder({
     sources: [buildHub2Source(hub1State$).pipe(skip(initialFormState ? 1 : 0))],
     initialState: initialFormState || (null as Form<unknown>),
+    name,
+    debug,
     reducers: {
       formChange,
       asyncValidation: {
