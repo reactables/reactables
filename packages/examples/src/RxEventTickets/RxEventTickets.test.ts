@@ -33,8 +33,7 @@ describe('RxEventTickets', () => {
         b: () => selectEvent(EventTypes.ItchyAndScratchyMovie),
       }).subscribe((action) => action());
 
-      expectObservable(state$).toBe('(xy)z--a---b---c', {
-        x: initialState,
+      expectObservable(state$).toBe('(y)-z--a---b---c', {
         y: {
           ...initialState,
           controls: initialControlState,
