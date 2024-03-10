@@ -1,1 +1,2 @@
-export { RxBuilder, EffectsAndSources } from './RxBuilder';
+export { RxBuilder, EffectsAndSources, RxConfig } from './RxBuilder';
+export { Cases } from './createSlice';
