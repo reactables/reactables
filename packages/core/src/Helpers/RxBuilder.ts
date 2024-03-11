@@ -20,7 +20,7 @@ export const RxBuilder = <T, S extends Cases<T>>({
   effects,
   sources = [],
   debug = false,
-  storeValue = true,
+  storeValue = false,
   ...sliceConfig
 }: RxConfig<T, S>) => {
   const { reducer, actions } = createSlice(sliceConfig);

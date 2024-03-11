@@ -219,7 +219,6 @@ const createReactable = <T extends CustomReducers<S>, S>(
     initialState: initialBaseState,
     name: `Stage 1 ${name ? name : 'rxForm'}`,
     debug,
-    storeValue,
     reducers: {
       updateValues: (state: BaseFormState<unknown>, action: Action, mergeChanges: boolean) =>
         updateValues(state, action, providers, mergeChanges),

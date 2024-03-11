@@ -51,6 +51,7 @@ export const RxEventTickets = (
     // Add control changes as a source for second reactable
     sources: { controlChange: rxControlsState$ },
     initialState,
+    storeValue: true,
     reducers: {
       controlChange: {
         reducer: (state, { payload }: Action<ControlState>) => ({
