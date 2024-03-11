@@ -1,6 +1,6 @@
 import { Hub, HubConfig, StoreConfig } from '../Models/Hub';
 import { Observable, ReplaySubject, merge } from 'rxjs';
-import { filter, tap, map, mergeAll, scan, pairwise, startWith } from 'rxjs/operators';
+import { filter, tap, map, mergeAll, scan, pairwise, startWith, takeWhile } from 'rxjs/operators';
 import { Action } from '../Models/Action';
 import { share, shareReplay } from 'rxjs/operators';
 import { Effect } from '../Models/Effect';
@@ -85,7 +85,13 @@ export const HubFactory = ({ effects, sources = [] }: HubConfig = {}): Hub => {
     if (storeValue) {
       const replaySubject = new ReplaySubject<T>(1);
 
-      state$.subscribe((state) => replaySubject.next(state));
+      state$
+        .pipe(
+          takeWhile(() => {
+            return !replaySubject.closed;
+          }),
+        )
+        .subscribe((state) => replaySubject.next(state));
 
       return replaySubject;
     }

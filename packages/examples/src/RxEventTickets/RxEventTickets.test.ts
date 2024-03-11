@@ -25,7 +25,7 @@ describe('RxEventTickets', () => {
   it('should calculate event prices and set calculating and control states', () => {
     testScheduler.run(({ expectObservable, cold }) => {
       const mockApi = ({ qty }: FetchPricePayload): Observable<number> =>
-        of(qty * 100).pipe(delay(4));
+        of(qty * 100).pipe(delay(5));
       const [state$, { setQty, selectEvent }] = RxEventTickets(mockApi);
 
       subscription = cold('-------a---b', {
@@ -33,7 +33,8 @@ describe('RxEventTickets', () => {
         b: () => selectEvent(EventTypes.ItchyAndScratchyMovie),
       }).subscribe((action) => action());
 
-      expectObservable(state$).toBe('(y)-z--a---b---c', {
+      expectObservable(state$).toBe('(xy)-z-a---b----c', {
+        x: initialState,
         y: {
           ...initialState,
           controls: initialControlState,
