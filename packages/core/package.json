@@ -15,5 +15,8 @@
   "license": "ISC",
   "peerDependencies": {
     "rxjs": "^6.0.0 || ^7.0.0"
+  },
+  "dependencies": {
+    "json-diff": "^1.0.6"
   }
 }
