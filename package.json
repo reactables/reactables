@@ -33,7 +33,6 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^29.5.2",
-    "@types/json-diff": "^1.0.3",
     "@types/lodash.clonedeep": "^4.5.7",
     "@types/lodash.isequal": "^4.5.7",
     "@types/node": "^16.18.34",

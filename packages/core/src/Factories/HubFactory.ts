@@ -4,7 +4,6 @@ import { filter, tap, map, mergeAll, scan, pairwise, startWith } from 'rxjs/oper
 import { Action } from '../Models/Action';
 import { share, shareReplay } from 'rxjs/operators';
 import { Effect } from '../Models/Effect';
-import { diff } from 'json-diff';
 
 const getScopedEffectSignature = (actionType: string, key: string | number) =>
   `type: ${actionType}, scoped: true${key ? `,key:${key}` : ''}`;
@@ -65,15 +64,19 @@ export const HubFactory = ({ effects, sources = [] }: HubConfig = {}): Hub => {
 
     const state$ = messages$.pipe(
       tap((action) => {
-        debug && console.log(debugName, '[Action]', action);
+        debug && console.log(debugName, '[Message Received]', action);
       }),
       scan(reducer, seedState),
       startWith(null, seedState),
       pairwise(),
       tap(([prevState, newState]) => {
         if (debug) {
-          console.log(debugName, '[State] State:', newState);
-          console.log(debugName, '[Diff]:', diff(prevState, newState));
+          const hasDiff = prevState !== newState;
+          if (hasDiff) {
+            console.log(debugName, '[State changed] State:', newState);
+          } else {
+            console.log(debugName, '[State unchanged] State:', newState);
+          }
         }
       }),
       map((pair) => pair[1] as T),
