@@ -68,4 +68,57 @@ describe('diffObjects', () => {
       },
     ]);
   });
+
+  it('Handles equal string', () => {
+    expect(diffObjects({ string: 'hi' }, { string: 'hi' })).toEqual([]);
+  });
+
+  it('Handles equal number', () => {
+    expect(diffObjects({ number: 1 }, { number: 1 })).toEqual([]);
+  });
+
+  it('Handles unequal number', () => {
+    expect(diffObjects({ number: 1 }, { number: 2 })).toEqual([
+      {
+        type: 'CHANGE',
+        path: ['number'],
+        value: 2,
+        oldValue: 1,
+      },
+    ]);
+  });
+
+  // Arrays and nested arrays
+  it('top level array & array diff', () => {
+    expect(diffObjects(['test', 'testing'], ['test'])).toEqual([
+      {
+        type: 'REMOVE',
+        path: [1],
+        oldValue: 'testing',
+      },
+    ]);
+  });
+
+  it('nested array', () => {
+    expect(diffObjects(['test', ['test']], ['test', ['test', 'test2']])).toEqual([
+      {
+        type: 'CREATE',
+        path: [1, 1],
+        value: 'test2',
+      },
+    ]);
+  });
+
+  it('object in array in object', () => {
+    expect(
+      diffObjects({ test: ['test', { test: true }] }, { test: ['test', { test: false }] }),
+    ).toEqual([
+      {
+        type: 'CHANGE',
+        path: ['test', 1, 'test'],
+        value: false,
+        oldValue: true,
+      },
+    ]);
+  });
 });
