@@ -4,6 +4,7 @@ import { filter, tap, map, mergeAll, scan, pairwise, startWith } from 'rxjs/oper
 import { Action } from '../Models/Action';
 import { share, shareReplay } from 'rxjs/operators';
 import { Effect } from '../Models/Effect';
+import diff, { Difference } from 'microdiff';
 
 const getScopedEffectSignature = (actionType: string, key: string | number) =>
   `type: ${actionType}, scoped: true${key ? `,key:${key}` : ''}`;
@@ -71,11 +72,32 @@ export const HubFactory = ({ effects, sources = [] }: HubConfig = {}): Hub => {
       pairwise(),
       tap(([prevState, newState]) => {
         if (debug) {
-          const hasDiff = prevState !== newState;
-          if (hasDiff) {
-            console.log(debugName, '[State changed] State:', newState);
+          if (
+            prevState &&
+            typeof prevState === 'object' &&
+            newState &&
+            typeof newState === 'object'
+          ) {
+            const reduceDiff = (diff: Difference[]) =>
+              diff.reduce((acc, change) => ({ ...acc, [change.path.join('|')]: change }), {});
+
+            const difference = reduceDiff(diff(prevState as object, newState as object));
+
+            console.log(debugName, '[State]:', {
+              state: newState as object,
+              diff: Object.keys(difference).length ? difference : null,
+            });
           } else {
-            console.log(debugName, '[State unchanged] State:', newState);
+            const hasDiff = prevState !== newState;
+            console.log(debugName, '[State]:', {
+              state: newState as unknown,
+              diff: hasDiff
+                ? {
+                    oldValue: prevState as unknown,
+                    newValue: newState as unknown,
+                  }
+                : null,
+            });
           }
         }
       }),
