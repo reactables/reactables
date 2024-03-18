@@ -88,7 +88,7 @@ export const HubFactory = ({ effects, sources = [] }: HubConfig = {}): Hub => {
                 diff: Object.keys(difference).length ? difference : null,
               });
             } catch (e) {
-              console.log('Error Reading Diff:', e);
+              console.log(`Error Reading Diff: ${e}`, { state: newState as object, diff: null });
             }
           } else {
             const hasDiff = prevState !== newState;
