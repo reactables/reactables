@@ -1,3 +1,8 @@
+/**
+ * Modified from https://github.com/AsyncBanana/microdiff
+ * v 1.3.2
+ * @description handles serializable (JSON) objects only
+ */
 export interface DifferenceCreate {
   type: 'CREATE';
   path: (string | number)[];
@@ -23,7 +28,7 @@ interface Options {
   cyclesFix: boolean;
 }
 
-const diffObjects = (
+const jsonDiff = (
   obj: Record<string, any> | any[],
   newObj: Record<string, any> | any[],
   options: Partial<Options> = { cyclesFix: true },
@@ -46,7 +51,7 @@ const diffObjects = (
     const newObjKey = newObj[key] as unknown;
     const areObjects = typeof objKey === 'object' && typeof newObjKey === 'object';
     if (objKey && newObjKey && areObjects && (!options.cyclesFix || !_stack.includes(objKey))) {
-      const nestedDiffs = diffObjects(
+      const nestedDiffs = jsonDiff(
         objKey,
         newObjKey,
         options,
@@ -88,4 +93,4 @@ const diffObjects = (
   return diffs;
 };
 
-export default diffObjects;
+export default jsonDiff;

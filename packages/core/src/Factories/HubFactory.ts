@@ -4,7 +4,7 @@ import { filter, tap, map, mergeAll, scan, pairwise, startWith } from 'rxjs/oper
 import { Action } from '../Models/Action';
 import { share, shareReplay } from 'rxjs/operators';
 import { Effect } from '../Models/Effect';
-import diff, { Difference } from 'microdiff';
+import jsonDiff, { Difference } from '../Helpers/jsonDiff';
 
 const getScopedEffectSignature = (actionType: string, key: string | number) =>
   `type: ${actionType}, scoped: true${key ? `,key:${key}` : ''}`;
@@ -78,15 +78,18 @@ export const HubFactory = ({ effects, sources = [] }: HubConfig = {}): Hub => {
             newState &&
             typeof newState === 'object'
           ) {
-            const reduceDiff = (diff: Difference[]) =>
-              diff.reduce((acc, change) => ({ ...acc, [change.path.join('|')]: change }), {});
+            try {
+              const reduceDiff = (diff: Difference[]) =>
+                diff.reduce((acc, change) => ({ ...acc, [change.path.join('|')]: change }), {});
+              const difference = reduceDiff(jsonDiff(prevState as object, newState as object));
 
-            const difference = reduceDiff(diff(prevState as object, newState as object));
-
-            console.log(debugName, '[State]:', {
-              state: newState as object,
-              diff: Object.keys(difference).length ? difference : null,
-            });
+              console.log(debugName, '[State]:', {
+                state: newState as object,
+                diff: Object.keys(difference).length ? difference : null,
+              });
+            } catch (e) {
+              console.log('Error Reading Diff:', e);
+            }
           } else {
             const hasDiff = prevState !== newState;
             console.log(debugName, '[State]:', {

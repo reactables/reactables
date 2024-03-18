@@ -1,8 +1,8 @@
-import diffObjects from './diffObjects';
+import jsonDiff from './jsonDiff';
 
-describe('diffObjects', () => {
+describe('jsonDiff', () => {
   it('new raw value', () => {
-    expect(diffObjects({ test: true }, { test: true, test2: true })).toEqual([
+    expect(jsonDiff({ test: true }, { test: true, test2: true })).toEqual([
       {
         type: 'CREATE',
         path: ['test2'],
@@ -12,7 +12,7 @@ describe('diffObjects', () => {
   });
 
   it('change raw value', () => {
-    expect(diffObjects({ test: true }, { test: false })).toEqual([
+    expect(jsonDiff({ test: true }, { test: false })).toEqual([
       {
         type: 'CHANGE',
         path: ['test'],
@@ -23,7 +23,7 @@ describe('diffObjects', () => {
   });
 
   it('remove raw value', () => {
-    expect(diffObjects({ test: true, test2: true }, { test: true })).toEqual([
+    expect(jsonDiff({ test: true, test2: true }, { test: true })).toEqual([
       {
         type: 'REMOVE',
         path: ['test2'],
@@ -33,7 +33,7 @@ describe('diffObjects', () => {
   });
 
   it('replace object with null', () => {
-    expect(diffObjects({ object: { test: true } }, { object: null })).toEqual([
+    expect(jsonDiff({ object: { test: true } }, { object: null })).toEqual([
       {
         type: 'CHANGE',
         path: ['object'],
@@ -43,7 +43,7 @@ describe('diffObjects', () => {
     ]);
   });
   it('replace object with other value', () => {
-    expect(diffObjects({ object: { test: true } }, { object: 'string' })).toEqual([
+    expect(jsonDiff({ object: { test: true } }, { object: 'string' })).toEqual([
       {
         type: 'CHANGE',
         path: ['object'],
@@ -53,14 +53,14 @@ describe('diffObjects', () => {
     ]);
   });
   it('equal null protype objects', () => {
-    expect(diffObjects(Object.create(null) as object, Object.create(null) as object)).toEqual([]);
+    expect(jsonDiff(Object.create(null) as object, Object.create(null) as object)).toEqual([]);
   });
 
   it('unequal null protype objects', () => {
     const obj1 = Object.create(null) as object;
     const obj2 = Object.create(null) as { test: boolean } & object;
     obj2.test = true;
-    expect(diffObjects(obj1, obj2)).toEqual([
+    expect(jsonDiff(obj1, obj2)).toEqual([
       {
         type: 'CREATE',
         path: ['test'],
@@ -70,15 +70,15 @@ describe('diffObjects', () => {
   });
 
   it('Handles equal string', () => {
-    expect(diffObjects({ string: 'hi' }, { string: 'hi' })).toEqual([]);
+    expect(jsonDiff({ string: 'hi' }, { string: 'hi' })).toEqual([]);
   });
 
   it('Handles equal number', () => {
-    expect(diffObjects({ number: 1 }, { number: 1 })).toEqual([]);
+    expect(jsonDiff({ number: 1 }, { number: 1 })).toEqual([]);
   });
 
   it('Handles unequal number', () => {
-    expect(diffObjects({ number: 1 }, { number: 2 })).toEqual([
+    expect(jsonDiff({ number: 1 }, { number: 2 })).toEqual([
       {
         type: 'CHANGE',
         path: ['number'],
@@ -90,7 +90,7 @@ describe('diffObjects', () => {
 
   // Arrays and nested arrays
   it('top level array & array diff', () => {
-    expect(diffObjects(['test', 'testing'], ['test'])).toEqual([
+    expect(jsonDiff(['test', 'testing'], ['test'])).toEqual([
       {
         type: 'REMOVE',
         path: [1],
@@ -100,7 +100,7 @@ describe('diffObjects', () => {
   });
 
   it('nested array', () => {
-    expect(diffObjects(['test', ['test']], ['test', ['test', 'test2']])).toEqual([
+    expect(jsonDiff(['test', ['test']], ['test', ['test', 'test2']])).toEqual([
       {
         type: 'CREATE',
         path: [1, 1],
@@ -111,7 +111,7 @@ describe('diffObjects', () => {
 
   it('object in array in object', () => {
     expect(
-      diffObjects({ test: ['test', { test: true }] }, { test: ['test', { test: false }] }),
+      jsonDiff({ test: ['test', { test: true }] }, { test: ['test', { test: false }] }),
     ).toEqual([
       {
         type: 'CHANGE',
