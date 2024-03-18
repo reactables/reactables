@@ -23,12 +23,12 @@ interface Options {
   cyclesFix: boolean;
 }
 
-export default function diff(
+const diffObjects = (
   obj: Record<string, any> | any[],
   newObj: Record<string, any> | any[],
   options: Partial<Options> = { cyclesFix: true },
   _stack: Record<string, any>[] = [],
-): Difference[] {
+): Difference[] => {
   const diffs: Difference[] = [];
   const isObjArray = Array.isArray(obj);
 
@@ -46,7 +46,7 @@ export default function diff(
     const newObjKey = newObj[key] as unknown;
     const areObjects = typeof objKey === 'object' && typeof newObjKey === 'object';
     if (objKey && newObjKey && areObjects && (!options.cyclesFix || !_stack.includes(objKey))) {
-      const nestedDiffs = diff(
+      const nestedDiffs = diffObjects(
         objKey,
         newObjKey,
         options,
@@ -86,4 +86,6 @@ export default function diff(
     }
   }
   return diffs;
-}
+};
+
+export default diffObjects;
