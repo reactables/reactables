@@ -81,26 +81,33 @@ export const HubFactory = ({ effects, sources = [] }: HubConfig = {}): Hub => {
             try {
               const reduceDiff = (diff: Difference[]) =>
                 diff.reduce((acc, change) => ({ ...acc, [change.path.join('|')]: change }), {});
+
               const difference = reduceDiff(jsonDiff(prevState as object, newState as object));
 
-              console.log(debugName, '[State]:', {
-                state: newState as object,
-                diff: Object.keys(difference).length ? difference : null,
-              });
+              console.log(
+                debugName,
+                '[Diff]:',
+                Object.keys(difference).length ? difference : null,
+                '[State]:',
+                newState,
+              );
             } catch (e) {
-              console.log('Error Reading Diff:', e, { state: newState as object, diff: null });
+              console.log('Error Reading Diff:', e, '[State]:', newState);
             }
           } else {
             const hasDiff = prevState !== newState;
-            console.log(debugName, '[State]:', {
-              state: newState as unknown,
-              diff: hasDiff
+            console.log(
+              debugName,
+              '[Diff]:',
+              hasDiff
                 ? {
                     oldValue: prevState as unknown,
                     newValue: newState as unknown,
                   }
                 : null,
-            });
+              '[State]:',
+              newState,
+            );
           }
         }
       }),
