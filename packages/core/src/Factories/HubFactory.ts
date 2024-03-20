@@ -59,13 +59,13 @@ export const HubFactory = ({ effects, sources = [] }: HubConfig = {}): Hub => {
   const messages$ = merge(inputStream$, mergedScopedEffects, ...genericEffects).pipe(share());
 
   const store = <T>({ reducer, name, debug, initialState, storeValue = false }: StoreConfig<T>) => {
-    const debugName = `[Rx Name] ${name || 'undefined'} - `;
+    const debugName = `[RX NAME] ${name || 'undefined'}\n`;
 
     const seedState = initialState !== undefined ? initialState : reducer();
 
     const state$ = messages$.pipe(
       tap((action) => {
-        debug && console.log(debugName, '[Message Received]', action);
+        debug && console.log(debugName, '[ACTION]', action, '\n');
       }),
       scan(reducer, seedState),
       startWith(null, seedState),
@@ -86,26 +86,29 @@ export const HubFactory = ({ effects, sources = [] }: HubConfig = {}): Hub => {
 
               console.log(
                 debugName,
-                '[Diff]:',
+                '[DIFF]',
                 Object.keys(difference).length ? difference : null,
-                '[State]:',
+                '\n',
+                '[STATE]',
                 newState,
+                '\n',
               );
             } catch (e) {
-              console.log('Error Reading Diff:', e, '[State]:', newState);
+              console.log('[ERROR READING DIFF]', e, '\n', '[STATE]', newState);
             }
           } else {
             const hasDiff = prevState !== newState;
             console.log(
               debugName,
-              '[Diff]:',
+              '[DIFF]',
               hasDiff
                 ? {
                     oldValue: prevState as unknown,
                     newValue: newState as unknown,
                   }
                 : null,
-              '[State]:',
+              '\n',
+              '[STATE]',
               newState,
             );
           }
