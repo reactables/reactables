@@ -4,6 +4,7 @@ import { filter, tap, map, mergeAll, scan, pairwise, startWith } from 'rxjs/oper
 import { Action } from '../Models/Action';
 import { share, shareReplay } from 'rxjs/operators';
 import { Effect } from '../Models/Effect';
+import jsonDiff, { Difference } from '../Helpers/jsonDiff';
 
 const getScopedEffectSignature = (actionType: string, key: string | number) =>
   `type: ${actionType}, scoped: true${key ? `,key:${key}` : ''}`;
@@ -58,24 +59,58 @@ export const HubFactory = ({ effects, sources = [] }: HubConfig = {}): Hub => {
   const messages$ = merge(inputStream$, mergedScopedEffects, ...genericEffects).pipe(share());
 
   const store = <T>({ reducer, name, debug, initialState, storeValue = false }: StoreConfig<T>) => {
-    const debugName = `[Rx Name] ${name || 'undefined'} - `;
+    const debugName = `[RX NAME] ${name || 'undefined'}\n`;
 
     const seedState = initialState !== undefined ? initialState : reducer();
 
     const state$ = messages$.pipe(
       tap((action) => {
-        debug && console.log(debugName, '[Message Received]', action);
+        debug && console.log(debugName, '[ACTION]', action, '\n');
       }),
       scan(reducer, seedState),
       startWith(null, seedState),
       pairwise(),
       tap(([prevState, newState]) => {
         if (debug) {
-          const hasDiff = prevState !== newState;
-          if (hasDiff) {
-            console.log(debugName, '[State changed] State:', newState);
+          if (
+            prevState &&
+            typeof prevState === 'object' &&
+            newState &&
+            typeof newState === 'object'
+          ) {
+            try {
+              const reduceDiff = (diff: Difference[]) =>
+                diff.reduce((acc, change) => ({ ...acc, [change.path.join('|')]: change }), {});
+
+              const difference = reduceDiff(jsonDiff(prevState as object, newState as object));
+
+              console.log(
+                debugName,
+                '[DIFF]',
+                Object.keys(difference).length ? difference : null,
+                '\n',
+                '[STATE]',
+                newState,
+                '\n',
+              );
+            } catch (e) {
+              console.log('[ERROR READING DIFF]', e, '\n', '[STATE]', newState);
+            }
           } else {
-            console.log(debugName, '[State unchanged] State:', newState);
+            const hasDiff = prevState !== newState;
+            console.log(
+              debugName,
+              '[DIFF]',
+              hasDiff
+                ? {
+                    oldValue: prevState as unknown,
+                    newValue: newState as unknown,
+                  }
+                : null,
+              '\n',
+              '[STATE]',
+              newState,
+            );
           }
         }
       }),
