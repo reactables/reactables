@@ -37,7 +37,7 @@ export const RxBuilder = <T, S extends Cases<T>>({
       map((action) => {
         const _case = sliceConfig.reducers[action.type];
 
-        if (typeof _case !== 'function' && _case.effects) {
+        if (_case && typeof _case !== 'function' && _case.effects) {
           const effects =
             typeof _case.effects === 'function'
               ? _case.effects
