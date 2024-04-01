@@ -1,0 +1,22 @@
+{
+  "name": "@reactables/testing",
+  "description": "Helpers for testing reactables",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "jest",
+    "build": "rimraf dist && rollup --config",
+    "lint": "eslint --max-warnings 0 \"src/**/*.ts*\" && prettier --check src/",
+    "fix": "eslint --fix \"src/**/*.ts*\" && prettier --write \"src/**/*.(ts*|scss)\""
+  },
+  "author": "David Lai",
+  "license": "ISC",
+  "dependencies": {
+    "@reactables/core": "*"
+  },
+  "peerDependencies": {
+    "rxjs": "^6.0.0 || ^7.0.0"
+  }
+}

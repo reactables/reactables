@@ -6,7 +6,7 @@
   ],
   "scripts": {
     "link-packages": "npm link --workspaces --if-present && npm link @reactables/core --workspace=@reactables/forms && npm link @reactables/core --workspace=@reactables/examples && npm link @reactables/core @reactables/forms @reactables/react-helpers --workspace=@reactables/react-forms",
-    "build": "npm run build -w packages/core && npm run build -w packages/examples && npm run build -w packages/forms && npm run build -w packages/react-helpers && npm run build -w packages/react-forms",
+    "build": "npm run build -w packages/core && npm run build -w packages/examples && npm run build -w packages/forms && npm run build -w packages/react-helpers && npm run build -w packages/react-forms && npm run build -w packages/testing",
     "test": "npm run test --workspaces --if-present",
     "lint": "npm run lint --workspaces",
     "fix": "npm run fix --workspaces",

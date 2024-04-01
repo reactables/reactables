@@ -27,6 +27,8 @@ Reactive state management with RxJS.
         1. [Action](#api-action)
         1. [Reducer](#api-reducer)
 1. [Testing Reactables](#testing)
+    1. [Flow Testing](#flow-testing)
+    1. [Marble Testing](#marble-testing)
 
 ## Installation <a name="installation"></a>
 
@@ -227,6 +229,11 @@ type Reducer<T> = (state?: T, action?: Action<unknown>) => T;
 ```
 
 ## Testing Reactables<a name="testing"></a>
+### Flow Testing<a name="flow-testing"></a>
+
+You can test a series of actions to simulate a defined user flow with the `testFlow` method from [`@reactables/testing`](https://github.com/reactables/reactables/blob/main/packages/testing/README.md) package. See [`@reactables/testing`](https://github.com/reactables/reactables/blob/main/packages/testing/README.md) for details. 
+
+### Marble Testing<a name="marble-testing"></a>
 
 We can use RxJS's built in [Marble Testing](https://rxjs.dev/guide/testing/marble-testing) for testing [Reactables](#reactable).
 
