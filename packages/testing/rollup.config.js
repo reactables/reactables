@@ -11,5 +11,5 @@ export default {
     },
   ],
   plugins: [typescript()],
-  external: ['rxjs', 'rxjs/testing', '@reactables/core'],
+  external: ['rxjs', 'rxjs/operators', 'rxjs/testing', '@reactables/core'],
 };
