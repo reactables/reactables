@@ -37,6 +37,11 @@ jobs:
       - run: npm publish --workspace=@reactables/examples --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: npm install @reactables/core@${{ github.event.release.tag_name || inputs.tag_name }} --workspace=@reactables/testing
+      - run: npm run build --workspace=@reactables/testing
+      - run: npm publish --workspace=@reactables/testing --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - run: npm run build --workspace=@reactables/react-helpers
       - run: npm publish --workspace=@reactables/react-helpers --access public
         env:
