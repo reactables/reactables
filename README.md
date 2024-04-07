@@ -74,3 +74,7 @@ All Reactables Actions flow in one direction contained in streams, making state 
 - Examples of Reactables. See [Reactables Examples](https://github.com/reactables/reactables/tree/main/packages/core#examples).
 
 - `npm i @reactables/examples`
+
+- Reactables helpers. See [Reactables Helpers](https://github.com/reactables/reactables/tree/main/packages/react-helpers).
+
+- `npm i @reactables/react-helpers`
