@@ -5,7 +5,7 @@
 Reactive state management with RxJS.
 
 ## Mission
-Provide simple, scalable and framework-agnostic state management that improves the UI development experience for all.
+Provide a simple, scalable and framework-agnostic state management that improves the UI development experience for all.
 
 ## Motivation
 
@@ -29,15 +29,15 @@ Developers can follow a standardized reactive pattern for managing state in any 
 
       > With components, the distinction between a “unit” and “integration” test can be blurry. If you’re testing a form, should its test also test the buttons inside of it? Or should a button component have its own test suite? Should refactoring a button ever break the form test?
     
-    - With Reactables developers can develop and test their state logic independently without rendering any UI providing greater flexibility and speed in unit testing.
+    - With Reactables, developers can write and test their state logic independently without rendering any UI providing greater flexibility and speed in unit testing.
 
 1. Reusability and Framework agnostic
 
-    - Reactables can easily integrate with any UI framework/library or vanilla JS - making them highly reusuable.
+    - Reactables can easily integrate with any UI framework/library or vanilla JS making them highly reusuable.
 
 ### Scalability
 
-Reactables can start small, then later combine with others to make larger more complex ones - making them highly scalable.
+Reactables can start small, then later combine with others to make larger and more complex ones. This makes them highly scalable.
 
 ### Predictable State Updates 
 
@@ -74,3 +74,7 @@ All Reactables Actions flow in one direction contained in streams, making state 
 - Examples of Reactables. See [Reactables Examples](https://github.com/reactables/reactables/tree/main/packages/core#examples).
 
 - `npm i @reactables/examples`
+
+- Reactables helpers. See [Reactables Helpers](https://github.com/reactables/reactables/tree/main/packages/react-helpers).
+
+- `npm i @reactables/react-helpers`

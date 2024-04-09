@@ -79,7 +79,7 @@ When initializing a [Reactable](#reactable-concept) we can declare effects. The 
 
 ### Scoped Effects <a name="scoped-effects"></a>
 
-Scoped Effects are dynamically created streams scoped to a particular action & key combination when an action is dispatch.
+Scoped Effects are dynamically created streams scoped to a particular action & key combination when an action is dispatched.
 
 <img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/SlideThreeScopedEffects.jpg" width="600" />
 
@@ -92,7 +92,7 @@ Actions and logic flow through the App in one direction and are **contained** in
 
 ### Basic Counter <a name="basic-counter-example"></a>
 
-Basic counter example. Button clicks dispatch actions to increment or reset the counter.
+A basic counter example. Button clicks dispatch actions to increment or reset the counter.
 
 Design Diagram           |  Reactable           | Try it out on StackBlitz.<br /> Choose your framework
 :-------------------------:|:-------------------------:|:-------------------------:
@@ -100,7 +100,7 @@ Design Diagram           |  Reactable           | Try it out on StackBlitz.<br /
 
 ### Scoped Effects - Updating Todos <a name="scoped-effects-example"></a>
 
-Updating statuses of todo items shows scoped effects in action. An 'update todo' stream is created for each todo during update. Pending async calls in their respective stream are cancelled if a new request comes in with RxJS [switchMap](https://www.learnrxjs.io/learn-rxjs/operators/transformation/switchmap) operator.
+Updating statuses of todo items shows scoped effects in action. An 'update todo' stream is created for each todo during update. Pending async calls in their respective stream are cancelled if a new request comes in with a RxJS [switchMap](https://www.learnrxjs.io/learn-rxjs/operators/transformation/switchmap) operator.
 
 Design Diagram           | Reactable      | Try it out on StackBlitz.<br /> Choose your framework
 :-------------------------:|:-------------------------:|:-------------------------:
@@ -108,7 +108,7 @@ Design Diagram           | Reactable      | Try it out on StackBlitz.<br /> Choo
 
 ### Connecting Multiple Reactables - Event Tickets  <a name="connecting-hub-example"></a>
 
-This examples shows two set reactables. The first is responsible for updating state of the user controls. The second fetches prices based on input from the first set.
+This examples shows two sets of reactables. The first is responsible for updating the state of user controls, while the second fetches prices based on input from the first.
 
 Design Diagram           | Reactable     | Try it out on StackBlitz.<br /> Choose your framework
 :-------------------------:|:-------------------------:|:-------------------------:
@@ -133,7 +133,7 @@ export interface ActionMap {
 
 ### RxBuilder <a name="rx-builder"></a>
 
-Factory function for building [Reactables](#reactable). Accepts a [RxConfig](#rx-confg) configuration object
+Factory function for building [Reactables](#reactable). Accepts a [RxConfig](#rx-confg) configuration object.
 
 ```typescript
 type RxBuilder = <T, S extends Cases<T>>(config: RxConfig<T, S>) => Reactable<T, unknown>
@@ -219,7 +219,7 @@ interface Action<T = undefined> {
 
 #### Reducer <a name="api-reducer"></a>
 
-From [Redux Docs](https://redux.js.org/tutorials/fundamentals/part-3-state-actions-reducers)
+From the [Redux Docs](https://redux.js.org/tutorials/fundamentals/part-3-state-actions-reducers):
 > Reducers are functions that take the current state and an action as arguments, and return a new state result
 
 ```typescript
