@@ -32,7 +32,7 @@ Reactive forms with [Reactables](https://github.com/reactables/reactables/tree/m
 
 ## Installation <a name="installation"></a>
 
-Installation will require [RxJS](https://rxjs.dev/) if not already installed.
+Installation requires [RxJS](https://rxjs.dev/) to be present.
 
 `npm i rxjs @reactables/forms`
 
@@ -46,7 +46,7 @@ Actions available to trigger state changes on Reactable.
 
 #### `updateValues` <a name="api-actions-update-values"></a>
 
-Updates value of a [`FormControl`](#api-form-control). For form group and form arrays, update will only occur if specified descendant controls exists. Otherwise it will throw an error.
+Updates values of a [`FormControl`](#api-form-control). For form group and form arrays, updates will only occur if the specified descendant controls exists. Otherwise it will throw an error.
 
 ```typescript
 type updateValues = <T>(payload: UpdateValuesPayload<T>) => void;
@@ -88,7 +88,7 @@ export interface PushControlPayload {
 
 #### `removeControl` <a name="api-actions-remove-control"></a>
 
-Removes a specified control from form.
+Removes a specified control from the form.
 
 ```typescript
 type removeControl = (payload: ControlRef) => void;
@@ -106,7 +106,7 @@ type markControlAsPristine = (payload: ControlRef) => void;
 
 #### `markControlAsTouched` <a name="api-actions-mark-as-touched"></a>
 
-Marks a control and all ancestors as touched. Can pass a `markAll` true to mark all descendants as touched as well.
+Marks a control and all ancestors as touched. Can set `markAll` to `true` to mark all descendants as touched as well.
 
 ```typescript
 type markControlAsTouched = (payload: MarkTouchedPayload) => void;
@@ -120,7 +120,7 @@ export interface MarkTouchedPayload {
 
 #### `markControlAsUntouched` <a name="api-actions-mark-as-untouched"></a>
 
-Marks a control and all descendants as untouched. Will recheck ancestors controls and update touched status.
+Marks a control and all descendants as untouched. This will recheck ancestor controls and update the touched status.
 
 ```typescript
 type markControlAsUnTouched = (payload: ControlRef) => void;
@@ -129,7 +129,7 @@ type markControlAsUnTouched = (payload: ControlRef) => void;
 
 #### `resetControl` <a name="api-actions-resetControl"></a>
 
-Marks a control and all descendants as untouched. Will recheck ancestors controls and update touched status.
+Marks a control and all descendants as untouched. This will recheck ancestor controls and update the touched status.
 
 ```typescript
 type resetControls = (payload: ControlRef) => void;
@@ -276,7 +276,7 @@ export interface FormErrors {
 
 #### `FormReducers` <a name="api-form-reducers"></a>
 
-Built in reducers to be used to update state of form tree. Payload and behaviour is same and descrbed in [`RxActions`](#api-actions); 
+Built in reducers which can be used to update the state of the form tree. Payload and behaviour is the same and descrbed in [`RxActions`](#api-actions); 
 
 ```typescript
 
