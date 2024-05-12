@@ -11,6 +11,7 @@ import { getErrors } from './getErrors';
 import { getDescendantControls } from '../../Helpers/getDescendantControls';
 import { getAncestorControls } from '../../Helpers/getAncestorControls';
 import { RxFormProviders } from '../../RxForm/RxForm';
+import { controlRefCheck } from '../../Helpers/controlRefCheck';
 
 const UPDATE_DESCENDANT_VALUES = 'UPDATE_DESCENDANT_VALUES';
 const updateDescendantValues = <T>(
@@ -71,6 +72,9 @@ export const updateValues = <T>(
   const {
     payload: { controlRef, value },
   } = action;
+
+  controlRefCheck(controlRef);
+
   // Update its own value
   const ctrlKey = getFormKey(controlRef);
 

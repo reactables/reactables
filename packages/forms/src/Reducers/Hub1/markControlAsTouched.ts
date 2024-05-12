@@ -4,6 +4,7 @@ import { MarkTouchedPayload } from '../../Models/Payloads';
 import { getAncestorControls } from '../../Helpers/getAncestorControls';
 import { getControlBranch } from '../../Helpers/getControlBranch';
 import { getFormKey } from '../../Helpers/getFormKey';
+import { controlRefCheck } from '../../Helpers/controlRefCheck';
 
 export const markControlAsTouched = <T>(
   state: BaseFormState<T>,
@@ -14,6 +15,8 @@ export const markControlAsTouched = <T>(
   const {
     payload: { controlRef, markAll },
   } = action;
+
+  controlRefCheck(controlRef);
 
   const controls = (
     markAll ? getControlBranch(controlRef, form) : getAncestorControls(controlRef, form)

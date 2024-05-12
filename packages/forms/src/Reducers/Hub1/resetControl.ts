@@ -8,6 +8,7 @@ import { buildState } from '../../Helpers/buildFormState';
 import { getControlBranch } from '../../Helpers/getControlBranch';
 import { getFormKey } from '../../Helpers/getFormKey';
 import { RxFormProviders } from '../../RxForm/RxForm';
+import { controlRefCheck } from '../../Helpers/controlRefCheck';
 
 export const resetControl = <T>(
   state: BaseFormState<T>,
@@ -17,6 +18,7 @@ export const resetControl = <T>(
 ): BaseFormState<T> => {
   const { form } = state;
   const { payload: controlRef } = action;
+  controlRefCheck(controlRef);
   const controlToReset = getControl(controlRef, form);
 
   const descendantsRemoved = { ...form };
