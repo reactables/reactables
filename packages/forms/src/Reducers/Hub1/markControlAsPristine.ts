@@ -8,6 +8,7 @@ import {
 } from './updateAncestorPristineValues';
 import { getFormKey } from '../../Helpers/getFormKey';
 import { getControlBranch } from '../../Helpers/getControlBranch';
+import { controlRefCheck } from '../../Helpers/controlRefCheck';
 
 export const markControlAsPristine = <T>(
   state: BaseFormState<T>,
@@ -16,6 +17,8 @@ export const markControlAsPristine = <T>(
 ): BaseFormState<T> => {
   const { form } = state;
   const { payload: controlRef } = action;
+
+  controlRefCheck(controlRef);
 
   const descendants = getDescendantControls(controlRef, form).reduce(
     (acc, control) => ({

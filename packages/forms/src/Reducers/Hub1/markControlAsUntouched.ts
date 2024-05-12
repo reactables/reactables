@@ -4,6 +4,7 @@ import { ControlRef } from '../../Models/ControlRef';
 import { getDescendantControls } from '../../Helpers/getDescendantControls';
 import { getControlBranch } from '../../Helpers/getControlBranch';
 import { getFormKey } from '../../Helpers/getFormKey';
+import { controlRefCheck } from '../../Helpers/controlRefCheck';
 
 export const markControlAsUntouched = <T>(
   state: BaseFormState<T>,
@@ -12,6 +13,8 @@ export const markControlAsUntouched = <T>(
 ): BaseFormState<T> => {
   const { form } = state;
   const { payload: controlRef } = action;
+
+  controlRefCheck(controlRef);
 
   let result = getDescendantControls(controlRef, form).reduce(
     (acc, control) => ({

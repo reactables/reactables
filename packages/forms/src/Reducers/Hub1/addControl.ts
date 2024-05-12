@@ -9,6 +9,7 @@ import {
 } from './updateAncestorValuesAddControl';
 import { getControlBranch } from '../../Helpers/getControlBranch';
 import { RxFormProviders } from '../../RxForm/RxForm';
+import { controlRefCheck } from '../../Helpers/controlRefCheck';
 
 export const addControl = <T>(
   state: BaseFormState<T>,
@@ -19,6 +20,8 @@ export const addControl = <T>(
   const {
     payload: { config, controlRef },
   } = action;
+
+  controlRefCheck(controlRef);
 
   // If controlRef does not exist we are adding control to a Form Group
 

@@ -10,6 +10,7 @@ import {
 import { getDescendantControls } from '../../Helpers/getDescendantControls';
 import { getAncestorControls } from '../../Helpers/getAncestorControls';
 import { RxFormProviders } from '../../RxForm/RxForm';
+import { controlRefCheck } from '../../Helpers/controlRefCheck';
 
 export const removeControl = <T>(
   state: BaseFormState<T>,
@@ -19,6 +20,8 @@ export const removeControl = <T>(
 ): BaseFormState<T> => {
   const { form } = state;
   const { payload: controlRef } = action;
+
+  controlRefCheck(controlRef);
 
   const controlToRemove = getControl(controlRef, form);
 
