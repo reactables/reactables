@@ -18,7 +18,7 @@
   "dependencies": {
     "@reactables/core": "*",
     "@reactables/forms": "*",
-    "@reactables/react-helpers": "*"
+    "@reactables/react": "*"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0",

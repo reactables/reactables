@@ -13,7 +13,7 @@ const config: StorybookConfig = {
     const newConfig = {
       ...config,
       optimizeDeps: {
-        include: ['@reactables/core', '@reactables/forms', '@reactables/react-helpers'],
+        include: ['@reactables/core', '@reactables/forms', '@reactables/react'],
       },
     };
 

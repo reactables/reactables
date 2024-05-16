@@ -75,6 +75,6 @@ All Reactables Actions flow in one direction contained in streams, making state 
 
 - `npm i @reactables/examples`
 
-- Reactables helpers. See [Reactables Helpers](https://github.com/reactables/reactables/tree/main/packages/react-helpers).
+- Reactables helpers. See [Reactables Helpers](https://github.com/reactables/reactables/tree/main/packages/react).
 
-- `npm i @reactables/react-helpers`
+- `npm i @reactables/react`
