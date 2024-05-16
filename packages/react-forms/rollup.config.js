@@ -16,7 +16,7 @@ export default {
     'rxjs/operators',
     '@reactables/core',
     '@reactables/forms',
-    '@reactables/react-helpers',
+    '@reactables/react',
     'react',
   ],
 };
