@@ -297,7 +297,7 @@ type ValidatorAsyncFn = <T>(control$: Observable<BaseControl<T>>) => Observable<
 
 #### `FormReducers` <a name="api-form-reducers"></a>
 
-Built in reducers which can be used to update the state of the form tree. Payload and behaviour is the same and descrbed in [`RxActions`](#api-actions); 
+Built in reducers which can be used to update the state of the form tree. Payload and behaviour is the same and described in [`RxActions`](#api-actions);
 
 ```typescript
 
