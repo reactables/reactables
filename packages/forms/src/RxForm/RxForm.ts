@@ -123,7 +123,7 @@ export type CustomReducer =
   | CustomReducerFunc
   | {
       reducer: CustomReducerFunc;
-      effects?: ((payload?: unknown) => ScopedEffects<unknown>) | Effect<unknown, unknown>[];
+      effects?: Effect<unknown, unknown>[] | ((payload?: unknown) => ScopedEffects<unknown>);
     };
 
 export type CustomReducers<T> = {

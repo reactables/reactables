@@ -63,7 +63,7 @@ const updateDescendantValues = <T>(
 // Will only update child controls that are present.
 // Use AddControlPayload/RemoveControl action reducers to add/remove control
 export const updateValues = <T>(
-  { form, changedControls = {}, removedControls = {} }: BaseFormState<T>,
+  { form, _changedControls = {}, _removedConrols = {} }: BaseFormState<T>,
   action: Action<UpdateValuesPayload<unknown>>,
   providers: RxFormProviders,
   mergeChanges = false,
@@ -108,7 +108,7 @@ export const updateValues = <T>(
       ...form,
       [ctrlKey]: newControl,
     },
-    changedControls: { [newControl.key]: newControl },
+    _changedControls: { [newControl.key]: newControl },
   };
 
   const { controls: configControls } = config as FormArrayConfig | FormGroupConfig;
@@ -138,8 +138,8 @@ export const updateValues = <T>(
     result = {
       ...result,
       form: updatedDescendants,
-      changedControls: {
-        ...result.changedControls,
+      _changedControls: {
+        ...result._changedControls,
         ...changedDescendantControls,
       },
     };
@@ -170,12 +170,12 @@ export const updateValues = <T>(
 
   const mergedResult = {
     ...result,
-    changedControls: {
-      ...(mergeChanges ? changedControls : undefined),
+    _changedControls: {
+      ...(mergeChanges ? _changedControls : undefined),
       ...changedAncestorControls,
-      ...result.changedControls,
+      ...result._changedControls,
     },
-    removedControls: mergeChanges ? removedControls : undefined,
+    _removedConrols: mergeChanges ? _removedConrols : undefined,
   };
 
   return mergedResult;

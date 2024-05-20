@@ -11,16 +11,16 @@ const hasErrors = (errors: FormErrors) => {
 
 export const mergeControls = <T>(
   state: Form<T>,
-  { form, changedControls = {}, removedControls }: BaseFormState<unknown>,
+  { form, _changedControls = {}, _removedConrols }: BaseFormState<unknown>,
 ) => {
-  const controlsRemoved = removedControls
-    ? Object.values(removedControls).reduce(
+  const controlsRemoved = _removedConrols
+    ? Object.values(_removedConrols).reduce(
         (acc, { controlRef }) => mergeRemoveControl(acc, form, controlRef),
         state,
       )
     : state;
 
-  const updatedBranch = Object.values(changedControls)
+  const updatedBranch = Object.values(_changedControls)
     .reverse()
     .reduce((acc: Form<unknown>, control) => {
       const formKey = getFormKey(control.controlRef);

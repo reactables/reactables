@@ -7,6 +7,7 @@ Reactive forms with [Reactables](https://github.com/reactables/reactables/tree/m
 ## Table of Contents
 
 1. [Installation](#installation)
+1. [Examples](#examples)
 1. [API](#api)
     1. [RxActions](#api-actions)
         1. [updateValues](#api-actions-update-values)
@@ -27,18 +28,27 @@ Reactive forms with [Reactables](https://github.com/reactables/reactables/tree/m
         1. [FormControl](#api-form-control)
         1. [ControlRef](#api-control-ref)
         1. [FormErrors](#api-form-errors)
+        1. [ValidatorFn](#api-validator-fn)
+        1. [ValidatorAsyncFn](#api-validator-fn-async)
         1. [FormReducers](#api-form-reducers)
+        1. [CustomReducers](#api-custom-reducers)
+        1. [BaseFormState](#api-base-form-state)
+        1. [BaseControl](#api-base-control)
 
 
 ## Installation <a name="installation"></a>
 
 Installation requires [RxJS](https://rxjs.dev/) to be present.
 
-`npm i rxjs @reactables/forms`
+`npm i rxjs` (if not already installed)
+
+`npm i @reactables/forms`
+
+## Examples <a name="examples"></a>
 
 ## API <a name="api"></a>
 
-The API for building Reactable Forms is very similar to [Angular FormBuilder](https://angular.io/api/forms/FormBuilder). It has been adapted to support Reactable features.
+The API for building Reactable Forms inspired by [Angular FormBuilder](https://angular.io/api/forms/FormBuilder). It has been adapted to support Reactable features.
 
 ### `RxActions` <a name="api-actions"></a>
 
@@ -51,7 +61,7 @@ Updates values of a [`FormControl`](#api-form-control). For form group and form 
 ```typescript
 type updateValues = <T>(payload: UpdateValuesPayload<T>) => void;
 
-export interface UpdateValuesPayload<T> {
+interface UpdateValuesPayload<T> {
   value: T;
   controlRef: ControlRef;
 }
@@ -65,7 +75,7 @@ Adds a control to a form group.
 ```typescript
 type addControl = (payload: AddControlPayload) => void;
 
-export interface AddControlPayload {
+interface AddControlPayload {
   config: AbstractControlConfig;
   controlRef: ControlRef;
 }
@@ -79,7 +89,7 @@ Pushes a control to a form array.
 ```typescript
 type pushControl = (payload: PushControlPayload) => void;
 
-export interface PushControlPayload {
+interface PushControlPayload {
   config: AbstractControlConfig;
   controlRef: ControlRef;
 }
@@ -106,12 +116,12 @@ type markControlAsPristine = (payload: ControlRef) => void;
 
 #### `markControlAsTouched` <a name="api-actions-mark-as-touched"></a>
 
-Marks a control and all ancestors as touched. Can set `markAll` to `true` to mark all descendants as touched as well.
+Marks a control and all ancestors as touched. Can set `markAll` to `true` to mark all descendants as touched as well (defaults to `false`).
 
 ```typescript
 type markControlAsTouched = (payload: MarkTouchedPayload) => void;
 
-export interface MarkTouchedPayload {
+interface MarkTouchedPayload {
   controlRef: ControlRef;
   markAll?: boolean;
 }
@@ -129,7 +139,7 @@ type markControlAsUnTouched = (payload: ControlRef) => void;
 
 #### `resetControl` <a name="api-actions-resetControl"></a>
 
-Marks a control and all descendants as untouched. This will recheck ancestor controls and update the touched status.
+Resets a control by removing existing control and rebuilding it with the original configuration.
 
 ```typescript
 type resetControls = (payload: ControlRef) => void;
@@ -155,17 +165,10 @@ interface RxFormOptions {
   effects?: Effect<unknown, unknown>[];
   sources?: Observable<Action<unknown>>[] | { [key: string]: Observable<unknown> };
 }
-
-type CustomReducer = (
-  reducers: FormReducers,
-  state: BaseFormState<unknown>,
-  action: Action<unknown>,
-) => BaseFormState<unknown>;
-
 ```
 | Property | Description |
 | -------- | ----------- |
-| reducers (optional) | Dictionary of `CustomReducer`s to implement custom form behaviour. The `CustomReducer` provides built in [`FormReducers`](#api-form-reducers). **Form state updates need to be made with [`FormReducers`](#api-form-reducers) to maintain integrity of the form state tree (i.e validation states of parent and child controls)**. |
+| reducers (optional) | Dictionary of [`CustomReducer`s](#api-custom-reducers) to implement custom form behaviour. The `CustomReducerFunc`(#api-custom-reducers) provides built in [`FormReducers`](#api-form-reducers). **Form state updates need to be made with [`FormReducers`](#api-form-reducers) to maintain integrity of the form state tree (i.e validation states of parent and child controls)**. |
 | effects (optional) | Array of [Effects](https://github.com/reactables/reactables/tree/main/packages/core#api-effect) to be registered to the Reactable. |
 | sources (optional) | Additional [Action](https://github.com/reactables/reactables/tree/main/packages/core#action-) Observables the Reactable is listening to. Can be an array or a dictionary where key is the action type and value is the Observable emitting the payload. |
 
@@ -217,7 +220,7 @@ interface FormArrayConfig {
 Form state. Dictionary of [`FormControl`](#api-form-control)(s) where the key is a period separated representation of the [`ControlRef`](#api-control-ref) tuple.
 
 ```typescript
-export interface Form<T> {
+interface Form<T> {
   root?: FormControl<T>;
   [key: string]: FormControl<unknown>;
 }
@@ -228,7 +231,7 @@ export interface Form<T> {
 
 ```typescript
 
-export interface FormControl<T> extends BaseControl<T>, Hub2Fields {
+interface FormControl<T> {
   pristineValue: T;
   controlRef: ControlRef;
   value: T;
@@ -269,10 +272,28 @@ Control Reference represented as a tuple for the [`FormControl`](#api-form-contr
 Dictionary of errors for the control.
 
 ```typescript
-export interface FormErrors {
+interface FormErrors {
   [key: string]: boolean;
 }
 ```
+
+#### `ValidatorFn` <a name="api-validator-fn"></a>
+
+Validator function that reads the value of the `FormControl` and returns a `FormErrors` object.
+
+```typescript
+type ValidatorFn = (value: unknown) => FormErrors
+```
+
+#### `ValidatorFnAsync` <a name="api-validator-fn-async"></a>
+
+Validator function takes in an `BaseControl` observable and returns an `Observable<FormErrors>`.
+
+```typescript
+type ValidatorAsyncFn = <T>(control$: Observable<BaseControl<T>>) => Observable<FormErrors>;
+
+```
+
 
 #### `FormReducers` <a name="api-form-reducers"></a>
 
@@ -280,7 +301,7 @@ Built in reducers which can be used to update the state of the form tree. Payloa
 
 ```typescript
 
-export interface FormReducers {
+interface FormReducers {
   updateValues: <T>(state: BaseFormState<T>, payload: UpdateValuesPayload<unknown>,
   ) => BaseFormState<T>;
   removeControl: <T>(state: BaseFormState<T>, payload: ControlRef) => BaseFormState<T>;
@@ -291,5 +312,56 @@ export interface FormReducers {
   markControlAsUntouched: <T>(state: BaseFormState<T>, payload: ControlRef,
   ) => BaseFormState<T>;
   resetControl: <T>(state: BaseFormState<T>, payload: ControlRef) => BaseFormState<T>;
+}
+```
+#### `CustomReducers` <a name="api-custom-reducers"></a>
+
+```typescript
+type CustomReducerFunc = (
+  reducers: FormReducers,
+  state: BaseFormState<unknown>,
+  action: Action<unknown>,
+) => BaseFormState<unknown>;
+
+type CustomReducer =
+  | CustomReducerFunc
+  | {
+      reducer: CustomReducerFunc;
+      effects?: Effect<unknown, unknown>[] | ((payload?: unknown) => ScopedEffects<unknown>);
+    };
+
+```
+
+#### `BaseFormState` <a name="api-base-form-state"></a>
+
+Form state before it is fully validated. This is accessible in `CustomReducer`s so developer can read the current state and implement custom form behaviours.
+
+```typescript
+interface BaseFormState<T> {
+  form: BaseForm<T>;
+}
+
+interface BaseForm<T> {
+  root?: BaseControl<T>;
+  [key: string]: BaseControl<unknown>;
+}
+
+```
+
+#### `BaseControl` <a name="api-base-control"></a>
+
+`BaseControl` contains some control information before a fully validated `FormControl` is created.
+
+```typescript
+
+interface BaseControl<T> {
+  pristineValue: T;
+  controlRef: ControlRef;
+  value: T;
+  dirty: boolean;
+  touched: boolean;
+  validatorErrors: FormErrors;
+  config: AbstractControlConfig;
+  key: string;
 }
 ```

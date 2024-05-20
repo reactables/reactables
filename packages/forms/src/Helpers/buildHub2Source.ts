@@ -12,10 +12,10 @@ export const buildHub2Source = <T>(
   const sourceForHub2$ = hub1StateMapped$.pipe(
     mergeMap((formChangeAction) => {
       const {
-        payload: { changedControls },
+        payload: { _changedControls },
       } = formChangeAction;
 
-      const controlsToCheck = changedControls ? Object.values(changedControls) : [];
+      const controlsToCheck = _changedControls ? Object.values(_changedControls) : [];
       const asyncValidationActions = getAsyncValidationActions(controlsToCheck);
 
       return of(formChangeAction, ...asyncValidationActions);
