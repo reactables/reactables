@@ -8,6 +8,12 @@ Reactive forms with [Reactables](https://github.com/reactables/reactables/tree/m
 
 1. [Installation](#installation)
 1. [Examples](#examples)
+    1. [Basic Form Group](#basic-form-group)
+    1. [Validation](#validation-example)
+    1. [AsyncValidation](#async-validation-example)
+    1. [Normalizing Values](#normalizing-values)
+    1. [Custom Reducer](#custom-reducer-example)
+
 1. [API](#api)
     1. [RxActions](#api-actions)
         1. [updateValues](#api-actions-update-values)
@@ -45,6 +51,39 @@ Installation requires [RxJS](https://rxjs.dev/) to be present.
 `npm i @reactables/forms`
 
 ## Examples <a name="examples"></a>
+
+### Basic Form Group <a name="basic-form-group"></a>
+
+```typescript
+import { control, build, group } from '@reactables/forms';
+
+const [state$, actions] = build(
+  group({
+    controls: {
+      name: control(['']),
+    },
+  }),
+);
+
+// Bind Event Handlers
+const nameControlEl = document.getElementById('name-control');
+
+nameControlEl.oninput = ({ target: { value } }) =>{
+  actions.updateValues({
+    ['name'],
+    value,
+  });
+} 
+
+nameControlEl.onblur = () => {
+  actions.markControlAsTouched({ controlRef: ['name'] });
+};
+
+// Subscribe to state updates and bind to view.
+state$.subscribe((form) => {
+  nameControlEl.value = form.name.value;
+});
+```
 
 ## API <a name="api"></a>
 
