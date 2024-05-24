@@ -84,6 +84,8 @@ state$.subscribe((form) => {
   nameControlEl.value = form.name.value;
 });
 ```
+[See full example on StackBlitz](https://stackblitz.com/edit/github-qtpo1k-vm45ed?file=src%2Findex.js)
+
 ### Validation <a name="validation-example"></a>
 
 `@reactable/forms` only comes with 3 built in validators, `required`, `email` & `arrayNotEmpty`. The developer can implement their own `ValidatorFn`s and provide them when building the reactable.
@@ -127,9 +129,12 @@ state$.subscribe((form) => {
 
 
 ```
+
+[See full example on StackBlitz](https://stackblitz.com/edit/github-qtpo1k-vm45ed?file=src%2Findex.js)
+
 ### Async Validation <a name="async-validation-example"></a>
 
-`FormControl`s have a `pending: boolean` state when their value changes and are awaiting the result from asynchronous validation
+`FormControl`s have a `pending: boolean` state when their value changes and are awaiting the result from asynchronous validation.
 
 ```typescript
 import { control, build, group } from '@reactables/forms';
@@ -179,6 +184,86 @@ state$.subscribe((state) => {
 });
 
 ```
+
+[See full example on StackBlitz](https://stackblitz.com/edit/github-qtpo1k-vm45ed?file=src%2Findex.js)
+
+### Normalize Values <a name="normalizing-values"></a>
+
+User input for a `FormControl` leaf (i.e having no child controls) can be normalized via normalizer functions provided during form initialization
+
+```typescript
+import { control, build, group } from '@reactables/forms';
+
+export const normalizePhone = (value) => {
+  let input = value.replace(/\D/g, '').substring(0, 10); // First ten digits of input only
+  const areaCode = input.substring(0, 3);
+  const middle = input.substring(3, 6);
+  const last = input.substring(6, 10);
+
+  if (input.length > 6) {
+    input = `(${areaCode}) ${middle} - ${last}`;
+  } else if (input.length > 3) {
+    input = `(${areaCode}) ${middle}`;
+  } else if (input.length > 0) {
+    input = `(${areaCode}`;
+  }
+
+  return input;
+};
+
+const rxForm = build(
+  group({
+    controls: {
+      phone: control({
+        initialValue: '',
+        normalizers: ['phone']
+      }),
+    },
+  }),
+  {
+    providers: {
+      normalizers: {
+        phone: normalizePhone,
+      },
+    },
+  }
+);
+```
+
+[See full example on StackBlitz](https://stackblitz.com/edit/github-qtpo1k-vm45ed?file=src%2Findex.js)
+
+### Custom Reducer <a name="custom-reducer-example"></a>
+
+You can declare [`CustomReducer`s](#api-custom-reducers) during form initialization to implement custom behaviour.
+
+Below the form reactable will have a `doubleOrder` action method which can be called to double the order amount.
+
+```typescript
+import { control, build, group } from '@reactables/forms';
+
+const rxForm = build(
+  group({
+    controls: {
+      donuts: control(['0']),
+    },
+  }),
+  {
+    reducers: {
+      doubleOrder: (formReducers, state) => {
+        const { updateValues } = formReducers;
+
+        const orders = Number(state.form.donuts.value);
+        const value = (orders * 2).toString();
+
+        return updateValues(state, { controlRef: ['donuts'], value });
+      },
+    },
+  }
+);
+
+```
+
+[See full example on StackBlitz](https://stackblitz.com/edit/github-qtpo1k-vm45ed?file=src%2Findex.js)
 
 ## API <a name="api"></a>
 
