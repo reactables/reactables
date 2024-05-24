@@ -10,7 +10,7 @@ Reactive forms with [Reactables](https://github.com/reactables/reactables/tree/m
 1. [Examples](#examples)
     1. [Basic Form Group](#basic-form-group)
     1. [Validation](#validation-example)
-    1. [AsyncValidation](#async-validation-example)
+    1. [Async Validation](#async-validation-example)
     1. [Normalizing Values](#normalizing-values)
     1. [Custom Reducer](#custom-reducer-example)
 
@@ -125,6 +125,58 @@ state$.subscribe((form) => {
   handleErrors(donuntMinOrderErrorEl, donuts.touched && donuts.errors.min4);
 });
 
+
+```
+### Async Validation <a name="async-validation-example"></a>
+
+`FormControl`s have a `pending: boolean` state when their value changes and are awaiting the result from asynchronous validation
+
+```typescript
+import { control, build, group } from '@reactables/forms';
+import { of, switchMap, delay } from 'rxjs';
+
+const rxForm = build(
+  group({
+    controls: {
+      email: control({
+        initialValue: '',
+        validators: ['email'],
+        asyncValidators: ['blacklistedEmail'],
+      }),
+    },
+  }),
+  {
+    providers: {
+      asyncValidators: {
+        blacklistedEmail: (control$) =>
+          control$.pipe(
+            switchMap(({ value }) =>
+              of({
+                blacklistedEmail: value === 'already@taken.com',
+              }).pipe(delay(1000))
+            )
+          ),
+      },
+    },
+  }
+);
+
+// ... Bind event handlers
+
+// Subscribe to state updates and bind to view.
+state$.subscribe((state) => {
+  const { email } = state;
+
+  emailControlEl.value = email.value;
+
+  const handleErrors = (el, show) => {
+    el.className = show ? 'form-error show' : 'form-error';
+  };
+
+  // Show pending status if async validation in progress
+  emailPendingEl.className = email.pending ? 'show' : '';
+  handleErrors(emailAsyncErrorEl, email.errors.blacklistedEmail);
+});
 
 ```
 
