@@ -57,6 +57,7 @@ Installation requires [RxJS](https://rxjs.dev/) to be present.
 ```typescript
 import { control, build, group } from '@reactables/forms';
 
+// Create form reactable
 const [state$, actions] = build(
   group({
     controls: {
@@ -67,7 +68,6 @@ const [state$, actions] = build(
 
 // Bind Event Handlers
 const nameControlEl = document.getElementById('name-control');
-
 nameControlEl.oninput = ({ target: { value } }) =>{
   actions.updateValues({
     ['name'],
@@ -83,6 +83,49 @@ nameControlEl.onblur = () => {
 state$.subscribe((form) => {
   nameControlEl.value = form.name.value;
 });
+```
+### Validation <a name="validation-example"></a>
+
+`@reactable/forms` only comes with 3 built in validators, `required`, `email` & `arrayNotEmpty`. The developer can implement their own `ValidatorFn`s and provide them when building the reactable.
+
+```typescript
+// Create form reactable
+const [state$, action] = build(
+  group({
+    controls: {
+      name: control(['', 'required']),
+      donuts: control(['0', 'min4']),
+    },
+  }),
+  {
+    providers: {
+      // Provide ValidatorFns here
+      validators: {
+        min4: (value) => ({ min4: Number(value) < 4 }),
+      },
+    },
+  }
+);
+
+// ... Bind event handers
+
+// Subscribe to state updates and bind to view.
+state$.subscribe((form) => {
+  const { name, donuts } = form;
+
+  nameControlEl.value = name.value;
+  donutControlEl.value = donuts.value;
+
+  // Show or hide errors based on form control states
+  const handleErrors = (el, show) => {
+    el.className = show ? 'form-error show' : 'form-error';
+  };
+
+  handleErrors(nameRequiredErrorEl, name.touched && name.errors.required);
+  handleErrors(donuntMinOrderErrorEl, donuts.touched && donuts.errors.min4);
+});
+
+
 ```
 
 ## API <a name="api"></a>
