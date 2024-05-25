@@ -234,6 +234,8 @@ const rxForm = build(
     },
   }
 );
+
+// ... Bind event handlers and view
 ```
 
 ### Custom Reducer <a name="custom-reducer-example"></a>
