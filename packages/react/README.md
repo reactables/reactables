@@ -7,11 +7,11 @@ Hooks and Providers to bind reactables to React Components
 ## Table of Contents
 
 1. [Installation](#installation)
+1. [Providers](#providers)
+    1. [`StoreProvider`](#store-provider)
 1. [Hooks](#hooks)
     1. [`useReactable`](#use-reactable)
     1. [`useAppStore`](#store-provider)
-1. [`Providers`](#providers)
-    1. [`StoreProvider`](#store-provider)
 
 ## Installation <a name="installation"></a>
 
