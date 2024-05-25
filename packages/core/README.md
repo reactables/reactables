@@ -16,7 +16,6 @@ Reactive state management with RxJS.
 1. [Examples](#examples)
     1. [Basic Counter](#basic-counter-example)
     1. [Scoped Effects - Updating Todos](#scoped-effects-example)
-    1. [Connecting Multiple Reactables - Event Prices](#connecting-hub-example)
 1. [API](#api)
     1. [Reactable](#reactable)
     1. [RxBuilder](#rx-builder)
@@ -105,15 +104,6 @@ Updating statuses of todo items shows scoped effects in action. An 'update todo'
 Design Diagram           | Reactable      | Try it out on StackBlitz.<br /> Choose your framework
 :-------------------------:|:-------------------------:|:-------------------------:
 <img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/Slide12ScopedEffectsExampleTodos.jpg" width="400" /> | [See Code for RxTodoUpdates](https://github.com/reactables/reactables/tree/main/packages/examples/src/RxTodoUpdates/RxTodoUpdates.ts) |  <a href="https://stackblitz.com/edit/github-6pgtev?file=src%2Findex.js"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/VanillaJS.jpg" width="50" /></a><br /><a href="https://stackblitz.com/edit/github-1r6pki?file=src%2FTodoUpdates.tsx"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/React.png" width="60" /><br /><a href="https://stackblitz.com/edit/github-zfmupm?file=src%2Fapp%2Fapp.component.ts,src%2Fapp%2Ftodos%2Ftodos.component.ts"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/Angular.png" width="60" /></a>
-
-### Connecting Multiple Reactables - Event Tickets  <a name="connecting-hub-example"></a>
-
-This examples shows two sets of reactables. The first is responsible for updating the state of user controls, while the second fetches prices based on input from the first.
-
-Design Diagram           | Reactable     | Try it out on StackBlitz.<br /> Choose your framework
-:-------------------------:|:-------------------------:|:-------------------------:
-<img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/Slide13ConnectingHubsExampleEventPrices.jpg" width="400" />|  [See Code for RxEventTickets](https://github.com/reactables/reactables/tree/main/packages/examples/src/RxEventTickets/RxEventTickets.ts) | <a href="https://stackblitz.com/edit/github-pgpwly?file=src%2findex.js"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/VanillaJS.jpg" width="50" /></a><br /><a href="https://stackblitz.com/edit/github-eypqvc?file=src%2FEventTickets.tsx"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/React.png" width="60" /></a><br /><a href="https://stackblitz.com/edit/github-66mbtu?file=src%2Fapp%2Fevent-tickets%2Fevent-tickets.component.ts"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/Angular.png" width="60" /></a>
-
 
 ## API <a name="api"></a>
 
