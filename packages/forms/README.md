@@ -54,54 +54,61 @@ Installation requires [RxJS](https://rxjs.dev/) to be present.
 
 ### Basic Form Group <a name="basic-form-group"></a>
 
+[See full example on StackBlitz](https://stackblitz.com/edit/github-qtpo1k-vm45ed?file=src%2Findex.js)
+
 ```typescript
 import { control, build, group } from '@reactables/forms';
 
-// Create form reactable
 const [state$, actions] = build(
   group({
     controls: {
       name: control(['']),
     },
-  }),
+  })
 );
 
-// Bind Event Handlers
+// Cache the DOM
 const nameControlEl = document.getElementById('name-control');
-nameControlEl.oninput = ({ target: { value } }) =>{
+
+// Bind Event Handlers
+nameControlEl.oninput = ({ target: { value } }) => {
   actions.updateValues({
-    ['name'],
+    controlRef: ['name'],
     value,
   });
-} 
+};
 
 nameControlEl.onblur = () => {
   actions.markControlAsTouched({ controlRef: ['name'] });
 };
 
 // Subscribe to state updates and bind to view.
-state$.subscribe((form) => {
-  nameControlEl.value = form.name.value;
+state$.subscribe((state) => {
+  const { name } = state;
+
+  nameControlEl.value = name.value;
 });
+
 ```
-[See full example on StackBlitz](https://stackblitz.com/edit/github-qtpo1k-vm45ed?file=src%2Findex.js)
 
 ### Validation <a name="validation-example"></a>
 
 `@reactable/forms` only comes with 3 built in validators, `required`, `email` & `arrayNotEmpty`. The developer can implement their own `ValidatorFn`s and provide them when building the reactable.
 
+[See full example on StackBlitz](https://stackblitz.com/edit/github-qtpo1k-f6tz82?file=src%2Findex.js)
+
 ```typescript
-// Create form reactable
-const [state$, action] = build(
+import { control, build, group } from '@reactables/forms';
+
+// Create Reactable
+const rxForm = build(
   group({
     controls: {
-      name: control(['', 'required']),
-      donuts: control(['0', 'min4']),
+      donuts: control(['0', ['required', 'min4']]),
     },
   }),
   {
     providers: {
-      // Provide ValidatorFns here
       validators: {
         min4: (value) => ({ min4: Number(value) < 4 }),
       },
@@ -109,45 +116,42 @@ const [state$, action] = build(
   }
 );
 
-// ... Bind event handers
+const [state$, actions] = rxForm;
+
+// ...Cache the DOM and bind event handlers
 
 // Subscribe to state updates and bind to view.
-state$.subscribe((form) => {
-  const { name, donuts } = form;
+state$.subscribe((state) => {
+  const { donuts } = state;
 
-  nameControlEl.value = name.value;
   donutControlEl.value = donuts.value;
 
-  // Show or hide errors based on form control states
   const handleErrors = (el, show) => {
     el.className = show ? 'form-error show' : 'form-error';
   };
 
-  handleErrors(nameRequiredErrorEl, name.touched && name.errors.required);
   handleErrors(donuntMinOrderErrorEl, donuts.touched && donuts.errors.min4);
+  handleErrors(donuntRequiredErrorEl, donuts.touched && donuts.errors.required);
 });
 
 
-```
 
-[See full example on StackBlitz](https://stackblitz.com/edit/github-qtpo1k-vm45ed?file=src%2Findex.js)
+```
 
 ### Async Validation <a name="async-validation-example"></a>
 
 `FormControl`s have a `pending: boolean` state when their value changes and are awaiting the result from asynchronous validation.
 
+[See full example on StackBlitz](https://stackblitz.com/edit/github-qtpo1k-wvznqm?file=src%2Findex.js)
+
 ```typescript
 import { control, build, group } from '@reactables/forms';
 import { of, switchMap, delay } from 'rxjs';
 
-const rxForm = build(
+const [state$, actions] = build(
   group({
     controls: {
-      email: control({
-        initialValue: '',
-        validators: ['email'],
-        asyncValidators: ['blacklistedEmail'],
-      }),
+      email: control(['', ['required', 'email'], ['blacklistedEmail']]),
     },
   }),
   {
@@ -166,7 +170,7 @@ const rxForm = build(
   }
 );
 
-// ... Bind event handlers
+// ...Bind Event Handlers
 
 // Subscribe to state updates and bind to view.
 state$.subscribe((state) => {
@@ -178,18 +182,20 @@ state$.subscribe((state) => {
     el.className = show ? 'form-error show' : 'form-error';
   };
 
-  // Show pending status if async validation in progress
   emailPendingEl.className = email.pending ? 'show' : '';
+
+  handleErrors(emailRequiredErrorEl, email.touched && email.errors.required);
   handleErrors(emailAsyncErrorEl, email.errors.blacklistedEmail);
 });
 
-```
 
-[See full example on StackBlitz](https://stackblitz.com/edit/github-qtpo1k-vm45ed?file=src%2Findex.js)
+```
 
 ### Normalize Values <a name="normalizing-values"></a>
 
-User input for a `FormControl` leaf (i.e having no child controls) can be normalized via normalizer functions provided during form initialization
+User input for a `FormControl` leaf (i.e having no child controls) can be normalized via normalizer functions provided during form initialization.
+
+[See full example on StackBlitz](https://stackblitz.com/edit/github-qtpo1k-frpncu?file=src%2findex.js)
 
 ```typescript
 import { control, build, group } from '@reactables/forms';
@@ -230,40 +236,46 @@ const rxForm = build(
 );
 ```
 
-[See full example on StackBlitz](https://stackblitz.com/edit/github-qtpo1k-vm45ed?file=src%2Findex.js)
-
 ### Custom Reducer <a name="custom-reducer-example"></a>
 
 You can declare [`CustomReducer`s](#api-custom-reducers) during form initialization to implement custom behaviour.
 
 Below the form reactable will have a `doubleOrder` action method which can be called to double the order amount.
 
+[See full example on StackBlitz](https://stackblitz.com/edit/github-qtpo1k-3qppus?file=src%2Findex.js)
+
 ```typescript
 import { control, build, group } from '@reactables/forms';
 
-const rxForm = build(
+const [state$, actions] = build(
   group({
     controls: {
-      donuts: control(['0']),
+      donuts: control(['0', 'min4']),
     },
   }),
   {
+    providers: {
+      validators: {
+        min4: (value) => ({ min4: Number(value) < 4 }),
+      },
+    },
     reducers: {
-      doubleOrder: (formReducers, state) => {
+      doubleOrder:  (formReducers, state) => {
+        /** Use built in Form Reducers for updating the form tree. **/
         const { updateValues } = formReducers;
 
         const orders = Number(state.form.donuts.value);
         const value = (orders * 2).toString();
 
         return updateValues(state, { controlRef: ['donuts'], value });
-      },
+      };,
     },
   }
 );
 
-```
+// ... Bind event handlers and view
 
-[See full example on StackBlitz](https://stackblitz.com/edit/github-qtpo1k-vm45ed?file=src%2Findex.js)
+```
 
 ## API <a name="api"></a>
 
