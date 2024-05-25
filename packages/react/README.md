@@ -38,6 +38,9 @@ const config = {
   initialState: {
     userLoggedIn: false,
   },
+  reducers: {
+    loginSuccess: () => ({ userLoggedIn: true })
+  }
 };
 
 const rxAppStore = storeValue(RxBuilder(config));
