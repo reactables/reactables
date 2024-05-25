@@ -2,7 +2,7 @@
 
 ## Description
 
-Hooks and Providers to bind reactables to React Components
+Reactable bindings for React Components
 
 ## Table of Contents
 
