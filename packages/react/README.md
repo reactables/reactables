@@ -63,10 +63,9 @@ root.render(
 React hook for binding a reactable to a React component. Accepts a reactable factory, dependencies (if any) and returns a tuple with the state `T`, actions `S`, and the original observable state `Observable<T>`.
 
 ```typescript
-export const useReactable = <T, S, U extends unknown[]>(
-  reactableFactory: (...deps: U) => Reactable<T, S>,
-  ...deps: U
-) => [T, S, Observable<T>]
+export declare const useReactable: <T, S, U extends unknown[]>(
+  reactableFactory: (...deps: U) => Reactable<T, S>, ...deps: U
+) => [T, S, Observable<T>];
 
 ```
 
@@ -104,4 +103,10 @@ export default Toggle;
 ```
 
 ### `useAppStore`<a name="useAppStore"></a>
+
+React hook for accessing reactable provided by [`StoreProvider`](#store-provider) and binding it to a React component. Like [`useReactable`](use-reactable) it returns a tuple with the state `T`, actions `S`, and the original observable state `Observable<T>`.
+
+```typescript
+export declare const useAppStore: <T, S = ActionMap>() => [T, S, Observable<T>];
+```
 
