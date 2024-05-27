@@ -33,6 +33,14 @@ import { storeValue, RxBuilder } from '@reactables/core';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 
+export interface AppState {
+  userLoggedIn: boolean
+}
+
+export interface AppActions {
+  logout: () => void;
+}
+
 const config = {
   name: 'rxAppStore',
   initialState: {
@@ -40,6 +48,7 @@ const config = {
   },
   reducers: {
     loginSuccess: () => ({ userLoggedIn: true })
+    logout: () => ({ userLoggedIn: false })
   }
 };
 
@@ -90,6 +99,8 @@ const RxToggle = (
 const Toggle = () => {
   const [state, actions] = useReactable(RxToggle, false);
 
+  if (!state) return;
+
   return (
     <div>
       <div>Toggle is: { state ? 'on' : 'off'} </div>
@@ -110,3 +121,29 @@ React hook for accessing reactable provided by [`StoreProvider`](#store-provider
 export declare const useAppStore: <T, S = ActionMap>() => [T, S, Observable<T>];
 ```
 
+Example using the setup from [`StoreProvider`](#store-provider) example above:
+
+```typescript
+import React from 'react';
+import { useAppStore } from '@reactables/react';
+import { AppState, AppActions } from '../index'
+
+const App = () => {
+  const [appState, appActions] = useAppStore<AppState, AppActions>();
+
+  if (!appState) return;
+
+  return (
+    <>
+      <div>
+        User is {appState.userLoggedIn ? 'logged in': 'not logged in'}.
+      </div>
+      <button type="button" onClick={appActions.logout}>Logout</button>
+    </>
+
+  )
+}
+
+export default App;
+
+```
