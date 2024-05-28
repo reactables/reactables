@@ -95,7 +95,7 @@ export default Input;
 
 ```
 
-Continuing from our `Form` example we then can wrap the `Input` component above as follows:
+Continuing from our `Form` example we can wrap the `Input` component above as follows:
 
 ```typescript
 import { build, group, control } from '@reactable/forms';
