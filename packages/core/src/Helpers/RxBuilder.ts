@@ -70,5 +70,6 @@ export const RxBuilder = <T, S extends Cases<T>>({
   return [
     hub.store({ reducer, debug, storeValue, name: sliceConfig.name }),
     actionsResult,
+    hub.messages$,
   ] as Reactable<T, { [K in keyof S]: (payload?: unknown) => void }>;
 };
