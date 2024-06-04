@@ -6,10 +6,12 @@ import { Reactable, Action } from '@reactables/core';
 // See Bug: https://github.com/facebook/react/issues/26315
 // See Bug: https://github.com/facebook/react/issues/24670
 
+export type HookedReactable<T, S> = [T, S, Observable<T>, Observable<Action<unknown>>?];
+
 export const useReactable = <T, S, U extends unknown[]>(
   reactableFactory: (...props: U) => Reactable<T, S>,
   ...props: U
-): [T, S, Observable<T>, Observable<Action<unknown>>?] => {
+): HookedReactable<T, S> => {
   const [state$, actions, messages$] = useMemo(() => reactableFactory(...props), []);
   const [state, setState] = useState<T>();
 

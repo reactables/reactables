@@ -1,2 +1,2 @@
-export { useReactable } from './useReactable';
+export { useReactable, HookedReactable } from './useReactable';
 export { useAppStore } from './useAppStore';
