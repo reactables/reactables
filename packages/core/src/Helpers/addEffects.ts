@@ -1,6 +1,6 @@
 import { Action, ActionCreator, ScopedEffects } from '../Models/Action';
 import { Effect } from '../Models/Effect';
-import { ofType } from '../Operators/ofType';
+import { ofTypes } from '../Operators/ofTypes';
 import { Observable } from 'rxjs';
 
 export const addEffects = <T>(
@@ -18,6 +18,6 @@ export const createEffect = <T, S>(
   operator: (actions$: Observable<Action<T>>) => Observable<Action<S>>,
 ): Effect<T, S> => {
   return (dispatcher$) => {
-    return dispatcher$.pipe(ofType(action), operator);
+    return dispatcher$.pipe(ofTypes([action]), operator);
   };
 };

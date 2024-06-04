@@ -5,7 +5,7 @@ import { HubFactory } from './HubFactory';
 import { Action } from '../Models/Action';
 import { Hub, Reducer } from '../Models/Hub';
 import { TEST_ACTION, TEST_ACTION_SUCCESS } from '../Testing/Actions';
-import { ofType } from '../Operators/ofType';
+import { ofTypes } from '../Operators/ofTypes';
 import { switchMapTestEffect, debounceTestEffect } from '../Testing/Effects';
 
 describe('HubFactory', () => {
@@ -63,7 +63,7 @@ describe('HubFactory', () => {
           };
           const effect = (action$: Observable<unknown>) =>
             action$.pipe(
-              ofType(TEST_ACTION),
+              ofTypes([TEST_ACTION]),
               switchMap(() => of(successAction).pipe(delay(2000))),
             );
 
