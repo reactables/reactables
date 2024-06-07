@@ -100,12 +100,20 @@ Continuing from our `Form` example we can wrap the `Input` component above as fo
 ```typescript
 import { build, group, control } from '@reactable/forms';
 import { useReactable } from '@reactable/react';
-import { Form } from '@reactable/react-form';
-import { formConfig } from './formConfig';
+import { Form, Field } from '@reactable/react-form';
 import Input from './Input';
 
+const userConfig = group(
+  {
+    controls: {
+      name: control(['', 'required']),
+      email: control(['', ['required', 'email']])
+    }
+  }
+);
+
 const MyForm = () => {
-  const rxForm = useReactable(build(formConfig));
+  const rxForm = useReactable(build(userConfig));
 
   return (
     <Form rxForm={rxForm}>
@@ -118,3 +126,55 @@ const MyForm = () => {
 export default MyForm;
 ```
 ### `FormArray`<a name="form-array"></a>
+
+`FormArray` uses the function as children pattern and makes available the `array` items as well as `pushControl` and `removeControl` action methods.
+
+```typescript
+import { build, group, control, array } from '@reactable/forms';
+import { useReactable } from '@reactable/react';
+import { Form, Field, FormArray } from '@reactable/react-form';
+import Input from './Input';
+
+const userConfig = group(
+  {
+    controls: {
+      name: control(['', 'required']),
+      email: control(['', ['required', 'email']])
+    }
+  }
+);
+
+const MyForm = () => {
+  const rxForm = useReactable(build(array({
+    controls: [userConfig]
+  })));
+
+  return (
+    <Form rxForm={rxForm}>
+      <FormArray name="root">
+        {({ items, pushControl, removeControl}) => 
+          <>
+            {items.map((control, index) => {
+                  return (<div>
+                    <Field name={`${index}.name`} component={Input} />
+                    <Field name={`${index}.email`} component={Input} />
+                    <button type="button" onClick={() => removeControl(index)}>
+                        Add contact
+                    </button>
+                  </div>)
+            })}
+            <button type="button" onClick={() => pushControl(userConfig)}>
+                Add contact
+              </button>
+          </> 
+        }
+      </FormArray>
+    </Form>
+  )
+}
+
+export default MyForm;
+
+```
+
+
