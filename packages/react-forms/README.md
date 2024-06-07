@@ -21,35 +21,37 @@ React components for binding to form reactables from `@reactables/forms`.
 
 ### `Form`<a name="form"></a>
 
+```typescript
+type HookedRxForm = HookedReactable<ControlModels.Form<unknown>, RxFormActions>;
+```
+
 `Form` is the provider component giving child `Field` and `FormArray` child components access to a `HookedRxForm`.
 
 ```typescript
-type HookedRxForm = [ControlModels.Form<unknown>, RxFormActions];
-```
+import { build, group, control } from '@reactables/forms';
+import { useReactable } from '@reactables/react';
+import { Form, Field } from '@reactables/react-forms';
+import Input from './Input';
 
-```typescript
-import { build, group, control } from '@reactable/forms';
-import { useReactable } from '@reactable/react';
-import { Form } from '@reactable/react-form';
-
-const userConfig = group(
-  {
-    controls: {
-      name: control(['', 'required']),
-      email: control(['', ['required', 'email']])
-    }
-  }
-);
+const userConfig = group({
+  controls: {
+    name: control(['', 'required']),
+    email: control(['', ['required', 'email']]),
+  },
+});
 
 const MyForm = () => {
-  const rxForm = useReactable(build(userConfig));
+  const rxForm = useReactable(() => build(userConfig));
 
   return (
     <Form rxForm={rxForm}>
-      {/* .... */}
+      <Field name="name" label="Name:" component={Input} />
+      <Field name="email" label="Email: " component={Input} />
     </Form>
-  )
-}
+  );
+};
+
+export default MyForm;
 ```
 
 ### `Field`<a name="field"></a>
@@ -61,9 +63,12 @@ Below is an `Input` component that will be wrapped by `Field` and provided the `
 `WrappedFieldInputProps` are passed in by the `input` prop which contains the input value and event handlers.
 
 ```typescript
+import { WrappedFieldProps } from '@reactables/react-forms';
+
 const Input = ({
   input,
-  meta: { touched, errors, pending, valid }
+  label,
+  meta: { touched, errors, pending, valid },
 }: { label?: string } & WrappedFieldProps) => {
   return (
     <div className="mb-3">
@@ -73,9 +78,7 @@ const Input = ({
       <input
         {...input}
         type="text"
-        className={`form-control ${
-          (touched && !valid) ? 'is-invalid' : ''
-        }`}
+        className={`form-control ${touched && !valid ? 'is-invalid' : ''}`}
       />
       {touched && errors.required && (
         <div>
@@ -98,30 +101,28 @@ export default Input;
 Continuing from our `Form` example we can wrap the `Input` component above as follows:
 
 ```typescript
-import { build, group, control } from '@reactable/forms';
-import { useReactable } from '@reactable/react';
-import { Form, Field } from '@reactable/react-form';
+import { build, group, control } from '@reactables/forms';
+import { useReactable } from '@reactables/react-helpers';
+import { Form, Field } from '@reactables/react-forms';
 import Input from './Input';
 
-const userConfig = group(
-  {
-    controls: {
-      name: control(['', 'required']),
-      email: control(['', ['required', 'email']])
-    }
-  }
-);
+const userConfig = group({
+  controls: {
+    name: control(['', 'required']),
+    email: control(['', ['required', 'email']]),
+  },
+});
 
 const MyForm = () => {
-  const rxForm = useReactable(build(userConfig));
+  const rxForm = useReactable(() => build(userConfig));
 
   return (
     <Form rxForm={rxForm}>
-      <Field name="name" component={Input} />
-      <Field name="email" component={Input} />
+      <Field name="name" label="Name:" component={Input} />
+      <Field name="email" label="Email: " component={Input} />
     </Form>
-  )
-}
+  );
+};
 
 export default MyForm;
 ```
@@ -130,48 +131,58 @@ export default MyForm;
 `FormArray` uses the function as children pattern and makes available the `array` items as well as `pushControl` and `removeControl` action methods.
 
 ```typescript
-import { build, group, control, array } from '@reactable/forms';
-import { useReactable } from '@reactable/react';
-import { Form, Field, FormArray } from '@reactable/react-form';
+import { build, group, control, array } from '@reactables/forms';
+import { useReactable } from '@reactables/react';
+import { Form, Field, FormArray } from '@reactables/react-forms';
 import Input from './Input';
 
-const userConfig = group(
-  {
-    controls: {
-      name: control(['', 'required']),
-      email: control(['', ['required', 'email']])
-    }
-  }
-);
+const userConfig = group({
+  controls: {
+    name: control(['', 'required']),
+    email: control(['', ['required', 'email']]),
+  },
+});
 
 const MyForm = () => {
-  const rxForm = useReactable(build(array({
-    controls: [userConfig]
-  })));
+  const rxForm = useReactable(() =>
+    build(
+      group({
+        controls: {
+          contacts: array({
+            controls: [userConfig],
+          }),
+        },
+      })
+    )
+  );
 
   return (
     <Form rxForm={rxForm}>
-      <FormArray name="root">
-        {({ items, pushControl, removeControl}) => 
-          <>
-            {items.map((control, index) => {
-                  return (<div>
-                    <Field name={`${index}.name`} component={Input} />
-                    <Field name={`${index}.email`} component={Input} />
+      <FormArray name="contacts">
+        {({ items, pushControl, removeControl }) => {
+          return (
+            <>
+              {items.map((control, index) => {
+                return (
+                  <div key={control.key}>
+                    <Field name={`contacts.${index}.name`} label="Name:" component={Input} />
+                    <Field name={`contacts.${index}.email`} label="Email: " component={Input} />
                     <button type="button" onClick={() => removeControl(index)}>
-                        Add contact
+                      Remove contact
                     </button>
-                  </div>)
-            })}
-            <button type="button" onClick={() => pushControl(userConfig)}>
-                Add contact
+                  </div>
+                );
+              })}
+              <button type="button" onClick={() => pushControl(userConfig)}>
+                Add User
               </button>
-          </> 
-        }
+            </>
+          );
+        }}
       </FormArray>
     </Form>
-  )
-}
+  );
+};
 
 export default MyForm;
 
