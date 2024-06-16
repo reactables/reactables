@@ -3,7 +3,7 @@
 
 ## Description
 
-React components for binding to form reactables from `@reactables/forms`.
+React components for binding [`@reactables/forms`](https://github.com/reactables/reactables/tree/main/packages/forms) reactables.
 
 ## Table of Contents
 
@@ -26,6 +26,8 @@ type HookedRxForm = HookedReactable<ControlModels.Form<unknown>, RxFormActions>;
 ```
 
 `Form` is the provider component giving child `Field` and `FormArray` child components access to a `HookedRxForm`.
+
+[See full example on StackBlitz](https://stackblitz.com/edit/vitejs-vite-6lzq4i?file=src%2FMyForm.tsx)
 
 ```typescript
 import { build, group, control } from '@reactables/forms';
@@ -54,8 +56,6 @@ const MyForm = () => {
 export default MyForm;
 ```
 
-[See full example on StackBlitz](https://stackblitz.com/edit/vitejs-vite-6lzq4i?file=src%2FMyForm.tsx)
-
 ### `Field`<a name="field"></a>
 
 A wrapper component that connects a component to the reactable form.
@@ -63,6 +63,8 @@ A wrapper component that connects a component to the reactable form.
 Below is an `Input` component that will be wrapped by `Field` and provided the `FormControl<T>` via the `meta` prop.
 
 `WrappedFieldInputProps` are passed in by the `input` prop which contains the input value and event handlers.
+
+[See full example on StackBlitz](https://stackblitz.com/edit/vitejs-vite-6lzq4i?file=src%2FMyForm.tsx)
 
 ```typescript
 import { WrappedFieldProps } from '@reactables/react-forms';
@@ -130,11 +132,11 @@ export default MyForm;
 
 ```
 
-[See full example on StackBlitz](https://stackblitz.com/edit/vitejs-vite-6lzq4i?file=src%2FMyForm.tsx)
-
 ### `FormArray`<a name="form-array"></a>
 
 `FormArray` uses the function as children pattern and makes available the `array` items as well as `pushControl` and `removeControl` action methods.
+
+[See full example on StackBlitz](https://stackblitz.com/edit/vitejs-vite-fmst4h?file=src%2FMyForm.tsx)
 
 ```typescript
 import { build, group, control, array } from '@reactables/forms';
@@ -193,5 +195,3 @@ const MyForm = () => {
 export default MyForm;
 
 ```
-
-[See full example on StackBlitz](https://stackblitz.com/edit/vitejs-vite-6lzq4i?file=src%2FMyForm.tsx)
