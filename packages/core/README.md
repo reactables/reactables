@@ -20,6 +20,7 @@ Reactive state management with RxJS.
     1. [Reactable](#reactable)
     1. [RxBuilder](#rx-builder)
         1. [RxConfig](#rx-config)
+    1. [ofTypes](#of-types)
     1. [Other Interfaces](#interfaces)
         1. [Effect](#api-effect)
         1. [ScopedEffects](#api-scoped-effects)
@@ -107,7 +108,7 @@ Design Diagram           | Reactable      | Try it out on StackBlitz.<br /> Choo
 
 ## API <a name="api"></a>
 
-### Reactable <a name="reactable"></a>
+### `Reactable` <a name="reactable"></a>
 
 Reactables provide the API for applications and UI components to receive and trigger state updates.
 
@@ -123,7 +124,7 @@ export interface ActionMap {
 }
 ```
 
-### RxBuilder <a name="rx-builder"></a>
+### `RxBuilder` <a name="rx-builder"></a>
 
 Factory function for building [Reactables](#reactable). Accepts a [RxConfig](#rx-confg) configuration object.
 
@@ -132,7 +133,7 @@ type RxBuilder = <T, S extends Cases<T>>(config: RxConfig<T, S>) => Reactable<T,
 
 ```
 
-#### RxConfig <a name="rx-config"></a>
+#### `RxConfig` <a name="rx-config"></a>
 
 Configuration object for creating Reactables.
 
@@ -169,9 +170,17 @@ Debug Example:
 
 <img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/SlideSixDebug.jpg" width="500" />
 
+### `ofTypes` <a name="of-Types"></a>
+
+Function that accepts an array of action types (`string`) and returns an `OperatorFunction` that will filter for those `Action`s.
+
+```typescript
+type ofTypes = (types: string[]) => OperatorFunction<Action<unknown>, Action<unknown>>
+```
+
 ### Other Interfaces <a name="interfaces"></a>
 
-#### Effect <a name="api-effect"></a>
+#### `Effect` <a name="api-effect"></a>
 
 Effects are expressed as [RxJS Operator Functions](https://rxjs.dev/api/index/interface/OperatorFunction). They pipe the [dispatcher$](#hub-dispatcher) stream and run side effects on incoming [Actions](#api-action).
 
@@ -179,7 +188,7 @@ Effects are expressed as [RxJS Operator Functions](https://rxjs.dev/api/index/in
 type Effect<T, S> = OperatorFunction<Action<T>, Action<S>>;
 ```
 
-#### ScopedEffects <a name="api-scoped-effects"></a>
+#### `ScopedEffects` <a name="api-scoped-effects"></a>
 
 Scoped Effects are declared when defining reducers in [RxConfig](#rx-config). They are dynamically created stream(s) scoped to an Action `type` & `key` combination.
 
@@ -195,7 +204,7 @@ interface ScopedEffects<T> {
 | effects | Array of [Effects](#api-effects) scoped to the Action `type` & `key` |
 
 
-#### Action <a name="api-action"></a>
+#### `Action` <a name="api-action"></a>
 ```typescript
 interface Action<T = undefined> {
   type: string;
@@ -209,7 +218,7 @@ interface Action<T = undefined> {
 | payload (optional) | payload associated with Action |
 | scopedEffects (optional) | [See ScopedEffects](#api-scoped-effects) |
 
-#### Reducer <a name="api-reducer"></a>
+#### `Reducer` <a name="api-reducer"></a>
 
 From the [Redux Docs](https://redux.js.org/tutorials/fundamentals/part-3-state-actions-reducers):
 > Reducers are functions that take the current state and an action as arguments, and return a new state result
