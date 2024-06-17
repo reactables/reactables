@@ -113,8 +113,10 @@ Reactables provide the API for applications and UI components to receive and tri
 
 It is a tuple with the first item being an Observable emitting state changes and the second item is a dictionary of action methods for triggering state updates. 
 
+Reactables may also expose an optional third item - an observable emitting all the actions the received by the store during state updates. This can be helpful if other reactables also want to subscribe and react to any of those actions.
+
 ```typescript
-export type Reactable<T, S = ActionMap> = [Observable<T>, S];
+export type Reactable<T, S = ActionMap> = [Observable<T>, S, Observable<Action<unknown>>?];
 
 export interface ActionMap {
   [key: string | number]: (payload?: unknown) => void | ActionMap;
