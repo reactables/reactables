@@ -74,7 +74,7 @@ export type RxFormActions = {
   markControlAsTouched: (payload: MarkTouchedPayload) => void;
   markControlAsUntouched: (payload: ControlRef) => void;
   resetControl: (payload: ControlRef) => void;
-};
+} & ActionMap;
 
 // For building custom reducers
 export interface FormReducers {
@@ -151,7 +151,7 @@ export interface RxFormProviders {
 export const build = (
   config: AbstractControlConfig,
   options: RxFormOptions = {},
-): Reactable<Form<unknown>, ActionMap & RxFormActions> => {
+): Reactable<Form<unknown>, RxFormActions> => {
   const providers = {
     normalizers: { ...options.providers?.normalizers },
     validators: { ...Validators, ...options.providers?.validators },
@@ -166,7 +166,7 @@ export const build = (
 export const load = (
   state: Form<unknown>,
   options: RxFormOptions = {},
-): Reactable<Form<unknown>, ActionMap & RxFormActions> => {
+): Reactable<Form<unknown>, RxFormActions> => {
   const baseFormState = {
     form: Object.entries(state).reduce(
       (acc: { [key: string]: BaseControl<unknown> }, [key, control]) => {
