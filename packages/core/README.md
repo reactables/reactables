@@ -141,7 +141,6 @@ Configuration object for creating Reactables.
 interface RxConfig <T, S extends Cases<T>>{
   initialState: T;
   reducers: S;
-  storeValue?: boolean;
   debug?: boolean;
   effects?: Effect<unknown, unknown>[];
   sources?: Observable<Action<unknown>>[] | { [key: string]: Observable<unknown> };
@@ -162,7 +161,6 @@ type SingleActionReducer<T, S> = (state: T, action: Action<S>) => T;
 | initialState | Initial state of the Reactable |
 | reducers | Dictionary of cases for the Reactable to handle. Each case can be a reducer function or a configuration object. RxBuilder will use this to generate Actions, Reducers, and add [ScopedEffects](#api-scoped-effects). |
 | debug (optional) | to turn on debugging to console.log all messages received by the store and state changes |
-| storeValue (optional) | Option to store value if Reactable is used to persist application state. Subsequent subscriptions will receive the latest stored value. Default to false |
 | effects (optional) | Array of [Effects](#api-effects) to be registered to the Reactable |
 | sources (optional) <a name="hub-sources"></a> | Additional [Action](#api-actions) Observables the Reactable is listening to. Can be an array or a dictionary where key is the action type and value is the Observable emitting the payload |
 
