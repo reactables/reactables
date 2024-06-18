@@ -21,6 +21,7 @@ Reactive state management with RxJS.
     1. [RxBuilder](#rx-builder)
         1. [RxConfig](#rx-config)
     1. [ofTypes](#of-types)
+    1. [storeValue](#store-value)
     1. [Other Interfaces](#interfaces)
         1. [Effect](#api-effect)
         1. [ScopedEffects](#api-scoped-effects)
@@ -129,7 +130,7 @@ export interface ActionMap {
 Factory function for building [Reactables](#reactable). Accepts a [RxConfig](#rx-confg) configuration object.
 
 ```typescript
-type RxBuilder = <T, S extends Cases<T>>(config: RxConfig<T, S>) => Reactable<T, unknown>
+declare const RxBuilder: <T, S extends Cases<T>>(config: RxConfig<T, S>) => Reactable<T, { [K in keyof S]: (payload?: unknown) => void; }>;
 
 ```
 
@@ -173,7 +174,21 @@ Debug Example:
 Function that accepts an array of action types (`string`) and returns an `OperatorFunction` that will filter for those `Action`s.
 
 ```typescript
-type ofTypes = (types: string[]) => OperatorFunction<Action<unknown>, Action<unknown>>
+export declare const ofTypes: (types: string[]) => OperatorFunction<Action<unknown>, Action<unknown>>;
+```
+
+### `storeValue` <a name="store-value"></a>
+
+Decorator function used store the state value in a `ReplaySubject` instead of an `Observable` so subsequent subscriptions can access the latest stored value.
+
+Also add's a `destroy` action method to be called to teardown any Reactable decorated with `storeValue`.
+
+```typescript
+interface DestroyAction {
+  destroy: () => void;
+}
+
+declare const storeValue: <T, S>(reactable: Reactable<T, S>) => Reactable<T, S & DestroyAction>;
 ```
 
 ### Other Interfaces <a name="interfaces"></a>

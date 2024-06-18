@@ -8,11 +8,11 @@ export interface DestroyAction {
 export const storeValue = <T, S>(reactable: Reactable<T, S>): Reactable<T, S & DestroyAction> => {
   const replaySubject$ = new ReplaySubject<T>(1);
 
-  const [state$, actions] = reactable;
+  const [state$, actions, actions$] = reactable;
 
   const subscription = state$.subscribe((state) => replaySubject$.next(state));
 
   const destroy = () => subscription.unsubscribe();
 
-  return [replaySubject$, { ...actions, destroy }];
+  return [replaySubject$, { ...actions, destroy }, actions$];
 };
