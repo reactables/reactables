@@ -16,11 +16,12 @@ Reactive state management with RxJS.
 1. [Examples](#examples)
     1. [Basic Counter](#basic-counter-example)
     1. [Scoped Effects - Updating Todos](#scoped-effects-example)
-    1. [Connecting Multiple Reactables - Event Prices](#connecting-hub-example)
 1. [API](#api)
     1. [Reactable](#reactable)
     1. [RxBuilder](#rx-builder)
         1. [RxConfig](#rx-config)
+    1. [ofTypes](#of-types)
+    1. [storeValue](#store-value)
     1. [Other Interfaces](#interfaces)
         1. [Effect](#api-effect)
         1. [ScopedEffects](#api-scoped-effects)
@@ -106,41 +107,34 @@ Design Diagram           | Reactable      | Try it out on StackBlitz.<br /> Choo
 :-------------------------:|:-------------------------:|:-------------------------:
 <img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/Slide12ScopedEffectsExampleTodos.jpg" width="400" /> | [See Code for RxTodoUpdates](https://github.com/reactables/reactables/tree/main/packages/examples/src/RxTodoUpdates/RxTodoUpdates.ts) |  <a href="https://stackblitz.com/edit/github-6pgtev?file=src%2Findex.js"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/VanillaJS.jpg" width="50" /></a><br /><a href="https://stackblitz.com/edit/github-1r6pki?file=src%2FTodoUpdates.tsx"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/React.png" width="60" /><br /><a href="https://stackblitz.com/edit/github-zfmupm?file=src%2Fapp%2Fapp.component.ts,src%2Fapp%2Ftodos%2Ftodos.component.ts"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/Angular.png" width="60" /></a>
 
-### Connecting Multiple Reactables - Event Tickets  <a name="connecting-hub-example"></a>
-
-This examples shows two sets of reactables. The first is responsible for updating the state of user controls, while the second fetches prices based on input from the first.
-
-Design Diagram           | Reactable     | Try it out on StackBlitz.<br /> Choose your framework
-:-------------------------:|:-------------------------:|:-------------------------:
-<img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/Slide13ConnectingHubsExampleEventPrices.jpg" width="400" />|  [See Code for RxEventTickets](https://github.com/reactables/reactables/tree/main/packages/examples/src/RxEventTickets/RxEventTickets.ts) | <a href="https://stackblitz.com/edit/github-pgpwly?file=src%2findex.js"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/VanillaJS.jpg" width="50" /></a><br /><a href="https://stackblitz.com/edit/github-eypqvc?file=src%2FEventTickets.tsx"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/React.png" width="60" /></a><br /><a href="https://stackblitz.com/edit/github-66mbtu?file=src%2Fapp%2Fevent-tickets%2Fevent-tickets.component.ts"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/Angular.png" width="60" /></a>
-
-
 ## API <a name="api"></a>
 
-### Reactable <a name="reactable"></a>
+### `Reactable` <a name="reactable"></a>
 
 Reactables provide the API for applications and UI components to receive and trigger state updates.
 
 It is a tuple with the first item being an Observable emitting state changes and the second item is a dictionary of action methods for triggering state updates. 
 
+Reactables may also expose an optional third item - an observable emitting all the actions the received by the store during state updates. This can be helpful if other reactables also want to subscribe and react to any of those actions.
+
 ```typescript
-export type Reactable<T, S = ActionMap> = [Observable<T>, S];
+export type Reactable<T, S = ActionMap> = [Observable<T>, S, Observable<Action<unknown>>?];
 
 export interface ActionMap {
   [key: string | number]: (payload?: unknown) => void | ActionMap;
 }
 ```
 
-### RxBuilder <a name="rx-builder"></a>
+### `RxBuilder` <a name="rx-builder"></a>
 
 Factory function for building [Reactables](#reactable). Accepts a [RxConfig](#rx-confg) configuration object.
 
 ```typescript
-type RxBuilder = <T, S extends Cases<T>>(config: RxConfig<T, S>) => Reactable<T, unknown>
+declare const RxBuilder: <T, S extends Cases<T>>(config: RxConfig<T, S>) => Reactable<T, { [K in keyof S]: (payload?: unknown) => void; }>;
 
 ```
 
-#### RxConfig <a name="rx-config"></a>
+#### `RxConfig` <a name="rx-config"></a>
 
 Configuration object for creating Reactables.
 
@@ -148,7 +142,6 @@ Configuration object for creating Reactables.
 interface RxConfig <T, S extends Cases<T>>{
   initialState: T;
   reducers: S;
-  storeValue?: boolean;
   debug?: boolean;
   effects?: Effect<unknown, unknown>[];
   sources?: Observable<Action<unknown>>[] | { [key: string]: Observable<unknown> };
@@ -169,7 +162,6 @@ type SingleActionReducer<T, S> = (state: T, action: Action<S>) => T;
 | initialState | Initial state of the Reactable |
 | reducers | Dictionary of cases for the Reactable to handle. Each case can be a reducer function or a configuration object. RxBuilder will use this to generate Actions, Reducers, and add [ScopedEffects](#api-scoped-effects). |
 | debug (optional) | to turn on debugging to console.log all messages received by the store and state changes |
-| storeValue (optional) | Option to store value if Reactable is used to persist application state. Subsequent subscriptions will receive the latest stored value. Default to false |
 | effects (optional) | Array of [Effects](#api-effects) to be registered to the Reactable |
 | sources (optional) <a name="hub-sources"></a> | Additional [Action](#api-actions) Observables the Reactable is listening to. Can be an array or a dictionary where key is the action type and value is the Observable emitting the payload |
 
@@ -177,9 +169,31 @@ Debug Example:
 
 <img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/SlideSixDebug.jpg" width="500" />
 
+### `ofTypes` <a name="of-Types"></a>
+
+Function that accepts an array of action types (`string`) and returns an `OperatorFunction` that will filter for those `Action`s.
+
+```typescript
+export declare const ofTypes: (types: string[]) => OperatorFunction<Action<unknown>, Action<unknown>>;
+```
+
+### `storeValue` <a name="store-value"></a>
+
+Decorator function used store the state value in a `ReplaySubject` instead of an `Observable` so subsequent subscriptions can access the latest stored value.
+
+Also add's a `destroy` action method to be called to teardown any Reactable decorated with `storeValue`.
+
+```typescript
+interface DestroyAction {
+  destroy: () => void;
+}
+
+declare const storeValue: <T, S>(reactable: Reactable<T, S>) => Reactable<T, S & DestroyAction>;
+```
+
 ### Other Interfaces <a name="interfaces"></a>
 
-#### Effect <a name="api-effect"></a>
+#### `Effect` <a name="api-effect"></a>
 
 Effects are expressed as [RxJS Operator Functions](https://rxjs.dev/api/index/interface/OperatorFunction). They pipe the [dispatcher$](#hub-dispatcher) stream and run side effects on incoming [Actions](#api-action).
 
@@ -187,7 +201,7 @@ Effects are expressed as [RxJS Operator Functions](https://rxjs.dev/api/index/in
 type Effect<T, S> = OperatorFunction<Action<T>, Action<S>>;
 ```
 
-#### ScopedEffects <a name="api-scoped-effects"></a>
+#### `ScopedEffects` <a name="api-scoped-effects"></a>
 
 Scoped Effects are declared when defining reducers in [RxConfig](#rx-config). They are dynamically created stream(s) scoped to an Action `type` & `key` combination.
 
@@ -203,7 +217,7 @@ interface ScopedEffects<T> {
 | effects | Array of [Effects](#api-effects) scoped to the Action `type` & `key` |
 
 
-#### Action <a name="api-action"></a>
+#### `Action` <a name="api-action"></a>
 ```typescript
 interface Action<T = undefined> {
   type: string;
@@ -217,7 +231,7 @@ interface Action<T = undefined> {
 | payload (optional) | payload associated with Action |
 | scopedEffects (optional) | [See ScopedEffects](#api-scoped-effects) |
 
-#### Reducer <a name="api-reducer"></a>
+#### `Reducer` <a name="api-reducer"></a>
 
 From the [Redux Docs](https://redux.js.org/tutorials/fundamentals/part-3-state-actions-reducers):
 > Reducers are functions that take the current state and an action as arguments, and return a new state result

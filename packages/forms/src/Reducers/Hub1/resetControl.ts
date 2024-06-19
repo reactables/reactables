@@ -50,8 +50,8 @@ export const resetControl = <T>(
     providers,
   );
 
-  const changedControls = {
-    ...(mergeChanges ? state.changedControls || {} : undefined),
+  const _changedControls = {
+    ...(mergeChanges ? state._changedControls || {} : undefined),
     ...getControlBranch(controlRef, result).reduce(
       (acc: { [key: string]: BaseControl<unknown> }, control) => ({
         ...acc,
@@ -61,21 +61,21 @@ export const resetControl = <T>(
     ),
   };
 
-  const removedControls = {
-    ...(mergeChanges ? state.removedControls || {} : undefined),
+  const _removedConrols = {
+    ...(mergeChanges ? state._removedConrols || {} : undefined),
     [controlToReset.key]: controlToReset,
   };
 
-  // If control is removed, we can delete it from the changedControls check
+  // If control is removed, we can delete it from the _changedControls check
   descendants
     .map(({ key }) => key)
     .forEach((key) => {
-      delete changedControls[key];
+      delete _changedControls[key];
     });
 
   return {
     form: result,
-    changedControls,
-    removedControls,
+    _changedControls,
+    _removedConrols,
   };
 };

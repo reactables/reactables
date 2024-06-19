@@ -41,17 +41,17 @@ export const addControl = <T>(
     providers,
   );
 
-  const changedControls = getControlBranch(controlRef, ancestorsUpdated).reduce(
+  const _changedControls = getControlBranch(controlRef, ancestorsUpdated).reduce(
     (acc: { [key: string]: BaseControl<unknown> }, control) => ({ ...acc, [control.key]: control }),
     {},
   );
 
   return {
     form: ancestorsUpdated,
-    changedControls: {
-      ...(mergeChanges ? state.changedControls || {} : undefined),
-      ...changedControls,
+    _changedControls: {
+      ...(mergeChanges ? state._changedControls || {} : undefined),
+      ..._changedControls,
     },
-    removedControls: mergeChanges ? state.removedControls || {} : undefined,
+    _removedConrols: mergeChanges ? state._removedConrols || {} : undefined,
   };
 };

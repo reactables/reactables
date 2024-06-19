@@ -70,16 +70,16 @@ export const mergeRemoveControl = <T>(
     (control) => control.controlRef.length > parentRef.length,
   );
 
-  const removedControls = { ...state };
+  const _removedConrols = { ...state };
 
   descendants.forEach((control) => {
-    delete removedControls[getFormKey(control.controlRef)];
+    delete _removedConrols[getFormKey(control.controlRef)];
   });
 
-  delete removedControls[getFormKey(controlRef)];
+  delete _removedConrols[getFormKey(controlRef)];
 
   return {
-    ...removedControls,
+    ..._removedConrols,
     ...updatedControlBranchOrderRestored,
   };
 };
