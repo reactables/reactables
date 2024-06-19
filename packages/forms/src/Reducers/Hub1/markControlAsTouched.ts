@@ -4,6 +4,7 @@ import { MarkTouchedPayload } from '../../Models/Payloads';
 import { getAncestorControls } from '../../Helpers/getAncestorControls';
 import { getControlBranch } from '../../Helpers/getControlBranch';
 import { getFormKey } from '../../Helpers/getFormKey';
+import { controlRefCheck } from '../../Helpers/controlRefCheck';
 
 export const markControlAsTouched = <T>(
   state: BaseFormState<T>,
@@ -12,8 +13,10 @@ export const markControlAsTouched = <T>(
 ): BaseFormState<T> => {
   const { form } = state;
   const {
-    payload: { controlRef, markAll },
+    payload: { controlRef, markAll = false },
   } = action;
+
+  controlRefCheck(controlRef);
 
   const controls = (
     markAll ? getControlBranch(controlRef, form) : getAncestorControls(controlRef, form)
@@ -36,7 +39,7 @@ export const markControlAsTouched = <T>(
     action,
   };
 
-  const changedControls = getControlBranch(controlRef, result.form).reduce(
+  const _changedControls = getControlBranch(controlRef, result.form).reduce(
     (acc, control) => ({ ...acc, [control.key]: control }),
     {},
   );
@@ -46,10 +49,10 @@ export const markControlAsTouched = <T>(
       ...form,
       ...controls,
     },
-    changedControls: {
-      ...(mergeChanges ? state.changedControls || {} : undefined),
-      ...changedControls,
+    _changedControls: {
+      ...(mergeChanges ? state._changedControls || {} : undefined),
+      ..._changedControls,
     },
-    removedControls: mergeChanges ? state.removedControls || {} : undefined,
+    _removedConrols: mergeChanges ? state._removedConrols || {} : undefined,
   };
 };

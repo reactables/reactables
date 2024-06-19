@@ -10,6 +10,7 @@ import {
 import { getDescendantControls } from '../../Helpers/getDescendantControls';
 import { getAncestorControls } from '../../Helpers/getAncestorControls';
 import { RxFormProviders } from '../../RxForm/RxForm';
+import { controlRefCheck } from '../../Helpers/controlRefCheck';
 
 export const removeControl = <T>(
   state: BaseFormState<T>,
@@ -19,6 +20,8 @@ export const removeControl = <T>(
 ): BaseFormState<T> => {
   const { form } = state;
   const { payload: controlRef } = action;
+
+  controlRefCheck(controlRef);
 
   const controlToRemove = getControl(controlRef, form);
 
@@ -86,8 +89,8 @@ export const removeControl = <T>(
     providers,
   );
 
-  let changedControls = {
-    ...(mergeChanges ? state.changedControls || {} : undefined),
+  let _changedControls = {
+    ...(mergeChanges ? state._changedControls || {} : undefined),
     ...getAncestorControls(controlRef.slice(0, -1), result).reduce(
       (acc: { [key: string]: BaseControl<unknown> }, control) => ({
         ...acc,
@@ -99,7 +102,7 @@ export const removeControl = <T>(
 
   // Check for reindexing for changed controls
   if (parentIsFormArray) {
-    changedControls = Object.entries(changedControls).reduce((acc, [key, control]) => {
+    _changedControls = Object.entries(_changedControls).reduce((acc, [key, control]) => {
       const oldIndex = control.controlRef.at(parentRef.length) as number;
 
       if (
@@ -127,20 +130,20 @@ export const removeControl = <T>(
     }, {});
   }
 
-  const removedControls = {
-    ...(mergeChanges ? state.removedControls || {} : undefined),
+  const _removedConrols = {
+    ...(mergeChanges ? state._removedConrols || {} : undefined),
     [controlToRemove.key]: controlToRemove,
   };
 
   descendants
     .map(({ key }) => key)
     .forEach((key) => {
-      delete changedControls[key];
+      delete _changedControls[key];
     });
 
   return {
     form: result,
-    changedControls,
-    removedControls,
+    _changedControls,
+    _removedConrols,
   };
 };

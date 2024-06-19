@@ -37,8 +37,8 @@ jobs:
       - run: npm publish --workspace=@reactables/examples --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - run: npm run build --workspace=@reactables/react-helpers
-      - run: npm publish --workspace=@reactables/react-helpers --access public
+      - run: npm run build --workspace=@reactables/react
+      - run: npm publish --workspace=@reactables/react --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 

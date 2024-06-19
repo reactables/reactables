@@ -11,6 +11,7 @@ import {
 } from './updateAncestorValuesAddControl';
 import { getControlBranch } from '../../Helpers/getControlBranch';
 import { RxFormProviders } from '../../RxForm/RxForm';
+import { controlRefCheck } from '../../Helpers/controlRefCheck';
 
 export const pushControl = <T>(
   state: BaseFormState<T>,
@@ -23,6 +24,8 @@ export const pushControl = <T>(
   const {
     payload: { config, controlRef },
   } = action;
+
+  controlRefCheck(controlRef);
 
   const existingControl = getControl(controlRef, state.form);
 
@@ -47,17 +50,17 @@ export const pushControl = <T>(
     providers,
   );
 
-  const changedControls = getControlBranch(newControlRef, ancestorsUpdated).reduce(
+  const _changedControls = getControlBranch(newControlRef, ancestorsUpdated).reduce(
     (acc: { [key: string]: BaseControl<unknown> }, control) => ({ ...acc, [control.key]: control }),
     {},
   );
 
   return {
     form: ancestorsUpdated,
-    changedControls: {
-      ...(mergeChanges ? state.changedControls || {} : undefined),
-      ...changedControls,
+    _changedControls: {
+      ...(mergeChanges ? state._changedControls || {} : undefined),
+      ..._changedControls,
     },
-    removedControls: mergeChanges ? state.removedControls || {} : undefined,
+    _removedConrols: mergeChanges ? state._removedConrols || {} : undefined,
   };
 };

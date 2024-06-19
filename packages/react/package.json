@@ -1,5 +1,5 @@
 {
-  "name": "@reactables/react-helpers",
+  "name": "@reactables/react",
   "description": "React Helpers for reactables",
   "main": "dist/index.js",
   "files": [

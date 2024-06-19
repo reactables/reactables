@@ -4,6 +4,7 @@ import { ControlRef } from '../../Models/ControlRef';
 import { getDescendantControls } from '../../Helpers/getDescendantControls';
 import { getControlBranch } from '../../Helpers/getControlBranch';
 import { getFormKey } from '../../Helpers/getFormKey';
+import { controlRefCheck } from '../../Helpers/controlRefCheck';
 
 export const markControlAsUntouched = <T>(
   state: BaseFormState<T>,
@@ -12,6 +13,8 @@ export const markControlAsUntouched = <T>(
 ): BaseFormState<T> => {
   const { form } = state;
   const { payload: controlRef } = action;
+
+  controlRefCheck(controlRef);
 
   let result = getDescendantControls(controlRef, form).reduce(
     (acc, control) => ({
@@ -45,17 +48,17 @@ export const markControlAsUntouched = <T>(
     };
   }
 
-  const changedControls = getControlBranch(controlRef, result).reduce(
+  const _changedControls = getControlBranch(controlRef, result).reduce(
     (acc, control) => ({ ...acc, [control.key]: control }),
     {},
   );
 
   return {
     form: result as BaseForm<T>,
-    changedControls: {
-      ...(mergeChanges ? state.changedControls || {} : undefined),
-      ...changedControls,
+    _changedControls: {
+      ...(mergeChanges ? state._changedControls || {} : undefined),
+      ..._changedControls,
     },
-    removedControls: mergeChanges ? state.removedControls || {} : undefined,
+    _removedConrols: mergeChanges ? state._removedConrols || {} : undefined,
   };
 };
