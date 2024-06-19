@@ -1,9 +1,3 @@
-/**
- * See full example here
- * Vanilla JS: https://stackblitz.com/edit/github-6pgtev?file=src%2Findex.js
- * React: https://stackblitz.com/edit/github-1r6pki?file=src%2FTodoUpdates.tsx
- * Angular: https://stackblitz.com/edit/github-zfmupm?file=src%2Fapp%2Fapp.component.ts,src%2Fapp%2Ftodos%2Ftodos.component.ts
- */
 import { switchMap, map } from 'rxjs/operators';
 import { Action, Reactable, RxBuilder } from '@reactables/core';
 import { EventTypes, FetchPricePayload } from './Models/EventTypes';
