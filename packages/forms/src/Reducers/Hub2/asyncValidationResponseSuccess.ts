@@ -46,12 +46,17 @@ export const asyncValidationResponseSuccess = <T>(
   const ancestorsUpdated = Object.entries(controlUpdated).reduce((acc, [key, control]) => {
     if (ancestors.includes(control)) {
       const descendants = getDescendantControls(control.controlRef, controlUpdated);
+      const pending = descendants.some((control) => isControlValidating(control));
 
       return {
         ...acc,
         [key]: {
           ...control,
-          pending: descendants.some((control) => isControlValidating(control)),
+          pending,
+          valid:
+            control.childrenValid &&
+            Object.values(control.validatorErrors).every((error) => !error) &&
+            !pending,
         },
       };
     }
