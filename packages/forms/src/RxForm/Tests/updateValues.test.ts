@@ -314,7 +314,7 @@ describe('RxForm', () => {
     });
 
     describe('with nested descendants', () => {
-      const RxForm = (asyncValidator: string) =>
+      const RxForm = (asyncValidators: string[]) =>
         build(
           group({
             controls: {
@@ -333,7 +333,7 @@ describe('RxForm', () => {
                             controls: {
                               email: control({
                                 initialValue: '',
-                                asyncValidators: [asyncValidator],
+                                asyncValidators,
                               }),
                             },
                           }),
@@ -366,7 +366,7 @@ describe('RxForm', () => {
 
       it('should update group value and nested descendants', () => {
         testScheduler.run(({ expectObservable, cold }) => {
-          const [state$, { updateValues }] = RxForm('uniqueEmail');
+          const [state$, { updateValues }] = RxForm(['uniqueEmail']);
 
           subscription = cold('-b', {
             b: () => updateValues(updatePayload),
@@ -434,7 +434,7 @@ describe('RxForm', () => {
 
       fit('should keep valid states false when pending', () => {
         testScheduler.run(({ expectObservable, cold }) => {
-          const [state$, { updateValues }] = RxForm('noError');
+          const [state$, { updateValues }] = RxForm(['noError']);
 
           subscription = cold('-b', {
             b: () => updateValues(updatePayload),
