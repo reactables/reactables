@@ -53,10 +53,6 @@ export const asyncValidationResponseSuccess = <T>(
         [key]: {
           ...control,
           pending,
-          valid:
-            control.childrenValid &&
-            Object.values(control.validatorErrors).every((error) => !error) &&
-            !pending,
         },
       };
     }
