@@ -6,6 +6,10 @@ export const uniqueEmail: ValidatorAsyncFn = (control$) => {
   return control$.pipe(mergeMap(() => of({ uniqueEmail: true }).pipe(delay(250))));
 };
 
+export const noError: ValidatorAsyncFn = (control$) => {
+  return control$.pipe(mergeMap(() => of({ hasError: false }).pipe(delay(250))));
+};
+
 export const blacklistedEmail: ValidatorAsyncFn = (control$) => {
   return control$.pipe(mergeMap(() => of({ blacklistedEmail: true }).pipe(delay(300))));
 };

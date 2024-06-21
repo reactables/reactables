@@ -313,9 +313,9 @@ describe('RxForm', () => {
       });
     });
 
-    it('should update group value and nested descendants', () => {
-      testScheduler.run(({ expectObservable, cold }) => {
-        const [state$, { updateValues }] = build(
+    describe('with nested descendants', () => {
+      const RxForm = (asyncValidator: string) =>
+        build(
           group({
             controls: {
               person: group({
@@ -333,7 +333,7 @@ describe('RxForm', () => {
                             controls: {
                               email: control({
                                 initialValue: '',
-                                asyncValidators: ['uniqueEmail'],
+                                asyncValidators: [asyncValidator],
                               }),
                             },
                           }),
@@ -350,31 +350,117 @@ describe('RxForm', () => {
           },
         );
 
-        subscription = cold('-b', {
-          b: () =>
-            updateValues({
-              controlRef: ['person'],
-              value: {
-                name: 'some guy',
-                address: {
-                  address: '123 any street',
-                  city: 'some city',
-                  state: 'some state',
-                  zip: '12345',
-                  addressContacts: [{ email: 'homer@homer.com' }],
+      const updatePayload = {
+        controlRef: ['person'],
+        value: {
+          name: 'some guy',
+          address: {
+            address: '123 any street',
+            city: 'some city',
+            state: 'some state',
+            zip: '12345',
+            addressContacts: [{ email: 'homer@homer.com' }],
+          },
+        },
+      };
+
+      it('should update group value and nested descendants', () => {
+        testScheduler.run(({ expectObservable, cold }) => {
+          const [state$, { updateValues }] = RxForm('uniqueEmail');
+
+          subscription = cold('-b', {
+            b: () => updateValues(updatePayload),
+          }).subscribe((action) => {
+            action();
+          });
+
+          expectObservable(state$).toBe('a(bc) 246ms d', {
+            a: {},
+            b: {
+              root: {
+                value: {
+                  person: {
+                    name: 'some guy',
+                    address: {
+                      address: '123 any street',
+                      city: 'some city',
+                      state: 'some state',
+                      zip: '12345',
+                      addressContacts: [{ email: 'homer@homer.com' }],
+                    },
+                  },
                 },
               },
-            }),
-        }).subscribe((action) => {
-          action();
+              person: {
+                value: {
+                  name: 'some guy',
+                  address: {
+                    address: '123 any street',
+                    city: 'some city',
+                    state: 'some state',
+                    zip: '12345',
+                    addressContacts: [{ email: 'homer@homer.com' }],
+                  },
+                },
+              },
+              'person.name': { value: 'some guy' },
+              'person.address.address': { value: '123 any street' },
+              'person.address.city': { value: 'some city' },
+              'person.address.state': { value: 'some state' },
+              'person.address.zip': { value: '12345' },
+              'person.address.addressContacts.0.email': { value: 'homer@homer.com' },
+            },
+            c: {
+              root: { pending: true, valid: false },
+              'person.address.addressContacts.0.email': {
+                value: 'homer@homer.com',
+                pending: true,
+                valid: false,
+                asyncValidateInProgress: { 0: true },
+              },
+            },
+            d: {
+              root: { pending: false },
+              'person.address.addressContacts.0.email': {
+                value: 'homer@homer.com',
+                pending: false,
+                valid: false,
+                asyncValidateInProgress: { 0: false },
+              },
+            },
+          });
         });
+      });
 
-        expectObservable(state$).toBe('a(bc) 246ms d', {
-          a: {},
-          b: {
-            root: {
-              value: {
-                person: {
+      fit('should keep valid states false when pending', () => {
+        testScheduler.run(({ expectObservable, cold }) => {
+          const [state$, { updateValues }] = RxForm('noError');
+
+          subscription = cold('-b', {
+            b: () => updateValues(updatePayload),
+          }).subscribe((action) => {
+            action();
+          });
+
+          expectObservable(state$).toBe('a(bc) 246ms d', {
+            a: {},
+            b: {
+              root: {
+                value: {
+                  person: {
+                    name: 'some guy',
+                    address: {
+                      address: '123 any street',
+                      city: 'some city',
+                      state: 'some state',
+                      zip: '12345',
+                      addressContacts: [{ email: 'homer@homer.com' }],
+                    },
+                  },
+                },
+              },
+              person: {
+                value: {
                   name: 'some guy',
                   address: {
                     address: '123 any street',
@@ -386,42 +472,33 @@ describe('RxForm', () => {
                 },
               },
             },
-            person: {
-              value: {
-                name: 'some guy',
-                address: {
-                  address: '123 any street',
-                  city: 'some city',
-                  state: 'some state',
-                  zip: '12345',
-                  addressContacts: [{ email: 'homer@homer.com' }],
-                },
+            c: {
+              root: { pending: true, valid: false },
+              person: { pending: true, valid: false },
+              'person.address': { pending: true, valid: false },
+              'person.address.addressContacts': { pending: true, valid: false },
+              'person.address.addressContacts.0': { pending: true, valid: false },
+              'person.address.addressContacts.0.email': {
+                value: 'homer@homer.com',
+                pending: true,
+                valid: false,
+                asyncValidateInProgress: { 0: true },
               },
             },
-            'person.name': { value: 'some guy' },
-            'person.address.address': { value: '123 any street' },
-            'person.address.city': { value: 'some city' },
-            'person.address.state': { value: 'some state' },
-            'person.address.zip': { value: '12345' },
-            'person.address.addressContacts.0.email': { value: 'homer@homer.com' },
-          },
-          c: {
-            root: { pending: true, valid: false },
-            'person.address.addressContacts.0.email': {
-              value: 'homer@homer.com',
-              pending: true,
-              valid: false,
-              asyncValidateInProgress: { 0: true },
+            d: {
+              root: { pending: false, valid: true },
+              person: { pending: false, valid: true },
+              'person.address': { pending: false, valid: true },
+              'person.address.addressContacts': { pending: false, valid: true },
+              'person.address.addressContacts.0': { pending: false, valid: true },
+              'person.address.addressContacts.0.email': {
+                value: 'homer@homer.com',
+                pending: false,
+                valid: true,
+                asyncValidateInProgress: { 0: false },
+              },
             },
-          },
-          d: {
-            root: { pending: false },
-            'person.address.addressContacts.0.email': {
-              value: 'homer@homer.com',
-              pending: false,
-              asyncValidateInProgress: { 0: false },
-            },
-          },
+          });
         });
       });
     });
