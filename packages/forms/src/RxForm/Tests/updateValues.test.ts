@@ -133,6 +133,7 @@ describe('RxForm', () => {
             root: {
               asyncValidateInProgress: { 0: true },
               pending: true,
+              valid: false,
             },
           },
           d: {
@@ -177,23 +178,33 @@ describe('RxForm', () => {
           a: {},
           b: { 'emergencyContacts.1.email': { value: 'moechanged@email.com' } },
           c: {
-            root: { pending: true, asyncValidateInProgress: { 0: true } },
+            root: { pending: true, valid: false, asyncValidateInProgress: { 0: true } },
           },
           d: {
-            emergencyContacts: { pending: true, asyncValidateInProgress: { 0: true } },
+            emergencyContacts: {
+              pending: true,
+              valid: false,
+              asyncValidateInProgress: { 0: true },
+            },
           },
           e: {
-            'emergencyContacts.1': { pending: true, asyncValidateInProgress: { 0: true } },
+            'emergencyContacts.1': {
+              pending: true,
+              valid: false,
+              asyncValidateInProgress: { 0: true },
+            },
           },
           f: {
             'emergencyContacts.1.email': {
               pending: true,
+              valid: false,
               asyncValidateInProgress: { 0: true, 1: true },
             },
           },
           g: {
             'emergencyContacts.1.email': {
               pending: true,
+              valid: false,
               asyncValidateInProgress: { 0: false, 1: true },
             },
           },
@@ -204,10 +215,14 @@ describe('RxForm', () => {
             },
           },
           i: {
-            emergencyContacts: { pending: true, asyncValidateInProgress: { 0: false } },
+            emergencyContacts: {
+              pending: true,
+              valid: false,
+              asyncValidateInProgress: { 0: false },
+            },
           },
           j: {
-            root: { pending: true, asyncValidateInProgress: { 0: false } },
+            root: { pending: true, valid: false, asyncValidateInProgress: { 0: false } },
           },
           k: {
             'emergencyContacts.1': { pending: false, asyncValidateInProgress: { 0: false } },
@@ -391,10 +406,11 @@ describe('RxForm', () => {
             'person.address.addressContacts.0.email': { value: 'homer@homer.com' },
           },
           c: {
-            root: { pending: true },
+            root: { pending: true, valid: false },
             'person.address.addressContacts.0.email': {
               value: 'homer@homer.com',
               pending: true,
+              valid: false,
               asyncValidateInProgress: { 0: true },
             },
           },
