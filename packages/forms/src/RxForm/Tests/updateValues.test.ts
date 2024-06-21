@@ -313,7 +313,7 @@ describe('RxForm', () => {
       });
     });
 
-    describe('with nested descendants', () => {
+    describe('with nested descendants and async validation', () => {
       const RxForm = (asyncValidators: string[]) =>
         build(
           group({
@@ -364,7 +364,7 @@ describe('RxForm', () => {
         },
       };
 
-      it('should update group value and nested descendants', () => {
+      it('should update group value and nested descendants and handle pending state', () => {
         testScheduler.run(({ expectObservable, cold }) => {
           const [state$, { updateValues }] = RxForm(['uniqueEmail']);
 
@@ -432,9 +432,9 @@ describe('RxForm', () => {
         });
       });
 
-      fit('should keep valid states false when pending', () => {
+      it('should keep valid states false when still pending', () => {
         testScheduler.run(({ expectObservable, cold }) => {
-          const [state$, { updateValues }] = RxForm(['noError']);
+          const [state$, { updateValues }] = RxForm(['noError', 'noError2']);
 
           subscription = cold('-b', {
             b: () => updateValues(updatePayload),
@@ -442,7 +442,7 @@ describe('RxForm', () => {
             action();
           });
 
-          expectObservable(state$).toBe('a(bc) 246ms d', {
+          expectObservable(state$).toBe('a(bc) 246ms d 49ms e', {
             a: {},
             b: {
               root: {
@@ -482,10 +482,23 @@ describe('RxForm', () => {
                 value: 'homer@homer.com',
                 pending: true,
                 valid: false,
-                asyncValidateInProgress: { 0: true },
+                asyncValidateInProgress: { 0: true, 1: true },
               },
             },
             d: {
+              root: { pending: true, valid: false },
+              person: { pending: true, valid: false },
+              'person.address': { pending: true, valid: false },
+              'person.address.addressContacts': { pending: true, valid: false },
+              'person.address.addressContacts.0': { pending: true, valid: false },
+              'person.address.addressContacts.0.email': {
+                value: 'homer@homer.com',
+                pending: true,
+                valid: false,
+                asyncValidateInProgress: { 0: false, 1: true },
+              },
+            },
+            e: {
               root: { pending: false, valid: true },
               person: { pending: false, valid: true },
               'person.address': { pending: false, valid: true },
@@ -495,7 +508,7 @@ describe('RxForm', () => {
                 value: 'homer@homer.com',
                 pending: false,
                 valid: true,
-                asyncValidateInProgress: { 0: false },
+                asyncValidateInProgress: { 0: false, 1: false },
               },
             },
           });
