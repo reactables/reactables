@@ -49,32 +49,26 @@ All Reactables Actions flow in one direction contained in streams, making state 
 
 ## Packages
 
-[Reactables Core](https://github.com/reactables/reactables/tree/main/packages/core) 
+[`@reactables/core`](https://github.com/reactables/reactables/tree/main/packages/core) 
 
-- Core `Hub` used to model state as reactive streams.
+- Core API for building reactables.
 
 - `npm i @reactables/core`
 
-[Reactable Forms](https://github.com/reactables/reactables/tree/main/packages/forms)
+[`@reactables/forms`](https://github.com/reactables/reactables/tree/main/packages/forms)
 
-- Library for building reactive forms based on [Reactables Core](https://github.com/reactables/reactables/tree/main/packages/core)
+- Library for building reactive forms with reactables.
 
 - `npm i @reactables/forms`
 
-[Reactable React Forms](https://github.com/reactables/reactables/tree/main/packages/react-forms)
+[@reactables/react](https://github.com/reactables/reactables/tree/main/packages/react).
 
-- See Storybook Demo [here](https://reactables.github.io/reactables/)
-
-- React Form Library built on [Reactables Forms](https://github.com/reactables/reactables/tree/main/packages/forms)
-
-- `npm i @reactables/react-forms`
-
-[Reactable Examples](https://github.com/reactables/reactables/tree/main/packages/examples) 
-
-- Examples of Reactables. See [Reactables Examples](https://github.com/reactables/reactables/tree/main/packages/core#examples).
-
-- `npm i @reactables/examples`
-
-- Reactables helpers. See [Reactables Helpers](https://github.com/reactables/reactables/tree/main/packages/react).
+- Reactable bindings for React Components
 
 - `npm i @reactables/react`
+
+[`@reactables/react-forms`](https://github.com/reactables/reactables/tree/main/packages/react-forms)
+
+- React Form Library built on reactables created from [@reactables/forms](https://github.com/reactables/reactables/tree/main/packages/forms)
+
+- `npm i @reactables/react-forms`

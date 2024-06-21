@@ -2,7 +2,7 @@
 
 ## Description
 
-Reactive state management with RxJS.
+Reactive state management with RxJS. Core API for building reactables.
 
 ## Table of Contents
 
