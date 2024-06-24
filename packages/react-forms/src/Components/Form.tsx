@@ -1,7 +1,7 @@
 import React from 'react';
 import { ControlModels, RxFormActions } from '@reactables/forms';
 
-export type HookedRxForm = [ControlModels.Form<unknown>, RxFormActions];
+export type HookedRxForm = [ControlModels.Form<unknown>, RxFormActions, ...unknown[]];
 
 export const FormContext = React.createContext(null) as React.Context<HookedRxForm>;
 
