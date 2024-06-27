@@ -1,17 +1,22 @@
 import { Observable, of } from 'rxjs';
 import isEqual from 'lodash.isequal';
-import { map, mergeMap, pairwise } from 'rxjs/operators';
+import { map, mergeMap, pairwise, startWith, skip } from 'rxjs/operators';
 import { Action } from '@reactables/core';
 import { BaseFormState, BaseControl, BaseForm } from '../Models/Controls';
 import { getAsyncValidationActions } from './addAsyncValidationEffects';
 
 export const buildHub2Source = <T>(
   hub1State$: Observable<BaseFormState<T>>,
+  initialBaseState: BaseFormState<T>,
 ): Observable<Action<T>> => {
   const hub1StateMapped$ = hub1State$.pipe(map((payload) => ({ type: 'formChange', payload })));
 
+  const initialAction = { type: 'formChange', payload: initialBaseState };
+
   const sourceForHub2$ = hub1StateMapped$.pipe(
+    startWith(initialAction, initialAction),
     pairwise(),
+    skip(1),
     mergeMap(
       ([
         {

@@ -57,7 +57,7 @@ describe('RxForm', () => {
       });
     });
 
-    fit('should not emit async validation actions because values have not changed', () => {
+    it('should not emit async validation actions because values have not changed', () => {
       testScheduler.run(({ expectObservable, cold }) => {
         const [state$, { markControlAsTouched, markControlAsUntouched }] = build(
           {
