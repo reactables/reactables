@@ -130,8 +130,8 @@ export const removeControl = <T>(
     }, {});
   }
 
-  const _removedConrols = {
-    ...(mergeChanges ? state._removedConrols || {} : undefined),
+  const _removedControls = {
+    ...(mergeChanges ? state._removedControls || {} : undefined),
     [controlToRemove.key]: controlToRemove,
   };
 
@@ -144,6 +144,6 @@ export const removeControl = <T>(
   return {
     form: result,
     _changedControls,
-    _removedConrols,
+    _removedControls,
   };
 };

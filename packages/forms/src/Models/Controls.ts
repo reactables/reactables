@@ -36,7 +36,7 @@ export interface BaseFormState<T> {
     [key: string]: BaseControl<unknown>;
   };
   // controls removed from removeControl or resetControl - only the target control ref, not descendants
-  _removedConrols?: {
+  _removedControls?: {
     [key: string]: BaseControl<unknown>;
   };
 }
