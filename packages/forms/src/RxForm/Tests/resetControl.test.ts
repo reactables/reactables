@@ -116,13 +116,9 @@ describe('RxForm', () => {
           resetControl(['emergencyContacts', 0]),
         );
 
-        expectObservable(state$).toBe('a(bcdef) 243ms g 49ms h 49ms i 49ms (jk)', {
+        expectObservable(state$).toBe('a(bef) 245ms g 49ms h 49ms 50ms k', {
           a: {},
           b: {},
-          c: {
-            root: { pending: true, asyncValidateInProgress: { 0: true } },
-          },
-          d: { emergencyContacts: { pending: true, asyncValidateInProgress: { 0: true } } },
           e: { 'emergencyContacts.0': { pending: true, asyncValidateInProgress: { 0: true } } },
           f: {
             'emergencyContacts.0.email': {
@@ -158,13 +154,6 @@ describe('RxForm', () => {
               pending: true,
               asyncValidateInProgress: { 0: false },
               asyncValidatorErrors: { arrayLengthError: true },
-            },
-          },
-          j: {
-            root: {
-              pending: true,
-              asyncValidateInProgress: { 0: false },
-              asyncValidatorErrors: { uniqueFirstAndLastName: true },
             },
           },
           k: {
