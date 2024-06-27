@@ -1,4 +1,4 @@
-# Reactables
+# <img src="https://avatars.githubusercontent.com/u/145691934" width="50"> Reactables
 
 ## Description
 
