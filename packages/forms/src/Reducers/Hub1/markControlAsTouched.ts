@@ -53,6 +53,6 @@ export const markControlAsTouched = <T>(
       ...(mergeChanges ? state._changedControls || {} : undefined),
       ..._changedControls,
     },
-    _removedConrols: mergeChanges ? state._removedConrols || {} : undefined,
+    _removedControls: mergeChanges ? state._removedControls || {} : undefined,
   };
 };

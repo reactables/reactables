@@ -61,8 +61,8 @@ export const resetControl = <T>(
     ),
   };
 
-  const _removedConrols = {
-    ...(mergeChanges ? state._removedConrols || {} : undefined),
+  const _removedControls = {
+    ...(mergeChanges ? state._removedControls || {} : undefined),
     [controlToReset.key]: controlToReset,
   };
 
@@ -76,6 +76,6 @@ export const resetControl = <T>(
   return {
     form: result,
     _changedControls,
-    _removedConrols,
+    _removedControls,
   };
 };

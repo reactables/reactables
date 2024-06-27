@@ -239,7 +239,7 @@ const createReactable = <T extends CustomReducers<S>, S>(
   });
 
   const [state$] = RxBuilder({
-    sources: [buildHub2Source(hub1State$).pipe(skip(initialFormState ? 1 : 0))],
+    sources: [buildHub2Source(hub1State$, initialBaseState).pipe(skip(initialFormState ? 1 : 0))],
     initialState: initialFormState || (null as Form<unknown>),
     name: `Stage 2 ${name ? name : 'rxForm'}`,
     debug,
