@@ -61,7 +61,7 @@ All Reactables Actions flow in one direction contained in streams, making state 
 
 - `npm i @reactables/forms`
 
-[`@reactables/react`](https://github.com/reactables/reactables/tree/main/packages/react).
+[`@reactables/react`](https://github.com/reactables/reactables/tree/main/packages/react)
 
 - Reactable bindings for React Components
 
