@@ -94,7 +94,7 @@ describe('RxForm', () => {
       });
     });
 
-    it('should emit async validation when resetting a control', () => {
+    it('should not emit async validation when resetting a control and value has not changed', () => {
       testScheduler.run(({ expectObservable, cold }) => {
         const [state$, { resetControl }] = build(
           group({
@@ -116,56 +116,96 @@ describe('RxForm', () => {
           resetControl(['emergencyContacts', 0]),
         );
 
-        expectObservable(state$).toBe('a(bef) 245ms g 49ms h 49ms 50ms k', {
+        expectObservable(state$).toBe('ab', {
           a: {},
           b: {},
-          e: { 'emergencyContacts.0': { pending: true, asyncValidateInProgress: { 0: true } } },
-          f: {
-            'emergencyContacts.0.email': {
-              pending: true,
-              asyncValidateInProgress: { 0: true, 1: true },
-            },
-          },
-          g: {
-            root: { pending: true },
-            emergencyContacts: { pending: true },
-            'emergencyContacts.0': { pending: true },
-            'emergencyContacts.0.email': {
-              pending: true,
-              asyncValidateInProgress: { 0: false, 1: true },
-              asyncValidatorErrors: { uniqueEmail: true },
-            },
-          },
-          h: {
-            root: { pending: true },
-            emergencyContacts: { pending: true },
-            'emergencyContacts.0': { pending: true },
-            'emergencyContacts.0.email': {
-              pending: false,
-              asyncValidateInProgress: { 0: false, 1: false },
-              asyncValidatorErrors: {
-                uniqueEmail: true,
-                blacklistedEmail: true,
-              },
-            },
-          },
-          i: {
-            emergencyContacts: {
-              pending: true,
-              asyncValidateInProgress: { 0: false },
-              asyncValidatorErrors: { arrayLengthError: true },
-            },
-          },
-          k: {
-            root: { pending: false },
-            'emergencyContacts.0': {
-              pending: false,
-              asyncValidateInProgress: { 0: false },
-              asyncValidatorErrors: { uniqueFirstAndLastName: true },
-            },
-          },
         });
       });
     });
+
+    // it('should emit async validation when resetting a control', () => {
+    //   testScheduler.run(({ expectObservable, cold }) => {
+    //     const [state$, { resetControl }] = build(
+    //       group({
+    //         ...asyncConfig,
+    //         controls: {
+    //           ...asyncConfig.controls,
+    //           emergencyContacts: {
+    //             ...asyncConfig.controls.emergencyContacts,
+    //             controls: asyncEmergencyContactConfigs,
+    //           },
+    //         },
+    //       }),
+    //       {
+    //         providers: { validators: Validators, asyncValidators: AsyncValidators },
+    //       },
+    //     );
+
+    //     subscription = cold('-b', { b: resetControl }).subscribe((resetControl) =>
+    //       resetControl(['emergencyContacts', 0]),
+    //     );
+
+    //     expectObservable(state$).toBe('a(bcdef) 243ms g 49ms h 49ms i 49ms (jk)', {
+    //       a: {},
+    //       b: {},
+    //       c: {
+    //         root: { pending: true, asyncValidateInProgress: { 0: true } },
+    //       },
+    //       d: { emergencyContacts: { pending: true, asyncValidateInProgress: { 0: true } } },
+    //       e: { 'emergencyContacts.0': { pending: true, asyncValidateInProgress: { 0: true } } },
+    //       f: {
+    //         'emergencyContacts.0.email': {
+    //           pending: true,
+    //           asyncValidateInProgress: { 0: true, 1: true },
+    //         },
+    //       },
+    //       g: {
+    //         root: { pending: true },
+    //         emergencyContacts: { pending: true },
+    //         'emergencyContacts.0': { pending: true },
+    //         'emergencyContacts.0.email': {
+    //           pending: true,
+    //           asyncValidateInProgress: { 0: false, 1: true },
+    //           asyncValidatorErrors: { uniqueEmail: true },
+    //         },
+    //       },
+    //       h: {
+    //         root: { pending: true },
+    //         emergencyContacts: { pending: true },
+    //         'emergencyContacts.0': { pending: true },
+    //         'emergencyContacts.0.email': {
+    //           pending: false,
+    //           asyncValidateInProgress: { 0: false, 1: false },
+    //           asyncValidatorErrors: {
+    //             uniqueEmail: true,
+    //             blacklistedEmail: true,
+    //           },
+    //         },
+    //       },
+    //       i: {
+    //         emergencyContacts: {
+    //           pending: true,
+    //           asyncValidateInProgress: { 0: false },
+    //           asyncValidatorErrors: { arrayLengthError: true },
+    //         },
+    //       },
+    //       j: {
+    //         root: {
+    //           pending: true,
+    //           asyncValidateInProgress: { 0: false },
+    //           asyncValidatorErrors: { uniqueFirstAndLastName: true },
+    //         },
+    //       },
+    //       k: {
+    //         root: { pending: false },
+    //         'emergencyContacts.0': {
+    //           pending: false,
+    //           asyncValidateInProgress: { 0: false },
+    //           asyncValidatorErrors: { uniqueFirstAndLastName: true },
+    //         },
+    //       },
+    //     });
+    //   });
+    // });
   });
 });

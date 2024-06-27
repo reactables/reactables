@@ -24,25 +24,13 @@ export const buildHub2Source = <T>(
         currAction,
       ]) => {
         const {
-          payload: { _changedControls },
+          payload: { _changedControls, form: currentForm },
         } = currAction;
 
-        const findControl = (control: BaseControl<unknown>, form: BaseForm<unknown>) => {
-          const { controlRef, key } = control;
-          if (form[controlRef.join('.')]?.key === key) {
-            return form[controlRef.join('.')];
-          } else {
-            return Object.values(form).find(({ key }) => key === key);
-          }
-        };
+        const valueChanged = !isEqual(prevForm.root.value, currentForm.root.value);
 
-        const controlsToCheck = _changedControls
-          ? Object.values(_changedControls).filter((control) => {
-              const prevControl = findControl(control, prevForm);
-
-              return !isEqual(prevControl?.value, control.value);
-            })
-          : [];
+        const controlsToCheck =
+          _changedControls && valueChanged ? Object.values(_changedControls) : [];
 
         const asyncValidationActions = getAsyncValidationActions(controlsToCheck);
 
