@@ -1,0 +1,71 @@
+---
+interface Props {
+}
+
+const { } = Astro.props;
+---
+
+<header class="header">
+	<nav class="navbar navbar-expand-lg">
+		<div class="container">
+			<a class="navbar-brand" href="/">
+				<img class="header__logo" src="transparent-logo-long-name.png" />
+			</a>
+			<button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="offcanvas offcanvas-end" id="navbarSupportedContent">
+				<div class="offcanvas-header">
+					<a class="navbar-brand" href="/">
+						<img class="header__logo" src="transparent-logo-long-name.png" />
+					</a>
+					<button class="undecorate-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+						<i class="fa fa-times"/>
+					</button>
+				</div>
+				<div class="offcanvas-body">
+					<ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+						<li class="nav-item me-3">
+							<a class="nav-link" href="/blog">
+								<i class="fa-regular fa-newspaper me-1 "></i>	
+								Blog
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="mailto:dlai@dave-lai.com">
+								<i class="fa-regular fa-envelope me-1"></i>	
+								dlai@dave-lai.com
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</nav>
+</header>
+<style lang="scss">
+
+	.header {
+		align-items: center;
+		background: white;
+		border-bottom: 1px solid gray;
+		position: sticky;
+		top: 0;
+		z-index: 1;
+
+		&__content {
+			display: flex;
+			align-items: center;
+			height: 70px;
+
+		}
+
+		&__logo {
+			height: 50px;
+		}
+
+		li::before {
+			background-image: none;
+		}
+	}
+</style>
