@@ -1,0 +1,21 @@
+---
+interface Props {
+  className?: string;
+}
+
+const { className = '' } = Astro.props;
+---
+<ul class={`navbar-nav flex-column mb-2 mb-lg-0 ${className}`}>
+  <li class="nav-item me-3">
+    <a class="nav-link" href="/blog">
+      <i class="fa-regular fa-newspaper me-1 "></i>	
+      Blog
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="mailto:dlai@dave-lai.com">
+      <i class="fa-regular fa-envelope me-1"></i>	
+      dlai@dave-lai.com
+    </a>
+  </li>
+</ul>

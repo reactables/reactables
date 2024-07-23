@@ -1,6 +1,7 @@
 ---
 import '../styles/bootstrap.scss';
 import Header from '../components/Header.astro';
+import TableOfContents from '../components/TableOfContents.astro';
 // import Footer from '../components/Footer.astro';
 
 interface Props {
@@ -22,7 +23,12 @@ const { title } = Astro.props;
 	</head>
 	<body>
 		<Header />
-		<slot />
+		<div class="d-flex">
+			<TableOfContents className="d-none d-lg-flex" />
+			<main>
+				<slot />
+			</main>
+		</div>
 		<script>
 			// Import only what you need
       import 'bootstrap/js/dist/alert';
@@ -68,5 +74,9 @@ const { title } = Astro.props;
 			Bitstream Vera Sans Mono,
 			Courier New,
 			monospace;
+	}
+
+	main {
+		flex-grow: 1;
 	}
 </style>
