@@ -70,24 +70,24 @@ Internally, [Reactables](#reactable-concept) are composed of a hub and store.
 
 The hub is responsible for dispatching actions to the store. It is also responsible for handling side effects.
 
-<img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/SlideOneHubStore.jpg" width="600" />
+<img src="https://raw.githubusercontent.com/reactables/reactables/main/assets/docs/SlideOneHubStore.jpg" width="600" />
 
 ### Effects<a name="effects"></a>
 
 When initializing a [Reactable](#reactable-concept) we can declare effects. The hub will listen for various actions and perform side effects as needed. The store will receive actions resulting from these effects.
 
-<img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/SlideTwoEffect.jpg" width="600" />
+<img src="https://raw.githubusercontent.com/reactables/reactables/main/assets/docs/SlideTwoEffect.jpg" width="600" />
 
 ### Scoped Effects <a name="scoped-effects"></a>
 
 Scoped Effects are dynamically created streams scoped to a particular action & key combination when an action is dispatched.
 
-<img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/SlideThreeScopedEffects.jpg" width="600" />
+<img src="https://raw.githubusercontent.com/reactables/reactables/main/assets/docs/SlideThreeScopedEffects.jpg" width="600" />
 
 ### Flow & Containment <a name="flow-containment"></a>
 Actions and logic flow through the App in one direction and are **contained** in their respective streams. This makes state updates more predictable and traceable during debugging.
 
-<img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/SlideSevenEightUnidirectionalFlow.jpg" />
+<img src="https://raw.githubusercontent.com/reactables/reactables/main/assets/docs/SlideSevenEightUnidirectionalFlow.jpg" />
 
 ## Examples <a name="examples"></a>
 
@@ -97,7 +97,7 @@ A basic counter example. Button clicks dispatch actions to increment or reset th
 
 Design Diagram           |  Reactable           | Try it out on StackBlitz.<br /> Choose your framework
 :-------------------------:|:-------------------------:|:-------------------------:
-<img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/Slide11BasicCounterExample.jpg" width="400" />  | [See Code for RxCounter](https://github.com/reactables/reactables/tree/main/packages/examples/src/RxCounter/RxCounter.ts) |  <a href="https://stackblitz.com/edit/github-qtpo1k?file=src%2Findex.js"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/VanillaJS.jpg" width="50" /></a><br /><a href="https://stackblitz.com/edit/github-hfk1t1?file=src%2FCounter.tsx"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/React.png" width="60" /></a><br /><a href="https://stackblitz.com/edit/github-98unub?file=src%2Fapp%2Fcounter%2Fcounter.component.ts"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/Angular.png" width="60" /></a>
+<img src="https://raw.githubusercontent.com/reactables/reactables/main/assets/docs/Slide11BasicCounterExample.jpg" width="400" />  | [See Code for RxCounter](https://github.com/reactables/reactables/tree/main/packages/examples/src/RxCounter/RxCounter.ts) |  <a href="https://stackblitz.com/edit/github-qtpo1k?file=src%2Findex.js"><img src="https://raw.githubusercontent.com/reactables/reactables/main/assets/docs/VanillaJS.jpg" width="50" /></a><br /><a href="https://stackblitz.com/edit/github-hfk1t1?file=src%2FCounter.tsx"><img src="https://raw.githubusercontent.com/reactables/reactables/main/assets/docs/React.png" width="60" /></a><br /><a href="https://stackblitz.com/edit/github-98unub?file=src%2Fapp%2Fcounter%2Fcounter.component.ts"><img src="https://raw.githubusercontent.com/reactables/reactables/main/assets/docs/Angular.png" width="60" /></a>
 
 ### Scoped Effects - Updating Todos <a name="scoped-effects-example"></a>
 
@@ -105,7 +105,7 @@ Updating statuses of todo items shows scoped effects in action. An 'update todo'
 
 Design Diagram           | Reactable      | Try it out on StackBlitz.<br /> Choose your framework
 :-------------------------:|:-------------------------:|:-------------------------:
-<img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/Slide12ScopedEffectsExampleTodos.jpg" width="400" /> | [See Code for RxTodoUpdates](https://github.com/reactables/reactables/tree/main/packages/examples/src/RxTodoUpdates/RxTodoUpdates.ts) |  <a href="https://stackblitz.com/edit/github-6pgtev?file=src%2Findex.js"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/VanillaJS.jpg" width="50" /></a><br /><a href="https://stackblitz.com/edit/github-1r6pki?file=src%2FTodoUpdates.tsx"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/React.png" width="60" /><br /><a href="https://stackblitz.com/edit/github-zfmupm?file=src%2Fapp%2Fapp.component.ts,src%2Fapp%2Ftodos%2Ftodos.component.ts"><img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/Angular.png" width="60" /></a>
+<img src="https://raw.githubusercontent.com/reactables/reactables/main/assets/docs/Slide12ScopedEffectsExampleTodos.jpg" width="400" /> | [See Code for RxTodoUpdates](https://github.com/reactables/reactables/tree/main/packages/examples/src/RxTodoUpdates/RxTodoUpdates.ts) |  <a href="https://stackblitz.com/edit/github-6pgtev?file=src%2Findex.js"><img src="https://raw.githubusercontent.com/reactables/reactables/main/assets/docs/VanillaJS.jpg" width="50" /></a><br /><a href="https://stackblitz.com/edit/github-1r6pki?file=src%2FTodoUpdates.tsx"><img src="https://raw.githubusercontent.com/reactables/reactables/main/assets/docs/React.png" width="60" /><br /><a href="https://stackblitz.com/edit/github-zfmupm?file=src%2Fapp%2Fapp.component.ts,src%2Fapp%2Ftodos%2Ftodos.component.ts"><img src="https://raw.githubusercontent.com/reactables/reactables/main/assets/docs/Angular.png" width="60" /></a>
 
 ## API <a name="api"></a>
 
@@ -167,7 +167,7 @@ type SingleActionReducer<T, S> = (state: T, action: Action<S>) => T;
 
 Debug Example:
 
-<img src="https://raw.githubusercontent.com/reactables/reactables/main/documentation/SlideSixDebug.jpg" width="500" />
+<img src="https://raw.githubusercontent.com/reactables/reactables/main/assets/docs/SlideSixDebug.jpg" width="500" />
 
 ### `ofTypes` <a name="of-Types"></a>
 
