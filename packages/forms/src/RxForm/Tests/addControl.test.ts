@@ -1,4 +1,4 @@
-import { build, control, group } from '../RxForm';
+import { build, control, group, RxFormActions } from '../RxForm';
 import { Subscription } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { config } from '../../Testing/config';
