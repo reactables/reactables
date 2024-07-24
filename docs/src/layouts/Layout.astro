@@ -6,9 +6,10 @@ import TableOfContents from '../components/TableOfContents.astro';
 
 interface Props {
 	title: string;
+	showDesktopNav?: boolean;
 }
 
-const { title } = Astro.props;
+const { title, showDesktopNav = true } = Astro.props;
 ---
 
 <!doctype html>
@@ -24,7 +25,7 @@ const { title } = Astro.props;
 	<body>
 		<Header />
 		<div class="d-flex">
-			<TableOfContents className="d-none d-lg-flex" />
+			{showDesktopNav && <TableOfContents className="d-none d-lg-flex" />}
 			<main>
 				<slot />
 			</main>
