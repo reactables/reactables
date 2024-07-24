@@ -148,10 +148,10 @@ export interface RxFormProviders {
   asyncValidators?: { [key: string]: ValidatorAsyncFn };
 }
 
-export const build = (
+export const build = <Value, Actions = RxFormActions>(
   config: AbstractControlConfig,
   options: RxFormOptions = {},
-): Reactable<Form<unknown>, RxFormActions> => {
+) => {
   const providers = {
     normalizers: { ...options.providers?.normalizers },
     validators: { ...Validators, ...options.providers?.validators },
@@ -160,13 +160,13 @@ export const build = (
 
   const initialState = buildFormState(config, undefined, undefined, providers);
 
-  return createReactable(initialState, options);
+  return createReactable(initialState, options) as Reactable<Form<Value>, Actions>;
 };
 
-export const load = (
+export const load = <Value, Actions = RxFormActions>(
   state: Form<unknown>,
   options: RxFormOptions = {},
-): Reactable<Form<unknown>, RxFormActions> => {
+) => {
   const baseFormState = {
     form: Object.entries(state).reduce(
       (acc: { [key: string]: BaseControl<unknown> }, [key, control]) => {
@@ -184,7 +184,7 @@ export const load = (
     ),
   };
 
-  return createReactable(baseFormState, options);
+  return createReactable(baseFormState, options) as Reactable<Form<Value>, Actions>;
 };
 
 const createReactable = <T extends CustomReducers<S>, S>(

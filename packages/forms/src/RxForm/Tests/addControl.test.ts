@@ -5,7 +5,7 @@ import { config } from '../../Testing/config';
 import { asyncConfig } from '../../Testing/asyncConfig';
 import * as Validators from '../../Testing/Validators';
 import * as AsyncValidators from '../../Testing/AsyncValidators';
-import { tap, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 describe('RxForm', () => {
   let testScheduler: TestScheduler;
