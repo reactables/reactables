@@ -48,8 +48,6 @@ const { title, showDesktopNav = true } = Astro.props;
 	}
 	html {
 		font-family: system-ui, sans-serif;
-		background: #13151a;
-		background-size: 224px;
 	}
 	code {
 		font-family:
@@ -65,5 +63,10 @@ const { title, showDesktopNav = true } = Astro.props;
 
 	main {
 		flex-grow: 1;
+	}
+
+	.undecorate-btn {
+		border: 0;
+		background: transparent;
 	}
 </style>
