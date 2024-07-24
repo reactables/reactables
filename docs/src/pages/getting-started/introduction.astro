@@ -5,7 +5,7 @@ import { getEntry } from 'astro:content';
 const entry = await getEntry('getting-started', 'introduction');
 const { Content } = await entry.render();
 ---
-<Layout title="Reactables - Getting Started">
+<Layout title="Reactables - Introduction">
   <ContentPageLayout>
     <Content />
   </ContentPageLayout>
