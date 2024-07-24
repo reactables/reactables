@@ -1,0 +1,12 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ContentPageLayout from '../../layouts/ContentPageLayout.astro';
+import { getEntry } from 'astro:content';
+const entry = await getEntry('getting-started', 'introduction');
+const { Content } = await entry.render();
+---
+<Layout title="Reactables - Getting Started">
+  <ContentPageLayout>
+    <Content />
+  </ContentPageLayout>
+</Layout>

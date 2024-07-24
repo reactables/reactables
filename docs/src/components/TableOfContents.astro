@@ -4,21 +4,67 @@ interface Props {
 }
 
 const { className = '' } = Astro.props;
+const pathname = new URL(Astro.request.url).pathname;
+const currentPath = pathname.slice(1); // remove the first "/"
 ---
-<ul class={`navbar-nav flex-column mb-2 mb-lg-0 ${className}`}>
-<li class="nav-item me-3">
-  Introduction
-</li>
-  <ul>
-    <li class="nav-item me-3">
-      <a class="nav-link" href="/introduction/getting-started">
-        Getting Started
-      </a>
+<div class={`table-of-contents ${className}`}>
+  <ul class={`navbar-nav flex-column mb-2 mb-lg-0`}>
+    <li class="nav-item me-3 heading" data-bs-toggle="collapse" data-bs-target="#getting-started">
+      Getting Started
     </li>
-    <li class="nav-item">
-      <a class="nav-link" href="/introduction/core-concepts">
-        Core Concepts
-      </a>
-    </li>
+    <ul class="collapse show" id="getting-started">
+      <li class="nav-item me-3">
+        <a class={`nav-link ${currentPath === 'getting-started/introduction' ? 'active': ''}`} href="/getting-started/introduction">
+          Introduction
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class={`nav-link ${currentPath === 'getting-started/core-concepts' ? 'active': ''}`} href="/getting-started/core-concepts">
+          Core Concepts
+        </a>
+      </li>
+    </ul>
   </ul>
-</ul>
+</div>
+
+<style lang="scss">
+  .table-of-contents {
+    padding: 2rem;
+    ul {
+      list-style: none;
+      padding-left: 0;
+      
+      li {
+        width: 100%;
+      }
+    }
+
+    .heading {
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+    }
+    &.desktop {
+      display: none;
+      height: calc(100vh - 77px);
+
+      @media screen and (min-width: 991px) {
+        display: flex;
+      }
+    }
+
+    background-color: #fff;
+    overflow: auto;
+  }
+
+  a {
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+
+    &.active {
+      background: #8abff536
+    }
+  }
+
+</style>

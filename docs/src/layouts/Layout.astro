@@ -25,7 +25,7 @@ const { title, showDesktopNav = true } = Astro.props;
 	<body>
 		<Header />
 		<div class="d-flex">
-			{showDesktopNav && <TableOfContents className="d-none d-lg-flex" />}
+			{showDesktopNav && <TableOfContents className="d-none d-lg-flex desktop" />}
 			<main>
 				<slot />
 			</main>
