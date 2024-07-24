@@ -13,6 +13,9 @@ const { } = Astro.props;
 			<a class="navbar-brand" href="/">
 				<img class="header__logo" src="/transparent-logo-long-name.png" />
 			</a>
+			<a class="ms-auto me-4 d-lg-none" href="https://github.com/reactables/reactables" target="_blank" rel="noreferrer">
+				<i class="fa-brands fa-github"></i>
+			</a>
 			<button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
@@ -26,6 +29,9 @@ const { } = Astro.props;
 					</button>
 				</div>
 				<div class="offcanvas-body">
+					<a class="ms-auto d-none d-lg-inline"  href="https://github.com/reactables/reactables" target="_blank" rel="noreferrer">
+						<i class="fa-brands fa-github"></i>
+					</a>
 					<TableOfContents className="d-lg-none" />
 				</div>
 			</div>
@@ -37,7 +43,7 @@ const { } = Astro.props;
 	.header {
 		align-items: center;
 		background: white;
-		border-bottom: 1px solid gray;
+		border-bottom: 1px solid rgba(0, 0, 0, 0.175);
 		position: sticky;
 		top: 0;
 		z-index: 1;
@@ -55,6 +61,11 @@ const { } = Astro.props;
 
 		li::before {
 			background-image: none;
+		}
+
+		.fa-github {
+			font-size: 2.5rem;
+			color: black;
 		}
 	}
 </style>
