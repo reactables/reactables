@@ -2,7 +2,7 @@
 
 A simple, scalable and framework-agnostic state management that improves the UI development experience for all. 
 
-Reactables leverages reactive/declarative patterns to allow you to spend less time on the **how** and more time on **what** you want to achieve in your buisness logic.
+Reactables leverages RxJS and reactive/declarative patterns to allow more time to focus on **what** you want to achieve in your buisness logic and save time on **how** it will be implemented.
 
 Whether your managing application (global) state or component (local) state, Reactables provides a simple consistent pattern for handling both.
 
