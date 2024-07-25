@@ -10,8 +10,10 @@ const { Content : Content2 } = await installation.render();
 <Layout title="Reactables - Introduction">
   <ContentPageLayout>
     <Content1 />
-    <img class="d-md-none img-fluid"src="/WhatToUse.jpg" alt="WhatToUseMobile" />
-    <img class="d-none d-md-inline img-fluid" src="https://github.com/reactables/reactables/blob/main/documentation/SlideNineStandardPattern.jpg?raw=true" alt="WhatToUseDesktop" />
+    <div class="mb-4">
+      <img class="d-md-none img-fluid"src="/WhatToUse.jpg" alt="WhatToUseMobile" />
+      <img class="d-none d-md-inline img-fluid" src="https://github.com/reactables/reactables/blob/main/documentation/SlideNineStandardPattern.jpg?raw=true" alt="WhatToUseDesktop" />
+    </div>
     <Content2 />
   </ContentPageLayout>
 </Layout>
