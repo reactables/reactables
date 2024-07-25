@@ -2,11 +2,23 @@
 import Layout from '../../layouts/Layout.astro';
 import ContentPageLayout from '../../layouts/ContentPageLayout.astro';
 import { getEntry } from 'astro:content';
-const entry = await getEntry('getting-started', 'introduction');
-const { Content } = await entry.render();
+const introduction = await getEntry('getting-started', 'introduction');
+const installation = await getEntry('getting-started', 'installation');
+const { Content : Content1 } = await introduction.render();
+const { Content : Content2 } = await installation.render();
 ---
 <Layout title="Reactables - Introduction">
   <ContentPageLayout>
-    <Content />
+    <Content1 />
+    <img class="d-md-none img-fluid"src="/WhatToUse.jpg" alt="WhatToUseMobile" />
+    <img class="d-none d-md-inline img-fluid" src="https://github.com/reactables/reactables/blob/main/documentation/SlideNineStandardPattern.jpg?raw=true" alt="WhatToUseDesktop" />
+    <Content2 />
   </ContentPageLayout>
 </Layout>
+<style lang="scss">
+  img[alt=WhatToUseDesktop] {
+    @media screen and (min-width: 1000px) {
+      max-width: 700px;
+    }
+  }
+</style>
