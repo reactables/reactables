@@ -12,7 +12,6 @@ import { RxBuilder } from '@reactables/core';
 export const RxToggle = (initialState = false) =>
   RxBuilder({
     initialState,
-    name: 'rxToggle',
     reducers: {
       toggleOn: () => true,
       toggleOff: () => false,
@@ -28,7 +27,8 @@ export const RxToggle = (initialState = false) =>
 
 ```typescript
 
-const [state$, { toggleOn, toggleOff, toggle }] = RxToggle();
+const [state$, actions] = RxToggle();
+const { toggleOn, toggleOff, toggle } = actions;
 
 state$.subscribe((toggleState) => {
   // Update the view when state changes.
