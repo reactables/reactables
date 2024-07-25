@@ -29,7 +29,10 @@ const currentPath = pathname.slice(1); // remove the first "/"
 
 <style lang="scss">
   .table-of-contents {
+    background-color: #fff;
+    overflow: auto;
     padding: 2rem;
+
     ul {
       list-style: none;
       padding-left: 0;
@@ -48,14 +51,12 @@ const currentPath = pathname.slice(1); // remove the first "/"
     &.desktop {
       display: none;
       height: calc(100vh - 77px);
+      min-width: 250px;
 
       @media screen and (min-width: 991px) {
         display: flex;
       }
     }
-
-    background-color: #fff;
-    overflow: auto;
   }
 
   a {
