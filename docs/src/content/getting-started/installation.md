@@ -32,13 +32,17 @@ const { toggleOn, toggleOff, toggle } = actions;
 
 state$.subscribe((toggleState) => {
   // Update the view when state changes.
-  document.getElementById('toggle-state').innerHTML = toggleState ? 'On' : 'Off';
+  document.getElementById('toggle-state')
+    .innerHTML = toggleState ? 'On' : 'Off';
 });
 
 // Bind click handlers
-document.getElementById('toggle-on').addEventListener('click', toggleOn);
-document.getElementById('toggle-off').addEventListener('click', toggleOff);
-document.getElementById('toggle').addEventListener('click', toggle);
+document.getElementById('toggle-on')
+  .addEventListener('click', toggleOn);
+document.getElementById('toggle-off')
+  .addEventListener('click', toggleOff);
+document.getElementById('toggle')
+  .addEventListener('click', toggle);
 
 
 ```
