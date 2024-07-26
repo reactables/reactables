@@ -12,8 +12,9 @@ const { sectionLinks } = Astro.props;
   <div class="content-page__content px-3 px-md-4 py-4">
     <slot />
   </div>
-  {sectionLinks?.length && <div class="content-page__section-links">
+  {sectionLinks?.length && <div class="content-page__section-links d-none d-xl-flex">
     <nav>
+      <p class="text-uppercase mb-0"><strong>On this page</strong></p>
       <ul class={`navbar-nav flex-column mb-2 mb-lg-0`}>
         {sectionLinks.map(({ label, link }) => {
           return <li class="nav-item me-3">
@@ -29,19 +30,18 @@ const { sectionLinks } = Astro.props;
 <style lang="scss">
   .content-page {
     display: flex;
+
+    &__content {
+      max-width: 48rem;
+    }
     &__section-links {
       background-color: #fff;
       overflow: auto;
       padding: 2rem;
-      display: none;
       height: calc(100vh - 77px);
       min-width: 250px;
       position: sticky;
       top: 77px;
-
-      @media screen and (min-width: 991px) {
-        display: flex;
-      }
 
       ul {
         list-style: none;
