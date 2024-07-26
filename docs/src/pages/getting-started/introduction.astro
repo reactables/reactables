@@ -6,9 +6,16 @@ const introduction = await getEntry('getting-started', 'introduction');
 const installation = await getEntry('getting-started', 'installation');
 const { Content : Content1 } = await introduction.render();
 const { Content : Content2 } = await installation.render();
+
+const sectionLinks= [
+  { label: 'Introduction', link: "#introduction" },
+  { label: 'Installation', link: "#installation" },
+  { label: 'Create Your First Reactable', link: "#create-your-first-reactable" },
+  { label: 'Bind to the View', link: "#bind-to-the-view" },
+]
 ---
 <Layout title="Reactables - Introduction">
-  <ContentPageLayout>
+  <ContentPageLayout sectionLinks={sectionLinks}>
     <Content1 />
     <div class="mb-4">
       <img class="d-md-none img-fluid"src="/WhatToUse.jpg" alt="WhatToUseMobile" />
