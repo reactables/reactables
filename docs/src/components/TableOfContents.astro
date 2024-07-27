@@ -24,6 +24,41 @@ const currentPath = pathname.slice(1); // remove the first "/"
         </a>
       </li>
     </ul>
+    <li class="nav-item me-3 mt-3 heading" data-bs-toggle="collapse" data-bs-target="#guides">
+      Guides
+    </li>
+    <ul class="collapse show" id="guides">
+      <li class="nav-item me-3">
+        <a class={`nav-link ${currentPath === 'guides/examples' ? 'active': ''}`} href="/guides/examples">
+          Examples
+        </a>
+      </li>
+      <li class="nav-item me-3">
+        <a class={`nav-link ${currentPath === 'guides/forms' ? 'active': ''}`} href="/guides/forms">
+          Forms
+        </a>
+      </li>
+      <li class="nav-item me-3">
+        <a class={`nav-link ${currentPath === 'guides/testing' ? 'active': ''}`} href="/guides/testing">
+          Testing
+        </a>
+      </li>
+    </ul>
+    <li class="nav-item me-3 heading mt-3" data-bs-toggle="collapse" data-bs-target="#references">
+      References
+    </li>
+    <ul class="collapse show" id="references">
+      <li class="nav-item me-3">
+        <a class={`nav-link ${currentPath === 'references/core-api' ? 'active': ''}`} href="/references/core-api">
+          Core API
+        </a>
+      </li>
+      <li class="nav-item me-3">
+        <a class={`nav-link ${currentPath === 'references/forms-api' ? 'active': ''}`} href="/references/forms-api">
+          Forms API
+        </a>
+      </li>
+    </ul>
   </ul>
 </div>
 

@@ -4,8 +4,10 @@ import ContentPageLayout from '../../layouts/ContentPageLayout.astro';
 import { getEntry } from 'astro:content';
 const introduction = await getEntry('getting-started', 'introduction');
 const installation = await getEntry('getting-started', 'installation');
+const vanillaJSToggle = await getEntry('getting-started', 'vanilla-js-toggle');
 const { Content : Content1 } = await introduction.render();
 const { Content : Content2 } = await installation.render();
+const { Content : VanillaJsToggle } = await vanillaJSToggle.render();
 
 const sectionLinks= [
   { label: 'Introduction', link: "#introduction" },
@@ -22,6 +24,35 @@ const sectionLinks= [
       <img class="d-none d-md-inline img-fluid" src="https://github.com/reactables/reactables/blob/main/documentation/SlideNineStandardPattern.jpg?raw=true" alt="WhatToUseDesktop" />
     </div>
     <Content2 />
+    <h2>Bind to the view!</h2>
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+          <a href="#react-toggle" class="nav-link" data-bs-toggle="tab">
+            <img src="/React.png" width="50" />
+          </a>
+      </li>
+      <li class="nav-item">
+          <a href="#angular-toggle" class="nav-link" data-bs-toggle="tab">
+            <img src="/angular.png" width="50" />
+          </a>
+      </li>
+      <li class="nav-item">
+          <a href="#vanilla-js-toggle" class="nav-link" data-bs-toggle="tab">
+            <img src="/VanillaJS.jpg" width="50" />
+          </a>
+      </li>
+    </ul>
+    <div class="tab-content">
+      <div class="tab-pane fade show active" id="react-toggle">
+          <p>Home tab content ...</p>
+      </div>
+      <div class="tab-pane fade" id="angular-toggle">
+          <p>Angular</p>
+      </div>
+      <div class="tab-pane fade" id="vanilla-js-toggle">
+        <VanillaJsToggle />
+      </div>
+    </div>
   </ContentPageLayout>
 </Layout>
 <style lang="scss">
