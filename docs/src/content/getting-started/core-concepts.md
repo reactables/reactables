@@ -1,12 +1,18 @@
 # Core Concepts
 
-- Reactable Interface
-  [state$, action]
+## Reactable Interface
 
-  - encapsulates all the logi encourages separation of concerns
-    - business logic not tightly coupled with your view and can be developed and tested independently
+```typescript
+  const [state$, actions] = RxToggle();
+```
 
-- Reactable primitive
+Reactables (prefixed with Rx) aim to provide a clean separation of concerns between state logic and presentation - enhancing testability and extensibility.
+
+Reactables encapsulate all the state logic and expose a state observable which UI components can subscribe to for state changes.
+
+The UI state can only be updated by invoking defined action methods provided by the Reactable.
+
+<!-- - Reactable primitive
  - hub & store
  - scoped effects
 
@@ -18,4 +24,4 @@
   - more stuff here
 
 
-
+ -->
