@@ -6,7 +6,7 @@
   const [state$, actions] = RxToggle();
 ```
 
-Reactables (prefixed with Rx) provide a clean separation of concerns between state logic and presentation - enhancing testability and extensibility.
+Reactables (prefixed with Rx) provide a clean separation of concerns between state logic and presentation in your UI - enhancing testability and extensibility.
 
 Reactables encapsulate the state logic and expose an observable which UI components can subscribe to for state changes.
 
@@ -37,7 +37,7 @@ The hub also handles side effects (i.e async operations) with `effects`.
 
 When an action is dispatched and a side effect is needed, a replayed action is sent through an effect stream to execute the side effect.
 
-Responses (if exists) are then mapped into actions and relayed to the store.
+Responses are then mapped into actions and relayed to the store.
 
 <a href="/ReactablePrimitiveTwo.jpg" target="_blank" rel="noreferrer">
   <img src="/ReactablePrimitiveTwo.jpg" alt="Effects" title="Effects" style="max-width: 300px" />
@@ -52,7 +52,7 @@ Reactables also have the ability to receive actions from a number of external so
 
 <br>
 
-## Composition, Reactive Programming and Unidirectional Flow.
+## Composition, Reactive Paradigm and Unidirectional Flow <a name="composition">
 
 Organizing state into slices is sensible when it grows and becomes more complex. Reactable primitives can represent each slice and through composition they can create a  new reactable to manage this complexity.
 
@@ -67,17 +67,3 @@ Organizing state into slices is sensible when it grows and becomes more complex.
 Reactables encourages a reactive paradigm where a Reactable's dependencies (sources of change) are clearly defined in its declaration. 
 
 This results in a unidirectional flow of actions making state changes highly predictable.
-
-<!-- - Reactable primitive
- - hub & store
- - scoped effects
-
-- Composition with Reactables
-
-  - Organizing state into slices is sensible when it grows and becomes more complex.Reactable primitives which can combine together to make bigger ones (BETTER way of saying this)
-
-- One directional flow and explicity dependencies
-  - more stuff here
-
-
- -->

@@ -1,6 +1,6 @@
 ## Installation
 
-Installation will require [RxJS](https://rxjs.dev/) if not already installed.
+Installation requires [RxJS](https://rxjs.dev/) if not already installed.
 
 `npm i rxjs @reactables/core`
 

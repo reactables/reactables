@@ -4,9 +4,14 @@ import ContentPageLayout from '../../layouts/ContentPageLayout.astro';
 import { getEntry } from 'astro:content';
 const entry = await getEntry('getting-started', 'core-concepts');
 const { Content } = await entry.render();
+const sectionLinks= [
+  { label: 'Reactable Interface', link: "#reactable-interface" },
+  { label: 'Reactable Primitive', link: "#reactable-primitive" },
+  { label: 'Composition and Reactive Paradigm', link: "#composition" },
+]
 ---
 <Layout title="Reactables - Core Concepts">
-  <ContentPageLayout>
+  <ContentPageLayout sectionLinks={sectionLinks}>
     <Content />
   </ContentPageLayout>
 </Layout>
