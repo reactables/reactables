@@ -6,7 +6,7 @@
   const [state$, actions] = RxToggle();
 ```
 
-Reactables (prefixed with Rx) aim to provide a clean separation of concerns between state logic and presentation - enhancing testability and extensibility.
+Reactables (prefixed with Rx) provide a clean separation of concerns between state logic and presentation - enhancing testability and extensibility.
 
 Reactables encapsulate the state logic and expose an observable which UI components can subscribe to for state changes.
 
