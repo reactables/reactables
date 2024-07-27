@@ -46,4 +46,3 @@ document.getElementById('toggle')
 
 
 ```
-
