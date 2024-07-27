@@ -23,7 +23,12 @@ export const RxToggle = (initialState = false) =>
 
 ## Bind to the View!
 
-[See full example on StackBlitz](https://stackblitz.com/edit/github-qtpo1k-gvgbvy?file=src%2Findex.js)
+<a href="https://stackblitz.com/edit/github-qtpo1k-gvgbvy?file=src%2Findex.js" target="_blank" rel="noreferrer">
+ See full example on StackBlitz
+<a>
+
+<br>
+<br>
 
 ```typescript
 

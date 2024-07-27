@@ -64,6 +64,6 @@ Organizing state into slices is sensible when it grows and becomes more complex.
 <br>
 <br>
 
-Reactables encourages a reactive paradigm where a Reactable's dependencies (sources of change) are clearly defined in its declaration. 
+Reactables encourages a reactive paradigm where a reactable's dependencies (sources of change) are clearly defined in its declaration. 
 
 This results in a unidirectional flow of actions making state changes highly predictable.
