@@ -8,9 +8,9 @@
 
 Reactables (prefixed with Rx) aim to provide a clean separation of concerns between state logic and presentation - enhancing testability and extensibility.
 
-Reactables encapsulate all the state logic and expose a state observable which UI components can subscribe to for state changes.
+Reactables encapsulate the state logic and expose an observable which UI components can subscribe to for state changes.
 
-The UI state can only be updated by invoking defined action methods provided by the Reactable.
+For predictable state changes, the UI state can only be changed by invoking action methods provided by the Reactable. 
 
 <!-- - Reactable primitive
  - hub & store
