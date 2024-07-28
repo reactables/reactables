@@ -54,7 +54,7 @@ Reactables also have the ability to receive actions from a number of external so
 
 ## Composition, Reactive Paradigm and Unidirectional Flow <a name="composition">
 
-Organizing state into slices is sensible when it grows and becomes more complex. Reactable primitives can represent each slice and through composition they can create a  new reactable to manage this complexity.
+Organizing state into slices is sensible when state grows and becomes more complex. Reactable primitives can represent each slice and through composition they can create a  new reactable to manage the complexity.
 
 <a href="/ReactableCombined.jpg" target="_blank" rel="noreferrer">
   <img src="/ReactableCombined.jpg" alt="Reactable Composition" title="Reactable Composition" style="max-width: 300px" />
