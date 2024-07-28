@@ -1,1 +1,59 @@
-<h1>Examples</h1>
+---
+import { getEntry } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import ContentPageLayout from '../../layouts/ContentPageLayout.astro';
+const basicToggle = await getEntry('guides', 'examples/basic-toggle/basic-toggle');
+const { Content : BasicToggle } = await basicToggle.render();
+const vanillaJSToggle = await getEntry('getting-started', 'vanilla-js-toggle');
+const reactToggle = await getEntry('getting-started', 'react-toggle');
+const angularToggle = await getEntry('getting-started', 'angular-toggle');
+const { Content : VanillaJsToggle } = await vanillaJSToggle.render();
+const { Content : ReactToggle } = await reactToggle.render();
+const { Content : AngularToggle } = await angularToggle.render();
+
+const sectionsLinks = [
+  { label: 'Basic Toggle', link: "#basic-toggle"},
+  { label: 'Fetching Data with an Effect', link: "#fetching-data"},
+  { label: 'Composition with Reactables', link: "#reactable-composition"},
+  ]
+---
+
+<Layout title="Reactables - Examples">
+  <ContentPageLayout sectionLinks={sectionsLinks}>
+    <h1>Examples</h1>
+
+    <h2 id="basic-toggle">Basic Toggle</h2>
+    <BasicToggle />
+    <h5>Bind to RxToggle to View</h5>
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+          <a href="#react-toggle" class="nav-link active" data-bs-toggle="tab">
+            <img src="/React.png" width="50" title="React Toggle"/>
+          </a>
+      </li>
+      <li class="nav-item">
+          <a href="#angular-toggle" class="nav-link" data-bs-toggle="tab">
+            <img src="/angular.png" width="50" title="Angular Toggle"/>
+          </a>
+      </li>
+      <li class="nav-item">
+          <a href="#vanilla-js-toggle" class="nav-link" data-bs-toggle="tab">
+            <img src="/VanillaJS.jpg" width="50" title="VanillaJS Toggle" />
+          </a>
+      </li>
+    </ul>
+    <div class="tab-content pt-3">
+      <div class="tab-pane fade show active" id="react-toggle">
+        <ReactToggle />
+      </div>
+      <div class="tab-pane fade" id="angular-toggle">
+        <AngularToggle />
+      </div>
+      <div class="tab-pane fade" id="vanilla-js-toggle">
+        <VanillaJsToggle />
+      </div>
+    </div>
+
+  </ContentPageLayout>
+
+</Layout>
