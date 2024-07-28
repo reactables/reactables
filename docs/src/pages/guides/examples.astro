@@ -2,6 +2,7 @@
 import { getEntry } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import ContentPageLayout from '../../layouts/ContentPageLayout.astro';
+
 const basicToggle = await getEntry('guides', 'examples/basic-toggle/basic-toggle');
 const { Content : BasicToggle } = await basicToggle.render();
 const vanillaJSToggle = await getEntry('getting-started', 'vanilla-js-toggle');
@@ -10,6 +11,9 @@ const angularToggle = await getEntry('getting-started', 'angular-toggle');
 const { Content : VanillaJsToggle } = await vanillaJSToggle.render();
 const { Content : ReactToggle } = await reactToggle.render();
 const { Content : AngularToggle } = await angularToggle.render();
+
+const fetchData = await getEntry('guides', 'examples/fetch-data/fetch-data');
+const { Content : FetchData } = await fetchData.render();
 
 const sectionsLinks = [
   { label: 'Basic Toggle', link: "#basic-toggle"},
@@ -22,6 +26,7 @@ const sectionsLinks = [
   <ContentPageLayout sectionLinks={sectionsLinks}>
     <h1>Examples</h1>
 
+    <!-- Basic Toggle -->
     <h2 id="basic-toggle">Basic Toggle</h2>
     <BasicToggle />
     <h5>Bind to RxToggle to View</h5>
@@ -54,6 +59,12 @@ const sectionsLinks = [
       </div>
     </div>
 
+    <br>
+    <br>
+
+    <!-- Fetching Data -->
+    <h2 id="fetching-data">Fetching Data with an Effect</h2>
+    <FetchData />
   </ContentPageLayout>
 
 </Layout>
