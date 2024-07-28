@@ -33,7 +33,7 @@ Internally, a reactable primitive has a hub and store. The hub dispatches action
 
 **Effects**
 
-The hub also handles side effects (i.e async operations) with `effects`.
+The hub also handles side effects (i.e API requests) with `effects`.
 
 When an action is dispatched and a side effect is needed, a replayed action is sent through an effect stream to execute the side effect.
 
