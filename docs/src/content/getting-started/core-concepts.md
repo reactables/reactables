@@ -48,7 +48,7 @@ Responses are then mapped into actions and relayed to the store.
 
 **Sources**
 
-Reactables also have the ability to receive actions from a number of external sources and react to them.
+Reactables also have the ability to receive actions from any number of external sources and react to them.
 
 <br>
 
