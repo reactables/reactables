@@ -34,11 +34,13 @@ export const RxFetchData = ({
         reducer: (state) => ({ ...state, loading: true }),
         effects: [
           (action$) =>
-            action$.pipe(switchMap(() => from(dataService.fetchData()))).pipe(
-              map((response) => ({ type: 'fetchSuccess', payload: response })),
-              catchError((err: unknown) =>
-                of({ type: 'fetchFailure', payload: true })
-              )
+            action$.pipe(
+              switchMap(() => from(dataService.fetchData()))).pipe(
+                map((response) =>
+                  ({ type: 'fetchSuccess', payload: response })),
+                catchError((err: unknown) =>
+                  of({ type: 'fetchFailure', payload: true })
+                )
             ),
         ],
       },
