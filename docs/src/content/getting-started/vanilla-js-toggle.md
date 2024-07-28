@@ -1,12 +1,12 @@
-
 <a href="https://stackblitz.com/edit/github-qtpo1k-gvgbvy?file=src%2Findex.js" target="_blank" rel="noreferrer">
- See full example on StackBlitz
+ See full example on <img src="/stackblitz.png" width="100" />
 <a>
 
 <br>
 <br>
 
 ```typescript
+import { RxToggle } from './RxToggle';
 
 const [state$, actions] = RxToggle();
 const { toggleOn, toggleOff, toggle } = actions;

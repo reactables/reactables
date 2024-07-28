@@ -5,9 +5,11 @@ import { getEntry } from 'astro:content';
 const introduction = await getEntry('getting-started', 'introduction');
 const installation = await getEntry('getting-started', 'installation');
 const vanillaJSToggle = await getEntry('getting-started', 'vanilla-js-toggle');
+const reactToggle = await getEntry('getting-started', 'react-toggle');
 const { Content : Content1 } = await introduction.render();
 const { Content : Content2 } = await installation.render();
 const { Content : VanillaJsToggle } = await vanillaJSToggle.render();
+const { Content : ReactToggle } = await reactToggle.render();
 
 const sectionLinks= [
   { label: 'Introduction', link: "#introduction" },
@@ -42,9 +44,9 @@ const sectionLinks= [
           </a>
       </li>
     </ul>
-    <div class="tab-content">
+    <div class="tab-content pt-3">
       <div class="tab-pane fade show active" id="react-toggle">
-          <p>Home tab content ...</p>
+        <ReactToggle />
       </div>
       <div class="tab-pane fade" id="angular-toggle">
           <p>Angular</p>
