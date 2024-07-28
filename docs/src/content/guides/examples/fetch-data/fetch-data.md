@@ -47,11 +47,13 @@ export const RxFetchData = ({
         success: true,
         loading: false,
         data: action.payload,
+        error: null,
       }),
       fetchFailure: (state, action) => ({
         ...state,
         loading: false,
         error: action.payload,
+        success: false,
       }),
     },
   });
