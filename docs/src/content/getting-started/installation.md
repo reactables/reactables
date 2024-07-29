@@ -6,7 +6,7 @@ Installation requires [RxJS](https://rxjs.dev/) if not already installed.
 
 ## Create your first Reactable!
 
-```typescript
+```javascript
 import { RxBuilder } from '@reactables/core';
 
 export const RxToggle = (initialState = false) =>

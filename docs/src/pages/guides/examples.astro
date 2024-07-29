@@ -12,6 +12,9 @@ const { Content : VanillaJsToggle } = await vanillaJSToggle.render();
 const { Content : ReactToggle } = await reactToggle.render();
 const { Content : AngularToggle } = await angularToggle.render();
 
+const extendingFunctionality = await getEntry('guides', 'examples/extending-functionality');
+const { Content : ExtendingFunctionality } = await extendingFunctionality.render();
+
 const fetchData = await getEntry('guides', 'examples/fetch-data/fetch-data');
 const { Content : FetchData } = await fetchData.render();
 
@@ -30,6 +33,7 @@ const { Content : AngularReactableComposition } = await angularReactableComposit
 
 const sectionsLinks = [
   { label: 'Basic Toggle', link: "#basic-toggle"},
+  { label: 'Extending Functionality', link: "#extending-functionality"},
   { label: 'Fetching Data with an Effect', link: "#fetching-data"},
   { label: 'Composition with Reactables', link: "#reactable-composition"},
   ]
@@ -71,7 +75,11 @@ const sectionsLinks = [
       </div>
     </div>
 
-    <br>
+    <br />
+
+    <ExtendingFunctionality />
+
+    <br />
 
     <!-- Fetching Data -->
     <FetchData />
@@ -97,7 +105,7 @@ const sectionsLinks = [
       </div>
     </div>
 
-    <br>
+    <br />
 
     <!-- Composition with Reactables -->
     <ReactableComposition />
@@ -124,7 +132,7 @@ const sectionsLinks = [
       </div>
     </div>
 
-    <br>
+    <br />
 
   </ContentPageLayout>
 
