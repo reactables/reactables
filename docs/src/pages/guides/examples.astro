@@ -20,6 +20,14 @@ const angularFetchData = await getEntry('guides', 'examples/fetch-data/angular-f
 const { Content : ReactFetchData } = await reactFetchData.render();
 const { Content : AngularFetchData } = await angularFetchData.render();
 
+const reactableComposition = await getEntry('guides', 'examples/reactable-composition/reactable-composition');
+const { Content : ReactableComposition } = await reactableComposition.render();
+
+const reactReactableComposition = await getEntry('guides', 'examples/reactable-composition/react-reactable-composition');
+const angularReactableComposition = await getEntry('guides', 'examples/reactable-composition/angular-reactable-composition');
+const { Content : ReactReactableComposition } = await reactReactableComposition.render();
+const { Content : AngularReactableComposition } = await angularReactableComposition.render();
+
 const sectionsLinks = [
   { label: 'Basic Toggle', link: "#basic-toggle"},
   { label: 'Fetching Data with an Effect', link: "#fetching-data"},
@@ -32,7 +40,6 @@ const sectionsLinks = [
     <h1>Examples</h1>
 
     <!-- Basic Toggle -->
-    <h2 id="basic-toggle">Basic Toggle</h2>
     <BasicToggle />
     <h5>Bind RxToggle to View</h5>
     <ul class="nav nav-tabs">
@@ -65,10 +72,8 @@ const sectionsLinks = [
     </div>
 
     <br>
-    <br>
 
     <!-- Fetching Data -->
-    <h2 id="fetching-data">Fetching Data with an Effect</h2>
     <FetchData />
     <h5>Bind RxFetchData to View</h5>
     <ul class="nav nav-tabs">
@@ -93,7 +98,34 @@ const sectionsLinks = [
     </div>
 
     <br>
+
+    <!-- Composition with Reactables -->
+    <ReactableComposition />
+
+    <h5>Bind RxHotelSearch to View</h5>
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+          <a href="#react-reactable-composition" class="nav-link active" data-bs-toggle="tab">
+            <img src="/React.png" width="50" title="React Reactable Composition"/>
+          </a>
+      </li>
+      <li class="nav-item">
+          <a href="#angular-reactable-composition" class="nav-link" data-bs-toggle="tab">
+            <img src="/angular.png" width="50" title="Angular Reactable Composition" />
+          </a>
+      </li>
+    </ul>
+    <div class="tab-content pt-3">
+      <div class="tab-pane fade show active" id="react-reactable-composition">
+        <ReactReactableComposition />
+      </div>
+      <div class="tab-pane fade" id="angular-reactable-composition">
+        <AngularReactableComposition />
+      </div>
+    </div>
+
     <br>
+
   </ContentPageLayout>
 
 </Layout>

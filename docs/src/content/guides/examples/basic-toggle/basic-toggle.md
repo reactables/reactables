@@ -1,3 +1,5 @@
+## Basic Toggle
+
 ```typescript
 import { RxBuilder, Reactable } from '@reactables/core';
 
