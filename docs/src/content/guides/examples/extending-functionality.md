@@ -1,6 +1,6 @@
 ## Extending Functionality
 
-Extending functionality for a reactable is straight forward as we can just pass in extra `reducers` as an option. To illustrate, we can make a slight modification to `RxToggle`.
+Extending functionality for a reactable is straight forward as we can just pass in extra `reducers` as an option. To illustrate, we can make a slight modification to `RxToggle` and make a `RxExtendedToggle`.
 
 ```javascript
 import { RxBuilder } from '@reactables/core';
