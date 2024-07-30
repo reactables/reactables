@@ -1,8 +1,8 @@
 ## Composition with Reactables <a name="reactable-composition">
 
-Consider a naive search that filter's hotels based on `smokingAllowed` and `petsAllowed`. Using `RxToggle` and a slightly modified `RxFetchData` from previous examples, we will combine them and implement the search.
+Using an example for illustration. Consider a naive search that filter's hotels based on `smokingAllowed` and `petsAllowed`. Using `RxToggle` and a slightly modified `RxFetchData` from previous examples, we will combine them and implement the search.
 
-We can start with the toggle filter controls for `smokingAllowed` and `petsAllowed`. We will want a Reactable with the following state and actions.
+We can start with the toggle filter controls for `smokingAllowed` and `petsAllowed`. We will want a reactable with the following state and actions.
 
 ```typescript
 export type SearchControlsState = {
