@@ -6,7 +6,14 @@ import { getEntry } from "astro:content";
 const forms = await getEntry('guides', 'forms/forms');
 const { Content } = await forms.render();
 
-const sectionLinks: { label: string, link: string}[] = [];
+const sectionLinks: { label: string, link: string}[] = [
+  { label: 'Installation', link: '#installation'},
+    { label: 'Basic Form Group', link: '#basic-form-group' },
+    { label: 'Validation', link: '#validation-example' },
+    { label: 'Async Validation', link: '#async-validation-example' },
+    { label: 'Normalizing Values', link: '#normalizing-values' },
+    { label: 'Custom Reducer', link: '#custom-reducer-example' },
+];
 ---
 
 <Layout title="Reactables - Forms">
