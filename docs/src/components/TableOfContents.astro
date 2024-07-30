@@ -44,6 +44,21 @@ const currentPath = pathname.slice(1); // remove the first "/"
         </a>
       </li>
     </ul>
+    <li class="nav-item me-3 heading mt-3" data-bs-toggle="collapse" data-bs-target="#react">
+      React
+    </li>
+    <ul class="collapse show" id="react">
+      <li class="nav-item me-3">
+        <a class={`nav-link ${currentPath === 'react/react-bindings' ? 'active': ''}`} href="/react/react-bindings">
+          React Bindings
+        </a>
+      </li>
+      <li class="nav-item me-3">
+        <a class={`nav-link ${currentPath === 'react/react-form-components' ? 'active': ''}`} href="/react/react-form-components">
+          React Form Components
+        </a>
+      </li>
+    </ul>
     <li class="nav-item me-3 heading mt-3" data-bs-toggle="collapse" data-bs-target="#references">
       References
     </li>
