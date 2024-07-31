@@ -24,11 +24,20 @@ const { Content: ReactValidation  } = await reactValidation.render();
 const vanillaJsValidation = await getEntry('guides', 'forms/examples/validation/vanilla-js-validation');
 const { Content: VanillaJSValidation  } = await vanillaJsValidation.render();
 
+const asyncValidation = await getEntry('guides', 'forms/examples/async-validation/async-validation');
+const { Content: AsyncValidation  } = await asyncValidation.render();
+
+const reactAsyncValidation = await getEntry('guides', 'forms/examples/async-validation/react-async-validation');
+const { Content: ReactAsyncValidation  } = await reactAsyncValidation.render();
+
+const vanillaJsAsyncValidation = await getEntry('guides', 'forms/examples/async-validation/vanilla-js-async-validation');
+const { Content: VanillaJSAsyncValidation  } = await vanillaJsAsyncValidation.render();
+
 const sectionLinks: { label: string, link: string}[] = [
   { label: 'Installation', link: '#installation'},
     { label: 'Basic Form Group', link: '#basic-form-group' },
     { label: 'Validation', link: '#validation-example' },
-    { label: 'Async Validation', link: '#async-validation-example' },
+    { label: 'Async Validation', link: '#async-validation' },
     { label: 'Normalizing Values', link: '#normalizing-values' },
     { label: 'Custom Reducer', link: '#custom-reducer-example' },
 ];
@@ -63,27 +72,27 @@ const sectionLinks: { label: string, link: string}[] = [
 
     <br />
 
-    <!-- Form Validation -->
-    <Validation />
-    <h5>Bind RxFormValidation to View</h5>
+    <!-- Form Async Validation -->
+    <AsyncValidation />
+    <h5>Bind RxFormAsyncValidation to View</h5>
     <ul class="nav nav-tabs">
       <li class="nav-item">
-          <a href="#react-validation" class="nav-link active" data-bs-toggle="tab">
-            <img src="/React.png" width="50" title="React Form Validation"/>
+          <a href="#react-async-validation" class="nav-link active" data-bs-toggle="tab">
+            <img src="/React.png" width="50" title="React Form Async Validation"/>
           </a>
       </li>
       <li class="nav-item">
-          <a href="#vanilla-js-validation" class="nav-link" data-bs-toggle="tab">
-            <img src="/VanillaJS.jpg" width="50" title="Form Validation VanillaJS" />
+          <a href="#vanilla-js-async-validation" class="nav-link" data-bs-toggle="tab">
+            <img src="/VanillaJS.jpg" width="50" title="Form Async Validation VanillaJS" />
           </a>
       </li>
     </ul>
     <div class="tab-content pt-3">
-      <div class="tab-pane fade show active" id="react-validation">
-        <ReactValidation />
+      <div class="tab-pane fade show active" id="react-async-validation">
+        <ReactAsyncValidation />
       </div>
-      <div class="tab-pane fade" id="vanilla-js-validation">
-        <VanillaJSValidation />
+      <div class="tab-pane fade" id="vanilla-js-async-validation">
+        <VanillaJSAsyncValidation />
       </div>
     </div>
 
