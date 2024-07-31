@@ -15,6 +15,15 @@ const { Content: ReactBasicFormGroup  } = await reactBasicFormGroup.render();
 const vanillaJsBasicFormGroup = await getEntry('guides', 'forms/examples/basic-form-group/vanilla-js-basic-form-group');
 const { Content: VanillaJSBasicFormGroup  } = await vanillaJsBasicFormGroup.render();
 
+const validation = await getEntry('guides', 'forms/examples/validation/validation');
+const { Content: Validation  } = await validation.render();
+
+const reactValidation = await getEntry('guides', 'forms/examples/validation/react-validation');
+const { Content: ReactValidation  } = await reactValidation.render();
+
+const vanillaJsValidation = await getEntry('guides', 'forms/examples/validation/vanilla-js-validation');
+const { Content: VanillaJSValidation  } = await vanillaJsValidation.render();
+
 const sectionLinks: { label: string, link: string}[] = [
   { label: 'Installation', link: '#installation'},
     { label: 'Basic Form Group', link: '#basic-form-group' },
@@ -28,6 +37,7 @@ const sectionLinks: { label: string, link: string}[] = [
 <Layout title="Reactables - Forms">
   <ContentPageLayout sectionLinks={sectionLinks}>
     <Content />
+    <!-- Basic Form Group -->
     <BasicFormGroup />
     <h5>Bind RxBasicFormGroup to View</h5>
     <ul class="nav nav-tabs">
@@ -48,6 +58,32 @@ const sectionLinks: { label: string, link: string}[] = [
       </div>
       <div class="tab-pane fade" id="vanilla-js-basic-form-group">
         <VanillaJSBasicFormGroup />
+      </div>
+    </div>
+
+    <br />
+
+    <!-- Form Validation -->
+    <Validation />
+    <h5>Bind RxFormValidation to View</h5>
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+          <a href="#react-validation" class="nav-link active" data-bs-toggle="tab">
+            <img src="/React.png" width="50" title="React Form Validation"/>
+          </a>
+      </li>
+      <li class="nav-item">
+          <a href="#vanilla-js-validation" class="nav-link" data-bs-toggle="tab">
+            <img src="/VanillaJS.jpg" width="50" title="Form Validation VanillaJS" />
+          </a>
+      </li>
+    </ul>
+    <div class="tab-content pt-3">
+      <div class="tab-pane fade show active" id="react-validation">
+        <ReactValidation />
+      </div>
+      <div class="tab-pane fade" id="vanilla-js-validation">
+        <VanillaJSValidation />
       </div>
     </div>
 
