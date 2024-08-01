@@ -1,6 +1,6 @@
 <a href="https://stackblitz.com/edit/vitejs-vite-enriqs?file=src%2FApp.tsx" target="_blank" rel="noreferrer">
  See full example on <img src="/stackblitz.png" width="100" />
-<a>
+</a>
 
 <br>
 <br>

@@ -16,7 +16,7 @@ type HookedRxForm = HookedReactable<ControlModels.Form<unknown>, RxFormActions>;
 
 <a href="https://stackblitz.com/edit/vitejs-vite-6lzq4i?file=src%2FMyForm.tsx" target="_blank" rel="noreferrer">
  See full example on <img src="/stackblitz.png" width="100" />
-<a>
+</a>
 
 <br>
 <br>
@@ -58,7 +58,7 @@ Below is an `Input` component that will be wrapped by `Field` and provided the `
 
 <a href="https://stackblitz.com/edit/vitejs-vite-6lzq4i?file=src%2FMyForm.tsx" target="_blank" rel="noreferrer">
  See full example on <img src="/stackblitz.png" width="100" />
-<a>
+</a>
 
 <br>
 <br>
@@ -135,7 +135,7 @@ export default MyForm;
 
 <a href="https://stackblitz.com/edit/vitejs-vite-fmst4h?file=src%2FMyForm.tsx" target="_blank" rel="noreferrer">
  See full example on <img src="/stackblitz.png" width="100" />
-<a>
+</a>
 
 <br>
 <br>
