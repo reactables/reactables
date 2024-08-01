@@ -18,7 +18,7 @@ export interface ActionMap {
 
 ## `RxBuilder` <a name="rx-builder"></a>
 
-Factory function for building [Reactables](#reactable). Accepts a [RxConfig](#rx-confg) configuration object.
+Factory function for building a [reactable](/getting-started/core-concepts#reactable-primitive) primitive. Accepts a [RxConfig](#rx-config) configuration object.
 
 ```typescript
 declare const RxBuilder: <T, S extends Cases<T>>(config: RxConfig<T, S>) => Reactable<T, { [K in keyof S]: (payload?: unknown) => void; }>;
