@@ -1,1 +1,29 @@
-<h1>Forms API</h1>
+---
+import Layout from "../../layouts/Layout.astro";
+import ContentPageLayout from "../../layouts/ContentPageLayout.astro";
+import { getEntry } from "astro:content";
+
+const content = await getEntry('references', 'forms-api');
+const { Content } = await content.render();
+
+const sectionLinks =[
+  {
+    label: 'RxFormActions',
+    link: '#api-actions'
+  },
+  {
+    label: 'Form Builders',
+    link: '#api-build'
+  },
+  {
+    label: 'Other Interfaces',
+    link: '#api-interfaces'
+  },
+];
+---
+
+<Layout title="Reactables - Forms API">
+  <ContentPageLayout sectionLinks={sectionLinks}>
+    <Content />
+  </ContentPageLayout>
+</Layout>
