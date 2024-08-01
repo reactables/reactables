@@ -1,1 +1,29 @@
-<h1>React bindings</h1>
+---
+import Layout from "../../layouts/Layout.astro";
+import ContentPageLayout from "../../layouts/ContentPageLayout.astro";
+import { getEntry } from "astro:content";
+
+const reactBindings = await getEntry('react', 'react-bindings');
+const { Content } = await reactBindings.render();
+
+const sectionLinks =[
+  {
+    label: 'Installation',
+    link: '#installation'
+  },
+  {
+    label: 'Providers',
+    link: '#providers'
+  },
+  {
+    label: 'Hooks',
+    link: '#hooks'
+  },
+];
+---
+
+<Layout title="Reactables - React Bindings">
+  <ContentPageLayout sectionLinks={sectionLinks}>
+    <Content />
+  </ContentPageLayout>
+</Layout>
