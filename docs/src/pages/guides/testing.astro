@@ -1,1 +1,15 @@
-<h1>Testing</h1>
+---
+import Layout from "../../layouts/Layout.astro";
+import ContentPageLayout from "../../layouts/ContentPageLayout.astro";
+import { getEntry } from "astro:content";
+
+const testing = await getEntry('guides', 'testing');
+const { Content } = await testing.render();
+---
+
+<Layout title="Reactables - Testing">
+  <ContentPageLayout>
+    <Content />
+  </ContentPageLayout>
+
+</Layout>
