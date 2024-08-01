@@ -1,1 +1,37 @@
-<h1>Core API</h1>
+---
+import Layout from "../../layouts/Layout.astro";
+import ContentPageLayout from "../../layouts/ContentPageLayout.astro";
+import { getEntry } from "astro:content";
+
+const content = await getEntry('references', 'core-api');
+const { Content } = await content.render();
+
+const sectionLinks =[
+  {
+    label: 'Reactable',
+    link: '#reactable'
+  },
+  {
+    label: 'RxBuilder',
+    link: '#rx-builder'
+  },
+  {
+    label: 'ofTypes',
+    link: '#of-types'
+  },
+  {
+    label: 'storeValue',
+    link: '#store-value'
+  },
+  {
+    label: 'Other Interfaces',
+    link: '#interfaces'
+  },
+];
+---
+
+<Layout title="Reactables - React Bindings">
+  <ContentPageLayout sectionLinks={sectionLinks}>
+    <Content />
+  </ContentPageLayout>
+</Layout>
