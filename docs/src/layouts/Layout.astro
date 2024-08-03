@@ -77,6 +77,11 @@ const { title, showDesktopNav = true } = Astro.props;
 		border-radius: 8px;
 		overflow: auto;
 		margin-bottom: 1.5rem;
+		max-width: calc(100vw - 32px);
+
+		@media screen and (min-width: 576px) {
+			max-width: calc(100vw - 58px);
+		}
 
 		@media screen and (min-width: 768px) {
 			font-size: 1rem;

@@ -26,6 +26,17 @@ const { sectionLinks = [] } = Astro.props;
 
   </div>}
 </div>
+<script>
+  (function() {
+    // Select all table elements
+    const tables = document.querySelectorAll('table');
+    
+    // Iterate over the NodeList and add the class 'table' to each table element
+    tables.forEach(table => {
+        table.classList.add('table');
+    });
+})();
+</script>
 
 <style lang="scss">
   .content-page {
