@@ -3,10 +3,27 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout title="Reactables - Home" showDesktopNav={false}>
-	<h1>Reactables!</h1>
-	<i class="fa fa-times"></i>
-	<button class="btn btn-primary">button</button>
+	<div class="home-page">
+		<section class="hero">
+			<div class="container">
+				<img class="hero__logo mb-3" src="/white-transparent.png" />
+				<h1>Reactables</h1>
+				<p>A scalable, framework-agnostic state management API</p>
+			</div>
+		</section>
+</div>
 </Layout>
 
 <style lang="scss">
+	.hero {
+		color: #fff;
+		text-align: center;
+		padding-top: 7rem;
+		padding-bottom: 7rem;
+		background-color: #4188d1;
+
+		&__logo {
+			width: 100px;
+		}
+	}
 </style>
