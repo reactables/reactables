@@ -8,12 +8,32 @@ import Layout from '../layouts/Layout.astro';
 			<div class="container">
 				<img class="hero__logo mb-3" src="/white-transparent.png" />
 				<h1>Reactables</h1>
-				<p>A scalable, framework-agnostic state management API</p>
+				<p>A flexible and extensible state management API</p>
 
 				<a href="/getting-started/introduction">
 					<button class="btn btn-outline-primary">Get Started</button>
 				</a>
 			</div>
+		</section>
+		<section class="features">
+			<div class="container">
+				<div class="row">
+					<div class="col-12 col-lg-4 py-5">
+						<h4>Reactive</h4>
+						<p>Reactables follow a reactive pattern where data flow is <strong>uni-directional</strong> through streams making state changes <strong>highly predictable</strong>.</p>
+					</div>
+					<div class="col-12 col-lg-4 py-5">
+						<h4>Flexible</h4>
+						<p>Reactables can manage both persisting global <strong>application state</strong> and local <strong>ephemeral state</strong> such as forms.</p>
+						<p>It is also framework agnostic and can work with any UI layer.</p>
+					</div>
+					<div class="col-12 col-lg-4 py-5">
+						<h4>Testability</h4>
+						<p>Reactables are <strong>decoupled</strong> from the UI layer so they can be <strong>tested independently</strong> without the need to render components.</p>
+					</div>
+				</div>
+			</div>
+
 		</section>
 </div>
 </Layout>
