@@ -2,13 +2,17 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="Reactables - Home" showDesktopNav={false}>
+<Layout title="Reactables - Home" showDesktopNav={false} hideHamburger showGetStartedBtn>
 	<div class="home-page">
 		<section class="hero">
 			<div class="container">
 				<img class="hero__logo mb-3" src="/white-transparent.png" />
 				<h1>Reactables</h1>
 				<p>A scalable, framework-agnostic state management API</p>
+
+				<a href="/getting-started/introduction">
+					<button class="btn btn-outline-primary">Get Started</button>
+				</a>
 			</div>
 		</section>
 </div>
@@ -18,8 +22,8 @@ import Layout from '../layouts/Layout.astro';
 	.hero {
 		color: #fff;
 		text-align: center;
-		padding-top: 7rem;
-		padding-bottom: 7rem;
+		padding-top: 6.5rem;
+		padding-bottom: 6.5rem;
 		background-color: #4188d1;
 
 		&__logo {

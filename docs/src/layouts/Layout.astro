@@ -6,9 +6,11 @@ import TableOfContents from '../components/TableOfContents.astro';
 interface Props {
 	title: string;
 	showDesktopNav?: boolean;
+	hideHamburger?: boolean
+	showGetStartedBtn?: boolean;
 }
 
-const { title, showDesktopNav = true } = Astro.props;
+const { title, showDesktopNav = true, hideHamburger = false, showGetStartedBtn = false } = Astro.props;
 ---
 
 <!doctype html>
@@ -23,7 +25,7 @@ const { title, showDesktopNav = true } = Astro.props;
 		<title>{title}</title>
 	</head>
 	<body>
-		<Header />
+		<Header hideHamburger={hideHamburger} showGetStartedBtn={showGetStartedBtn} />
 		<div class="d-flex">
 			{showDesktopNav && <TableOfContents className="d-none d-lg-flex desktop" />}
 			<main>
@@ -92,5 +94,22 @@ const { title, showDesktopNav = true } = Astro.props;
 		font-weight: 700;
 		/* padding-bottom: 0.5rem; */
 		margin-bottom: 1rem;
+	}
+
+	.bg-primary {
+		background-color: #4188d1;
+	}
+
+	.btn {
+		&.btn-primary {
+			background-color: #4188d1;
+			font-weight: bold;
+		}
+
+		&.btn-outline-primary, &.btn-outline-primary:focus {
+			background-color: white;
+			font-weight: bold;
+			color: #4188d1;
+		}
 	}
 </style>

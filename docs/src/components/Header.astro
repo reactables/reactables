@@ -2,9 +2,11 @@
 import './TableOfContents.astro';
 import TableOfContents from './TableOfContents.astro';
 interface Props {
+	hideHamburger?: boolean;
+	showGetStartedBtn?: boolean;
 }
 
-const { } = Astro.props;
+const { hideHamburger = false, showGetStartedBtn = false } = Astro.props;
 ---
 
 <header class="header">
@@ -13,12 +15,20 @@ const { } = Astro.props;
 			<a class="navbar-brand" href="/">
 				<img class="header__logo" src="/transparent-logo-long-name.png" />
 			</a>
-			<a class="ms-auto me-4 d-lg-none" href="https://github.com/reactables/reactables" target="_blank" rel="noreferrer">
-				<img src="/github-mark.png" width="40" />
-			</a>
-			<button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+			<div class="ms-auto me-4 d-lg-none">
+				{showGetStartedBtn &&
+					<a class="get-started-btn me-2"  href="/getting-started/introduction">
+						<button class="btn btn-primary">Get Started</button>
+					</a>
+				}
+				<a href="https://github.com/reactables/reactables" target="_blank" rel="noreferrer">
+					<img src="/github-mark.png" width="40" />
+				</a>
+			</div>
+			{!hideHamburger && <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
+			}
 			<div class="offcanvas offcanvas-end" id="navbarSupportedContent">
 				<div class="offcanvas-header">
 					<a class="navbar-brand" href="/">
@@ -29,9 +39,16 @@ const { } = Astro.props;
 					</button>
 				</div>
 				<div class="offcanvas-body">
-					<a class="ms-auto d-none d-lg-inline"  href="https://github.com/reactables/reactables" target="_blank" rel="noreferrer">
-						<img src="/github-mark.png" width="40" />
-					</a>
+					<div class="ms-auto">
+						{showGetStartedBtn &&
+							<a class="d-none d-lg-inline me-3 get-started-btn"  href="/getting-started/introduction">
+								<button class="btn btn-primary">Get Started</button>
+							</a>
+						}
+						<a class="d-none d-lg-inline"  href="https://github.com/reactables/reactables" target="_blank" rel="noreferrer">
+							<img src="/github-mark.png" width="40" />
+						</a>
+					</div>
 					<TableOfContents className="d-lg-none" />
 				</div>
 			</div>
@@ -56,7 +73,7 @@ const { } = Astro.props;
 		}
 
 		&__logo {
-			height: 50px;
+			height: 46px;
 		}
 
 		li::before {
@@ -67,5 +84,9 @@ const { } = Astro.props;
 			font-size: 2.5rem;
 			color: black;
 		}
+	}
+
+	.get-started-btn {
+		text-decoration: none;
 	}
 </style>
