@@ -15,6 +15,12 @@ const { Content: ReactBasicFormGroup  } = await reactBasicFormGroup.render();
 const vanillaJsBasicFormGroup = await getEntry('guides', 'forms/examples/basic-form-group/vanilla-js-basic-form-group');
 const { Content: VanillaJSBasicFormGroup  } = await vanillaJsBasicFormGroup.render();
 
+const formArrays = await getEntry('guides', 'forms/examples/form-arrays/form-arrays');
+const { Content: FormArrays  } = await formArrays.render();
+
+const reactFormArrays = await getEntry('guides', 'forms/examples/form-arrays/react-form-arrays');
+const { Content: ReactFormArrays  } = await reactFormArrays.render();
+
 const validation = await getEntry('guides', 'forms/examples/validation/validation');
 const { Content: Validation  } = await validation.render();
 
@@ -86,6 +92,24 @@ const sectionLinks: { label: string, link: string}[] = [
       </div>
       <div class="tab-pane fade" id="vanilla-js-basic-form-group">
         <VanillaJSBasicFormGroup />
+      </div>
+    </div>
+
+    <br />
+
+    <!-- Form Arrays -->
+    <FormArrays />
+    <h5>Bind RxFormArray to View</h5>
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+          <a href="#react-form-arrays" class="nav-link active" data-bs-toggle="tab">
+            <img src="/React.png" width="50" title="React Form Arrays"/>
+          </a>
+      </li>
+    </ul>
+    <div class="tab-content pt-3">
+      <div class="tab-pane fade show active" id="react-form-arrays">
+        <ReactFormArrays />
       </div>
     </div>
 

@@ -142,32 +142,18 @@ export default MyForm;
 
 ```typescript
 import { build, group, control, array } from '@reactables/forms';
-import { useReactable } from '@reactables/react';
+import { useReactable } from '@reactables/react-helpers';
 import { Form, Field, FormArray } from '@reactables/react-forms';
 import Input from './Input';
-
-const userConfig = group({
-  controls: {
-    name: control(['', 'required']),
-    email: control(['', ['required', 'email']]),
-  },
-});
+import { RxFormArray, userConfig } from './RxFormArray';
 
 const MyForm = () => {
-  const rxForm = useReactable(() =>
-    build(
-      group({
-        controls: {
-          contacts: array({
-            controls: [userConfig],
-          }),
-        },
-      })
-    )
-  );
+  const [state, actions] = useReactable(RxFormArray);
+
+  if (!state) return <></>;
 
   return (
-    <Form rxForm={rxForm}>
+    <Form rxForm={[state, actions]}>
       <FormArray name="contacts">
         {({ items, pushControl, removeControl }) => {
           return (
@@ -175,8 +161,17 @@ const MyForm = () => {
               {items.map((control, index) => {
                 return (
                   <div key={control.key}>
-                    <Field name={`contacts.${index}.name`} label="Name:" component={Input} />
-                    <Field name={`contacts.${index}.email`} label="Email: " component={Input} />
+                    <div>Contact # {index + 1}</div>
+                    <Field
+                      name={`contacts.${index}.name`}
+                      label="Name:"
+                      component={Input}
+                    />
+                    <Field
+                      name={`contacts.${index}.email`}
+                      label="Email: "
+                      component={Input}
+                    />
                     <button type="button" onClick={() => removeControl(index)}>
                       Remove contact
                     </button>
@@ -184,7 +179,7 @@ const MyForm = () => {
                 );
               })}
               <button type="button" onClick={() => pushControl(userConfig)}>
-                Add User
+                Add Contact
               </button>
             </>
           );
@@ -195,5 +190,4 @@ const MyForm = () => {
 };
 
 export default MyForm;
-
 ```
