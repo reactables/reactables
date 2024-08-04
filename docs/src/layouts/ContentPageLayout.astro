@@ -1,16 +1,38 @@
 ---
 interface Props {
+  editPageLink?: {
+    label?: string;
+    link: string;
+  }
+  nextLink?: {
+    label: string;
+    link: string;
+  }
   sectionLinks?: {
     label: string;
     link: string;
   }[]
 }
 
-const { sectionLinks = [] } = Astro.props;
+const { sectionLinks = [], nextLink, editPageLink } = Astro.props;
 ---
 <div class="content-page">
   <div class="content-page__content px-3 px-md-4 py-4">
     <slot />
+    <div class="content-page__footer">
+      <div class="d-flex mt-4">
+        {editPageLink &&
+          <a href={editPageLink.link} target="_blank" rel="noreferrer">
+            {editPageLink.label || 'Edit this Page'} <i class="ms-2 fa fa-edit"></i>
+          </a>
+        }
+        {nextLink &&
+          <a class="ms-auto btn btn-outline-primary" href={nextLink.link}>
+            Next: {nextLink.label} <i class="fa fa-arrow-right"></i>
+          </a>
+        }
+      </div>
+    </div>
   </div>
   {Boolean(sectionLinks?.length) && <div class="content-page__section-links d-none d-xl-flex">
     <nav>
@@ -23,7 +45,6 @@ const { sectionLinks = [] } = Astro.props;
         })}
       </ul>
     </nav>
-
   </div>}
 </div>
 <script>
@@ -32,6 +53,7 @@ const { sectionLinks = [] } = Astro.props;
     const tables = document.querySelectorAll('table');
     
     // Iterate over the NodeList and add the class 'table' to each table element
+    // for bootstrap styling
     tables.forEach(table => {
         table.classList.add('table');
     });

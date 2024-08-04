@@ -37,7 +37,7 @@ const { title, showDesktopNav = true, hideHamburger = false, showGetStartedBtn =
 		<script src="https://kit.fontawesome.com/fdd5cdd029.js" crossorigin="anonymous"></script>
 	</body>
 </html>
-<style is:global>
+<style is:global lang="scss">
 	:root {
 		--accent: 136, 58, 234;
 		--accent-light: 224, 204, 250;
@@ -116,6 +116,15 @@ const { title, showDesktopNav = true, hideHamburger = false, showGetStartedBtn =
 			font-weight: bold;
 			color: #4188d1;
 			border-color: #4188d1;
+		}
+	}
+
+	.tab-pane {
+		position: relative;
+
+		.edit-snippet {
+			position: absolute;
+			right: 0;
 		}
 	}
 </style>

@@ -19,7 +19,11 @@ const sectionLinks= [
 ]
 ---
 <Layout title="Reactables - Introduction">
-  <ContentPageLayout sectionLinks={sectionLinks}>
+  <ContentPageLayout
+    sectionLinks={sectionLinks}
+    nextLink={{ label: "Core Concepts", link: '/getting-started/core-concepts'}}
+    editPageLink={{ link: 'https://github.com/reactables/reactables/edit/main/docs/src/content/getting-started/introduction.md'}}
+  >
     <h1 id="introduction">Introduction</h1>
     <div class="mb-4">
       <img class="d-md-none img-fluid"src="/WhatToUse.jpg" alt="WhatToUseMobile" />
@@ -46,12 +50,21 @@ const sectionLinks= [
     </ul>
     <div class="tab-content pt-3">
       <div class="tab-pane fade show active" id="react-toggle">
+        <a class="edit-snippet" href="https://github.com/reactables/reactables/edit/main/docs/src/content/getting-started/react-toggle.md" target="_blank" rel="noreferrer">
+          Edit this snippet <i class="fa fa-edit"/>
+        </a>
         <ReactToggle />
       </div>
       <div class="tab-pane fade" id="angular-toggle">
+        <a class="edit-snippet" href="https://github.com/reactables/reactables/edit/main/docs/src/content/getting-started/angular-toggle.md" target="_blank" rel="noreferrer">
+          Edit this snippet <i class="fa fa-edit"/>
+        </a>
         <AngularToggle />
       </div>
       <div class="tab-pane fade" id="vanilla-js-toggle">
+        <a class="edit-snippet" href="https://github.com/reactables/reactables/edit/main/docs/src/content/getting-started/vanilla-js-toggle.md" target="_blank" rel="noreferrer">
+          Edit this snippet <i class="fa fa-edit"/>
+        </a>
         <VanillaJsToggle />
       </div>
     </div>

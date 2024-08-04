@@ -4,7 +4,7 @@ Reactables leverages RxJS and reactive/declarative patterns to allow more time t
 
 ## Installation
 
-`npm i rxjs` (requires [RxJS](https://rxjs.dev/) if not already installed)
+Requires [RxJS](https://rxjs.dev/) 6 and above. If not already installed, run `npm i rxjs`
 
 `npm i @reactables/core`
 
