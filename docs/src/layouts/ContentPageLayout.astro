@@ -4,6 +4,10 @@ interface Props {
     label?: string;
     link: string;
   }
+  prevLink?: {
+    label: string;
+    link: string;
+  }
   nextLink?: {
     label: string;
     link: string;
@@ -14,23 +18,34 @@ interface Props {
   }[]
 }
 
-const { sectionLinks = [], nextLink, editPageLink } = Astro.props;
+const { sectionLinks = [], nextLink, editPageLink, prevLink } = Astro.props;
 ---
 <div class="content-page">
   <div class="content-page__content px-3 px-md-4 py-4">
     <slot />
     <div class="content-page__footer">
-      <div class="d-flex mt-4">
-        {editPageLink &&
-          <a href={editPageLink.link} target="_blank" rel="noreferrer">
-            {editPageLink.label || 'Edit this Page'} <i class="ms-2 fa fa-edit"></i>
-          </a>
-        }
-        {nextLink &&
-          <a class="ms-auto btn btn-outline-primary" href={nextLink.link}>
-            Next: {nextLink.label} <i class="fa fa-arrow-right"></i>
-          </a>
-        }
+      {editPageLink &&
+        <a href={editPageLink.link} target="_blank" rel="noreferrer">
+          {editPageLink.label || 'Edit this Page'} <i class="ms-2 fa fa-edit mt-4"></i>
+        </a>
+      }
+      <div class="row mt-4">
+        <div class="col-6">
+          {prevLink &&
+            <a class="me-auto btn btn-outline-primary d-flex flex-column align-items-start" href={prevLink.link}>
+              <span class="nav-small">Previous</span>
+              <span class="nav-big">{prevLink.label}</span>
+            </a>
+          }
+        </div>
+        <div class="col-6">
+          {nextLink &&
+            <a class="ms-auto btn btn-outline-primary d-flex flex-column align-items-end" href={nextLink.link}>
+              <span class="nav-small">Next</span>
+              <span class="nav-big">{nextLink.label}</i></span>
+            </a>
+          }
+        </div>
       </div>
     </div>
   </div>
@@ -85,6 +100,16 @@ const { sectionLinks = [], nextLink, editPageLink } = Astro.props;
         }
       }
 
-      }
+    }
+    .nav-small {
+      font-weight: normal;
+      color: #333;
+      font-size: 0.875rem;
+    }
+
+    .nav-big {
+      display: flex;
+      align-items: center;
+    }
   }
 </style>
