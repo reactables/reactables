@@ -27,7 +27,16 @@ export const RxCustomReducers = () => build(
         const orders = Number(state.form.donuts.value);
         const value = (orders * 2).toString();
 
-        return updateValues(state, { controlRef: ['donuts'], value });
+        state = updateValues(state, { controlRef: ['donuts'], value });
+
+  /**
+   * You can perform any number of operations imperatively
+   * with formReducers i.e addControl, removeControl etc...
+   * until you get your desired result,
+   * and then return the new state.
+   **/
+
+        return state;
       };,
     },
   }
@@ -35,4 +44,4 @@ export const RxCustomReducers = () => build(
 
 ```
 
-**IMPORTANT**: When updating the form with custom reducers, it must be done with the provided `FormReducers`. This will propagate the change appropriately to all ancestor and descendant controls - maintaining the integrity of the state tree.
+**IMPORTANT**: When updating the form with custom reducers, it must be done **imperatively** with the provided `FormReducers`. This will propagate the change appropriately to all ancestor and descendant controls - maintaining the integrity of the state tree.

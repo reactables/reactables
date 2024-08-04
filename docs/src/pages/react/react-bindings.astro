@@ -23,7 +23,12 @@ const sectionLinks =[
 ---
 
 <Layout title="Reactables - React Bindings">
-  <ContentPageLayout sectionLinks={sectionLinks}>
+  <ContentPageLayout
+    sectionLinks={sectionLinks}
+    editPageLink={{ link: 'https://github.com/reactables/reactables/edit/main/docs/src/content/react/react-bindings.md'}}
+    prevLink={{label: 'Testing', link: '/guides/testing'}}
+    nextLink={{label: 'React Form Components', link: '/react/react-form-components'}}
+  >
     <Content />
   </ContentPageLayout>
 </Layout>

@@ -23,7 +23,11 @@ const sectionLinks =[
 ---
 
 <Layout title="Reactables - Forms API">
-  <ContentPageLayout sectionLinks={sectionLinks}>
+  <ContentPageLayout
+    sectionLinks={sectionLinks}
+    editPageLink={{ link: 'https://github.com/reactables/reactables/edit/main/docs/src/content/references/forms-api.md'}}
+    prevLink={{label: 'Core API', link: '/references/core-api'}}
+  >
     <Content />
   </ContentPageLayout>
 </Layout>

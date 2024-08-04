@@ -6,6 +6,6 @@ Reactable Forms API took its inspiration from [Angular Forms](https://angular.de
 
 ## Installation <a name="installation"></a>
 
-`npm i rxjs` (requires [RxJS](https://rxjs.dev/) if not already installed)
+Requires [RxJS](https://rxjs.dev/) 6 and above. If not already installed, run `npm i rxjs`
 
 `npm i @reactables/forms`

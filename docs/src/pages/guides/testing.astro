@@ -8,7 +8,11 @@ const { Content } = await testing.render();
 ---
 
 <Layout title="Reactables - Testing">
-  <ContentPageLayout>
+  <ContentPageLayout
+    editPageLink={{ link: 'https://github.com/reactables/reactables/edit/main/docs/src/content/guides/testng.md'}}
+    prevLink={{label: 'Forms', link: '/guides/forms'}}
+    nextLink={{label: 'React Bindings', link: '/react/react-bindings'}}
+  >
     <Content />
   </ContentPageLayout>
 
