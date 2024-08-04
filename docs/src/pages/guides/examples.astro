@@ -40,10 +40,16 @@ const sectionsLinks = [
 ---
 
 <Layout title="Reactables - Examples">
-  <ContentPageLayout sectionLinks={sectionsLinks}>
+  <ContentPageLayout sectionLinks={sectionsLinks}
+    prevLink={{label: 'Core Concepts', link: '/getting-started/core-concepts'}}
+    nextLink={{label: 'Forms', link: '/guides/forms'}}
+  >
     <h1>Examples</h1>
 
     <!-- Basic Toggle -->
+    <a class="edit-snippet pt-3 pe-4" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/examples/basic-toggle/basic-toggle.md" target="_blank" rel="noreferrer">
+      Edit this snippet <i class="fa fa-edit"></i>
+    </a>
     <BasicToggle />
     <h5>Bind RxToggle to View</h5>
     <ul class="nav nav-tabs">
@@ -65,23 +71,38 @@ const sectionsLinks = [
     </ul>
     <div class="tab-content pt-3">
       <div class="tab-pane fade show active" id="react-toggle">
+        <a class="edit-snippet" href="https://github.com/reactables/reactables/edit/main/docs/src/content/getting-started/react-toggle.md" target="_blank" rel="noreferrer">
+          Edit this snippet <i class="fa fa-edit"/>
+        </a>
         <ReactToggle />
       </div>
       <div class="tab-pane fade" id="angular-toggle">
+        <a class="edit-snippet" href="https://github.com/reactables/reactables/edit/main/docs/src/content/getting-started/angular-toggle.md" target="_blank" rel="noreferrer">
+          Edit this snippet <i class="fa fa-edit"/>
+        </a>
         <AngularToggle />
       </div>
       <div class="tab-pane fade" id="vanilla-js-toggle">
+        <a class="edit-snippet" href="https://github.com/reactables/reactables/edit/main/docs/src/content/getting-started/vanilla-js-toggle.md" target="_blank" rel="noreferrer">
+          Edit this snippet <i class="fa fa-edit"/>
+        </a>
         <VanillaJsToggle />
       </div>
     </div>
 
     <br />
 
+    <a class="edit-snippet pt-3 pe-4" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/examples/extending-functionality.md" target="_blank" rel="noreferrer">
+      Edit this snippet <i class="fa fa-edit"></i>
+    </a>
     <ExtendingFunctionality />
 
     <br />
 
     <!-- Fetching Data -->
+    <a class="edit-snippet pt-3 pe-4" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/examples/fetch-data/fetch-data.md" target="_blank" rel="noreferrer">
+      Edit this snippet <i class="fa fa-edit"></i>
+    </a>
     <FetchData />
     <h5>Bind RxFetchData to View</h5>
     <ul class="nav nav-tabs">
@@ -98,9 +119,15 @@ const sectionsLinks = [
     </ul>
     <div class="tab-content pt-3">
       <div class="tab-pane fade show active" id="react-fetch-data">
+        <a class="edit-snippet pt-3 pe-4" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/examples/fetch-data/react-fetch-data.md" target="_blank" rel="noreferrer">
+          Edit this snippet <i class="fa fa-edit"></i>
+        </a>
         <ReactFetchData />
       </div>
       <div class="tab-pane fade" id="angular-fetch-data">
+        <a class="edit-snippet pt-3 pe-4" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/examples/fetch-data/angular-fetch-data.md" target="_blank" rel="noreferrer">
+          Edit this snippet <i class="fa fa-edit"></i>
+        </a>
         <AngularFetchData />
       </div>
     </div>
@@ -108,6 +135,9 @@ const sectionsLinks = [
     <br />
 
     <!-- Composition with Reactables -->
+    <a class="edit-snippet pt-3 pe-4" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/examples/reactable-composition/reactable-composition.md" target="_blank" rel="noreferrer">
+      Edit this snippet <i class="fa fa-edit"></i>
+    </a>
     <ReactableComposition />
 
     <h5>Bind RxHotelSearch to View</h5>
@@ -125,9 +155,15 @@ const sectionsLinks = [
     </ul>
     <div class="tab-content pt-3">
       <div class="tab-pane fade show active" id="react-reactable-composition">
+        <a class="edit-snippet pt-3 pe-4" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/examples/reactable-composition/react-reactable-composition.md" target="_blank" rel="noreferrer">
+          Edit this example <i class="fa fa-edit"></i>
+        </a>
         <ReactReactableComposition />
       </div>
       <div class="tab-pane fade" id="angular-reactable-composition">
+        <a class="edit-snippet pt-3 pe-4" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/examples/reactable-composition/angular-reactable-composition.md" target="_blank" rel="noreferrer">
+          Edit this snippet <i class="fa fa-edit"></i>
+        </a>
         <AngularReactableComposition />
       </div>
     </div>
