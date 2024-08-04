@@ -1,0 +1,28 @@
+---
+const year = new Date().getFullYear();
+---
+<footer class="footer">
+  <a href="/">
+    <img class="footer__logo mb-3" src="/white-transparent.png" />
+  </a>
+  <p>Copyright 2023 - {year} <a href="https://dave-lai.com">Dave Lai</a> and the Reactables documentation contributors.</p>
+</footer>
+<style lang="scss">
+  .footer {
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+		background-color: #4188d1;
+    padding: 2rem 1rem;
+    text-align: center;
+
+    a{
+      color: #fff;
+    }
+
+    &__logo {
+      width: 50px;
+    }
+  }
+</style>
