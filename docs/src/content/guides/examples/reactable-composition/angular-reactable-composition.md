@@ -1,5 +1,5 @@
 <a href="https://stackblitz.com/edit/stackblitz-starters-i2ufm4?file=src%2Fmain.ts" target="_blank" rel="noreferrer">
- <img src="/stackblitz.png" width="100" />
+ <img src="/reactables/stackblitz.png" width="100" />
 <a>
 
 <br>

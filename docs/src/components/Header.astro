@@ -12,17 +12,17 @@ const { hideHamburger = false, showGetStartedBtn = false } = Astro.props;
 <header class="header">
 	<nav class="navbar navbar-expand-lg">
 		<div class="container">
-			<a class="navbar-brand" href="/">
-				<img class="header__logo" src="/transparent-logo-long-name.png" />
+			<a class="navbar-brand" href="/reactables/">
+				<img class="header__logo" src="/reactables/transparent-logo-long-name.png" />
 			</a>
 			<div class="ms-auto me-4 d-lg-none">
 				{showGetStartedBtn &&
-					<a class="get-started-btn me-2"  href="/getting-started/introduction">
+					<a class="get-started-btn me-2"  href="/reactables/getting-started/introduction">
 						<button class="btn btn-primary">Get Started</button>
 					</a>
 				}
 				<a href="https://github.com/reactables/reactables" target="_blank" rel="noreferrer">
-					<img src="/github-mark.png" width="40" />
+					<img src="/reactables/github-mark.png" width="40" />
 				</a>
 			</div>
 			{!hideHamburger && <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,8 +31,8 @@ const { hideHamburger = false, showGetStartedBtn = false } = Astro.props;
 			}
 			<div class="offcanvas offcanvas-end" id="navbarSupportedContent">
 				<div class="offcanvas-header">
-					<a class="navbar-brand" href="/">
-						<img class="header__logo" src="/transparent-logo-long-name.png" />
+					<a class="navbar-brand" href="/reactables/">
+						<img class="header__logo" src="/reactables/transparent-logo-long-name.png" />
 					</a>
 					<button class="undecorate-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 						<i class="fa fa-times"/>
@@ -41,12 +41,12 @@ const { hideHamburger = false, showGetStartedBtn = false } = Astro.props;
 				<div class="offcanvas-body">
 					<div class="ms-auto">
 						{showGetStartedBtn &&
-							<a class="d-none d-lg-inline me-3 get-started-btn"  href="/getting-started/introduction">
+							<a class="d-none d-lg-inline me-3 get-started-btn"  href="/reactables/getting-started/introduction">
 								<button class="btn btn-primary">Get Started</button>
 							</a>
 						}
 						<a class="d-none d-lg-inline"  href="https://github.com/reactables/reactables" target="_blank" rel="noreferrer">
-							<img src="/github-mark.png" width="40" />
+							<img src="/reactables/github-mark.png" width="40" />
 						</a>
 					</div>
 					<TableOfContents className="d-lg-none" />

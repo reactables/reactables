@@ -1,11 +1,11 @@
 <a href="https://stackblitz.com/edit/vitejs-vite-mk2enr?file=src%2FApp.tsx" target="_blank" rel="noreferrer">
- <img src="/stackblitz.png" width="100" />
+ <img src="/reactables/stackblitz.png" width="100" />
 <a>
 
 <br>
 <br>
 
-See <a href="/react/react-bindings">React Bindings</a> & <a href="/react/react-form-components">React Form Components</a> for API reference!
+See <a href="/reactables/react/react-bindings">React Bindings</a> & <a href="/reactables/react/react-form-components">React Form Components</a> for API reference!
 
 `Input.tsx`
 

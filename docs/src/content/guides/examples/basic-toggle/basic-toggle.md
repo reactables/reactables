@@ -34,4 +34,4 @@ When creating a reactable primitive with [`RxBuilder`](/references/core-api#rx-b
 
 Debug Example:
 
-<img class="img-fluid" src="/debug-example.png" width="400" />
+<img class="img-fluid" src="/reactables/debug-example.png" width="400" />

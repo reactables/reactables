@@ -1,5 +1,5 @@
 <a href="https://stackblitz.com/edit/github-qtpo1k-frpncu?file=src%2Findex.js" target="_blank" rel="noreferrer">
- <img src="/stackblitz.png" width="100" />
+ <img src="/reactables/stackblitz.png" width="100" />
 <a>
 
 <br>

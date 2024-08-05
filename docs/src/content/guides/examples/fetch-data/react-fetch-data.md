@@ -1,5 +1,5 @@
 <a href="https://stackblitz.com/edit/vitejs-vite-hph5ey?file=src%2FApp.tsx" target="_blank" rel="noreferrer">
- <img src="/stackblitz.png" width="100" />
+ <img src="/reactables/stackblitz.png" width="100" />
 <a>
 
 <br>
