@@ -24,7 +24,7 @@ It can be used alone or combine with other primitives to form more complex react
 
 Internally, a reactable primitive has a hub and store. The hub dispatches actions to the store where state updates occur.
 
-<a href="/ReactablePrimitiveOne.jpg" target="_blank" rel="noreferrer">
+<a class="rx-example" href="/ReactablePrimitiveOne.jpg" target="_blank" rel="noreferrer">
   <img src="/ReactablePrimitiveOne.jpg" alt="Hub and Store" title="Hub and Store" style="max-width: 300px" />
 </a>
 
@@ -39,7 +39,7 @@ When an action is dispatched and a side effect is needed, a replayed action is s
 
 Responses are then mapped into actions and relayed to the store.
 
-<a href="/ReactablePrimitiveTwo.jpg" target="_blank" rel="noreferrer">
+<a class="rx-example" href="/ReactablePrimitiveTwo.jpg" target="_blank" rel="noreferrer">
   <img src="/ReactablePrimitiveTwo.jpg" alt="Effects" title="Effects" style="max-width: 300px" />
 </a>
 
@@ -56,7 +56,7 @@ Reactables also have the ability to receive actions from any number of external 
 
 Organizing state into slices is sensible when state grows and becomes more complex. Reactable primitives can represent these slices and through composition they can create a new reactable to handle increasing complexity.
 
-<a href="/ReactableCombined.jpg" target="_blank" rel="noreferrer">
+<a class="rx-example" href="/ReactableCombined.jpg" target="_blank" rel="noreferrer">
   <img src="/ReactableCombined.jpg" alt="Reactable Composition" title="Reactable Composition" style="max-width: 300px" />
 </a>
 
