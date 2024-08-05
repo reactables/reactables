@@ -16,7 +16,7 @@ export type SearchControlsActions = {
 };
 ```
 
-We can initialize an `RxToggle` for each filter control and use rxjs's `combineLatest` function to combine the state observables together to create `RxSearchControls`.
+We can initialize an `RxToggle` for each filter control and use RxJS's <a href="https://rxjs.dev/api/index/function/combineLatest" target="_blank" rel="noreferrer">`combineLatest`</a> function to combine the state observables together to create `RxSearchControls`.
 
 ```typescript
 import { combineLatest } from 'rxjs';
@@ -98,4 +98,4 @@ export const RxHotelSearch = ({
 
 ```
 
-We then use `combineLatest` function again to to give us our combined state observable.
+We then use <a href="https://rxjs.dev/api/index/function/combineLatest" target="_blank" rel="noreferrer">`combineLatest`</a> function again to to give us our combined state observable.
