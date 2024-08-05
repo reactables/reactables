@@ -1,0 +1,38 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ContentPageLayout from "../../layouts/ContentPageLayout.astro";
+import { getEntry } from "astro:content";
+
+const content = await getEntry('react', 'react-form-components');
+const { Content } = await content.render();
+
+const sectionLinks =[
+  {
+    label: 'Installation',
+    link: '#installation'
+  },
+  {
+    label: 'Form',
+    link: '#form'
+  },
+  {
+    label: 'Field',
+    link: '#field'
+  },
+  {
+    label: 'FormArray',
+    link: '#form-array'
+  },
+];
+---
+
+<Layout title="Reactables - React Form Components">
+  <ContentPageLayout
+    sectionLinks={sectionLinks}
+    editPageLink={{ link: 'https://github.com/reactables/reactables/edit/main/docs/src/content/react/react-form-components.md'}}
+    prevLink={{label: 'React Bindings', link: '/react/react-bindings'}}
+    nextLink={{label: 'Core API', link: '/references/core-api'}}
+  >
+    <Content />
+  </ContentPageLayout>
+</Layout>

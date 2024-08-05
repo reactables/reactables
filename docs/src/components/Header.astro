@@ -1,0 +1,92 @@
+---
+import './TableOfContents.astro';
+import TableOfContents from './TableOfContents.astro';
+interface Props {
+	hideHamburger?: boolean;
+	showGetStartedBtn?: boolean;
+}
+
+const { hideHamburger = false, showGetStartedBtn = false } = Astro.props;
+---
+
+<header class="header">
+	<nav class="navbar navbar-expand-lg">
+		<div class="container">
+			<a class="navbar-brand" href="/">
+				<img class="header__logo" src="/transparent-logo-long-name.png" />
+			</a>
+			<div class="ms-auto me-4 d-lg-none">
+				{showGetStartedBtn &&
+					<a class="get-started-btn me-2"  href="/getting-started/introduction">
+						<button class="btn btn-primary">Get Started</button>
+					</a>
+				}
+				<a href="https://github.com/reactables/reactables" target="_blank" rel="noreferrer">
+					<img src="/github-mark.png" width="40" />
+				</a>
+			</div>
+			{!hideHamburger && <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			}
+			<div class="offcanvas offcanvas-end" id="navbarSupportedContent">
+				<div class="offcanvas-header">
+					<a class="navbar-brand" href="/">
+						<img class="header__logo" src="/transparent-logo-long-name.png" />
+					</a>
+					<button class="undecorate-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+						<i class="fa fa-times"/>
+					</button>
+				</div>
+				<div class="offcanvas-body">
+					<div class="ms-auto">
+						{showGetStartedBtn &&
+							<a class="d-none d-lg-inline me-3 get-started-btn"  href="/getting-started/introduction">
+								<button class="btn btn-primary">Get Started</button>
+							</a>
+						}
+						<a class="d-none d-lg-inline"  href="https://github.com/reactables/reactables" target="_blank" rel="noreferrer">
+							<img src="/github-mark.png" width="40" />
+						</a>
+					</div>
+					<TableOfContents className="d-lg-none" />
+				</div>
+			</div>
+		</div>
+	</nav>
+</header>
+<style lang="scss">
+
+	.header {
+		align-items: center;
+		background: white;
+		border-bottom: 1px solid rgba(0, 0, 0, 0.175);
+		position: sticky;
+		top: 0;
+		z-index: 1;
+
+		&__content {
+			display: flex;
+			align-items: center;
+			height: 70px;
+
+		}
+
+		&__logo {
+			height: 46px;
+		}
+
+		li::before {
+			background-image: none;
+		}
+
+		.fa-github {
+			font-size: 2.5rem;
+			color: black;
+		}
+	}
+
+	.get-started-btn {
+		text-decoration: none;
+	}
+</style>

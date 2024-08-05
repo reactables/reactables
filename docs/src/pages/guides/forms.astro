@@ -1,0 +1,259 @@
+---
+import Layout from "../../layouts/Layout.astro"
+import ContentPageLayout from "../../layouts/ContentPageLayout.astro"
+import { getEntry } from "astro:content";
+
+const forms = await getEntry('guides', 'forms/forms');
+const { Content } = await forms.render();
+
+const basicFormGroup = await getEntry('guides', 'forms/examples/basic-form-group/basic-form-group');
+const { Content: BasicFormGroup  } = await basicFormGroup.render();
+
+const reactBasicFormGroup = await getEntry('guides', 'forms/examples/basic-form-group/react-basic-form-group');
+const { Content: ReactBasicFormGroup  } = await reactBasicFormGroup.render();
+
+const vanillaJsBasicFormGroup = await getEntry('guides', 'forms/examples/basic-form-group/vanilla-js-basic-form-group');
+const { Content: VanillaJSBasicFormGroup  } = await vanillaJsBasicFormGroup.render();
+
+const formArrays = await getEntry('guides', 'forms/examples/form-arrays/form-arrays');
+const { Content: FormArrays  } = await formArrays.render();
+
+const reactFormArrays = await getEntry('guides', 'forms/examples/form-arrays/react-form-arrays');
+const { Content: ReactFormArrays  } = await reactFormArrays.render();
+
+const validation = await getEntry('guides', 'forms/examples/validation/validation');
+const { Content: Validation  } = await validation.render();
+
+const reactValidation = await getEntry('guides', 'forms/examples/validation/react-validation');
+const { Content: ReactValidation  } = await reactValidation.render();
+
+const vanillaJsValidation = await getEntry('guides', 'forms/examples/validation/vanilla-js-validation');
+const { Content: VanillaJSValidation  } = await vanillaJsValidation.render();
+
+const asyncValidation = await getEntry('guides', 'forms/examples/async-validation/async-validation');
+const { Content: AsyncValidation  } = await asyncValidation.render();
+
+const reactAsyncValidation = await getEntry('guides', 'forms/examples/async-validation/react-async-validation');
+const { Content: ReactAsyncValidation  } = await reactAsyncValidation.render();
+
+const vanillaJsAsyncValidation = await getEntry('guides', 'forms/examples/async-validation/vanilla-js-async-validation');
+const { Content: VanillaJSAsyncValidation  } = await vanillaJsAsyncValidation.render();
+
+const normalizing = await getEntry('guides', 'forms/examples/normalizing-values/normalizing-values');
+const { Content: Normalizing } = await normalizing.render();
+
+const reactNormalizing = await getEntry('guides', 'forms/examples/normalizing-values/react-normalizing-values');
+const { Content: ReactNormalizing  } = await reactNormalizing.render();
+
+const vanillaJsNormalizing = await getEntry('guides', 'forms/examples/normalizing-values/vanilla-js-normalizing-values');
+const { Content: VanillaJSNormalizing  } = await vanillaJsNormalizing.render();
+
+const customReducers = await getEntry('guides', 'forms/examples/custom-reducers/custom-reducers');
+const { Content: CustomReducers } = await customReducers.render();
+
+const reactCustomReducers = await getEntry('guides', 'forms/examples/custom-reducers/react-custom-reducers');
+const { Content: ReactCustomReducers  } = await reactCustomReducers.render();
+
+const vanillaJsCustomReducers = await getEntry('guides', 'forms/examples/custom-reducers/vanilla-js-custom-reducers');
+const { Content: VanillaJSCustomReducers  } = await vanillaJsCustomReducers.render();
+
+const sectionLinks: { label: string, link: string}[] = [
+  { label: 'Installation', link: '#installation'},
+    { label: 'Basic Form Group', link: '#basic-form-group' },
+    { label: 'Form Arrays', link: '#form-arrays' },
+    { label: 'Validation', link: '#validation-example' },
+    { label: 'Async Validation', link: '#async-validation' },
+    { label: 'Normalizing Values', link: '#normalizing-values' },
+    { label: 'Custom Reducers', link: '#custom-reducers' },
+];
+---
+
+<Layout title="Reactables - Forms">
+  <ContentPageLayout sectionLinks={sectionLinks}
+    editPageLink={{ link: 'https://github.com/reactables/reactables/edit/main/docs/src/content/guides/forms.md'}}
+    prevLink={{label: 'Examples', link: '/guides/examples'}}
+    nextLink={{label: 'Testing', link: '/guides/testing'}}
+  >
+    <Content />
+    <!-- Basic Form Group -->
+    <BasicFormGroup />
+    <h5>Bind RxBasicFormGroup to View</h5>
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+          <a href="#react-basic-form-group" class="nav-link active" data-bs-toggle="tab">
+            <img src="/React.png" width="50" title="React Basic Form Group"/>
+          </a>
+      </li>
+      <li class="nav-item">
+          <a href="#vanilla-js-basic-form-group" class="nav-link" data-bs-toggle="tab">
+            <img src="/VanillaJS.jpg" width="50" title="Basic Form Group VanillaJS" />
+          </a>
+      </li>
+    </ul>
+    <div class="tab-content pt-3">
+      <div class="tab-pane fade show active" id="react-basic-form-group">
+        <a class="edit-snippet pt-3 pe-4" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/forms/examples/basic-form-group/react-basic-form-group.md" target="_blank" rel="noreferrer">
+          Edit this snippet <i class="fa fa-edit"></i>
+        </a>
+        <ReactBasicFormGroup />
+      </div>
+      <div class="tab-pane fade" id="vanilla-js-basic-form-group">
+        <a class="edit-snippet pt-3 pe-4" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/forms/examples/basic-form-group/vanilla-js-basic-form-group.md" target="_blank" rel="noreferrer">
+          Edit this snippet <i class="fa fa-edit"></i>
+        </a>
+        <VanillaJSBasicFormGroup />
+      </div>
+    </div>
+
+    <br />
+
+    <!-- Form Arrays -->
+    <FormArrays />
+    <h5>Bind RxFormArray to View</h5>
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+          <a href="#react-form-arrays" class="nav-link active" data-bs-toggle="tab">
+            <img src="/React.png" width="50" title="React Form Arrays"/>
+          </a>
+      </li>
+    </ul>
+    <div class="tab-content pt-3">
+      <div class="tab-pane fade show active" id="react-form-arrays">
+        <a class="edit-snippet pt-3 pe-4" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/forms/examples/form-arrays/react-form-arrays.md" target="_blank" rel="noreferrer">
+          Edit this snippet <i class="fa fa-edit"></i>
+        </a>
+        <ReactFormArrays />
+      </div>
+    </div>
+
+    <br />
+
+    <!-- Form Validation -->
+    <Validation />
+    <h5>Bind RxFormValidation to View</h5>
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+          <a href="#react-validation" class="nav-link active" data-bs-toggle="tab">
+            <img src="/React.png" width="50" title="React Form Validation"/>
+          </a>
+      </li>
+      <li class="nav-item">
+          <a href="#vanilla-js-validation" class="nav-link" data-bs-toggle="tab">
+            <img src="/VanillaJS.jpg" width="50" title="Form Validation VanillaJS" />
+          </a>
+      </li>
+    </ul>
+    <div class="tab-content pt-3">
+      <div class="tab-pane fade show active" id="react-validation">
+        <a class="edit-snippet pt-3 pe-4" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/forms/examples/validation/react-validation.md" target="_blank" rel="noreferrer">
+          Edit this snippet <i class="fa fa-edit"></i>
+        </a>
+        <ReactValidation />
+      </div>
+      <div class="tab-pane fade" id="vanilla-js-validation">
+        <a class="edit-snippet pt-3 pe-4" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/forms/examples/validation/vanilla-js-validation.md" target="_blank" rel="noreferrer">
+          Edit this snippet <i class="fa fa-edit"></i>
+        </a>
+        <VanillaJSValidation />
+      </div>
+    </div>
+
+    <br />
+
+    <!-- Form Async Validation -->
+    <AsyncValidation />
+    <h5>Bind RxFormAsyncValidation to View</h5>
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+          <a href="#react-async-validation" class="nav-link active" data-bs-toggle="tab">
+            <img src="/React.png" width="50" title="React Form Async Validation"/>
+          </a>
+      </li>
+      <li class="nav-item">
+          <a href="#vanilla-js-async-validation" class="nav-link" data-bs-toggle="tab">
+            <img src="/VanillaJS.jpg" width="50" title="Form Async Validation VanillaJS" />
+          </a>
+      </li>
+    </ul>
+    <div class="tab-content pt-3">
+      <div class="tab-pane fade show active" id="react-async-validation">
+        <a class="edit-snippet pt-3 pe-4" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/forms/examples/async-validation/react-async-validation.md" target="_blank" rel="noreferrer">
+          Edit this snippet <i class="fa fa-edit"></i>
+        </a>
+        <ReactAsyncValidation />
+      </div>
+      <div class="tab-pane fade" id="vanilla-js-async-validation">
+        <a class="edit-snippet pt-3 pe-4" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/forms/examples/async-validation/vanilla-js-async-validation.md" target="_blank" rel="noreferrer">
+          Edit this snippet <i class="fa fa-edit"></i>
+        </a>
+        <VanillaJSAsyncValidation />
+      </div>
+    </div>
+
+    <br />
+
+    <!-- Normalizing Values -->
+    <Normalizing />
+    <h5>Bind RxFormNormalizing to View</h5>
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+          <a href="#react-normalizing" class="nav-link active" data-bs-toggle="tab">
+            <img src="/React.png" width="50" title="React Form Normalizing Values"/>
+          </a>
+      </li>
+      <li class="nav-item">
+          <a href="#vanilla-js-normalizing" class="nav-link" data-bs-toggle="tab">
+            <img src="/VanillaJS.jpg" width="50" title="Form Normalizing Values VanillaJS" />
+          </a>
+      </li>
+    </ul>
+    <div class="tab-content pt-3">
+      <div class="tab-pane fade show active" id="react-normalizing">
+        <a class="edit-snippet pt-3 pe-4" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/forms/examples/normalizing-values/react-normalizing-values.md" target="_blank" rel="noreferrer">
+          Edit this snippet <i class="fa fa-edit"></i>
+        </a>
+        <ReactNormalizing />
+      </div>
+      <div class="tab-pane fade" id="vanilla-js-normalizing">
+        <a class="edit-snippet pt-3 pe-4" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/forms/examples/normalizing-values/vanilla-js-normalizing-values.md" target="_blank" rel="noreferrer">
+          Edit this snippet <i class="fa fa-edit"></i>
+        </a>
+        <VanillaJSNormalizing />
+      </div>
+    </div>
+
+    <br />
+
+    <!-- Custom Reducers -->
+    <CustomReducers />
+    <h5>Bind RxCustomReducers to View</h5>
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+          <a href="#react-custom-reducers" class="nav-link active" data-bs-toggle="tab">
+            <img src="/React.png" width="50" title="React Form Custom Reducers"/>
+          </a>
+      </li>
+      <li class="nav-item">
+          <a href="#vanilla-js-custom-reducers" class="nav-link" data-bs-toggle="tab">
+            <img src="/VanillaJS.jpg" width="50" title="Form Custom Reducers VanillaJS" />
+          </a>
+      </li>
+    </ul>
+    <div class="tab-content pt-3">
+      <div class="tab-pane fade show active" id="react-custom-reducers">
+        <a class="edit-snippet pt-3 pe-4" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/forms/examples/custom-reducers/react-custom-reducers.md" target="_blank" rel="noreferrer">
+          Edit this snippet <i class="fa fa-edit"></i>
+        </a>
+        <ReactCustomReducers />
+      </div>
+      <div class="tab-pane fade" id="vanilla-js-custom-reducers">
+        <a class="edit-snippet pt-3 pe-4" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/forms/examples/custom-reducers/vanilla-js-custom-reducers.md" target="_blank" rel="noreferrer">
+          Edit this snippet <i class="fa fa-edit"></i>
+        </a>
+        <VanillaJSCustomReducers />
+      </div>
+    </div>
+
+    <br />
+  </ContentPageLayout>
+</Layout>

@@ -2,7 +2,7 @@
 
 ## Description
 
-Reactive state management with RxJS.
+A reactive, flexible and extensible state management solution.
 
 ## Mission
 Provide a simple, scalable and framework-agnostic state management that improves the UI development experience for all.
@@ -13,7 +13,7 @@ Provide a simple, scalable and framework-agnostic state management that improves
 
 Developers can follow a standardized reactive pattern for managing state in any UI Framework for greater consistency.  
 
-<img src="https://github.com/reactables/reactables/blob/main/documentation/SlideNineStandardPattern.jpg?raw=true" height="300" />
+<img src="https://github.com/reactables/reactables/blob/main/assets/docs/SlideNineStandardPattern.jpg?raw=true" height="300" />
 
 ### Separation of Concerns - state management from UI components for:
 
@@ -43,9 +43,9 @@ Reactables can start small, then later combine with others to make larger and mo
 
 All Reactables Actions flow in one direction contained in streams, making state updates highly predictable and traceable in debugging.
 
-<img src="https://github.com/reactables/reactables/blob/main/documentation/SlideThreeScopedEffects.jpg?raw=true" width="600" />
+<img src="https://github.com/reactables/reactables/blob/main/assets/docs/SlideThreeScopedEffects.jpg?raw=true" width="600" />
 
-### Learn more! -> [See the docs](https://github.com/reactables/reactables/tree/main/packages/core) 
+### Learn more! -> [See the docs](https://github.com/reactables/reactables/tree/main/docs/src/content) 
 
 ## Packages
 
@@ -72,3 +72,9 @@ All Reactables Actions flow in one direction contained in streams, making state 
 - React Form Library built on reactables created from [@reactables/forms](https://github.com/reactables/reactables/tree/main/packages/forms)
 
 - `npm i @reactables/react-forms`
+
+### Contact
+
+Dave Lai 
+email: <a href="dlai@dave-lai.com">dlai@dave-lai.com</a>
+github: https://github.com/laidav

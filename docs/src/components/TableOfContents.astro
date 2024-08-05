@@ -1,0 +1,123 @@
+---
+interface Props {
+  className?: string;
+}
+
+const { className = '' } = Astro.props;
+const pathname = new URL(Astro.request.url).pathname;
+const currentPath = pathname.slice(1); // remove the first "/"
+---
+<div class={`table-of-contents ${className}`}>
+  <ul class={`navbar-nav flex-column mb-2 mb-lg-0`}>
+    <li class="nav-item me-3 heading" data-bs-toggle="collapse" data-bs-target="#getting-started">
+      Getting Started
+    </li>
+    <ul class="collapse show" id="getting-started">
+      <li class="nav-item me-3">
+        <a class={`nav-link ${currentPath === 'getting-started/introduction' ? 'active': ''}`} href="/getting-started/introduction">
+          Introduction
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class={`nav-link ${currentPath === 'getting-started/core-concepts' ? 'active': ''}`} href="/getting-started/core-concepts">
+          Core Concepts
+        </a>
+      </li>
+    </ul>
+    <li class="nav-item me-3 mt-3 heading" data-bs-toggle="collapse" data-bs-target="#guides">
+      Guides
+    </li>
+    <ul class="collapse show" id="guides">
+      <li class="nav-item me-3">
+        <a class={`nav-link ${currentPath === 'guides/examples' ? 'active': ''}`} href="/guides/examples">
+          Examples
+        </a>
+      </li>
+      <li class="nav-item me-3">
+        <a class={`nav-link ${currentPath === 'guides/forms' ? 'active': ''}`} href="/guides/forms">
+          Forms
+        </a>
+      </li>
+      <li class="nav-item me-3">
+        <a class={`nav-link ${currentPath === 'guides/testing' ? 'active': ''}`} href="/guides/testing">
+          Testing
+        </a>
+      </li>
+    </ul>
+    <li class="nav-item me-3 heading mt-3" data-bs-toggle="collapse" data-bs-target="#react">
+      React
+    </li>
+    <ul class="collapse show" id="react">
+      <li class="nav-item me-3">
+        <a class={`nav-link ${currentPath === 'react/react-bindings' ? 'active': ''}`} href="/react/react-bindings">
+          React Bindings
+        </a>
+      </li>
+      <li class="nav-item me-3">
+        <a class={`nav-link ${currentPath === 'react/react-form-components' ? 'active': ''}`} href="/react/react-form-components">
+          React Form Components
+        </a>
+      </li>
+    </ul>
+    <li class="nav-item me-3 heading mt-3" data-bs-toggle="collapse" data-bs-target="#references">
+      References
+    </li>
+    <ul class="collapse show" id="references">
+      <li class="nav-item me-3">
+        <a class={`nav-link ${currentPath === 'references/core-api' ? 'active': ''}`} href="/references/core-api">
+          Core API
+        </a>
+      </li>
+      <li class="nav-item me-3">
+        <a class={`nav-link ${currentPath === 'references/forms-api' ? 'active': ''}`} href="/references/forms-api">
+          Forms API
+        </a>
+      </li>
+    </ul>
+  </ul>
+</div>
+
+<style lang="scss">
+  .table-of-contents {
+    background-color: #fff;
+    overflow: auto;
+    padding: 2rem;
+
+    ul {
+      list-style: none;
+      padding-left: 0;
+      
+      li {
+        width: 100%;
+      }
+    }
+
+    .heading {
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+    }
+    &.desktop {
+      display: none;
+      height: calc(100vh - 77px);
+      min-width: 250px;
+      position: sticky;
+      top: 77px;
+
+      @media screen and (min-width: 991px) {
+        display: flex;
+      }
+    }
+  }
+
+  a {
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+
+    &.active {
+      background: #8abff536
+    }
+  }
+
+</style>

@@ -1,0 +1,42 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ContentPageLayout from "../../layouts/ContentPageLayout.astro";
+import { getEntry } from "astro:content";
+
+const content = await getEntry('references', 'core-api');
+const { Content } = await content.render();
+
+const sectionLinks =[
+  {
+    label: 'Reactable',
+    link: '#reactable'
+  },
+  {
+    label: 'RxBuilder',
+    link: '#rx-builder'
+  },
+  {
+    label: 'ofTypes',
+    link: '#of-types'
+  },
+  {
+    label: 'storeValue',
+    link: '#store-value'
+  },
+  {
+    label: 'Other Interfaces',
+    link: '#interfaces'
+  },
+];
+---
+
+<Layout title="Reactables - Core API">
+  <ContentPageLayout
+    sectionLinks={sectionLinks}
+    editPageLink={{ link: 'https://github.com/reactables/reactables/edit/main/docs/src/content/references/core-api.md'}}
+    prevLink={{label: 'React Form Components', link: '/react/react-form-components'}}
+    nextLink={{label: 'Forms API', link: '/references/forms-api'}}
+  >
+    <Content />
+  </ContentPageLayout>
+</Layout>

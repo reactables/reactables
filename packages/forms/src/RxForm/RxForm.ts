@@ -164,7 +164,7 @@ export const build = <Value, Actions = RxFormActions>(
 };
 
 export const load = <Value, Actions = RxFormActions>(
-  state: Form<unknown>,
+  state: Form<Value>,
   options: RxFormOptions = {},
 ) => {
   const baseFormState = {

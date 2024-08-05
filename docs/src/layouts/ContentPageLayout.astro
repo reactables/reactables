@@ -1,0 +1,116 @@
+---
+interface Props {
+  editPageLink?: {
+    label?: string;
+    link: string;
+  }
+  prevLink?: {
+    label: string;
+    link: string;
+  }
+  nextLink?: {
+    label: string;
+    link: string;
+  }
+  sectionLinks?: {
+    label: string;
+    link: string;
+  }[]
+}
+
+const { sectionLinks = [], nextLink, editPageLink, prevLink } = Astro.props;
+---
+<div class="content-page">
+  <div class="content-page__content px-3 px-md-4 py-4">
+    <slot />
+    <div class="content-page__footer">
+      {editPageLink &&
+        <a href={editPageLink.link} target="_blank" rel="noreferrer">
+          {editPageLink.label || 'Edit this Page'} <i class="ms-2 fa fa-edit mt-4"></i>
+        </a>
+      }
+      <div class="row mt-4">
+        <div class="col-6">
+          {prevLink &&
+            <a class="me-auto btn btn-outline-primary d-flex flex-column align-items-start" href={prevLink.link}>
+              <span class="nav-small">Previous</span>
+              <span class="nav-big">{prevLink.label}</span>
+            </a>
+          }
+        </div>
+        <div class="col-6">
+          {nextLink &&
+            <a class="ms-auto btn btn-outline-primary d-flex flex-column align-items-end" href={nextLink.link}>
+              <span class="nav-small">Next</span>
+              <span class="nav-big">{nextLink.label}</i></span>
+            </a>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+  {Boolean(sectionLinks?.length) && <div class="content-page__section-links d-none d-xl-flex">
+    <nav>
+      <p class="text-uppercase mb-0"><strong>On this page</strong></p>
+      <ul class={`navbar-nav flex-column mb-2 mb-lg-0`}>
+        {sectionLinks.map(({ label, link }) => {
+          return <li class="nav-item me-3">
+            <a class="nav-link" href={`${link}`}>{label}</a>
+          </li>
+        })}
+      </ul>
+    </nav>
+  </div>}
+</div>
+<script>
+  (function() {
+    // Select all table elements
+    const tables = document.querySelectorAll('table');
+    
+    // Iterate over the NodeList and add the class 'table' to each table element
+    // for bootstrap styling
+    tables.forEach(table => {
+        table.classList.add('table');
+    });
+})();
+</script>
+
+<style lang="scss">
+  .content-page {
+    display: flex;
+
+    &__content {
+      max-width: 48rem;
+      position: relative;
+    }
+    &__section-links {
+      background-color: #fff;
+      overflow: auto;
+      padding: 2rem;
+      height: calc(100vh - 77px);
+      min-width: 250px;
+      position: sticky;
+      top: 77px;
+
+      ul {
+        list-style: none;
+        padding-left: 0;
+
+        li {
+          width: 100%;
+        }
+      }
+
+    }
+    .nav-small {
+      font-weight: normal;
+      color: #333;
+      font-size: 0.875rem;
+    }
+
+    .nav-big {
+      display: flex;
+      align-items: center;
+    }
+  }
+</style>
