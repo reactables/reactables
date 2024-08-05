@@ -45,7 +45,7 @@ All Reactables Actions flow in one direction contained in streams, making state 
 
 <img src="https://github.com/reactables/reactables/blob/main/assets/docs/SlideThreeScopedEffects.jpg?raw=true" width="600" />
 
-### Learn more! -> [See the docs](https://github.com/reactables/reactables/tree/main/packages/core) 
+### Learn more! -> [See the docs](https://github.com/reactables/reactables/tree/main/docs/src/content) 
 
 ## Packages
 
@@ -72,3 +72,9 @@ All Reactables Actions flow in one direction contained in streams, making state 
 - React Form Library built on reactables created from [@reactables/forms](https://github.com/reactables/reactables/tree/main/packages/forms)
 
 - `npm i @reactables/react-forms`
+
+### Contact
+
+Dave Lai 
+email: <a href="dlai@dave-lai.com">dlai@dave-lai.com</a>
+github: https://github.com/laidav
