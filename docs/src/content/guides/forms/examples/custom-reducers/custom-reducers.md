@@ -1,6 +1,6 @@
 ## Custom Reducers
 
-You can declare [`CustomReducer`s](#api-custom-reducers) during form initialization to implement custom behaviour.
+You can declare [`CustomReducer`s](/references/forms-api#api-custom-reducers) during form initialization to implement custom behaviour.
 
 Below the form reactable will have a `doubleOrder` action method which can be called to double the order amount.
 
@@ -44,4 +44,4 @@ export const RxCustomReducers = () => build(
 
 ```
 
-**IMPORTANT**: When updating the form with custom reducers, it must be done **imperatively** with the provided `FormReducers`. This will propagate the change appropriately to all ancestor and descendant controls - maintaining the integrity of the state tree.
+**IMPORTANT**: When updating the form with custom reducers, it must be done **imperatively** with the provided [`FormReducers`](/references/forms-api#api-form-reducers). This will propagate the change appropriately to all ancestor and descendant controls - maintaining the integrity of the state tree.

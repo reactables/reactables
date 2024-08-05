@@ -5,7 +5,7 @@
 <br>
 <br>
 
-See <a href="/react/react-bindings">React Bindings</a> & <a href="react/react-form-components">React Form Components</a> for API reference!
+See <a href="/react/react-bindings">React Bindings</a> & <a href="/react/react-form-components">React Form Components</a> for API reference!
 
 ```typescript
 import './App.css';
