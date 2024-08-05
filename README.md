@@ -2,7 +2,7 @@
 
 ## Description
 
-Reactive state management with RxJS.
+A reactive, flexible and extensible state management solution.
 
 ## Mission
 Provide a simple, scalable and framework-agnostic state management that improves the UI development experience for all.
