@@ -12,7 +12,7 @@ React components for binding [`@reactables/forms`](https://github.com/reactables
 type HookedRxForm = HookedReactable<ControlModels.Form<unknown>, RxFormActions>;
 ```
 
-`Form` is the provider component giving child `Field` and `FormArray` child components access to a `HookedRxForm`.
+`Form` is the provider component giving child [`Field`](#field) and [`FormArray`](#form-array) child components access to a `HookedRxForm`.
 
 <a href="https://stackblitz.com/edit/vitejs-vite-6lzq4i?file=src%2FMyForm.tsx" target="_blank" rel="noreferrer">
  See full example on <img src="/stackblitz.png" width="100" />
@@ -52,7 +52,7 @@ export default MyForm;
 
 A wrapper component that connects a component to the reactable form.
 
-Below is an `Input` component that will be wrapped by `Field` and provided the `FormControl<T>` via the `meta` prop.
+Below is an `Input` component that will be wrapped by `Field` and provided the [`FormControl<T>`](/references/forms-api#api-form-control) via the `meta` prop.
 
 `WrappedFieldInputProps` are passed in by the `input` prop which contains the input value and event handlers.
 

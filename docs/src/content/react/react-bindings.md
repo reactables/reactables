@@ -10,9 +10,9 @@ Reactable bindings for React Components
 
 ### `StoreProvider`<a name="store-provider"></a>
 
-Used to set up a context containing one reactable responsible for managing application (global) state. The reactable can be accessed via the `useAppStore` hook in components.
+Used to set up a context containing one reactable responsible for managing application (global) state. The reactable can be accessed via the [`useAppStore`](#useAppStore) hook in components.
 
-**Note: The reactable used for application state must be decorated with the `storeValue` decorator to ensure subsequent subscriptions to the reactable by components receive the latest stored value.**
+**Note: The reactable used for application state must be decorated with the [`storeValue`](/references/core-api#store-value) decorator to ensure subsequent subscriptions to the reactable by components receive the latest stored value.**
 
 Example:
 ```typescript

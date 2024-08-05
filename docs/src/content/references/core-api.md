@@ -51,18 +51,14 @@ type SingleActionReducer<T, S> = (state: T, action: Action<S>) => T;
 | Property | Description |
 | -------- | ----------- |
 | initialState | Initial state of the Reactable |
-| reducers | Dictionary of cases for the Reactable to handle. Each case can be a reducer function or a configuration object. RxBuilder will use this to generate Actions, Reducers, and add [ScopedEffects](#api-scoped-effects). |
+| reducers | Dictionary of cases for the Reactable to handle. Each case can be a reducer function or a configuration object. RxBuilder will use this to generate Actions, Reducers, and add [`ScopedEffects`](#api-scoped-effects). |
 | debug (optional) | to turn on debugging to console.log all messages received by the store and state changes |
-| effects (optional) | Array of [Effects](#api-effects) to be registered to the Reactable |
-| sources (optional) <a name="hub-sources"></a> | Additional [Action](#api-actions) Observables the Reactable is listening to. Can be an array or a dictionary where key is the action type and value is the Observable emitting the payload |
-
-Debug Example:
-
-<img src="https://raw.githubusercontent.com/reactables/reactables/main/assets/docs/SlideSixDebug.jpg" width="500" />
+| effects (optional) | Array of [`Effects`](#api-effect) to be registered to the Reactable |
+| sources (optional) <a name="hub-sources"></a> | Additional [`Action`](#api-action) Observables the Reactable is listening to. Can be an array or a dictionary where key is the action type and value is the Observable emitting the payload |
 
 ## `ofTypes` <a name="of-types"></a>
 
-Function that accepts an array of action types (`string`) and returns an `OperatorFunction` that will filter for those `Action`s.
+Function that accepts an array of action types (`string`) and returns an <a href="https://rxjs.dev/api/index/interface/OperatorFunction" target="_blank" rel="noreferrer">`OperatorFunction`</a> that will filter for those [`Action`](#api-action)s.
 
 ```typescript
 export declare const ofTypes: (types: string[]) => OperatorFunction<Action<unknown>, Action<unknown>>;
@@ -70,7 +66,7 @@ export declare const ofTypes: (types: string[]) => OperatorFunction<Action<unkno
 
 ## `storeValue` <a name="store-value"></a>
 
-Decorator function used store the state value in a `ReplaySubject` instead of an `Observable` so subsequent subscriptions can access the latest stored value.
+Decorator function used store the state value in a <a href="https://rxjs.dev/api/index/class/ReplaySubject" target="_blank" rel="noreferrer">`ReplaySubject`</a> instead of an <a href="https://rxjs.dev/api/index/class/Observable" target="_blank" rel="noreferrer">`Observable`</a> so subsequent subscriptions can access the latest stored value.
 
 Also add's a `destroy` action method to be called to teardown any Reactable decorated with `storeValue`.
 
@@ -86,7 +82,7 @@ declare const storeValue: <T, S>(reactable: Reactable<T, S>) => Reactable<T, S &
 
 ### `Effect` <a name="api-effect"></a>
 
-Effects are expressed as [RxJS Operator Functions](https://rxjs.dev/api/index/interface/OperatorFunction). They pipe the [dispatcher$](#hub-dispatcher) stream and run side effects on incoming [Actions](#api-action).
+Effects are expressed as <a href="https://rxjs.dev/api/index/interface/OperatorFunction">RxJS Operator Functions</a>. They pipe the `dispatcher$` stream and run side effects on incoming [`Actions`](#api-action).
 
 ```typescript
 type Effect<T, S> = OperatorFunction<Action<T>, Action<S>>;
@@ -105,7 +101,7 @@ interface ScopedEffects<T> {
 | Property | Description |
 | -------- | ----------- |
 | key (optional) | key to be combined with the Action `type` to generate a unique signature for the effect stream(s). Example: An id for the entity the action is being performed on. |
-| effects | Array of [Effects](#api-effects) scoped to the Action `type` & `key` |
+| effects | Array of [`Effects`](#api-effect) scoped to the Action `type` & `key` |
 
 
 ### `Action` <a name="api-action"></a>
@@ -124,7 +120,7 @@ interface Action<T = undefined> {
 
 ### `Reducer` <a name="api-reducer"></a>
 
-From the [Redux Docs](https://redux.js.org/tutorials/fundamentals/part-3-state-actions-reducers):
+From the <a href="https://redux.js.org/tutorials/fundamentals/part-3-state-actions-reducers" target="_blank" rel="noreferrer">Redux Docs</a>:
 > Reducers are functions that take the current state and an action as arguments, and return a new state result
 
 ```typescript
