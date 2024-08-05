@@ -1,5 +1,9 @@
 ## Basic Toggle
 
+<a class="mb-3 d-block" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/examples/basic-toggle/basic-toggle.md" target="_blank" rel="noreferrer">
+  Edit this snippet <i class="fa fa-edit"></i>
+</a>
+
 ```typescript
 import { RxBuilder, Reactable } from '@reactables/core';
 
@@ -30,4 +34,4 @@ When creating a reactable primitive with [`RxBuilder`](/references/core-api#rx-b
 
 Debug Example:
 
-<img src="/debug-example.png" width="500" />
+<img class="img-fluid" src="/debug-example.png" width="400" />

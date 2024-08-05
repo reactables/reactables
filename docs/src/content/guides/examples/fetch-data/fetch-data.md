@@ -1,5 +1,9 @@
 ## Fetching Data with an Effect<a name="fetching-data">
 
+<a class="mb-3 d-block" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/examples/fetch-data/fetch-data.md" target="_blank" rel="noreferrer">
+  Edit this snippet <i class="fa fa-edit"></i>
+</a>
+
 ```typescript
 import { RxBuilder, Reactable } from '@reactables/core';
 import DataService from './data-service';

@@ -1,5 +1,5 @@
 <a href="https://stackblitz.com/edit/vitejs-vite-fmst4h?file=src%2FMyForm.tsx" target="_blank" rel="noreferrer">
- See full example on <img src="/stackblitz.png" width="100" />
+ <img src="/stackblitz.png" width="100" />
 </a>
 
 <br>

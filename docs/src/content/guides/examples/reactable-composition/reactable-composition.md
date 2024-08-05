@@ -4,6 +4,10 @@ Using an example for illustration. Consider a naive search that filter's hotels 
 
 We can start with the toggle filter controls for `smokingAllowed` and `petsAllowed`. We will want a reactable with the following state and actions.
 
+<a class="mb-3 d-block" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/examples/reactable-composition/reactable-composition.md" target="_blank" rel="noreferrer">
+  Edit this snippet <i class="fa fa-edit"></i>
+</a>
+
 ```typescript
 export type SearchControlsState = {
   smokingAllowed: ToggleState; // boolean
