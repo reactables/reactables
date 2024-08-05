@@ -2,7 +2,7 @@
 
 Since reactables are not tightly coupled with UI components, we can test our state logic independently without needing to render any UI components.
 
-To test a reactable, we subscribe to its state observable and invoke the action methods being tested. We can assert the sequence of events emitted by the observable matches requirement specs.
+To test a reactable, we subscribe to its state observable and invoke the action methods being tested. We can assert the sequence of state values emitted by the observable matches requirement specs.
 
 This can be done with RxJS's built in <a href="https://rxjs.dev/guide/testing/marble-testing" target="_blank" rel="noreferrer">Marble Testing</a>.
 

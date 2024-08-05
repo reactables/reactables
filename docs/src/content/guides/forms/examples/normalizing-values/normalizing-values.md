@@ -1,6 +1,10 @@
 ## Normalizing Values
 User input for a `FormControl` leaf (i.e having no child controls) can be normalized via normalizer functions provided during form initialization.
 
+<a class="mb-3 d-block" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/forms/examples/normalizing-values/normalizing-values.md" target="_blank" rel="noreferrer">
+  Edit this snippet <i class="fa fa-edit"></i>
+</a>
+
 ```typescript
 import { control, build, group } from '@reactables/forms';
 

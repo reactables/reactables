@@ -4,6 +4,10 @@ You can declare [`CustomReducer`s](/references/forms-api#api-custom-reducers) du
 
 Below the form reactable will have a `doubleOrder` action method which can be called to double the order amount.
 
+<a class="mb-3 d-block" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/forms/examples/custom-reducers/custom-reducers.md" target="_blank" rel="noreferrer">
+  Edit this snippet <i class="fa fa-edit"></i>
+</a>
+
 ```typescript
 import { control, build, group } from '@reactables/forms';
 
