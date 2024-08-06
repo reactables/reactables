@@ -73,7 +73,13 @@ const { hideHamburger = false, showGetStartedBtn = false } = Astro.props;
 		}
 
 		&__logo {
-			height: 46px;
+			position: relative;
+			top: -3px;
+		  height: 34px;
+
+			@media screen and (min-width: 768px) {
+				height: 46px;
+			}
 		}
 
 		li::before {
