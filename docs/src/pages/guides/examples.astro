@@ -18,6 +18,9 @@ const { Content : ExtendingFunctionality } = await extendingFunctionality.render
 const fetchData = await getEntry('guides', 'examples/fetch-data/fetch-data');
 const { Content : FetchData } = await fetchData.render();
 
+const actionsOnComponentMount = await getEntry('guides', 'examples/actions-on-component-mount');
+const { Content : ActionsOnComponentMount } = await actionsOnComponentMount.render();
+
 const reactFetchData = await getEntry('guides', 'examples/fetch-data/react-fetch-data');
 const angularFetchData = await getEntry('guides', 'examples/fetch-data/angular-fetch-data');
 const { Content : ReactFetchData } = await reactFetchData.render();
@@ -36,6 +39,7 @@ const sectionsLinks = [
   { label: 'Debugging', link: "#debugging"},
   { label: 'Extending Functionality', link: "#extending-functionality"},
   { label: 'Fetching Data with an Effect', link: "#fetching-data"},
+  { label: 'Actions On Component Mount', link: "#actions-on-component-mount"},
   { label: 'Composition with Reactables', link: "#reactable-composition"},
   ]
 ---
@@ -123,6 +127,11 @@ const sectionsLinks = [
         <AngularFetchData />
       </div>
     </div>
+
+    <br />
+
+    <!-- Actions On Component Mount -->
+     <ActionsOnComponentMount />
 
     <br />
 
