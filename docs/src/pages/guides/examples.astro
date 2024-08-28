@@ -12,6 +12,9 @@ const { Content : VanillaJsToggle } = await vanillaJSToggle.render();
 const { Content : ReactToggle } = await reactToggle.render();
 const { Content : AngularToggle } = await angularToggle.render();
 
+const debugging = await getEntry('guides', 'examples/debugging');
+const { Content : Debugging } = await debugging.render();
+
 const extendingFunctionality = await getEntry('guides', 'examples/extending-functionality');
 const { Content : ExtendingFunctionality } = await extendingFunctionality.render();
 
@@ -92,6 +95,12 @@ const sectionsLinks = [
       </div>
     </div>
 
+    <br />
+
+    <Debugging />
+
+    <br />
+    <br />
     <br />
 
     <ExtendingFunctionality />
