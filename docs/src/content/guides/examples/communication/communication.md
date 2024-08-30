@@ -6,7 +6,7 @@ Reactables can also expose their actions for other reactables to receive. The [r
 
 All reactable primitives created with [RxBuilder](/reactables/references/core-api/#rx-builder) provides the actions observable.
 
-When composing reactables the developer can decide what actions to expose (if any).
+When composing reactables the developer can decide what actions to expose (if any) by merging any number of action observables together with [RxJS](https://rxjs.dev/).
 
 <a class="mb-3 d-block" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/examples/communication/communication.md" target="_blank" rel="noreferrer">
   Edit this snippet <i class="fa fa-edit"></i>
