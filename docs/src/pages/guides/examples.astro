@@ -40,6 +40,11 @@ const { Content : AngularReactableComposition } = await angularReactableComposit
 const reactableCommunication = await getEntry('guides', 'examples/communication/communication');
 const { Content : ReactableCommunication } = await reactableCommunication.render();
 
+const reactReactableCommunication = await getEntry('guides', 'examples/communication/react-communication');
+const angularReactableCommunication = await getEntry('guides', 'examples/communication/angular-communication');
+const { Content : ReactReactableCommunication } = await reactReactableCommunication.render();
+const { Content : AngularReactableCommunication } = await angularReactableCommunication.render();
+
 const sectionsLinks = [
   { label: 'Basic Toggle', link: "#basic-toggle"},
   { label: 'Debugging', link: "#debugging"},
@@ -183,6 +188,35 @@ const sectionsLinks = [
 
     <!-- Communication between Reactables -->
     <ReactableCommunication />
+    <h5>Bind RxToggleCounter to View</h5>
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+          <a href="#react-communication" class="nav-link active" data-bs-toggle="tab">
+            <img src="/reactables/React.png" width="50" title="React Communication"/>
+          </a>
+      </li>
+      <li class="nav-item">
+          <a href="#angular-communication" class="nav-link" data-bs-toggle="tab">
+            <img src="/reactables/angular.png" width="50" title="Angular Communication"/>
+          </a>
+      </li>
+    </ul>
+    <div class="tab-content pt-3">
+      <div class="tab-pane fade show active" id="react-communication">
+        <a class="edit-snippet pt-3 pe-4" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/examples/communication/react-communication.md" target="_blank" rel="noreferrer">
+          Edit this snippet <i class="fa fa-edit"></i>
+        </a>
+        <ReactReactableCommunication />
+      </div>
+      <div class="tab-pane fade" id="angular-communication">
+        <a class="edit-snippet pt-3 pe-4" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/examples/communication/angular-communication.md" target="_blank" rel="noreferrer">
+          Edit this snippet <i class="fa fa-edit"></i>
+        </a>
+        <AngularReactableCommunication />
+      </div>
+    </div>
+
+    <br />
 
   </ContentPageLayout>
 
