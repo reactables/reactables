@@ -1,12 +1,14 @@
 ## Communication between Reactables
 
-We have seen in the [reactable composition example](#reactable-composition) above one reactable can react to the state changes of another.
+The [reactable composition example](#reactable-composition) above is a case where one reactable reacts to the state changes of another.
 
-Reactables can also expose their actions for other reactables to receive. The [reactable interface](/reactables/references/core-api/#reactable) has a third optional item which is an observable emitting the reactable's actions.
+Reactables can also emit their actions for other reactables to receive. The [reactable interface](/reactables/references/core-api/#reactable) has a third optional item which is an observable emitting the reactable's actions.
 
 All reactable primitives created with [RxBuilder](/reactables/references/core-api/#rx-builder) provides the actions observable.
 
 When composing reactables the developer can decide what actions to expose (if any) by merging any number of action observables together with [RxJS](https://rxjs.dev/).
+
+Below is an example where a counter reactable, `RxCounter`, is extended to react to `toggle` actions emitted by `RxToggle`.
 
 <a class="mb-3 d-block" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/examples/communication/communication.md" target="_blank" rel="noreferrer">
   Edit this snippet <i class="fa fa-edit"></i>
@@ -37,9 +39,8 @@ export const RxToggleCounter = (): Reactable<
 > => {
   const [toggleState$, toggleActions, toggleActions$] = RxToggle();
 
-  const toggled$ = (toggleActions$ as Observable<Action<unknown>>).pipe(
-    ofTypes(['toggle'])
-  );
+  const toggled$ = (toggleActions$ as Observable<Action<unknown>>)
+    .pipe(ofTypes(['toggle']));
 
   const [counter$, { reset }] = RxCounter({
     sources: [toggled$],

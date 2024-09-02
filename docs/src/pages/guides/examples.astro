@@ -37,6 +37,9 @@ const angularReactableComposition = await getEntry('guides', 'examples/reactable
 const { Content : ReactReactableComposition } = await reactReactableComposition.render();
 const { Content : AngularReactableComposition } = await angularReactableComposition.render();
 
+const reactableCommunication = await getEntry('guides', 'examples/communication/communication');
+const { Content : ReactableCommunication } = await reactableCommunication.render();
+
 const sectionsLinks = [
   { label: 'Basic Toggle', link: "#basic-toggle"},
   { label: 'Debugging', link: "#debugging"},
@@ -44,7 +47,8 @@ const sectionsLinks = [
   { label: 'Fetching Data with an Effect', link: "#fetching-data"},
   { label: 'Actions On Component Mount', link: "#actions-on-component-mount"},
   { label: 'Composition with Reactables', link: "#reactable-composition"},
-  ]
+  { label: 'Communication between Reactables', link: "#communication-between-reactables"},
+]
 ---
 
 <Layout title="Reactables - Examples">
@@ -176,6 +180,9 @@ const sectionsLinks = [
     </div>
 
     <br />
+
+    <!-- Communication between Reactables -->
+    <ReactableCommunication />
 
   </ContentPageLayout>
 
