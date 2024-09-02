@@ -12,11 +12,17 @@ const { Content : VanillaJsToggle } = await vanillaJSToggle.render();
 const { Content : ReactToggle } = await reactToggle.render();
 const { Content : AngularToggle } = await angularToggle.render();
 
+const debugging = await getEntry('guides', 'examples/debugging');
+const { Content : Debugging } = await debugging.render();
+
 const extendingFunctionality = await getEntry('guides', 'examples/extending-functionality');
 const { Content : ExtendingFunctionality } = await extendingFunctionality.render();
 
 const fetchData = await getEntry('guides', 'examples/fetch-data/fetch-data');
 const { Content : FetchData } = await fetchData.render();
+
+const actionsOnComponentMount = await getEntry('guides', 'examples/actions-on-component-mount');
+const { Content : ActionsOnComponentMount } = await actionsOnComponentMount.render();
 
 const reactFetchData = await getEntry('guides', 'examples/fetch-data/react-fetch-data');
 const angularFetchData = await getEntry('guides', 'examples/fetch-data/angular-fetch-data');
@@ -31,13 +37,23 @@ const angularReactableComposition = await getEntry('guides', 'examples/reactable
 const { Content : ReactReactableComposition } = await reactReactableComposition.render();
 const { Content : AngularReactableComposition } = await angularReactableComposition.render();
 
+const reactableCommunication = await getEntry('guides', 'examples/communication/communication');
+const { Content : ReactableCommunication } = await reactableCommunication.render();
+
+const reactReactableCommunication = await getEntry('guides', 'examples/communication/react-communication');
+const angularReactableCommunication = await getEntry('guides', 'examples/communication/angular-communication');
+const { Content : ReactReactableCommunication } = await reactReactableCommunication.render();
+const { Content : AngularReactableCommunication } = await angularReactableCommunication.render();
+
 const sectionsLinks = [
   { label: 'Basic Toggle', link: "#basic-toggle"},
   { label: 'Debugging', link: "#debugging"},
   { label: 'Extending Functionality', link: "#extending-functionality"},
   { label: 'Fetching Data with an Effect', link: "#fetching-data"},
+  { label: 'Actions On Component Mount', link: "#actions-on-component-mount"},
   { label: 'Composition with Reactables', link: "#reactable-composition"},
-  ]
+  { label: 'Communication between Reactables', link: "#communication-between-reactables"},
+]
 ---
 
 <Layout title="Reactables - Examples">
@@ -90,6 +106,12 @@ const sectionsLinks = [
 
     <br />
 
+    <Debugging />
+
+    <br />
+    <br />
+    <br />
+
     <ExtendingFunctionality />
 
     <br />
@@ -126,6 +148,11 @@ const sectionsLinks = [
 
     <br />
 
+    <!-- Actions On Component Mount -->
+     <ActionsOnComponentMount />
+
+    <br />
+
     <!-- Composition with Reactables -->
     <ReactableComposition />
 
@@ -154,6 +181,38 @@ const sectionsLinks = [
           Edit this snippet <i class="fa fa-edit"></i>
         </a>
         <AngularReactableComposition />
+      </div>
+    </div>
+
+    <br />
+
+    <!-- Communication between Reactables -->
+    <ReactableCommunication />
+    <h5>Bind RxToggleCounter to View</h5>
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+          <a href="#react-communication" class="nav-link active" data-bs-toggle="tab">
+            <img src="/reactables/React.png" width="50" title="React Communication"/>
+          </a>
+      </li>
+      <li class="nav-item">
+          <a href="#angular-communication" class="nav-link" data-bs-toggle="tab">
+            <img src="/reactables/angular.png" width="50" title="Angular Communication"/>
+          </a>
+      </li>
+    </ul>
+    <div class="tab-content pt-3">
+      <div class="tab-pane fade show active" id="react-communication">
+        <a class="edit-snippet pt-3 pe-4" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/examples/communication/react-communication.md" target="_blank" rel="noreferrer">
+          Edit this snippet <i class="fa fa-edit"></i>
+        </a>
+        <ReactReactableCommunication />
+      </div>
+      <div class="tab-pane fade" id="angular-communication">
+        <a class="edit-snippet pt-3 pe-4" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/examples/communication/angular-communication.md" target="_blank" rel="noreferrer">
+          Edit this snippet <i class="fa fa-edit"></i>
+        </a>
+        <AngularReactableCommunication />
       </div>
     </div>
 
