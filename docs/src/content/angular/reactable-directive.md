@@ -2,7 +2,7 @@
 
 RxJS observables are already integrated with Angular and developers can subscribe to a reactable's state observable via the `subscribe` method or with Angular's `async` pipe.
 
-Alternatively, we can create a [structural directive](https://angular.dev/guide/directives/structural-directives) that subscribes to a reactable's state observable and makes the state and action methods easily accessible in the template.
+Alternatively, we can create a <a href="https://angular.dev/guide/directives/structural-directives" rel="noreferrer" target="_blank">structural directive</a> that subscribes to a reactable's state observable and makes the state and action methods easily accessible in the template.
 
 ```typescript
 import {
