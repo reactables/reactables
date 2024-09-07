@@ -8,8 +8,6 @@
 ```typescript
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { bootstrapApplication } from '@angular/platform-browser';
-import 'zone.js';
 import { RxToggle } from './RxToggle';
 import { ReactableDirective } from './reactable.directive';
 
@@ -30,7 +28,5 @@ import { ReactableDirective } from './reactable.directive';
 export class App {
   rxToggle = RxToggle();
 }
-
-bootstrapApplication(App);
 
 ```
