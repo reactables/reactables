@@ -22,7 +22,7 @@ import { takeUntil } from 'rxjs/operators';
 })
 export class ReactableDirective<T, S extends ActionMap> implements OnDestroy {
   private $destroy = new Subject();
-  state: unknown | null = null;
+  state: T | null = null;
   actions: ActionMap | null = null;
 
   constructor(
