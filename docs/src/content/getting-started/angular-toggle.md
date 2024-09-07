@@ -6,15 +6,20 @@
 <br>
 
 ```typescript
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { bootstrapApplication } from '@angular/platform-browser';
+import 'zone.js';
 import { RxToggle } from './RxToggle';
+import { ReactableDirective } from './reactable.directive';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ReactableDirective],
   template: `
-    <div>
-      <h1>Angular Reactable Toggle {{ (state$ | async) ? 'on' : 'off' }}</h1>
+    <div *reactable="rxToggle; let state = state; let actions = actions;">
+      <h1>Angular Reactable Toggle: {{ state ? 'on' : 'off' }}</h1>
       <button (click)="actions.toggleOn()">Toggle On </button>
       <button (click)="actions.toggleOff()">Toggle Off </button>
       <button (click)="actions.toggle()">Toggle </button>
@@ -24,7 +29,8 @@ import { RxToggle } from './RxToggle';
 })
 export class App {
   rxToggle = RxToggle();
-  state$ = this.rxToggle[0];
-  actions = this.rxToggle[1];
 }
+
+bootstrapApplication(App);
+
 ```
