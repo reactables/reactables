@@ -8,17 +8,18 @@
 ```typescript
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { bootstrapApplication } from '@angular/platform-browser';
-import 'zone.js';
 import { RxToggleCounter } from './RxToggleCounter';
+
+// See Reactable Directive
+// at https://reactables.github.io/angular/reactable-directive
+import { ReactableDirective } from './reactable.directive';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ReactableDirective],
   template: `
-    <div *ngIf="rxToggleCounter[0] | async as state;">
-      <ng-container *ngIf="rxToggleCounter[1] as actions">
+    <div *reactable="rxToggleCounter; let state = state; let actions = actions;">
         <h1>Angular Reactable Toggle</h1>
         <h2>Toggle is {{ state.toggle ? 'on' : 'off' }}</h2>
         <button (click)="actions.toggle.toggleOn()">Turn On </button>
@@ -29,7 +30,6 @@ import { RxToggleCounter } from './RxToggleCounter';
         <h2>Toggle Button Count: {{ state.counter.count }}</h2>
         <br>
         <button (click)="actions.resetCounter()">Reset Counter </button>
-      </ng-container>
     </div>
 
   `,
@@ -37,6 +37,4 @@ import { RxToggleCounter } from './RxToggleCounter';
 export class App {
   rxToggleCounter = RxToggleCounter();
 }
-
-bootstrapApplication(App);
 ```
