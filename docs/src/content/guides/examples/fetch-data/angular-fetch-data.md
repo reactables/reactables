@@ -10,6 +10,9 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RxFetchData, FetchDataReactable } from './RxFetchData';
 import DataService from './data-service';
+
+// See Reactable Directive
+// at https://reactables.github.io/angular/reactable-directive
 import { ReactableDirective } from './reactable.directive';
 
 @Component({

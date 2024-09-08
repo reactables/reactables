@@ -9,6 +9,9 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RxToggle } from './RxToggle';
+
+// See Reactable Directive
+// at https://reactables.github.io/angular/reactable-directive
 import { ReactableDirective } from './reactable.directive';
 
 @Component({

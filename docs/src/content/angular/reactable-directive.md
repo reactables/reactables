@@ -12,7 +12,7 @@ import {
   ViewContainerRef,
   OnDestroy,
 } from '@angular/core';
-import { Reactable, ActionMap } from '@reactables/core';
+import { Reactable } from '@reactables/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -20,7 +20,7 @@ import { takeUntil } from 'rxjs/operators';
   selector: '[reactable]',
   standalone: true,
 })
-export class ReactableDirective<T, S extends ActionMap> implements OnDestroy {
+export class ReactableDirective<T, S> implements OnDestroy {
   private $destroy = new Subject();
   state: T | null = null;
   actions: S | null = null;

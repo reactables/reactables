@@ -8,8 +8,6 @@
 ```typescript
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { bootstrapApplication } from '@angular/platform-browser';
-import 'zone.js';
 import {
   RxHotelSearch,
   HotelSearchState,
@@ -18,13 +16,16 @@ import {
 import { Reactable } from '@reactables/core';
 import HotelService from './hotel-service';
 
+// See Reactable Directive
+// at https://reactables.github.io/angular/reactable-directive
+import { ReactableDirective } from './reactable.directive';
+
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ReactableDirective],
   template: `
-    <div *ngIf="rxHotelSearch && rxHotelSearch[0] | async as state">
-      <ng-container *ngIf="rxHotelSearch && rxHotelSearch[1] as actions">
+    <div *reactable="rxHotelSearch; let state = state; let actions = actions;">
         <h1>Hotel Search</h1>
         <button (click)="actions.toggleSmokingAllowed()">Smoking Allowed: {{ state.controls.smokingAllowed ? 'Yes' : 'No'}}</button>
         <button (click)="actions.togglePetsAllowed()">Pets Allowed: {{ state.controls.petsAllowed ? 'Yes' : 'No'}}</button>
@@ -32,13 +33,12 @@ import HotelService from './hotel-service';
         <span *ngIf="state.searchResult.loading">Searching...</span>
         <br />
         <span *ngIf="state.searchResult.data">{{ state.searchResult.data }}</span>
-      </ng-container>
     </div>
 
   `,
 })
 export class App implements OnInit {
-  rxHotelSearch: Reactable<HotelSearchState, HotelSearchActions> | null = null;
+  rxHotelSearch!: Reactable<HotelSearchState, HotelSearchActions>;
 
   constructor(private hotelService: HotelService) {}
 
@@ -46,6 +46,4 @@ export class App implements OnInit {
     this.rxHotelSearch = RxHotelSearch({ hotelService: this.hotelService });
   }
 }
-
-bootstrapApplication(App);
 ```
