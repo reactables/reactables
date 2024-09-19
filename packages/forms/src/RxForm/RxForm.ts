@@ -215,7 +215,7 @@ const createReactable = <T extends CustomReducers<S>, S>(
     };
   }, {} as { [K in keyof T]: Reducer<BaseFormState<unknown>> });
 
-  const [hub1State$, hub1Actions] = RxBuilder({
+  const [hub1State$, hub1Actions, hub1Actions$] = RxBuilder({
     initialState: initialBaseState,
     name: `Stage 1 ${name ? name : 'rxForm'}`,
     debug,
@@ -260,5 +260,6 @@ const createReactable = <T extends CustomReducers<S>, S>(
   return [
     state$.pipe(filter((form) => form !== null)),
     hub1Actions as { [K in keyof T]: (payload?) => void } & RxFormActions,
+    hub1Actions$,
   ];
 };
