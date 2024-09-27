@@ -45,6 +45,9 @@ const angularReactableCommunication = await getEntry('guides', 'examples/communi
 const { Content : ReactReactableCommunication } = await reactReactableCommunication.render();
 const { Content : AngularReactableCommunication } = await angularReactableCommunication.render();
 
+const globalState = await getEntry('guides', 'examples/global-state');
+const { Content : GlobalState } = await globalState.render();
+
 const sectionsLinks = [
   { label: 'Basic Toggle', link: "#basic-toggle"},
   { label: 'Debugging', link: "#debugging"},
@@ -53,6 +56,7 @@ const sectionsLinks = [
   { label: 'Actions On Component Mount', link: "#actions-on-component-mount"},
   { label: 'Composition with Reactables', link: "#reactable-composition"},
   { label: 'Communication between Reactables', link: "#communication-between-reactables"},
+  { label: 'Global State with Reactables', link: "#global-state-with-reactables"},
 ]
 ---
 
@@ -217,6 +221,8 @@ const sectionsLinks = [
     </div>
 
     <br />
+
+    <GlobalState />
 
   </ContentPageLayout>
 

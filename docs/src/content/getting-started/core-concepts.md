@@ -27,9 +27,10 @@ Internally, a reactable primitive has a hub and store. The hub dispatches action
 <a class="rx-example" href="/reactables/ReactablePrimitiveOne.jpg" target="_blank" rel="noreferrer">
   <img src="/reactables/ReactablePrimitiveOne.jpg" alt="Hub and Store" title="Hub and Store" style="max-width: 300px" />
 </a>
+<br>
+<br>
 
-<br>
-<br>
+See [Basic Toggle](https://reactables.github.io/reactables/guides/examples/#basic-toggle) for an example.
 
 **Effects**
 
@@ -45,6 +46,8 @@ Responses are then mapped into actions and relayed to the store.
 
 <br>
 <br>
+
+See [Fetching Data with an Effect](https://reactables.github.io/reactables/guides/examples/#fetching-data) for example.
 
 **Sources**
 
@@ -67,3 +70,5 @@ Organizing state into slices is sensible when state grows and becomes more compl
 Reactables encourages a reactive programming style where a reactable's **sources of change are explicit** in its declaration.
 
 This results in a unidirectional flow of actions making state changes highly predictable.
+
+See [Composition with Reactables](https://reactables.github.io/reactables/guides/examples/#reactable-composition) for example.

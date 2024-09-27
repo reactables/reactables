@@ -39,10 +39,11 @@ interface RxConfig <T, S extends Cases<T>>{
 }
 
 interface Cases<T> {
-  [key: string]: SingleActionReducer<T, unknown>
+  [key: string]:
+    | SingleActionReducer<T, unknown>
     | {
-        reducer: SingleActionReducer<T, unknown>
-        effects?: (payload?: unknown) => ScopedEffects<unknown>
+        reducer: SingleActionReducer<T, unknown>;
+        effects?: Effect<unknown, unknown>[] | ((payload?: unknown) => ScopedEffects<unknown>);
       };
 }
 
