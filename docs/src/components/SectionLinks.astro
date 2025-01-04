@@ -1,0 +1,27 @@
+---
+import { type SectionLink } from '../layouts/ContentPageLayout.astro';
+interface Props {
+	sectionLinks: Array<SectionLink>;
+  nested?: boolean;
+}
+
+const { sectionLinks, nested } = Astro.props;
+---
+<ul class={`navbar-nav flex-column mb-2 mb-lg-0 ${nested && 'nested'}`}>
+  {sectionLinks.map(({ label, link, children }) => {
+    return <li class="nav-item me-3">
+      <a class="nav-link" href={`${link}`}>{label}</a>
+      {children?.length && <Astro.self sectionLinks={children} nested />}
+    </li>
+  })}
+</ul>
+
+<style lang="scss">
+  ul.nested {
+    padding-left: 16px;
+    
+    li {
+      font-size: 14px;
+    }
+  }
+</style>
