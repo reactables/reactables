@@ -2,18 +2,66 @@
 import Layout from "../../layouts/Layout.astro";
 import ContentPageLayout from "../../layouts/ContentPageLayout.astro";
 import { getEntry } from "astro:content";
+import { type SectionLink } from "../../layouts/ContentPageLayout.astro";
 
 const content = await getEntry('references', 'forms-api');
 const { Content } = await content.render();
 
-const sectionLinks =[
+const sectionLinks: Array<SectionLink> = [
   {
     label: 'RxFormActions',
-    link: '#api-actions'
+    link: '#api-actions',
+    children: [
+      {
+        label: 'updateValues',
+        link: '#api-actions-update-values',
+      },
+      {
+        label: 'addControl',
+        link: '#api-actions-add-control',
+      },
+      {
+        label: 'pushControl',
+        link: '#api-actions-push-control',
+      },
+      {
+        label: 'removeControl',
+        link: '#api-actions-remove-control',
+      },
+      {
+        label: 'markControlAsPristine',
+        link: '#api-actions-mark-as-pristine',
+      },
+      { label: 'markControlAsTouched',
+        link: '#api-actions-mark-as-touched',
+      },
+      {
+        label: 'markControlAsUntouched',
+        link: '#api-actions-mark-as-untouched',
+      },
+      {
+        label: 'resetControl',
+        link: '#api-actions-resetControl',
+      },
+    ]
   },
   {
     label: 'Form Builders',
-    link: '#api-builders'
+    link: '#api-builders',
+    children: [
+      {
+        label: 'build',
+        link: '#api-build',
+      },
+      {
+        label: 'load',
+        link: '#api-load',
+      },
+      {
+        label: 'RxFormOptions',
+        link: '#api-form-options',
+      },
+    ]
   },
   {
     label: 'Other Interfaces',
@@ -26,7 +74,7 @@ const sectionLinks =[
   <ContentPageLayout
     sectionLinks={sectionLinks}
     editPageLink={{ link: 'https://github.com/reactables/reactables/edit/main/docs/src/content/references/forms-api.md'}}
-    prevLink={{label: 'Core API', link: '/references/core-api'}}
+    prevLink={{ label: 'Core API', link: '/references/core-api' }}
   >
     <Content />
   </ContentPageLayout>
