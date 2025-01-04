@@ -19,7 +19,7 @@ export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
       };
     },
     {
-      states: {} as { [K in keyof T]: Observable<T[K][0]> },
+      states: {} as { [K in keyof T]: T[K][0] },
       actions: {} as { [K in keyof T]: T[K][1] },
       actions$: [] as Observable<Action<unknown>>[],
     },
@@ -28,9 +28,7 @@ export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
 
   return [states$, actions, merge(...actions$)] as [
     Observable<{
-      [K in keyof { [K in keyof T]: Observable<T[K][0]> }]: ObservedValueOf<
-        { [K in keyof T]: Observable<T[K][0]> }[K]
-      >;
+      [K in keyof { [K in keyof T]: T[K][0] }]: ObservedValueOf<{ [K in keyof T]: T[K][0] }[K]>;
     }>,
     { [K in keyof T]: T[K][1] },
     Observable<Action<unknown>>,
