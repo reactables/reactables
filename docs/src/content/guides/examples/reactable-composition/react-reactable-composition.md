@@ -1,4 +1,4 @@
-<a href="https://stackblitz.com/edit/vitejs-vite-bbdsdv?file=src%2FApp.tsx" target="_blank" rel="noreferrer">
+<a href="https://stackblitz.com/edit/vitejs-vite-vab54vcn?file=src%2FApp.tsx" target="_blank" rel="noreferrer">
  <img src="/reactables/stackblitz.png" width="100" />
 <a>
 
@@ -28,12 +28,12 @@ function App() {
     <>
       <div>
         <br />
-        <button onClick={actions.toggleSmokingAllowed}>
+        <button onClick={actions.controls.smokingAllowed.toggle}>
           Smoking Allowed : {smokingAllowed ? 'Yes' : 'No'}{' '}
         </button>
         <br />
         <br />
-        <button onClick={actions.togglePetsAllowed}>
+        <button onClick={actions.controls.petsAllowed.toggle}>
           Pets Allowed : {petsAllowed ? 'Yes' : 'No'}{' '}
         </button>
         <br />
@@ -46,4 +46,5 @@ function App() {
 }
 
 export default App;
+
 ```

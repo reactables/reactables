@@ -17,11 +17,11 @@ Below is an example where a counter reactable, `RxCounter`, is extended to react
 <br>
 
 ```typescript
-import { ofTypes, Action, Reactable } from '@reactables/core';
-import { Observable, combineLatest } from 'rxjs';
+import { ofTypes, Action, Reactable, combine } from '@reactables/core';
+import { Observable } from 'rxjs';
 
 import { RxToggle, ToggleActions, ToggleState } from './RxToggle';
-import { RxCounter, CounterState } from './RxCounter';
+import { RxCounter, CounterState, CounterActions } from './RxCounter';
 
 interface ToggleCounter {
   toggle: ToggleState;
@@ -30,36 +30,30 @@ interface ToggleCounter {
 
 interface ToggleCounterActions {
   toggle: ToggleActions;
-  resetCounter: () => void;
+  counter: CounterActions;
 }
 
 export const RxToggleCounter = (): Reactable<
   ToggleCounter,
   ToggleCounterActions
 > => {
-  const [toggleState$, toggleActions, toggleActions$] = RxToggle();
+  const rxToggle = RxToggle();
 
-  const toggled$ = (toggleActions$ as Observable<Action<unknown>>)
-    .pipe(ofTypes(['toggle']));
+  const toggled$ = (rxToggle[2] as Observable<Action<unknown>>).pipe(
+    ofTypes(['toggle'])
+  );
 
-  const [counter$, { reset }] = RxCounter({
+  const rxCounter = RxCounter({
     sources: [toggled$],
     reducers: {
       toggle: (state) => ({ count: state.count + 1 }),
     },
   });
 
-  const state$ = combineLatest({
-    toggle: toggleState$,
-    counter: counter$,
+  return combine({
+    toggle: rxToggle,
+    counter: rxCounter,
   });
-
-  const actions = {
-    toggle: toggleActions,
-    resetCounter: reset,
-  };
-
-  return [state$, actions];
 };
 
 ```

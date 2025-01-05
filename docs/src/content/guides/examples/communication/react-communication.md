@@ -1,4 +1,4 @@
-<a href="https://stackblitz.com/edit/vitejs-vite-gonpgj?file=src%2FApp.tsx" target="_blank" rel="noreferrer">
+<a href="https://stackblitz.com/edit/vitejs-vite-ksxbknfu?file=src%2FApp.tsx" target="_blank" rel="noreferrer">
  <img src="/reactables/stackblitz.png" width="100" />
 <a>
 
@@ -18,9 +18,10 @@ function App() {
     toggle: toggleState,
     counter: { count },
   } = state;
+
   const {
     toggle: { toggleOn, toggleOff, toggle },
-    resetCounter,
+    counter,
   } = actions;
 
   return (
@@ -35,7 +36,7 @@ function App() {
       <br />
       Toggle Button Count: {count}
       <br />
-      <button onClick={resetCounter}>Reset Count</button>
+      <button onClick={counter.reset}>Reset Count</button>
     </>
   );
 }

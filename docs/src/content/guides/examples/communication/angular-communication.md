@@ -1,4 +1,4 @@
-<a href="https://stackblitz.com/edit/stackblitz-starters-bx1wgt?file=src%2Fmain.ts" target="_blank" rel="noreferrer">
+<a href="https://stackblitz.com/edit/stackblitz-starters-3jdgcbdj?file=src%2Fmain.ts" target="_blank" rel="noreferrer">
  <img src="/reactables/stackblitz.png" width="100" />
 <a>
 
@@ -8,10 +8,9 @@
 ```typescript
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { bootstrapApplication } from '@angular/platform-browser';
+import 'zone.js';
 import { RxToggleCounter } from './RxToggleCounter';
-
-// See Reactable Directive
-// at https://reactables.github.io/angular/reactable-directive
 import { ReactableDirective } from './reactable.directive';
 
 @Component({
@@ -29,7 +28,7 @@ import { ReactableDirective } from './reactable.directive';
         <br>  
         <h2>Toggle Button Count: {{ state.counter.count }}</h2>
         <br>
-        <button (click)="actions.resetCounter()">Reset Counter </button>
+        <button (click)="actions.counter.reset()">Reset Counter </button>
     </div>
 
   `,
@@ -37,4 +36,6 @@ import { ReactableDirective } from './reactable.directive';
 export class App {
   rxToggleCounter = RxToggleCounter();
 }
+
+bootstrapApplication(App);
 ```

@@ -1,12 +1,12 @@
 ## Composition with Reactables <a name="reactable-composition">
 
-Aside from creating Reactable primitives with the <a href="https://reactables.github.io/reactables/references/core-api/#rx-builder" target="_blank">RxBuilder</a> factory function, you can also combine any number of Reactables together to form a new one.
+Aside from creating Reactable primitives with the <a href="https://reactables.github.io/reactables/references/core-api/#rx-builder" target="_blank">RxBuilder</a> factory function, we can also combine any number of Reactables together to form a new one.
 
 **Two primary use cases for this approach (not mutually exclusive):**
 
-- You wish to create a Reactable that reuses functionality from other Reactables.
+- We wish to create a Reactable that reuses functionality from other Reactables.
 
-- One part of your state needs to react to changes of another part.
+- One part of our state needs to react to changes of another part.
 
 
 Using an example for illustration. Consider a naive search that filter's hotels based on `smokingAllowed` and `petsAllowed`. Using `RxToggle` and a slightly modified `RxFetchData` from previous examples, we will combine them and implement the search.
@@ -18,43 +18,37 @@ We can start with the toggle filter controls for `smokingAllowed` and `petsAllow
 </a>
 
 ```typescript
+import { ToggleState, ToggleActions } from './RxToggle';
+
 export type SearchControlsState = {
   smokingAllowed: ToggleState; // boolean
   petsAllowed: ToggleState; // boolean
 };
 
 export type SearchControlsActions = {
-  toggleSmokingAllowed: () => void;
-  togglePetsAllowed: () => void;
+  smokingAllowed: ToggleActions;
+  petsAllowed: ToggleActions;
 };
 ```
 
-We can initialize an `RxToggle` for each filter control and use RxJS's <a href="https://rxjs.dev/api/index/function/combineLatest" target="_blank" rel="noreferrer">`combineLatest`</a> function to combine the state observables together to create `RxSearchControls`.
+We can initialize an `RxToggle` for each filter control and use the [`combine`](/reactables/references/core-api#combine) helper function to combine the Reactables together to create `RxSearchControls`.
 
 ```typescript
-import { combineLatest } from 'rxjs';
+
+import { Reactable, combine } from '@reactables/core';
+import { RxToggle, ToggleState, ToggleActions } from './RxToggle';
 
 ...
 
 export const RxSearchControls = (): Reactable<
   SearchControlsState,
   SearchControlsActions
-> => {
-  const [smokingAllowed$, { toggle: smokingToggle }] = RxToggle();
-  const [petsAllowed$, { toggle: petsToggle }] = RxToggle();
-
-  const state$ = combineLatest({
-    smokingAllowed: smokingAllowed$,
-    petsAllowed: petsAllowed$,
+> =>
+  combine({
+    smokingAllowed: RxToggle(),
+    petsAllowed: RxToggle(),
   });
 
-  const actions = {
-    toggleSmokingAllowed: smokingToggle,
-    togglePetsAllowed: petsToggle,
-  };
-
-  return [state$, actions];
-};
 
 ```
 
@@ -65,8 +59,7 @@ We know when there is a state change in `RxSearchControls`, `RxFetchData` will h
 We will pipe the state observable from `RxSearchControls` and map it to a `fetch` action. Then provide this piped observable, `fetchOnSearchChange$`, as a source for `RxFetchData` during initialization.
 
 ```typescript
-import { Reactable } from '@reactables/core';
-import { combineLatest } from 'rxjs';
+import { Reactable, combine } from '@reactables/core';
 import { map } from 'rxjs/operators';
 import {
   RxSearchControls,
@@ -81,34 +74,30 @@ type HotelSearchState = {
   searchResult: FetchDataState;
 };
 
-type HotelSearchActions = SearchControlsActions;
+type HotelSearchActions = { controls: SearchControlsActions };
 
 export const RxHotelSearch = ({
   hotelService,
 }: {
   hotelService: HotelService;
 }): Reactable<HotelSearchState, HotelSearchActions> => {
-  const [searchControls$, searchControlActions] = RxSearchControls();
+  const rxSearchControls = RxSearchControls();
 
-  const fetchOnSearchChange$ = searchControls$.pipe(
+  const fetchOnSearchChange$ = rxSearchControls[0].pipe(
     map((search) => ({ type: 'fetch', payload: search }))
   );
 
-  const [searchResult$] = RxFetchData({
-    dataService: hotelService,
+  const rxSearchResult = RxFetchData({
     sources: [fetchOnSearchChange$],
+    dataService: hotelService,
   });
 
-  const state$ = combineLatest({
-    controls: searchControls$,
-    searchResult: searchResult$,
+  return combine({
+    controls: rxSearchControls,
+    searchResult: rxSearchResult,
   });
-
-  const actions = searchControlActions;
-
-  return [state$, actions];
 };
 
 ```
 
-We then use <a href="https://rxjs.dev/api/index/function/combineLatest" target="_blank" rel="noreferrer">`combineLatest`</a> function again to to give us our combined state observable.
+We then use [`combine`](/reactables/references/core-api#combine) function again to to give us our combined state observable.
