@@ -74,8 +74,6 @@ const { title, showDesktopNav = true, hideHamburger = false, showGetStartedBtn =
 			Bitstream Vera Sans Mono,
 			Courier New,
 			monospace;
-			display: block;
-			overflow: auto;
 	}
 
 	main {
@@ -94,6 +92,11 @@ const { title, showDesktopNav = true, hideHamburger = false, showGetStartedBtn =
 		overflow: auto;
 		margin-bottom: 1.5rem;
 		max-width: calc(100vw - 32px);
+
+		code {
+			display: block;
+			overflow: auto;
+		}
 
 		@media screen and (min-width: 576px) {
 			max-width: calc(100vw - 58px);

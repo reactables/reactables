@@ -63,9 +63,9 @@ Helper Function that accepts a dictionary of Reactables and combines them into o
 ```typescript
 export declare const combine: <T extends Record<string, Reactable<unknown, unknown>>>(sourceReactables: T) =>
   Reactable<
-    { [K in keyof T]: ObservedValueOf<T[K][0]>; }, // State
-    { [K in keyof T]: T[K][1] }, // Action Map
-    Observable<Action<unknown>>, // Actions Observable
+    { [K in keyof T]: ObservedValueOf<T[K][0]>; }, // Combined State
+    { [K in keyof T]: T[K][1] }, // Combined ActionMap
+    Observable<Action<unknown>>, // Merged Actions Observable
   >;
 ```
 
