@@ -1,4 +1,4 @@
 export { getArrayItems } from './getArrayItems';
-export { getDescendantControls } from './getDescendantControls';
 export { getAncestorControls } from './getAncestorControls';
+export { getDescendantControls } from './getDescendantControls';
 export { getValueFromControlConfig } from './getValueFromControlConfig';
