@@ -195,6 +195,51 @@ interface FormArrayConfig {
 }
 ```
 
+## Helpers <a name="api-helpers"></a>
+
+### `getArrayItems` <a name="api-get-array-items"></a>
+
+Given a `controlRef` for a form array and a `Form`, returns all the controls for the form array control. If the `controlRef` does not find a form array control an error is throw.
+
+```typescript
+type getArrayItems = <T extends BaseForm<unknown> | Form<unknown>>(
+  controlRef: ControlRef,
+  form: T,
+) => T extends BaseForm<unknown> ? BaseControl<unknown>[] : FormControl<unknown>[]
+```
+
+### `getAncestorControls` <a name="api-get-ancestor-controls"></a>
+
+Given a `controlRef` a `Form`, returns all the ancestor controls including itself. 
+
+```typescript
+type getAncestorControls = <T extends BaseForm<unknown> | Form<unknown>>(
+  controlRef: ControlRef,
+  form: T,
+  excludeSelf = false,
+) => (T extends Form<unknown> ? FormControl<unknown> : BaseControl<unknown>)[]
+```
+
+### `getDescendantControls` <a name="api-get-descendant-controls"></a>
+
+Given a `controlRef` a `Form`, returns all the descendant controls including itself. 
+
+```typescript
+type getDescendantControls = <T extends BaseForm<unknown> | Form<unknown>>(
+  controlRef: ControlRef,
+  form: T,
+  excludeSelf = false,
+) => (T extends Form<unknown> ? FormControl<unknown> : BaseControl<unknown>)[]
+```
+
+### `getValueFromControlConfig` <a name="api-get-value-from-config"></a>
+
+Reads a [`AbstractControlConfig`](#api-configuration-interfaces) and returns its initial value for the form. 
+
+```typescript
+type getValueFromControlConfig = <T>(controlConfig: AbstractControlConfig) => T
+```
+
 ## Other Interfaces <a name="api-interfaces"></a>
 
 ### `Form` <a name="api-form"></a>
@@ -351,4 +396,36 @@ interface BaseControl<T> {
   config: AbstractControlConfig;
   key: string;
 }
+```
+
+### Configuration Interfaces
+
+<a name="api-configuration-interfaces"></a>
+
+```typescript
+interface ValidatorConfigs {
+  validators?: string[];
+  asyncValidators?: string[];
+}
+
+export interface FormGroupConfig extends ValidatorConfigs {
+  controls: { [key: string]: AbstractControlConfig };
+}
+
+export interface FormArrayConfig extends ValidatorConfigs {
+  controls: AbstractControlConfig[];
+}
+
+export interface FormControlConfig<T> extends ValidatorConfigs {
+  initialValue: T;
+  normalizers?: string[];
+}
+
+export type AbstractControlConfig = (
+  | FormControlConfig<unknown>
+  | FormArrayConfig
+  | FormGroupConfig
+) & {
+  controls?: AbstractControlConfig[] | { [key: string]: AbstractControlConfig };
+};
 ```

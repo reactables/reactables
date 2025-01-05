@@ -10,15 +10,20 @@ const { sectionLinks, nested } = Astro.props;
 <ul class={`navbar-nav flex-column mb-2 mb-lg-0 ${nested && 'nested'}`}>
   {sectionLinks.map(({ label, link, children }) => {
     return <li class="nav-item me-3">
-      <a class="nav-link" href={`${link}`}>{label}</a>
+      <a class={`nav-link ${children?.length && 'nav-link--has-children'}`} href={`${link}`}>{label}</a>
       {children?.length && <Astro.self sectionLinks={children} nested />}
     </li>
   })}
 </ul>
 
 <style lang="scss">
+  .nav-link--has-children {
+    font-weight: 600;
+  }
+
   ul.nested {
     padding-left: 16px;
+
     
     li {
       font-size: 14px;
