@@ -2,9 +2,9 @@ import { combineLatest, Observable, merge, ObservedValueOf } from 'rxjs';
 import { Action, Reactable } from '../Models';
 
 export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
-  reactablesDict: T,
+  sourceReactables: T,
 ) => {
-  const { states, actions, actions$ } = Object.entries(reactablesDict).reduce(
+  const { states, actions, actions$ } = Object.entries(sourceReactables).reduce(
     (acc, [key, [state$, actions, actions$]]) => {
       return {
         states: {

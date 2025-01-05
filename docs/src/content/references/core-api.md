@@ -57,6 +57,18 @@ type SingleActionReducer<T, S> = (state: T, action: Action<S>) => T;
 | effects (optional) | Array of [`Effects`](#api-effect) to be registered to the Reactable |
 | sources (optional) <a name="hub-sources"></a> | Additional [`Action`](#api-action) Observables the Reactable is listening to. Can be an array or a dictionary where key is the action type and value is the Observable emitting the payload |
 
+## `combine` <a name="combine"></a>
+Helper Function that accepts a dictionary of Reactables and combines them into one Reactable.
+
+```typescript
+export declare const combine: <T extends Record<string, Reactable<unknown, unknown>>>(sourceReactables: T) =>
+  Reactable<
+    { [K in keyof T]: ObservedValueOf<T[K][0]>; }, // State
+    { [K in keyof T]: T[K][1] }, // Action Map
+    Observable<Action<unknown>>, // Actions Observable
+  >;
+```
+
 ## `ofTypes` <a name="of-types"></a>
 
 Function that accepts an array of action types (`string`) and returns an <a href="https://rxjs.dev/api/index/interface/OperatorFunction" target="_blank" rel="noreferrer">`OperatorFunction`</a> that will filter for those [`Action`](#api-action)s.
