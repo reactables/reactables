@@ -16,7 +16,16 @@ export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
           ...acc.actions,
           [key as keyof T]: actions as { [K in keyof T]: T[K][1] },
         },
-        actions$: actions$ ? acc.actions$.concat(actions$) : acc.actions$,
+        actions$: actions$
+          ? acc.actions$.concat(
+              actions$.pipe(
+                map((action) => ({
+                  ...action,
+                  type: `[${key}] - ${action.type}`,
+                })),
+              ),
+            )
+          : acc.actions$,
       };
     },
     {
