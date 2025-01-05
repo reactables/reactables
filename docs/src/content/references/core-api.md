@@ -58,7 +58,7 @@ type SingleActionReducer<T, S> = (state: T, action: Action<S>) => T;
 | sources (optional) <a name="hub-sources"></a> | Additional [`Action`](#api-action) Observables the Reactable is listening to. Can be an array or a dictionary where key is the action type and value is the Observable emitting the payload |
 
 ## `combine` <a name="combine"></a>
-Helper Function that accepts a dictionary of Reactables and combines them into one Reactable.
+Helper function that accepts a dictionary of Reactables and combines them into one Reactable.
 
 ```typescript
 export declare const combine: <T extends Record<string, Reactable<unknown, unknown>>>(sourceReactables: T) =>
