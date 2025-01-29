@@ -21,29 +21,40 @@ jobs:
           cache: 'npm'
           cache-dependency-path: '**/package-lock.json'
           registry-url: 'https://registry.npmjs.org'
+      # @reactables/core
       - run: npm ci
       - run: npm --no-git-tag-version version ${{ github.event.release.tag_name || inputs.tag_name }} --workspaces
       - run: npm run build --workspace=@reactables/core
       - run: npm publish --workspace=@reactables/core --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # @reactables/forms
       - run: npm install @reactables/core@${{ github.event.release.tag_name || inputs.tag_name }} --workspace=@reactables/forms
       - run: npm run build --workspace=@reactables/forms
       - run: npm publish --workspace=@reactables/forms --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # @reactables/examples
       - run: npm install @reactables/core@${{ github.event.release.tag_name || inputs.tag_name }} --workspace=@reactables/examples
       - run: npm run build --workspace=@reactables/examples
       - run: npm publish --workspace=@reactables/examples --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # @reactables/react
       - run: npm run build --workspace=@reactables/react
       - run: npm publish --workspace=@reactables/react --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      # @reactables/react-forms
       - run: npm install @reactables/forms@${{ github.event.release.tag_name || inputs.tag_name }} --workspace=@reactables/react-forms
       - run: npm run build --workspace=@reactables/react-forms
       - run: npm publish --workspace=@reactables/react-forms --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # @reactables/web-workers
+      - run: npm run build --workspace=@reactables/web-workers
+      - run: npm publish --workspace=@reactables/web-workers --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
