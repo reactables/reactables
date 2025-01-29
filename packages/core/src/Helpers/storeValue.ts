@@ -16,7 +16,7 @@ export const storeValue = <T, S>(
 
   const destroy = () => {
     // If destroy action already exists (i.e from a web worker), invoke it
-    actions.destroy && actions.destroy();
+    actions.destroy?.();
 
     subscription.unsubscribe();
   };
