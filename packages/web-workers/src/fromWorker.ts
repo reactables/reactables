@@ -47,16 +47,12 @@ export const fromWorker = <State, Actions>(worker: Worker, config?: SourcesAndPr
       ) {
         const { actionsSchema } = (event as MessageEvent<InitializedMessage>).data;
 
-        const assignActions = (source: ActionsSchema, dest: any, stack: string[] = []) => {
+        const assignActions = (source: ActionsSchema, dest: unknown, stack: string[] = []) => {
           // Recursively go through the ActionsSchema
-          for (let key in source) {
+          for (const key in source) {
             if (typeof source[key] === 'object' && source[key] !== null) {
-              dest[key] = source[key] as any;
-              assignActions(
-                source[key] as ActionsSchema,
-                dest[key] as unknown as ActionMap,
-                stack.concat(key),
-              );
+              dest[key] = source[key] as unknown;
+              assignActions(source[key], dest[key] as unknown as ActionMap, stack.concat(key));
             } else {
               /**
                * Assigning the action function to the ActionMap

@@ -102,9 +102,9 @@ export const toWorker = <State, Actions>(
        */
       case ToWorkerMessageTypes.Action: {
         const { type, payload } = event.data.action;
-        const splitKey = (type as string).split('~');
+        const splitKey = type.split('~');
 
-        let action: any = reactable[1];
+        let action: unknown = reactable[1];
 
         try {
           for (let i = 0; i < splitKey.length; i++) {
@@ -122,7 +122,7 @@ export const toWorker = <State, Actions>(
 
         // If the action exists, invoke it
         if (action) {
-          action(payload);
+          (action as (payload?: unknown) => void)(payload);
         }
 
         // If it is a destroy action clean up subscriptions
