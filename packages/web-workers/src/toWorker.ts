@@ -64,7 +64,7 @@ export const toWorker = <State, Actions>(
                 (acc, key) => ({ ...acc, [key]: null }),
                 {},
               );
-              assignNull(source[key] as ActionMap, dest[key]);
+              assignNull(source[key] as unknown as ActionMap, dest[key]);
             } else {
               dest[key] = null;
             }
