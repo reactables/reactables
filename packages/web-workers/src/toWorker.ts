@@ -86,10 +86,10 @@ export const toWorker = <State, Actions>(
         });
 
         if (actions$) {
-          actions$.pipe(takeUntil(destroy$)).subscribe((action) => {
+          actions$.pipe(takeUntil(destroy$)).subscribe(({ type, payload }) => {
             postMessage({
               type: FromWorkerMessageTypes.Action,
-              action,
+              action: { type, payload },
             });
           });
         }
