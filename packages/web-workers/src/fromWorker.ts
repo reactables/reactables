@@ -1,6 +1,6 @@
 import { fromEvent, merge, Subject } from 'rxjs';
 import { map, filter, tap, takeUntil } from 'rxjs/operators';
-import { Reactable, ActionMap, storeValue } from '@reactables/core';
+import { Reactable, ActionMap } from '@reactables/core';
 import {
   FromWorkerMessageTypes,
   ToWorkerMessageTypes,
