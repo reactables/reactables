@@ -127,6 +127,7 @@ export const toWorker = <State, Actions>(
 
         // If it is a destroy action clean up subscriptions
         if (type === 'destroy') {
+          console.log('workerDestroyed in worker');
           destroy$.next();
           destroy$.complete();
         }

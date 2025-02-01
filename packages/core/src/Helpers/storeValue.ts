@@ -15,11 +15,11 @@ export const storeValue = <T, S>(
   const subscription = state$.subscribe((state) => replaySubject$.next(state));
 
   const destroy = () => {
-    // If destroy action already exists (i.e from a web worker), invoke it
-    actions.destroy?.();
-
+    console.log('unsubscribe store value');
     subscription.unsubscribe();
   };
 
-  return [replaySubject$, { ...actions, destroy }, actions$];
+  actions.destroy = destroy;
+
+  return [replaySubject$, actions as S & DestroyAction, actions$];
 };

@@ -1,6 +1,6 @@
 import { fromEvent, merge, Subject } from 'rxjs';
 import { map, filter, tap, takeUntil } from 'rxjs/operators';
-import { Reactable, ActionMap } from '@reactables/core';
+import { Reactable, ActionMap, storeValue } from '@reactables/core';
 import {
   FromWorkerMessageTypes,
   ToWorkerMessageTypes,
@@ -57,7 +57,16 @@ export const fromWorker = <State, Actions>(worker: Worker, config?: SourcesAndPr
               /**
                * Assigning the action function to the ActionMap
                */
+              let storeValueDestroyFunc: () => void;
+
+              if (key === 'destroy' && typeof dest[key] === 'function') {
+                storeValueDestroyFunc = dest[key] as () => void;
+              }
+
               dest[key] = (payload?: unknown) => {
+                //If there is a destroy action (from storeValue decorator), call it
+                storeValueDestroyFunc?.();
+
                 // Notify worker of action invoked
                 worker.postMessage({
                   type: ToWorkerMessageTypes.Action,
@@ -68,6 +77,7 @@ export const fromWorker = <State, Actions>(worker: Worker, config?: SourcesAndPr
                 });
 
                 if (key === 'destroy') {
+                  console.log('terminate');
                   worker.terminate();
                   destroy$.next();
                   destroy$.complete();
