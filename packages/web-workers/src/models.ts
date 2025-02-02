@@ -1,4 +1,4 @@
-import { Reactable, Action } from '@reactables/core';
+import { Action } from '@reactables/core';
 import { Observable } from 'rxjs';
 
 export type SourcesAndProps = {
@@ -6,14 +6,6 @@ export type SourcesAndProps = {
   sources?: Observable<Action<unknown>>[];
 };
 
-export type RxFactoryConfig<T = undefined> = {
-  deps?: Record<string, unknown>;
-  reducers?: Record<string, (state: T, action?: Action<unknown>) => T>;
-} & SourcesAndProps;
-
-export type ReactableFactory<State, Actions> = (
-  config?: RxFactoryConfig<State>,
-) => Reactable<State, Actions>;
 /**
  * MESSAGES TO THE WORKER
  */
@@ -27,7 +19,7 @@ export type ToWorkerMessage = ToWorkerInitMessage | ToWorkerActionMessage | ToWo
 
 export interface ToWorkerInitMessage {
   type: ToWorkerMessageTypes.Init;
-  props?: Record<string, unknown>;
+  config?: Record<string, unknown>;
 }
 
 export interface ToWorkerActionMessage {

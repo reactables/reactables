@@ -14,11 +14,14 @@ import {
   SourcesAndProps,
 } from './models';
 
+/**
+ * @description creates a Reactable Interface from a worker to be used on the client side
+ */
 export const fromWorker = <State, Actions>(worker: Worker, config?: SourcesAndProps) => {
   const destroy$ = new Subject<void>();
 
   /**
-   * Handle Sources
+   * Set up observable to listen to sources and post messages to the worker
    */
   merge(...(config?.sources || []))
     .pipe(takeUntil(destroy$))
@@ -111,11 +114,11 @@ export const fromWorker = <State, Actions>(worker: Worker, config?: SourcesAndPr
   );
 
   /**
-   * Notify the worker initialize the Reactable on worker side;
+   * Notify the worker to initialize the Reactable on worker side;
    */
   worker.postMessage({
     type: ToWorkerMessageTypes.Init,
-    props: config?.props,
+    config,
   } as ToWorkerInitMessage);
 
   return [state$, actions, actions$] as Reactable<State, Actions>;

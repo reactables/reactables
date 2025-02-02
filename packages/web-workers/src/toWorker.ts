@@ -2,19 +2,21 @@ import { Reactable, ActionMap, Action } from '@reactables/core';
 import { ReplaySubject, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
-  ReactableFactory,
-  RxFactoryConfig,
   ToWorkerMessage,
   ToWorkerMessageTypes,
   FromWorkerMessageTypes,
   ActionsSchema,
 } from './models';
 
-export const toWorker = <State, Actions>(
-  RxFactory: ReactableFactory<State, Actions>,
-  config?: RxFactoryConfig<State>,
+/**
+ * @description
+ * Creates a Reactable to handle business logic on the workers side
+ */
+export const toWorker = (
+  RxFactory: (config) => Reactable<unknown, unknown>,
+  config?: object,
 ): void => {
-  let reactable: Reactable<State, Actions>;
+  let reactable: Reactable<unknown, unknown>;
 
   const destroy$ = new Subject<void>();
 
@@ -31,13 +33,9 @@ export const toWorker = <State, Actions>(
        */
       case ToWorkerMessageTypes.Init: {
         reactable = RxFactory({
-          deps: { ...config?.deps },
-          props: {
-            ...config?.props,
-            ...event.data.props,
-          },
+          ...config,
+          ...event.data.config,
           sources: [sources$.asObservable()],
-          reducers: { ...config?.reducers },
         });
 
         const [state$, actions, actions$] = reactable;
