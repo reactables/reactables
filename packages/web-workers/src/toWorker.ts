@@ -10,7 +10,7 @@ import {
 
 /**
  * @description
- * Creates a Reactable to handle business logic on the workers side
+ * Creates a Reactable to handle business logic on the Workers Side
  */
 export const toWorker = (
   RxFactory: (config) => Reactable<unknown, unknown>,

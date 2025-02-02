@@ -15,23 +15,16 @@ import {
 } from './models';
 
 /**
- * @description creates a Reactable Interface from a worker to be used on the client side
+ * @description creates a Reactable Interface from a worker to be used on the Client Side.
  */
 export const fromWorker = <State, Actions>(worker: Worker, config?: SourcesAndProps) => {
   const destroy$ = new Subject<void>();
 
   /**
-   * Set up observable to listen to sources and post messages to the worker
+   * Once the Reactable is initialized on the worker side,
+   * it will send an ActionsSchema to the client and `const actions` will be updated to the
+   * according ActionMap the UI can call to invoke state changes.
    */
-  merge(...(config?.sources || []))
-    .pipe(takeUntil(destroy$))
-    .subscribe((action) => {
-      worker.postMessage({
-        type: ToWorkerMessageTypes.Source,
-        action,
-      } as ToWorkerSourceMessage);
-    });
-
   const actions = {} as Actions;
 
   /**
@@ -57,15 +50,17 @@ export const fromWorker = <State, Actions>(worker: Worker, config?: SourcesAndPr
               dest[key] = source[key] as unknown;
               assignActions(source[key], dest[key] as unknown as ActionMap, stack.concat(key));
             } else {
-              /**
-               * Assigning the action function to the ActionMap
-               */
+              // Check if there is a destroy action to handle Reactables decorated with `storeValue`
               let storeValueDestroyFunc: () => void;
 
               if (key === 'destroy' && typeof dest[key] === 'function') {
                 storeValueDestroyFunc = dest[key] as () => void;
               }
 
+              /**
+               * Assigning an action function to the ActionMap to post messages back
+               * to the worker
+               */
               dest[key] = (payload?: unknown) => {
                 //If there is a destroy action (from storeValue decorator), call it
                 storeValueDestroyFunc?.();
@@ -112,6 +107,19 @@ export const fromWorker = <State, Actions>(worker: Worker, config?: SourcesAndPr
     ),
     map((event) => (event as MessageEvent<FromWorkerActionMessage>).data.action),
   );
+
+  /**
+   * Set up observable & subscription to listen to sources on the client side
+   * and post messages to the worker
+   */
+  merge(...(config?.sources || []))
+    .pipe(takeUntil(destroy$))
+    .subscribe((action) => {
+      worker.postMessage({
+        type: ToWorkerMessageTypes.Source,
+        action,
+      } as ToWorkerSourceMessage);
+    });
 
   /**
    * Notify the worker to initialize the Reactable on worker side;
