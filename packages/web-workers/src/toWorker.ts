@@ -21,8 +21,8 @@ export const toWorker = (
   const destroy$ = new Subject<void>();
 
   /**
-   * Subject to listen for source actions from the client and emit it to
-   * the Worker Reactable here
+   * Subject to push source actions from the client to the
+   * Worker Reactable here on the Worker side
    */
   const sources$ = new ReplaySubject<Action<unknown>>(1);
 
@@ -52,8 +52,11 @@ export const toWorker = (
           destroy: null,
         };
 
-        /* We will recursively loop through the ActionMap and assign all
-         * leaves null so it can be serialized and sent to client.
+        /* We will recursively loop through the ActionMap and create an ActionsSchema
+         * by assign all leaves null so it can be serialized and sent to client.
+
+         * The client will use the schema to make their own ActionMap to use because they
+         * have no prior knowledge of the shape of the ActionMap
          */
         const assignNull = (source: ActionMap, dest: ActionsSchema) => {
           for (const key in source) {
@@ -71,11 +74,13 @@ export const toWorker = (
 
         assignNull(actions as ActionMap, actionsSchema);
 
+        // Notifiy Client Worker Side Reactable Initialize and send them the Action Schema
         postMessage({
           type: FromWorkerMessageTypes.Initialized,
           actionsSchema,
         });
 
+        // Set up subscription to push state updates to the client
         state$.pipe(takeUntil(destroy$)).subscribe((state) => {
           postMessage({
             type: FromWorkerMessageTypes.State,
@@ -84,6 +89,7 @@ export const toWorker = (
         });
 
         if (actions$) {
+          // Set up subscription to push processed actions to the client
           actions$.pipe(takeUntil(destroy$)).subscribe(({ type, payload }) => {
             postMessage({
               type: FromWorkerMessageTypes.Action,
@@ -131,6 +137,9 @@ export const toWorker = (
         }
         break;
       }
+      /**
+       * Handling Source messages received from the client
+       */
       case ToWorkerMessageTypes.Source:
         sources$.next(event.data.action);
         break;

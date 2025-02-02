@@ -3,7 +3,7 @@
     "allowJs": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "declaration": true,
+    "declaration": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*"]
 }
