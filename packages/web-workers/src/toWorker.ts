@@ -34,7 +34,7 @@ export const toWorker = (
       case ToWorkerMessageTypes.Init: {
         reactable = RxFactory({
           ...config,
-          ...event.data.config,
+          ...event.data.props,
           sources: [sources$.asObservable()],
         });
 

@@ -118,7 +118,7 @@ export const fromWorker = <State, Actions>(worker: Worker, config?: SourcesAndPr
    */
   worker.postMessage({
     type: ToWorkerMessageTypes.Init,
-    config,
+    props: config?.props,
   } as ToWorkerInitMessage);
 
   return [state$, actions, actions$] as Reactable<State, Actions>;

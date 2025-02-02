@@ -19,7 +19,7 @@ export type ToWorkerMessage = ToWorkerInitMessage | ToWorkerActionMessage | ToWo
 
 export interface ToWorkerInitMessage {
   type: ToWorkerMessageTypes.Init;
-  config?: Record<string, unknown>;
+  props?: Record<string, unknown>;
 }
 
 export interface ToWorkerActionMessage {
