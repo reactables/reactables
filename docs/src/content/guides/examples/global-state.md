@@ -10,11 +10,11 @@ In Angular, initializing your Reactable in a service provided in `root` is an ea
 
 You can use the APIs available in your framework for storing Reactable(s) in the global scope.
 
-**Decorate Reactable with <a href="https://reactables.github.io/reactables/references/core-api/#store-value" target="_blank">`storeValue`</a>**
+**Modify Reactable with <a href="https://reactables.github.io/reactables/references/core-api/#store-value" target="_blank">`storeValue`</a>**
 
 By default, the state observable from a Reactable is just an <a href="https://rxjs.dev/guide/observable" target="_blank">`Observable`</a>. It does not hold a value and only emits a new state object when an action is invoked.
 
-When using a Reactable for managing global state, it needs to be decorated with the <a href="https://reactables.github.io/reactables/references/core-api/#store-value" target="_blank">`storeValue`</a> decorator which extends the Reactable to return a <a href="https://rxjs.dev/api/index/class/ReplaySubject" target="_blank">`ReplaySubject`</a> instead of the default state `Observable`.  This ensures subsequent subscriptions from UI components will always receive the latest value. 
+When using a Reactable for managing global state, it needs to be modified with the <a href="https://reactables.github.io/reactables/references/core-api/#store-value" target="_blank">`storeValue`</a> modifier function which extends the Reactable to return a <a href="https://rxjs.dev/api/index/class/ReplaySubject" target="_blank">`ReplaySubject`</a> instead of the default state `Observable`.  This ensures subsequent subscriptions from UI components will always receive the latest value. 
 
 Example:
 ```typescript
