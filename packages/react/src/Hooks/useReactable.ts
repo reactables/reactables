@@ -10,7 +10,7 @@ export const useReactable = <T, S, U extends unknown[]>(
 ): HookedReactable<T, S> => {
   const rx = useRef<Reactable<T, S>>(null);
 
-  if (rx === null) {
+  if (rx.current === null) {
     rx.current = reactableFactory(...props);
   }
 
