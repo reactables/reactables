@@ -10,6 +10,12 @@ export const useReactable = <T, S, U extends unknown[]>(
 ): HookedReactable<T, S> => {
   const rx = useRef<Reactable<T, S>>(null);
 
+  /**
+   * React Strict Mode has bugs with clean up with refs so it breaks the useReactable hook as of now
+   * See Bug: https://github.com/facebook/react/issues/26315
+   * See Bug: https://github.com/facebook/react/issues/24670
+   * Using this recommended approach for resolving Strict Modeissue: https://react.dev/reference/react/useRef#avoiding-recreating-the-ref-contents
+   */
   if (rx.current === null) {
     rx.current = reactableFactory(...props);
   }
