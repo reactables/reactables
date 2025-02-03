@@ -13,7 +13,7 @@ export interface EffectsAndSources {
 
 export interface RxConfig<T, S extends Cases<T>> extends SliceConfig<T, S>, EffectsAndSources {
   debug?: boolean;
-  /**@deprecated Use storeValue decorator instead to add store value behaviour to reactable */
+  /**@deprecated Use storeValue modifier instead to add store value behaviour to reactable */
   storeValue?: boolean;
 }
 

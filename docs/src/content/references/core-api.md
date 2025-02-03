@@ -79,9 +79,9 @@ export declare const ofTypes: (types: string[]) => OperatorFunction<Action<unkno
 
 ## `storeValue` <a name="store-value"></a>
 
-Decorator function used store the state value in a <a href="https://rxjs.dev/api/index/class/ReplaySubject" target="_blank" rel="noreferrer">`ReplaySubject`</a> instead of an <a href="https://rxjs.dev/api/index/class/Observable" target="_blank" rel="noreferrer">`Observable`</a> so subsequent subscriptions can access the latest stored value.
+Modifier function used store the state value in a <a href="https://rxjs.dev/api/index/class/ReplaySubject" target="_blank" rel="noreferrer">`ReplaySubject`</a> instead of an <a href="https://rxjs.dev/api/index/class/Observable" target="_blank" rel="noreferrer">`Observable`</a> so subsequent subscriptions can access the latest stored value.
 
-Also add's a `destroy` action method to be called to teardown any Reactable decorated with `storeValue`.
+Also add's a `destroy` action method to be called to teardown any Reactable modified with `storeValue`.
 
 ```typescript
 interface DestroyAction {
