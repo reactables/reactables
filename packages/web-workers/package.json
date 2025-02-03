@@ -1,6 +1,6 @@
 {
   "name": "@reactables/web-workers",
-  "description": "Web Worker Decorators for Reactables",
+  "description": "Web Worker converters for Reactables",
   "main": "dist/index.js",
   "files": [
     "dist"

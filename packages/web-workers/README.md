@@ -2,7 +2,7 @@
 
 ## Description
 
-Decorator functions `toWorker` and `fromWorker` to use Reactables in Web Workers
+Converter functions `toWorker` and `fromWorker` to use Reactables in Web Workers
 
 [See docs at https://reactables.github.io/reactables/](https://reactables.github.io/reactables/)
 

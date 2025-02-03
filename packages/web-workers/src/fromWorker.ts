@@ -50,7 +50,7 @@ export const fromWorker = <State, Actions>(worker: Worker, config?: SourcesAndPr
               dest[key] = source[key] as unknown;
               assignActions(source[key], dest[key] as unknown as ActionMap, stack.concat(key));
             } else {
-              // Check if there is a destroy action to handle Reactables decorated with `storeValue`
+              // Check if there is a destroy action to handle Reactables d with `storeValue`
               let storeValueDestroyFunc: () => void;
 
               if (key === 'destroy' && typeof dest[key] === 'function') {
@@ -62,7 +62,7 @@ export const fromWorker = <State, Actions>(worker: Worker, config?: SourcesAndPr
                * to the worker
                */
               dest[key] = (payload?: unknown) => {
-                //If there is a destroy action (from storeValue decorator), call it
+                //If there is a destroy action (from storeValue modifier), call it
                 storeValueDestroyFunc?.();
 
                 // Notify worker of action invoked
