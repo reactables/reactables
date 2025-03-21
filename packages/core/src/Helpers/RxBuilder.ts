@@ -5,6 +5,7 @@ import { HubFactory } from '../Factories/HubFactory';
 import { Reactable } from '../Models/Reactable';
 import { Effect } from '../Models/Effect';
 import { Action, ScopedEffects } from '../Models/Action';
+import { storeValue, DestroyAction } from './storeValue';
 
 export interface EffectsAndSources {
   effects?: Effect<unknown, unknown>[];
@@ -21,7 +22,6 @@ export const RxBuilder = <T, S extends Cases<T>>({
   effects,
   sources = [],
   debug = false,
-  storeValue = false,
   ...sliceConfig
 }: RxConfig<T, S>) => {
   const { reducer, actions } = createSlice(sliceConfig);
@@ -68,9 +68,9 @@ export const RxBuilder = <T, S extends Cases<T>>({
     ]),
   ) as { [K in keyof S]: (payload: unknown) => void };
 
-  return [
-    hub.store({ reducer, debug, storeValue, name: sliceConfig.name }),
+  return storeValue([
+    hub.store({ reducer, debug, name: sliceConfig.name }),
     actionsResult,
     hub.messages$,
-  ] as Reactable<T, { [K in keyof S]: (payload?: unknown) => void }>;
+  ]) as Reactable<T, { [K in keyof S]: (payload?: unknown) => void } & DestroyAction>;
 };
