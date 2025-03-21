@@ -1,12 +1,17 @@
 import { combineLatest, Observable, merge, ObservedValueOf } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Action, Reactable } from '../Models';
+import { DestroyAction } from './storeValue';
 
 export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
   sourceReactables: T,
 ) => {
   const { states, actions, actions$ } = Object.entries(sourceReactables).reduce(
     (acc, [key, [state$, actions, actions$]]) => {
+      const destroy = () => {
+        (actions as DestroyAction).destroy();
+        acc.actions.destroy();
+      };
       return {
         states: {
           ...acc.states,
@@ -15,6 +20,7 @@ export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
         actions: {
           ...acc.actions,
           [key as keyof T]: actions as { [K in keyof T]: T[K][1] },
+          destroy,
         },
         actions$: actions$
           ? acc.actions$.concat(
@@ -30,7 +36,11 @@ export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
     },
     {
       states: {} as { [K in keyof T]: T[K][0] },
-      actions: {} as { [K in keyof T]: T[K][1] },
+      actions: {
+        destroy: () => {
+          undefined;
+        },
+      } as { [K in keyof T]: T[K][1] } & DestroyAction,
       actions$: [] as Observable<Action<unknown>>[],
     },
   );
