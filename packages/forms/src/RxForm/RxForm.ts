@@ -7,6 +7,7 @@ import {
   Effect,
   ScopedEffects,
   ActionMap,
+  DestroyAction,
 } from '@reactables/core';
 import { filter, skip } from 'rxjs/operators';
 import { buildFormState } from '../Helpers/buildFormState';
@@ -238,7 +239,7 @@ const createReactable = <T extends CustomReducers<S>, S>(
     ...otherOptions,
   });
 
-  const [state$] = RxBuilder({
+  const [state$, hub2Actions] = RxBuilder({
     sources: [buildHub2Source(hub1State$, initialBaseState).pipe(skip(initialFormState ? 1 : 0))],
     initialState: initialFormState || (null as Form<unknown>),
     name: `Stage 2 ${name ? name : 'rxForm'}`,
@@ -257,9 +258,15 @@ const createReactable = <T extends CustomReducers<S>, S>(
     },
   });
 
+  const destroy = () => {
+    hub1Actions.destroy();
+    hub2Actions.destroy();
+  };
+
   return [
     state$.pipe(filter((form) => form !== null)),
-    hub1Actions as { [K in keyof T]: (payload?) => void } & RxFormActions,
+    { ...hub1Actions, destroy } as { [K in keyof T]: (payload?) => void } & RxFormActions &
+      DestroyAction,
     hub1Actions$,
   ];
 };
