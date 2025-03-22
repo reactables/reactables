@@ -35,7 +35,7 @@ import { markControlAsTouched } from '../Reducers/Hub1/markControlAsTouched';
 import { markControlAsUntouched } from '../Reducers/Hub1/markControlAsUntouched';
 import { resetControl } from '../Reducers/Hub1/resetControl';
 import { asyncValidation } from '../Reducers/Hub2/asyncValidation';
-import { asyncValidationResponseSuccess } from '../Reducers/Hub2/asyncValidationResponseSuccess';
+import { asyncValidationResponse } from '../Reducers/Hub2/asyncValidationResponse';
 import { formChange } from '../Reducers/Hub2/formChange';
 import { BaseControl, Form, BaseFormState } from '../Models/Controls';
 import { getScopedEffectsForControl } from '../Helpers/addAsyncValidationEffects';
@@ -247,14 +247,15 @@ const createReactable = <T extends CustomReducers<S>, S>(
     storeValue,
     reducers: {
       formChange,
-      asyncValidation: {
-        reducer: asyncValidation,
+      asyncValidationEffect: {
+        reducer: (state) => state,
         effects: (control: BaseControl<unknown>) => ({
           key: control.key,
           effects: getScopedEffectsForControl(control, providers),
         }),
       },
-      asyncValidationResponseSuccess,
+      asyncValidation,
+      asyncValidationResponse,
     },
   });
 

@@ -1,3 +1,3 @@
 export { formChange } from './formChange';
 export { asyncValidation } from './asyncValidation';
-export { asyncValidationResponseSuccess } from './asyncValidationResponseSuccess';
+export { asyncValidationResponse } from './asyncValidationResponse';
