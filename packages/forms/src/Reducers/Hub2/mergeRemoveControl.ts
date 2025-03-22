@@ -58,7 +58,7 @@ export const mergeRemoveControl = <T>(
           ...existingControl,
           ...baseControl,
           errors,
-          valid: selfValid && childrenValid && !existingControl.pending,
+          valid: selfValid && childrenValid,
           childrenValid,
         },
       };

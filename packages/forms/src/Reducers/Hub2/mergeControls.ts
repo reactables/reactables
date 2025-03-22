@@ -65,7 +65,7 @@ export const mergeControls = <T>(
         [formKey]: {
           ...newControl,
           errors,
-          valid: selfValid && childrenValid && !newControl.pending,
+          valid: selfValid && childrenValid,
           childrenValid,
         },
       };

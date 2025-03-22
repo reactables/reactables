@@ -133,7 +133,7 @@ describe('RxForm', () => {
             root: {
               asyncValidateInProgress: { 0: true },
               pending: true,
-              valid: false,
+              valid: true,
             },
           },
           d: {
@@ -183,21 +183,21 @@ describe('RxForm', () => {
           d: {
             emergencyContacts: {
               pending: true,
-              valid: false,
+              valid: true,
               asyncValidateInProgress: { 0: true },
             },
           },
           e: {
             'emergencyContacts.1': {
               pending: true,
-              valid: false,
+              valid: true,
               asyncValidateInProgress: { 0: true },
             },
           },
           f: {
             'emergencyContacts.1.email': {
               pending: true,
-              valid: false,
+              valid: true,
               asyncValidateInProgress: { 0: true, 1: true },
             },
           },
@@ -411,11 +411,11 @@ describe('RxForm', () => {
               'person.address.addressContacts.0.email': { value: 'homer@homer.com' },
             },
             c: {
-              root: { pending: true, valid: false },
+              root: { pending: true, valid: true },
               'person.address.addressContacts.0.email': {
                 value: 'homer@homer.com',
                 pending: true,
-                valid: false,
+                valid: true,
                 asyncValidateInProgress: { 0: true },
               },
             },
@@ -426,89 +426,6 @@ describe('RxForm', () => {
                 pending: false,
                 valid: false,
                 asyncValidateInProgress: { 0: false },
-              },
-            },
-          });
-        });
-      });
-
-      it('should keep valid states false when still pending', () => {
-        testScheduler.run(({ expectObservable, cold }) => {
-          const [state$, { updateValues }] = RxForm(['noError', 'noError2']);
-
-          subscription = cold('-b', {
-            b: () => updateValues(updatePayload),
-          }).subscribe((action) => {
-            action();
-          });
-
-          expectObservable(state$).toBe('a(bc) 246ms d 49ms e', {
-            a: {},
-            b: {
-              root: {
-                value: {
-                  person: {
-                    name: 'some guy',
-                    address: {
-                      address: '123 any street',
-                      city: 'some city',
-                      state: 'some state',
-                      zip: '12345',
-                      addressContacts: [{ email: 'homer@homer.com' }],
-                    },
-                  },
-                },
-              },
-              person: {
-                value: {
-                  name: 'some guy',
-                  address: {
-                    address: '123 any street',
-                    city: 'some city',
-                    state: 'some state',
-                    zip: '12345',
-                    addressContacts: [{ email: 'homer@homer.com' }],
-                  },
-                },
-              },
-            },
-            c: {
-              root: { pending: true, valid: false },
-              person: { pending: true, valid: false },
-              'person.address': { pending: true, valid: false },
-              'person.address.addressContacts': { pending: true, valid: false },
-              'person.address.addressContacts.0': { pending: true, valid: false },
-              'person.address.addressContacts.0.email': {
-                value: 'homer@homer.com',
-                pending: true,
-                valid: false,
-                asyncValidateInProgress: { 0: true, 1: true },
-              },
-            },
-            d: {
-              root: { pending: true, valid: false },
-              person: { pending: true, valid: false },
-              'person.address': { pending: true, valid: false },
-              'person.address.addressContacts': { pending: true, valid: false },
-              'person.address.addressContacts.0': { pending: true, valid: false },
-              'person.address.addressContacts.0.email': {
-                value: 'homer@homer.com',
-                pending: true,
-                valid: false,
-                asyncValidateInProgress: { 0: false, 1: true },
-              },
-            },
-            e: {
-              root: { pending: false, valid: true },
-              person: { pending: false, valid: true },
-              'person.address': { pending: false, valid: true },
-              'person.address.addressContacts': { pending: false, valid: true },
-              'person.address.addressContacts.0': { pending: false, valid: true },
-              'person.address.addressContacts.0.email': {
-                value: 'homer@homer.com',
-                pending: false,
-                valid: true,
-                asyncValidateInProgress: { 0: false, 1: false },
               },
             },
           });

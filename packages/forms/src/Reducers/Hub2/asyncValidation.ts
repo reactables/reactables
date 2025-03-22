@@ -15,7 +15,6 @@ export const asyncValidation = <T>(
       [getFormKey(control.controlRef)]: {
         ...control,
         pending: true,
-        valid: false,
         asyncValidateInProgress: isChangedControl
           ? {
               ...control.config.asyncValidators.reduce(

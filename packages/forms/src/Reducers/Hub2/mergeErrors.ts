@@ -41,7 +41,7 @@ export const mergeErrors = <T>(form: Form<T>): Form<T> => {
         [key]: {
           ...control,
           errors,
-          valid: selfValid && childrenValid && !control.pending,
+          valid: selfValid && childrenValid,
           childrenValid,
         },
       };
