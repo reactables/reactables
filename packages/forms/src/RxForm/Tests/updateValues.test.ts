@@ -13,7 +13,6 @@ describe('RxForm', () => {
 
   beforeEach(() => {
     testScheduler = new TestScheduler((actual, expected) => {
-      // console.log(actual);
       expect(actual).toMatchObject(expected);
     });
   });
@@ -121,8 +120,9 @@ describe('RxForm', () => {
           action();
         });
 
-        expectObservable(state$).toBe('a(bc) 246ms d', {
+        expectObservable(state$).toBe('a(zbc) 245ms d', {
           a: {},
+          z: {},
           b: {
             root: {
               value: 'new@email.com',
@@ -251,7 +251,6 @@ describe('RxForm', () => {
           {
             providers: {
               validators: Validators,
-              asyncValidators: AsyncValidators,
               normalizers: { numbersOnly: (value: string) => value.replace(/\D/g, '') },
             },
           },
@@ -380,8 +379,9 @@ describe('RxForm', () => {
             action();
           });
 
-          expectObservable(state$).toBe('a(bc) 246ms d', {
+          expectObservable(state$).toBe('a(zbc) 245ms d', {
             a: {},
+            z: {},
             b: {
               root: {
                 value: {
