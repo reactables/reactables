@@ -13,6 +13,7 @@ describe('RxForm', () => {
 
   beforeEach(() => {
     testScheduler = new TestScheduler((actual, expected) => {
+      // console.log(actual);
       expect(actual).toMatchObject(expected);
     });
   });
@@ -174,8 +175,13 @@ describe('RxForm', () => {
           action();
         });
 
-        expectObservable(state$).toBe('a(bcdef) 243ms g 49ms h 49ms i 49ms (jk)', {
+        expectObservable(state$).toBe('a(zyxwvbcdef) 238ms g 49ms h 49ms i 49ms (jk)', {
           a: {},
+          z: {},
+          y: {},
+          x: {},
+          w: {},
+          v: {},
           b: { 'emergencyContacts.1.email': { value: 'moechanged@email.com' } },
           c: {
             root: { pending: true, valid: false, asyncValidateInProgress: { 0: true } },
