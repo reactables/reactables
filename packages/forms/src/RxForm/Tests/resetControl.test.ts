@@ -159,9 +159,14 @@ describe('RxForm', () => {
         }).subscribe((action) => action());
 
         expectObservable(state$).toBe(
-          'a(bcdef) 243ms g 49ms h 49ms i 49ms (jk) 97ms (lmnop) 243ms q 49ms r 49ms s 49ms (tu)',
+          'a(zyxwvbcdef) 238ms g 49ms h 49ms i 49ms (jk) 97ms (ABCDElmnop) 238ms q 49ms r 49ms s 49ms (tu)',
           {
             a: {},
+            z: {},
+            y: {},
+            x: {},
+            w: {},
+            v: {},
             b: {},
             c: {
               root: { pending: true, asyncValidateInProgress: { 0: true } },
@@ -219,7 +224,11 @@ describe('RxForm', () => {
                 asyncValidatorErrors: { uniqueFirstAndLastName: true },
               },
             },
-
+            A: {},
+            B: {},
+            C: {},
+            D: {},
+            E: {},
             l: {},
             m: {
               root: { pending: true, asyncValidateInProgress: { 0: true } },
