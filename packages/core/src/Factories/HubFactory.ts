@@ -11,7 +11,10 @@ const getScopedEffectSignature = (actionType: string, key: string | number) =>
 
 export const HubFactory = ({ effects, sources = [] }: HubConfig = {}): Hub => {
   const dispatcher$ = new ReplaySubject<Action<unknown>>(1);
-  const inputStream$ = merge(dispatcher$, ...sources.map((source) => source.pipe(shareReplay(1))));
+  const inputStream$ = merge(
+    dispatcher$,
+    ...sources.map((source) => source.pipe(shareReplay({ bufferSize: 1, refCount: true }))),
+  );
 
   const genericEffects =
     effects?.reduce((result: Observable<Action<unknown>>[], effect) => {
