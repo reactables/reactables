@@ -1,5 +1,5 @@
 import { of } from 'rxjs';
-import { delay, map } from 'rxjs/operators';
+import { delay, map, debounceTime } from 'rxjs/operators';
 import { ValidatorAsyncFn } from '../Models/Validators';
 
 export const uniqueEmail: ValidatorAsyncFn = (control$) => {
@@ -29,3 +29,13 @@ export const uniqueFirstAndLastName: ValidatorAsyncFn = (control$) => {
 export const blacklistedDoctorType: ValidatorAsyncFn = (control$) => {
   return control$.pipe(map(() => of({ blacklistedDoctorType: true }).pipe(delay(500))));
 };
+
+export const debouncedUniqueName: ValidatorAsyncFn = (control$) =>
+  control$.pipe(
+    debounceTime(500),
+    map(() =>
+      of({
+        debouncedUnniqueName: true,
+      }).pipe(delay(250)),
+    ),
+  );

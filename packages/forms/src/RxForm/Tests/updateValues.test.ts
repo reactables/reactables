@@ -147,6 +147,79 @@ describe('RxForm', () => {
       });
     });
 
+    it('should perform async validation and set pending state on FC with a debounced time', () => {
+      testScheduler.run(({ expectObservable, cold }) => {
+        const [state$, { updateValues }] = build(control(['', null, 'debouncedUniqueName']), {
+          providers: { validators: Validators, asyncValidators: AsyncValidators },
+        });
+
+        subscription = cold('-b----c----d', {
+          b: () =>
+            updateValues({
+              value: 'new',
+              controlRef: [],
+            }),
+          c: () =>
+            updateValues({
+              value: 'newN',
+              controlRef: [],
+            }),
+          d: () =>
+            updateValues({
+              value: 'newName',
+              controlRef: [],
+            }),
+        }).subscribe((action) => {
+          action();
+        });
+
+        expectObservable(state$).toBe('a(zb)-(yc)-(xd) 496ms e 249ms f', {
+          a: {},
+          z: {},
+          b: {
+            root: {
+              value: 'new',
+              dirty: true,
+              pending: false,
+              valid: true,
+            },
+          },
+          y: {},
+          c: {
+            root: {
+              value: 'newN',
+              dirty: true,
+              pending: false,
+              valid: true,
+            },
+          },
+          x: {},
+          d: {
+            root: {
+              value: 'newName',
+              dirty: true,
+              pending: false,
+              valid: true,
+            },
+          },
+          e: {
+            root: {
+              asyncValidateInProgress: { 0: true },
+              pending: true,
+              valid: true,
+            },
+          },
+          f: {
+            root: {
+              asyncValidateInProgress: { 0: false },
+              pending: false,
+              valid: false,
+            },
+          },
+        });
+      });
+    });
+
     it('should emit async validation actions for multiple form controls and all ancestors', () => {
       testScheduler.run(({ expectObservable, cold }) => {
         const [state$, { updateValues }] = build(
