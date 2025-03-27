@@ -13,6 +13,7 @@ export const HubFactory = ({ effects, sources = [] }: HubConfig = {}): Hub => {
   const dispatcher$ = new ReplaySubject<Action<unknown>>(1);
   const inputStream$ = merge(
     dispatcher$,
+    // We need to hook this up to the destory action
     ...sources.map((source) => source.pipe(shareReplay({ bufferSize: 1, refCount: true }))),
   );
 
