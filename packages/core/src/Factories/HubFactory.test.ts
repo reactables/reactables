@@ -318,7 +318,7 @@ describe('HubFactory', () => {
 
     it('create an observable and emit initial value', () => {
       testScheduler.run(({ expectObservable }) => {
-        const state$ = hub.store({ reducer });
+        const { state$ } = hub.store({ reducer });
 
         expectObservable(state$).toBe('a', { a: initialState });
       });
@@ -326,7 +326,7 @@ describe('HubFactory', () => {
 
     it('should response to messages and update', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const state$ = hub.store({ reducer });
+        const { state$ } = hub.store({ reducer });
         const action = increment();
         subscription = cold('-a-b-c', {
           a: action,

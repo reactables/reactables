@@ -1,6 +1,6 @@
 import { Hub, HubConfig, StoreConfig } from '../Models/Hub';
-import { Observable, ReplaySubject, merge } from 'rxjs';
-import { filter, tap, map, mergeAll, scan, pairwise, startWith } from 'rxjs/operators';
+import { Observable, ReplaySubject, Subject, merge } from 'rxjs';
+import { filter, tap, map, mergeAll, scan, pairwise, startWith, takeUntil } from 'rxjs/operators';
 import { Action } from '../Models/Action';
 import { share, shareReplay } from 'rxjs/operators';
 import { Effect } from '../Models/Effect';
@@ -10,11 +10,13 @@ const getScopedEffectSignature = (actionType: string, key: string | number) =>
   `type: ${actionType}, scoped: true${key ? `,key:${key}` : ''}`;
 
 export const HubFactory = ({ effects, sources = [] }: HubConfig = {}): Hub => {
+  const destroy$ = new Subject<void>();
+
   const dispatcher$ = new ReplaySubject<Action<unknown>>(1);
   const inputStream$ = merge(
     dispatcher$,
     // We need to hook this up to the destory action
-    ...sources.map((source) => source.pipe(shareReplay({ bufferSize: 1, refCount: true }))),
+    ...sources.map((source) => source.pipe(takeUntil(destroy$), shareReplay(1))),
   );
 
   const genericEffects =
@@ -120,8 +122,17 @@ export const HubFactory = ({ effects, sources = [] }: HubConfig = {}): Hub => {
       }),
       map((pair) => pair[1] as T),
     );
+    const replaySubject = new ReplaySubject<T>(1);
 
-    return state$;
+    state$.pipe(takeUntil(destroy$)).subscribe((state) => replaySubject.next(state));
+
+    return {
+      state$: replaySubject,
+      destroy: () => {
+        destroy$.next();
+        destroy$.complete();
+      },
+    };
   };
 
   return {
