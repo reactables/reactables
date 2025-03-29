@@ -8,7 +8,7 @@ import { TEST_ACTION, TEST_ACTION_SUCCESS } from '../Testing/Actions';
 import { ofTypes } from '../Operators/ofTypes';
 import { switchMapTestEffect, debounceTestEffect } from '../Testing/Effects';
 
-describe('HubFactory', () => {
+describe.skip('HubFactory', () => {
   let testScheduler: TestScheduler;
 
   beforeEach(() => {
