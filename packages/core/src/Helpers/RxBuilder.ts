@@ -38,6 +38,7 @@ export const RxBuilder = <T, S extends Cases<T>>({
     );
   }
 
+  // Add applicable effects to source actions
   sources = sources.map((action$) =>
     action$.pipe(
       map((action) => {

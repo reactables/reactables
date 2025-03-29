@@ -16,7 +16,7 @@ describe('createSlice', () => {
       },
     });
     const {
-      actions: { increment, decrement, reset, setCounter },
+      actionCreators: { increment, decrement, reset, setCounter },
       reducer,
     } = counterSlice;
     const initialState = reducer();
