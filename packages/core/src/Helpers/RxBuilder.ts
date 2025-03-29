@@ -12,6 +12,7 @@ const getScopedEffectSignature = (actionType: string, key: string | number) =>
   `type: ${actionType}, scoped: true${key ? `,key:${key}` : ''}`;
 
 export interface EffectsAndSources {
+  effects?: Effect<unknown, unknown>[];
   sources?: Observable<Action<unknown>>[] | { [key: string]: Observable<unknown> };
 }
 
@@ -22,6 +23,7 @@ export interface RxConfig<T, S extends Cases<T>> extends SliceConfig<T, S>, Effe
 }
 
 export const RxBuilder = <T, S extends Cases<T>>({
+  effects,
   sources = [],
   debug = false,
   ...sliceConfig
@@ -29,7 +31,7 @@ export const RxBuilder = <T, S extends Cases<T>>({
   /**
    * CREATE REDUCERS AND ACTION CREATORS
    */
-  const { reducer, actionCreators } = createSlice(sliceConfig);
+  const { reducer, actions } = createSlice(sliceConfig);
 
   // Check sources and see if need to add effects
   if (!Array.isArray(sources)) {
@@ -71,8 +73,14 @@ export const RxBuilder = <T, S extends Cases<T>>({
 
   const inputStream$ = merge(
     dispatcher$,
+    // We need to hook this up to the destory action
     ...sources.map((source) => source.pipe(takeUntil(destroy$), shareReplay(1))),
   );
+
+  const genericEffects =
+    effects?.reduce((result: Observable<Action<unknown>>[], effect) => {
+      return result.concat(inputStream$.pipe(effect));
+    }, []) || [];
 
   // Dictionary of action streams
   const scopedEffectsDict: { [key: string]: Effect<unknown, unknown>[] } = {};
@@ -112,13 +120,13 @@ export const RxBuilder = <T, S extends Cases<T>>({
     mergeAll(),
   );
 
-  const actions$ = merge(inputStream$, mergedScopedEffects).pipe(share());
+  const messages$ = merge(inputStream$, mergedScopedEffects, ...genericEffects).pipe(share());
 
   const debugName = `[RX NAME] ${sliceConfig.name || 'undefined'}\n`;
 
   const seedState = sliceConfig.initialState !== undefined ? sliceConfig.initialState : reducer();
 
-  const stateEvents$ = actions$.pipe(
+  const state$ = messages$.pipe(
     tap((action) => {
       debug && console.log(debugName, '[ACTION]', action, '\n');
     }),
@@ -171,13 +179,13 @@ export const RxBuilder = <T, S extends Cases<T>>({
     }),
     map((pair) => pair[1] as T),
   );
-  const storedState$ = new ReplaySubject<T>(1);
+  const replaySubject = new ReplaySubject<T>(1);
 
-  stateEvents$.pipe(takeUntil(destroy$)).subscribe((state) => storedState$.next(state));
+  state$.pipe(takeUntil(destroy$)).subscribe((state) => replaySubject.next(state));
 
-  const actions = {
+  const actionsResult = {
     ...(Object.fromEntries(
-      Object.entries(actionCreators).map(([key, actionCreator]) => [
+      Object.entries(actions).map(([key, actionCreator]) => [
         key,
         (payload: unknown) => {
           dispatcher$.next(actionCreator(payload));
@@ -190,7 +198,7 @@ export const RxBuilder = <T, S extends Cases<T>>({
     },
   };
 
-  return [storedState$, actions, actions$] as Reactable<
+  return [replaySubject, actionsResult, messages$] as Reactable<
     T,
     { [K in keyof S]: (payload?: unknown) => void } & DestroyAction
   >;
