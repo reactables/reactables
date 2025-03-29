@@ -3,7 +3,6 @@ import { Subscription } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { FormControlConfig, FormArrayConfig } from '../../Models/Configs';
 import { config, emergencyContactConfigs } from '../../Testing/config';
-import { required, email } from '../../Validators/Validators';
 import { EmergencyContact } from '../../Testing/Models/EmergencyContact';
 import { asyncConfig } from '../../Testing/asyncConfig';
 import * as Validators from '../../Testing/Validators';
@@ -201,8 +200,13 @@ describe('RxForm', () => {
             }),
         }).subscribe((action) => action());
 
-        expectObservable(state$).toBe('a(bcdef)  243ms g 49ms h 49ms i 49ms (jk) ', {
+        expectObservable(state$).toBe('a(zyxwvbcdef) 238ms g 49ms h 49ms i 49ms (jk) ', {
           a: {},
+          z: {},
+          y: {},
+          x: {},
+          w: {},
+          v: {},
           b: {
             root: {
               value: {

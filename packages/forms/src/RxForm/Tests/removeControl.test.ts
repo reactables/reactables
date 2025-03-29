@@ -206,8 +206,10 @@ describe('RxForm', () => {
           removeControl(['emergencyContacts', 0]),
         );
 
-        expectObservable(state$).toBe('a(bcd) 345ms e 49ms f', {
+        expectObservable(state$).toBe('a(zybcd) 343ms e 49ms f', {
           a: {},
+          z: {},
+          y: {},
           b: {},
           c: {
             root: { pending: true, asyncValidateInProgress: { 0: true } },

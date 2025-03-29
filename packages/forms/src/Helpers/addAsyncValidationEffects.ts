@@ -1,43 +1,58 @@
-import { Observable } from 'rxjs';
+import { Observable, of, concat } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { Action, Effect } from '@reactables/core';
-import { map } from 'rxjs/operators';
+import { map, mergeMap } from 'rxjs/operators';
 import { BaseControl } from '../Models/Controls';
 import { ControlAsyncValidationResponse } from '../Models/Payloads';
 import { RxFormProviders } from '../RxForm/RxForm';
+import { ControlRef } from '../Models';
+
+type ControlScopedEffect<T> = Effect<BaseControl<T>, ControlAsyncValidationResponse | ControlRef>;
 
 export const getScopedEffectsForControl = <T>(
   formControl: BaseControl<T>,
   providers: RxFormProviders,
-): Effect<BaseControl<T>, ControlAsyncValidationResponse>[] => {
-  const { config, key } = formControl;
+): ControlScopedEffect<T>[] => {
+  const { config, key, controlRef } = formControl;
   const { asyncValidators } = config;
 
-  let scopedEffects: Effect<BaseControl<T>, ControlAsyncValidationResponse>[] = [];
+  let scopedEffects: ControlScopedEffect<T>[] = [];
 
   if (asyncValidators && asyncValidators.length) {
     scopedEffects = asyncValidators.reduce(
-      (
-        acc: Effect<BaseControl<T>, ControlAsyncValidationResponse>[],
-        asyncValidator,
-        validatorIndex,
-      ) => {
-        const effect: Effect<BaseControl<T>, ControlAsyncValidationResponse> = (
-          actions$: Observable<Action<BaseControl<T>>>,
-        ) => {
+      (acc: ControlScopedEffect<T>[], asyncValidator, validatorIndex) => {
+        const effect: ControlScopedEffect<T> = (actions$: Observable<Action<BaseControl<T>>>) => {
           if (!providers.asyncValidators[asyncValidator]) {
             throw `You have not provided an asyncValidator for "${asyncValidator}"`;
           }
           return actions$.pipe(
             map(({ payload: control }) => control),
             providers.asyncValidators[asyncValidator],
-            map((errors) => ({
-              type: 'asyncValidationResponseSuccess',
-              payload: {
-                key,
-                errors,
-                validatorIndex,
-              },
-            })),
+            mergeMap((errors$) => {
+              return concat(
+                of({ type: 'asyncValidation', payload: controlRef }),
+                errors$.pipe(
+                  map((errors) => ({
+                    type: 'asyncValidationResponse',
+                    payload: {
+                      key,
+                      errors,
+                      validatorIndex,
+                    },
+                  })),
+                  catchError(() =>
+                    of({
+                      type: 'asyncValidationResponse',
+                      payload: {
+                        key,
+                        errors: { asyncValidationApiError: true },
+                        validatorIndex,
+                      },
+                    }),
+                  ),
+                ),
+              );
+            }),
           );
         };
 
@@ -49,11 +64,11 @@ export const getScopedEffectsForControl = <T>(
   return scopedEffects;
 };
 
-export const getAsyncValidationActions = (formControls: BaseControl<unknown>[]) =>
+export const getAsyncValidationEffects = (formControls: BaseControl<unknown>[]) =>
   formControls.reduce((acc: Action<BaseControl<unknown>>[], control) => {
     if (!control.config.asyncValidators?.length) return acc;
 
-    const action = { type: 'asyncValidation', payload: control };
+    const action = { type: 'asyncValidationEffect', payload: control };
 
     return acc.concat(action);
   }, []);

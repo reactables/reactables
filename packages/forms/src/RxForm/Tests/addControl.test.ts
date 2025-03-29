@@ -79,8 +79,11 @@ describe('RxForm', () => {
             }),
         }).subscribe((action) => action());
 
-        expectObservable(state$).toBe('a(bcde) 394ms (fg) 96ms h', {
+        expectObservable(state$).toBe('a(zyxbcde) 391ms (fg) 96ms h', {
           a: {},
+          z: {},
+          y: {},
+          x: {},
           b: {
             root: {
               value: {

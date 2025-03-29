@@ -16,7 +16,7 @@ const getControlByKey = (key: string, form: Form<unknown>) => {
   return Object.values(form).find((control) => control.key === key);
 };
 
-export const asyncValidationResponseSuccess = <T>(
+export const asyncValidationResponse = <T>(
   form: Form<T>,
   { payload: { key, validatorIndex, errors } }: Action<ControlAsyncValidationResponse>,
 ): Form<T> => {

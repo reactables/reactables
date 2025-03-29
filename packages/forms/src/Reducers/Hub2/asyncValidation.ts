@@ -2,11 +2,11 @@ import { Action } from '@reactables/core';
 import { Form } from '../../Models/Controls';
 import { getAncestorControls } from '../../Helpers/getAncestorControls';
 import { getFormKey } from '../../Helpers/getFormKey';
-import { BaseControl } from '../../Models/Controls';
+import { ControlRef } from '../../Models';
 
 export const asyncValidation = <T>(
   form: Form<T>,
-  { payload: { controlRef } }: Action<BaseControl<unknown>>,
+  { payload: controlRef }: Action<ControlRef>,
 ): Form<T> => {
   const updatedSelfAndAncestors = getAncestorControls(controlRef, form).reduce((acc, control) => {
     const isChangedControl = getFormKey(control.controlRef) === getFormKey(controlRef);

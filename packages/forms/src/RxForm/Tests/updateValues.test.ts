@@ -120,8 +120,9 @@ describe('RxForm', () => {
           action();
         });
 
-        expectObservable(state$).toBe('a(bc) 246ms d', {
+        expectObservable(state$).toBe('a(zbc) 245ms d', {
           a: {},
+          z: {},
           b: {
             root: {
               value: 'new@email.com',
@@ -140,6 +141,79 @@ describe('RxForm', () => {
             root: {
               asyncValidateInProgress: { 0: false },
               pending: false,
+            },
+          },
+        });
+      });
+    });
+
+    it('should perform async validation and set pending state on FC with a debounced time', () => {
+      testScheduler.run(({ expectObservable, cold }) => {
+        const [state$, { updateValues }] = build(control(['', null, 'debouncedUniqueName']), {
+          providers: { validators: Validators, asyncValidators: AsyncValidators },
+        });
+
+        subscription = cold('-b----c----d', {
+          b: () =>
+            updateValues({
+              value: 'new',
+              controlRef: [],
+            }),
+          c: () =>
+            updateValues({
+              value: 'newN',
+              controlRef: [],
+            }),
+          d: () =>
+            updateValues({
+              value: 'newName',
+              controlRef: [],
+            }),
+        }).subscribe((action) => {
+          action();
+        });
+
+        expectObservable(state$).toBe('a(zb)-(yc)-(xd) 496ms e 249ms f', {
+          a: {},
+          z: {},
+          b: {
+            root: {
+              value: 'new',
+              dirty: true,
+              pending: false,
+              valid: true,
+            },
+          },
+          y: {},
+          c: {
+            root: {
+              value: 'newN',
+              dirty: true,
+              pending: false,
+              valid: true,
+            },
+          },
+          x: {},
+          d: {
+            root: {
+              value: 'newName',
+              dirty: true,
+              pending: false,
+              valid: true,
+            },
+          },
+          e: {
+            root: {
+              asyncValidateInProgress: { 0: true },
+              pending: true,
+              valid: true,
+            },
+          },
+          f: {
+            root: {
+              asyncValidateInProgress: { 0: false },
+              pending: false,
+              valid: false,
             },
           },
         });
@@ -174,8 +248,13 @@ describe('RxForm', () => {
           action();
         });
 
-        expectObservable(state$).toBe('a(bcdef) 243ms g 49ms h 49ms i 49ms (jk)', {
+        expectObservable(state$).toBe('a(zyxwvbcdef) 238ms g 49ms h 49ms i 49ms (jk)', {
           a: {},
+          z: {},
+          y: {},
+          x: {},
+          w: {},
+          v: {},
           b: { 'emergencyContacts.1.email': { value: 'moechanged@email.com' } },
           c: {
             root: { pending: true, valid: false, asyncValidateInProgress: { 0: true } },
@@ -245,7 +324,6 @@ describe('RxForm', () => {
           {
             providers: {
               validators: Validators,
-              asyncValidators: AsyncValidators,
               normalizers: { numbersOnly: (value: string) => value.replace(/\D/g, '') },
             },
           },
@@ -374,8 +452,9 @@ describe('RxForm', () => {
             action();
           });
 
-          expectObservable(state$).toBe('a(bc) 246ms d', {
+          expectObservable(state$).toBe('a(zbc) 245ms d', {
             a: {},
+            z: {},
             b: {
               root: {
                 value: {
