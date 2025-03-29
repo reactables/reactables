@@ -2,11 +2,14 @@ import { createSlice, SliceConfig, Cases } from './createSlice';
 import { Reactable } from '../Models/Reactable';
 import { Effect } from '../Models/Effect';
 import { Action, ScopedEffects } from '../Models/Action';
-import { DestroyAction } from './storeValue';
 import { Observable, ReplaySubject, Subject, merge } from 'rxjs';
 import { filter, tap, map, mergeAll, scan, pairwise, startWith, takeUntil } from 'rxjs/operators';
 import { share, shareReplay } from 'rxjs/operators';
 import jsonDiff, { Difference } from '../Helpers/jsonDiff';
+
+export interface DestroyAction {
+  destroy: () => void;
+}
 
 const getScopedEffectSignature = (actionType: string, key: string | number) =>
   `type: ${actionType}, scoped: true${key ? `,key:${key}` : ''}`;
