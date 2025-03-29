@@ -6,7 +6,7 @@ import { addEffects } from './addEffects';
 export type SingleActionReducer<T, S> = (state: T, action: Action<S>) => T;
 
 export interface Slice<T> {
-  actions: { [key: string]: ActionCreator<unknown> };
+  actionCreators: { [key: string]: ActionCreator<unknown> };
   reducer: Reducer<T>;
 }
 
@@ -64,6 +64,6 @@ export const createSlice = <T, S extends Cases<T>>(config: SliceConfig<T, S>) =>
 
   return {
     reducer,
-    actions,
+    actionCreators: actions,
   };
 };
