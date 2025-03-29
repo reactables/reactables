@@ -1,19 +1,16 @@
 import { Subscription } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { RxBuilder } from './RxBuilder';
-import { storeValue } from './storeValue';
 
-describe('storeValue', () => {
+describe('Reactable', () => {
   let testScheduler: TestScheduler;
 
-  const rxCounter = storeValue(
-    RxBuilder({
-      initialState: 0,
-      reducers: {
-        increment: (state) => state + 1,
-      },
-    }),
-  );
+  const rxCounter = RxBuilder({
+    initialState: 0,
+    reducers: {
+      increment: (state) => state + 1,
+    },
+  });
 
   beforeEach(() => {
     testScheduler = new TestScheduler((actual, expected) => {
