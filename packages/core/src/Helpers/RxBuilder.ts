@@ -180,7 +180,6 @@ export const RxBuilder = <T, S extends Cases<T>>({
   );
 
   const storedState$ = new ReplaySubject<T>(1);
-
   stateEvents$.pipe(takeUntil(destroy$)).subscribe((state) => storedState$.next(state));
 
   // Action methods for the UI to invoke state changes
