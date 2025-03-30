@@ -25,7 +25,7 @@ export const RxBuilder = <T, S extends Cases<T>>({
   ...sliceConfig
 }: RxConfig<T, S>) => {
   /**
-   * CREATE REDUCERS AND ACTION CREATORS
+   * CREATE MAIN REDUCER AND ACTION CREATORS
    */
   const { reducer, actionCreators } = createSlice(sliceConfig);
 
