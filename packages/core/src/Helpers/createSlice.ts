@@ -1,7 +1,17 @@
 import { Effect } from '../Models/Effect';
 import { Action, ActionCreator, ScopedEffects } from '../Models/Action';
-import { Reducer } from '../Models/Hub';
-import { addEffects } from './addEffects';
+
+export const addEffects = <T>(
+  actionCreator: ActionCreator<T>,
+  scopedEffects: (payload: T) => ScopedEffects<T>,
+): ActionCreator<T> => {
+  return (payload?: T) => ({
+    ...actionCreator(payload),
+    scopedEffects: scopedEffects(payload),
+  });
+};
+
+export type Reducer<T> = (state?: T, action?: Action<unknown>) => T;
 
 export type SingleActionReducer<T, S> = (state: T, action: Action<S>) => T;
 
