@@ -25,13 +25,11 @@ export const RxBuilder = <T, S extends Cases<T>>({
   ...sliceConfig
 }: RxConfig<T, S>) => {
   /**
-   * Create reducers and action creators
+   * CREATE REDUCERS AND ACTION CREATORS
    */
   const { reducer, actionCreators } = createSlice(sliceConfig);
 
-  /**
-   * Add effects to incoming source actions
-   */
+  // Add effects to incoming source actions
   sources = sources.map((action$) =>
     action$.pipe(
       map((action) => {
@@ -57,23 +55,27 @@ export const RxBuilder = <T, S extends Cases<T>>({
   );
 
   /**
-   * Create hub and store
+   * CREATE HUB AND STORE
    */
+
+  // Teardown subject
   const destroy$ = new Subject<void>();
 
+  // Dispatcher for the UI to push state updates
   const dispatcher$ = new ReplaySubject<Action<unknown>>(1);
 
-  const inputStream$ = merge(
+  // All incoming actions
+  const incomingActions$ = merge(
     dispatcher$,
     ...sources.map((source) => source.pipe(takeUntil(destroy$), shareReplay(1))),
   );
 
-  /**
-   * Dictionary of action streams
-   */
+  // Dictionary of effects scoped to actions & key (if provided)
   const scopedEffectsDict: { [key: string]: Effect<unknown, unknown>[] } = {};
 
-  const mergedScopedEffects = inputStream$.pipe(
+  // Registers scoped effects to the dictionary.
+  const mergedScopedEffects$ = incomingActions$.pipe(
+    // Listen for scoped effects not yet registered in "scopedEffectsDict"
     filter(({ type, scopedEffects }) => {
       const hasEffects = Boolean(scopedEffects && scopedEffects.effects.length);
 
@@ -82,16 +84,18 @@ export const RxBuilder = <T, S extends Cases<T>>({
         scopedEffectsDict[getScopedEffectSignature(type, scopedEffects.key)] === undefined
       );
     }),
+    // Register the new scoped effect
     tap(({ type, scopedEffects: { key, effects } }) => {
       scopedEffectsDict[getScopedEffectSignature(type, key)] = effects;
     }),
+    // Once effects are registered, merge them into the `mergeScopedEffects$` stream for the store to receive.
     map(({ type, scopedEffects: { key, effects } }) => {
       const signature = getScopedEffectSignature(type, key);
 
       const pipedEffects = effects.reduce(
         (acc: Observable<Action<unknown>>[], effect) =>
           acc.concat(
-            inputStream$.pipe(
+            incomingActions$.pipe(
               filter(
                 (initialAction) =>
                   getScopedEffectSignature(initialAction.type, initialAction.scopedEffects?.key) ===
@@ -108,12 +112,13 @@ export const RxBuilder = <T, S extends Cases<T>>({
     mergeAll(),
   );
 
-  const actions$ = merge(inputStream$, mergedScopedEffects).pipe(share());
-
   const debugName = `[RX NAME] ${sliceConfig.name || 'undefined'}\n`;
-
   const seedState = sliceConfig.initialState !== undefined ? sliceConfig.initialState : reducer();
 
+  // All actions received by the store
+  const actions$ = merge(incomingActions$, mergedScopedEffects$).pipe(share());
+
+  // State updates
   const stateEvents$ = actions$.pipe(
     tap((action) => {
       debug &&
@@ -123,6 +128,7 @@ export const RxBuilder = <T, S extends Cases<T>>({
     startWith(null, seedState),
     pairwise(),
     tap(([prevState, newState]) => {
+      // Debug Logging
       if (debug) {
         if (
           prevState &&
@@ -172,10 +178,12 @@ export const RxBuilder = <T, S extends Cases<T>>({
     }),
     map((pair) => pair[1] as T),
   );
+
   const storedState$ = new ReplaySubject<T>(1);
 
   stateEvents$.pipe(takeUntil(destroy$)).subscribe((state) => storedState$.next(state));
 
+  // Action methods for the UI to invoke state changes
   const actions = {
     ...(Object.fromEntries(
       Object.entries(actionCreators).map(([key, actionCreator]) => [
@@ -185,6 +193,7 @@ export const RxBuilder = <T, S extends Cases<T>>({
         },
       ]),
     ) as { [K in keyof S]: (payload: unknown) => void }),
+    // Destroy method to teardown reactable
     destroy: () => {
       destroy$.next();
       destroy$.complete();
