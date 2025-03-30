@@ -11,18 +11,13 @@ export interface DestroyAction {
   destroy: () => void;
 }
 
+export interface RxConfig<T, S extends Cases<T>> extends SliceConfig<T, S> {
+  debug?: boolean;
+  sources?: Observable<Action<unknown>>[];
+}
+
 const getScopedEffectSignature = (actionType: string, key: string | number) =>
   `type: ${actionType}, scoped: true${key ? `,key:${key}` : ''}`;
-
-export interface EffectsAndSources {
-  sources?: Observable<Action<unknown>>[] | { [key: string]: Observable<unknown> };
-}
-
-export interface RxConfig<T, S extends Cases<T>> extends SliceConfig<T, S>, EffectsAndSources {
-  debug?: boolean;
-  /**@deprecated Use storeValue modifier instead to add store value behaviour to reactable */
-  storeValue?: boolean;
-}
 
 export const RxBuilder = <T, S extends Cases<T>>({
   sources = [],
@@ -30,18 +25,13 @@ export const RxBuilder = <T, S extends Cases<T>>({
   ...sliceConfig
 }: RxConfig<T, S>) => {
   /**
-   * CREATE REDUCERS AND ACTION CREATORS
+   * Create reducers and action creators
    */
   const { reducer, actionCreators } = createSlice(sliceConfig);
 
-  // Check sources and see if need to add effects
-  if (!Array.isArray(sources)) {
-    sources = Object.entries(sources).map(([key, obs$]) =>
-      obs$.pipe(map((value) => ({ type: key, payload: value }))),
-    );
-  }
-
-  // Add applicable effects to source actions
+  /**
+   * Add effects to incoming source actions
+   */
   sources = sources.map((action$) =>
     action$.pipe(
       map((action) => {
@@ -67,7 +57,7 @@ export const RxBuilder = <T, S extends Cases<T>>({
   );
 
   /**
-   * CREATE HUB AND STORE
+   * Create hub and store
    */
   const destroy$ = new Subject<void>();
 
@@ -78,7 +68,9 @@ export const RxBuilder = <T, S extends Cases<T>>({
     ...sources.map((source) => source.pipe(takeUntil(destroy$), shareReplay(1))),
   );
 
-  // Dictionary of action streams
+  /**
+   * Dictionary of action streams
+   */
   const scopedEffectsDict: { [key: string]: Effect<unknown, unknown>[] } = {};
 
   const mergedScopedEffects = inputStream$.pipe(
@@ -124,7 +116,8 @@ export const RxBuilder = <T, S extends Cases<T>>({
 
   const stateEvents$ = actions$.pipe(
     tap((action) => {
-      debug && console.log(debugName, '[ACTION]', action, '\n');
+      debug &&
+        console.log(debugName, '[ACTION]', { type: action.type, payload: action.payload }, '\n');
     }),
     scan(reducer, seedState),
     startWith(null, seedState),
@@ -145,11 +138,11 @@ export const RxBuilder = <T, S extends Cases<T>>({
 
             console.log(
               debugName,
-              '[DIFF]',
-              Object.keys(difference).length ? difference : null,
-              '\n',
               '[STATE]',
               newState,
+              '\n',
+              '[DIFF]',
+              Object.keys(difference).length ? difference : null,
               '\n',
             );
           } catch (e) {
@@ -157,19 +150,23 @@ export const RxBuilder = <T, S extends Cases<T>>({
           }
         } else {
           const hasDiff = prevState !== newState;
-          console.log(
-            debugName,
-            '[DIFF]',
-            hasDiff
-              ? {
-                  oldValue: prevState as unknown,
-                  newValue: newState as unknown,
-                }
-              : null,
-            '\n',
-            '[STATE]',
-            newState,
-          );
+          try {
+            console.log(
+              debugName,
+              '\n',
+              '[STATE]',
+              newState,
+              '[DIFF]',
+              hasDiff
+                ? {
+                    oldValue: prevState as unknown,
+                    newValue: newState as unknown,
+                  }
+                : null,
+            );
+          } catch (e) {
+            console.log('[ERROR READING DIFF]', e, '\n', '[STATE]', newState);
+          }
         }
       }
     }),
