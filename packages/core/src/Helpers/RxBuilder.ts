@@ -1,38 +1,35 @@
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { createSlice, SliceConfig, Cases } from './createSlice';
-import { HubFactory } from '../Factories/HubFactory';
 import { Reactable } from '../Models/Reactable';
 import { Effect } from '../Models/Effect';
 import { Action, ScopedEffects } from '../Models/Action';
-import { DestroyAction } from './storeValue';
+import { Observable, ReplaySubject, Subject, merge } from 'rxjs';
+import { filter, tap, map, mergeAll, scan, pairwise, startWith, takeUntil } from 'rxjs/operators';
+import { share, shareReplay } from 'rxjs/operators';
+import jsonDiff, { Difference } from '../Helpers/jsonDiff';
 
-export interface EffectsAndSources {
-  effects?: Effect<unknown, unknown>[];
-  sources?: Observable<Action<unknown>>[] | { [key: string]: Observable<unknown> };
+export interface DestroyAction {
+  destroy: () => void;
 }
 
-export interface RxConfig<T, S extends Cases<T>> extends SliceConfig<T, S>, EffectsAndSources {
+export interface RxConfig<T, S extends Cases<T>> extends SliceConfig<T, S> {
   debug?: boolean;
-  /**@deprecated Use storeValue modifier instead to add store value behaviour to reactable */
-  storeValue?: boolean;
+  sources?: Observable<Action<unknown>>[];
 }
+
+const getScopedEffectSignature = (actionType: string, key: string | number) =>
+  `type: ${actionType}, scoped: true${key ? `,key:${key}` : ''}`;
 
 export const RxBuilder = <T, S extends Cases<T>>({
-  effects,
   sources = [],
   debug = false,
   ...sliceConfig
 }: RxConfig<T, S>) => {
-  const { reducer, actions } = createSlice(sliceConfig);
+  /**
+   * CREATE REDUCERS AND ACTION CREATORS
+   */
+  const { reducer, actionCreators } = createSlice(sliceConfig);
 
-  // Check sources and see if need to add effects
-  if (!Array.isArray(sources)) {
-    sources = Object.entries(sources).map(([key, obs$]) =>
-      obs$.pipe(map((value) => ({ type: key, payload: value }))),
-    );
-  }
-
+  // Add effects to incoming source actions
   sources = sources.map((action$) =>
     action$.pipe(
       map((action) => {
@@ -57,20 +54,152 @@ export const RxBuilder = <T, S extends Cases<T>>({
     ),
   );
 
-  const hub = HubFactory({ effects, sources });
+  /**
+   * CREATE HUB AND STORE
+   */
 
-  const { state$, destroy } = hub.store({ reducer, debug, name: sliceConfig.name });
+  // Teardown subject
+  const destroy$ = new Subject<void>();
 
-  const actionsResult = Object.fromEntries(
-    Object.entries(actions).map(([key, actionCreator]) => [
-      key,
-      (payload: unknown) => {
-        hub.dispatch(actionCreator(payload));
-      },
-    ]),
-  ) as { [K in keyof S]: (payload: unknown) => void };
+  // Dispatcher for the UI to push state updates
+  const dispatcher$ = new ReplaySubject<Action<unknown>>(1);
 
-  return [state$, { ...actionsResult, destroy }, hub.messages$] as Reactable<
+  // All incoming actions
+  const incomingActions$ = merge(
+    dispatcher$,
+    ...sources.map((source) => source.pipe(takeUntil(destroy$), shareReplay(1))),
+  );
+
+  // Dictionary of effects scoped to actions & key (if provided)
+  const scopedEffectsDict: { [key: string]: Effect<unknown, unknown>[] } = {};
+
+  // Registers scoped effects to the dictionary.
+  const mergedScopedEffects$ = incomingActions$.pipe(
+    // Listen for scoped effects not yet registered in "scopedEffectsDict"
+    filter(({ type, scopedEffects }) => {
+      const hasEffects = Boolean(scopedEffects && scopedEffects.effects.length);
+
+      return (
+        hasEffects &&
+        scopedEffectsDict[getScopedEffectSignature(type, scopedEffects.key)] === undefined
+      );
+    }),
+    // Register the new scoped effect
+    tap(({ type, scopedEffects: { key, effects } }) => {
+      scopedEffectsDict[getScopedEffectSignature(type, key)] = effects;
+    }),
+    // Once effects are registered, merge them into the `mergeScopedEffects$` stream for the store to receive.
+    map(({ type, scopedEffects: { key, effects } }) => {
+      const signature = getScopedEffectSignature(type, key);
+
+      const pipedEffects = effects.reduce(
+        (acc: Observable<Action<unknown>>[], effect) =>
+          acc.concat(
+            incomingActions$.pipe(
+              filter(
+                (initialAction) =>
+                  getScopedEffectSignature(initialAction.type, initialAction.scopedEffects?.key) ===
+                  signature,
+              ),
+              effect,
+            ),
+          ),
+        [],
+      );
+
+      return merge(...pipedEffects);
+    }),
+    mergeAll(),
+  );
+
+  const debugName = `[RX NAME] ${sliceConfig.name || 'undefined'}\n`;
+  const seedState = sliceConfig.initialState !== undefined ? sliceConfig.initialState : reducer();
+
+  // All actions received by the store
+  const actions$ = merge(incomingActions$, mergedScopedEffects$).pipe(share());
+
+  // State updates
+  const stateEvents$ = actions$.pipe(
+    tap((action) => {
+      debug &&
+        console.log(debugName, '[ACTION]', { type: action.type, payload: action.payload }, '\n');
+    }),
+    scan(reducer, seedState),
+    startWith(null, seedState),
+    pairwise(),
+    tap(([prevState, newState]) => {
+      // Debug Logging
+      if (debug) {
+        if (
+          prevState &&
+          typeof prevState === 'object' &&
+          newState &&
+          typeof newState === 'object'
+        ) {
+          try {
+            const reduceDiff = (diff: Difference[]) =>
+              diff.reduce((acc, change) => ({ ...acc, [change.path.join('|')]: change }), {});
+
+            const difference = reduceDiff(jsonDiff(prevState as object, newState as object));
+
+            console.log(
+              debugName,
+              '[STATE]',
+              newState,
+              '\n',
+              '[DIFF]',
+              Object.keys(difference).length ? difference : null,
+              '\n',
+            );
+          } catch (e) {
+            console.log('[ERROR READING DIFF]', e, '\n', '[STATE]', newState);
+          }
+        } else {
+          const hasDiff = prevState !== newState;
+          try {
+            console.log(
+              debugName,
+              '\n',
+              '[STATE]',
+              newState,
+              '[DIFF]',
+              hasDiff
+                ? {
+                    oldValue: prevState as unknown,
+                    newValue: newState as unknown,
+                  }
+                : null,
+            );
+          } catch (e) {
+            console.log('[ERROR READING DIFF]', e, '\n', '[STATE]', newState);
+          }
+        }
+      }
+    }),
+    map((pair) => pair[1] as T),
+  );
+
+  const storedState$ = new ReplaySubject<T>(1);
+  stateEvents$.pipe(takeUntil(destroy$)).subscribe((state) => storedState$.next(state));
+
+  // Action methods for the UI to invoke state changes
+  const actions = {
+    ...(Object.fromEntries(
+      Object.entries(actionCreators).map(([key, actionCreator]) => [
+        key,
+        (payload: unknown) => {
+          dispatcher$.next(actionCreator(payload));
+        },
+      ]),
+    ) as { [K in keyof S]: (payload: unknown) => void }),
+    // Destroy method to teardown reactable
+    destroy: () => {
+      destroy$.next();
+      destroy$.complete();
+    },
+  };
+
+  return [storedState$, actions, actions$] as Reactable<
     T,
     { [K in keyof S]: (payload?: unknown) => void } & DestroyAction
   >;

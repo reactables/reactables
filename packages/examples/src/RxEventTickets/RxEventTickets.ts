@@ -49,9 +49,12 @@ export const RxEventTickets = (
   // Create reactable for combining controls and price info.
   const [state$]: Reactable<EventTicketsState, unknown> = RxBuilder({
     // Add control changes as a source for second reactable
-    sources: { controlChange: rxControlsState$ },
+    sources: [
+      rxControlsState$.pipe(
+        map((controlsState) => ({ type: 'controlChange', payload: controlsState })),
+      ),
+    ],
     initialState,
-    storeValue: true,
     reducers: {
       controlChange: {
         reducer: (state, { payload }: Action<ControlState>) => ({

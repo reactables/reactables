@@ -2,7 +2,7 @@ import { Subscription } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { RxBuilder } from './RxBuilder';
 
-describe('Reactable', () => {
+describe('RxBuilder', () => {
   let testScheduler: TestScheduler;
 
   const rxCounter = RxBuilder({

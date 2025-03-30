@@ -1,4 +1,3 @@
-export { RxBuilder, EffectsAndSources, RxConfig } from './RxBuilder';
-export { DestroyAction } from './storeValue';
+export { RxBuilder, RxConfig, DestroyAction } from './RxBuilder';
 export { Cases } from './createSlice';
 export { combine } from './combine';

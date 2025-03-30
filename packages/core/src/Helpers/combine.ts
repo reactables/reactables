@@ -1,7 +1,7 @@
 import { combineLatest, Observable, merge, ObservedValueOf } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Action, Reactable } from '../Models';
-import { DestroyAction } from './storeValue';
+import { DestroyAction } from './RxBuilder';
 
 export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
   sourceReactables: T,
