@@ -346,7 +346,44 @@ describe('RxForm', () => {
       });
     });
 
-    it('should throw an error when updating form group and controls dont match', () => {});
+    fit('should throw an error when updating form group and controls dont match', () => {
+      testScheduler.run(({ expectObservable, cold }) => {
+        const [state$, { updateValues }] = build(
+          group({
+            controls: {
+              person: group({
+                controls: {
+                  firstName: control(['Homer', 'required']),
+                  lastName: control(['Simpson', 'required']),
+                },
+              }),
+            },
+          }),
+        );
+
+        subscription = cold('-b', {
+          b: () =>
+            updateValues({
+              controlRef: ['person'],
+              value: {
+                laName: '',
+              },
+            }),
+        }).subscribe((action) => {
+          action();
+        });
+
+        expectObservable(state$).toBe('ab', {
+          a: {
+            root: { value: { person: { lastName: 'Simpson' } }, valid: true },
+            person: { value: { firstName: 'Homer', lastName: 'Simpson' }, valid: true },
+            ['person.firstName']: { value: 'Homer', valid: true, errors: { required: false } },
+            ['person.lastName']: { value: 'Simpson', valid: true, errors: { required: false } },
+          },
+          b: {},
+        });
+      });
+    });
 
     it('should throw an error when updating form array and controls dont match', () => {});
 
