@@ -365,9 +365,7 @@ describe('RxForm', () => {
           b: () =>
             updateValues({
               controlRef: ['person'],
-              value: {
-                laName: '',
-              },
+              value: ['hello'],
             }),
         }).subscribe((action) => {
           action();
