@@ -346,6 +346,10 @@ describe('RxForm', () => {
       });
     });
 
+    it('should throw an error when updating form group and controls dont match', () => {});
+
+    it('should throw an error when updating form array and controls dont match', () => {});
+
     it('should validate descendant control validators when the group value is set', () => {
       testScheduler.run(({ expectObservable, cold }) => {
         const [state$, { updateValues }] = build(
