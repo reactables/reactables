@@ -391,6 +391,111 @@ describe('RxForm', () => {
       });
     });
 
+    it('should update the value of an array control and descendants', () => {
+      testScheduler.run(({ expectObservable, cold }) => {
+        const user = () =>
+          group({
+            controls: {
+              firstName: control(['Homer', 'required']),
+              lastName: control(['Simpson', 'required']),
+              status: control(['active', 'required']),
+            },
+          });
+        const [state$, { updateValues }] = build(
+          group({
+            controls: {
+              users: array({
+                controls: [user(), user(), user()],
+              }),
+            },
+          }),
+        );
+
+        subscription = cold('-b', {
+          b: () =>
+            updateValues({
+              controlRef: ['users'],
+              value: [
+                {
+                  firstName: 'Homer',
+                  lastName: 'Simpson',
+                  status: 'cancelled',
+                },
+                {
+                  firstName: 'Homer',
+                  lastName: 'Simpson',
+                  status: 'cancelled',
+                },
+                {
+                  firstName: 'Homer',
+                  lastName: 'Simpson',
+                  status: 'cancelled',
+                },
+              ],
+            }),
+        }).subscribe((action) => {
+          action();
+        });
+
+        expectObservable(state$).toBe('ab', {
+          a: {
+            root: {
+              value: {
+                users: [
+                  {
+                    firstName: 'Homer',
+                    lastName: 'Simpson',
+                    status: 'active',
+                  },
+                  {
+                    firstName: 'Homer',
+                    lastName: 'Simpson',
+                    status: 'active',
+                  },
+                  {
+                    firstName: 'Homer',
+                    lastName: 'Simpson',
+                    status: 'active',
+                  },
+                ],
+              },
+              valid: true,
+            },
+          },
+          b: {
+            root: {
+              value: {
+                users: [
+                  {
+                    firstName: 'Homer',
+                    lastName: 'Simpson',
+                    status: 'cancelled',
+                  },
+                  {
+                    firstName: 'Homer',
+                    lastName: 'Simpson',
+                    status: 'cancelled',
+                  },
+                  {
+                    firstName: 'Homer',
+                    lastName: 'Simpson',
+                    status: 'cancelled',
+                  },
+                ],
+              },
+              valid: true,
+            },
+            'users.0': { value: { firstName: 'Homer', lastName: 'Simpson', status: 'cancelled' } },
+            'users.1': { value: { firstName: 'Homer', lastName: 'Simpson', status: 'cancelled' } },
+            'users.2': { value: { firstName: 'Homer', lastName: 'Simpson', status: 'cancelled' } },
+            'users.0.status': { value: 'cancelled' },
+            'users.1.status': { value: 'cancelled' },
+            'users.2.status': { value: 'cancelled' },
+          },
+        });
+      });
+    });
+
     describe('with nested descendants and async validation', () => {
       const RxForm = (asyncValidators: string[]) =>
         build(
@@ -511,33 +616,5 @@ describe('RxForm', () => {
         });
       });
     });
-
-    // TODO: More cases to handle
-    // it('should throw an error if trying to update a FG key that does not exist', () => {
-    //   const initialState: BaseForm<Contact> = buildFormState(config);
-    //   const value = {
-    //     firstName: 'Dr',
-    //     lastName: 'Ho',
-    //     email: 'dr@hoe.com',
-    //     xyz: 'not here',
-    //   };
-
-    //   const newStateFunc = () => {
-    //     updateValues(
-    //       initialState,
-    //       controlChange({ controlRef: ['doctorInfo'], value }),
-    //     );
-    //   };
-
-    //   expect(newStateFunc).toThrowError(
-    //     `The number of keys do not match form group: doctorInfo`,
-    //   );
-    // });
-
-    // it('should throw an error if trying to update a FA index that does not exist', () => {
-    //   expect(newStateFunc).toThrowError(
-    //     `The number of value items does not match the number of controls in array: emergencyContacts`,
-    //   );
-    // });
   });
 });

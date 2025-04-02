@@ -1,7 +1,6 @@
 import {
   RxBuilder,
   Reactable,
-  EffectsAndSources,
   Action,
   Reducer,
   Effect,
@@ -9,6 +8,7 @@ import {
   ActionMap,
   DestroyAction,
 } from '@reactables/core';
+import { Observable } from 'rxjs';
 import { filter, skip } from 'rxjs/operators';
 import { buildFormState } from '../Helpers/buildFormState';
 import {
@@ -133,12 +133,12 @@ export type CustomReducers<T> = {
   })]: CustomReducer;
 };
 
-export interface RxFormOptions extends EffectsAndSources {
+export interface RxFormOptions {
   reducers?: CustomReducers<unknown>;
   providers?: RxFormProviders;
   name?: string;
   debug?: boolean;
-  storeValue?: boolean;
+  sources?: Observable<Action<unknown>>[];
 }
 
 type NormalizerFunction<T> = (value: T) => T;
@@ -199,7 +199,7 @@ const createReactable = <T extends CustomReducers<S>, S>(
     asyncValidators: { ...options.providers?.asyncValidators },
   };
 
-  const { reducers, debug, name, storeValue, ...otherOptions } = options;
+  const { reducers, debug, name, ...otherOptions } = options;
 
   const customReducers = Object.entries(reducers || ({} as T)).reduce((acc, [key, _case]) => {
     const _reducer = typeof _case === 'function' ? _case : _case.reducer;
@@ -244,7 +244,6 @@ const createReactable = <T extends CustomReducers<S>, S>(
     initialState: initialFormState || (null as Form<unknown>),
     name: `Stage 2 ${name ? name : 'rxForm'}`,
     debug,
-    storeValue,
     reducers: {
       formChange,
       asyncValidationEffect: {

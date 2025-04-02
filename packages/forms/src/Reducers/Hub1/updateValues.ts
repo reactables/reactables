@@ -13,6 +13,12 @@ import { getAncestorControls } from '../../Helpers/getAncestorControls';
 import { RxFormProviders } from '../../RxForm/RxForm';
 import { controlRefCheck } from '../../Helpers/controlRefCheck';
 
+const checkKeys = (obj1: object, obj2: object): void => {
+  if (Object.keys(obj1).slice().sort().join() !== Object.keys(obj2).slice().sort().join()) {
+    throw 'Can not update value because keys are not the same.';
+  }
+};
+
 const UPDATE_DESCENDANT_VALUES = 'UPDATE_DESCENDANT_VALUES';
 const updateDescendantValues = <T>(
   form: BaseForm<T>,
@@ -25,14 +31,15 @@ const updateDescendantValues = <T>(
 
   const result = descendants.reduce((acc: BaseForm<T>, [key, control]) => {
     if (isChildRef(control.controlRef, controlRef)) {
-      const childValue = value[control.controlRef.at(-1)] as unknown;
-      const validatorErrors: FormErrors = getErrors(control, childValue, providers);
+      const newChildValue = value[control.controlRef.at(-1)] as unknown;
+      const validatorErrors: FormErrors = getErrors(control, newChildValue, providers);
+      const oldChildValue = control.value;
 
       const newControl = {
         ...control,
-        value: childValue,
+        value: newChildValue,
         validatorErrors,
-        dirty: !isEqual(childValue, control.pristineValue),
+        dirty: !isEqual(newChildValue, control.pristineValue),
       };
 
       acc = {
@@ -43,11 +50,12 @@ const updateDescendantValues = <T>(
       const { controls: configControls } = control.config as FormArrayConfig | FormGroupConfig;
 
       if (configControls) {
+        checkKeys(oldChildValue as object, newChildValue as object);
         acc = updateDescendantValues(
           acc,
           {
             type: UPDATE_DESCENDANT_VALUES,
-            payload: { controlRef: control.controlRef, value: childValue },
+            payload: { controlRef: control.controlRef, value: newChildValue },
           },
           providers,
         );
@@ -79,6 +87,7 @@ export const updateValues = <T>(
   const ctrlKey = getFormKey(controlRef);
 
   let newValue = value;
+  const oldValue = form[ctrlKey].value;
 
   const { config } = form[ctrlKey];
 
@@ -115,6 +124,7 @@ export const updateValues = <T>(
 
   // Update its descendants
   if (configControls) {
+    checkKeys(oldValue as object, newValue as object);
     const updatedDescendants = updateDescendantValues(
       result.form,
       {

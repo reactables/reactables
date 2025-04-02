@@ -20,6 +20,7 @@ Github: https://github.com/laidav
 ## v2 breaking changes
 
 ### Core
+- EffectsAndSources Interface removed
 - Effects option removed
 - effects and sources interface removed
 - sources now is only array signature, no dictionary
