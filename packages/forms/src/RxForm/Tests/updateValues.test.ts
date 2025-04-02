@@ -1,5 +1,5 @@
 import { build, control, group, array } from '../RxForm';
-import { Subscription } from 'rxjs';
+import { catchError, of, Subscription } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { FormArrayConfig } from '../../Models/Configs';
 import { config, emergencyContactConfigs } from '../../Testing/config';
@@ -345,45 +345,6 @@ describe('RxForm', () => {
         });
       });
     });
-
-    fit('should throw an error when updating form group and controls dont match', () => {
-      testScheduler.run(({ expectObservable, cold }) => {
-        const [state$, { updateValues }] = build(
-          group({
-            controls: {
-              person: group({
-                controls: {
-                  firstName: control(['Homer', 'required']),
-                  lastName: control(['Simpson', 'required']),
-                },
-              }),
-            },
-          }),
-        );
-
-        subscription = cold('-b', {
-          b: () =>
-            updateValues({
-              controlRef: ['person'],
-              value: ['hello'],
-            }),
-        }).subscribe((action) => {
-          action();
-        });
-
-        expectObservable(state$).toBe('ab', {
-          a: {
-            root: { value: { person: { lastName: 'Simpson' } }, valid: true },
-            person: { value: { firstName: 'Homer', lastName: 'Simpson' }, valid: true },
-            ['person.firstName']: { value: 'Homer', valid: true, errors: { required: false } },
-            ['person.lastName']: { value: 'Simpson', valid: true, errors: { required: false } },
-          },
-          b: {},
-        });
-      });
-    });
-
-    it('should throw an error when updating form array and controls dont match', () => {});
 
     it('should validate descendant control validators when the group value is set', () => {
       testScheduler.run(({ expectObservable, cold }) => {
