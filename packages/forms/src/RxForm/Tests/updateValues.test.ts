@@ -1,5 +1,5 @@
 import { build, control, group, array } from '../RxForm';
-import { catchError, of, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { FormArrayConfig } from '../../Models/Configs';
 import { config, emergencyContactConfigs } from '../../Testing/config';
@@ -391,6 +391,10 @@ describe('RxForm', () => {
       });
     });
 
+    it('should update the value of an array control and descendants', () => {});
+
+    //TODO: Test errors are thrown if keys don't match
+
     describe('with nested descendants and async validation', () => {
       const RxForm = (asyncValidators: string[]) =>
         build(
@@ -511,33 +515,5 @@ describe('RxForm', () => {
         });
       });
     });
-
-    // TODO: More cases to handle
-    // it('should throw an error if trying to update a FG key that does not exist', () => {
-    //   const initialState: BaseForm<Contact> = buildFormState(config);
-    //   const value = {
-    //     firstName: 'Dr',
-    //     lastName: 'Ho',
-    //     email: 'dr@hoe.com',
-    //     xyz: 'not here',
-    //   };
-
-    //   const newStateFunc = () => {
-    //     updateValues(
-    //       initialState,
-    //       controlChange({ controlRef: ['doctorInfo'], value }),
-    //     );
-    //   };
-
-    //   expect(newStateFunc).toThrowError(
-    //     `The number of keys do not match form group: doctorInfo`,
-    //   );
-    // });
-
-    // it('should throw an error if trying to update a FA index that does not exist', () => {
-    //   expect(newStateFunc).toThrowError(
-    //     `The number of value items does not match the number of controls in array: emergencyContacts`,
-    //   );
-    // });
   });
 });
