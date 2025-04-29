@@ -15,7 +15,9 @@
     "build-storybook": "npm run build-storybook --workspaces --if-present"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^25.0.0",
+    "@rollup/plugin-commonjs": "^28.0.3",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-typescript": "^12.1.2",
     "@storybook/addon-essentials": "^7.0.26",
     "@storybook/addon-interactions": "^7.0.26",
     "@storybook/addon-links": "^7.0.26",
@@ -51,8 +53,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
-    "rollup": "^2.60.2",
-    "rollup-plugin-typescript2": "^0.31.1",
+    "rollup": "^4.40.1",
     "rxjs": "^7.8.1",
     "storybook": "^7.0.26",
     "ts-jest": "^29.1.0",

@@ -1,7 +1,14 @@
 {
   "name": "@reactables/core",
+  "main": "./dist/index.cjs.js",
+  "module": "./dist/index.esm.js",
+  "type": "module",
   "description": "State management with rxjs",
-  "main": "dist/index.js",
+  "exports": {
+    "require": "./dist/index.cjs.js",
+    "import": "./dist/index.esm.js"
+  },
+  "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
