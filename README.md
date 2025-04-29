@@ -23,8 +23,8 @@ Github: https://github.com/laidav
 - EffectsAndSources Interface removed
 - Effects option removed
 - effects and sources interface removed
-- sources now is only array signature, no dictionary
 - all reactables now store their state and has a destroy action
+- sources now is only array signature, no dictionary
 
 ### Forms
 - valid state is now longer coupled with pending
