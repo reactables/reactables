@@ -4,6 +4,7 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "declaration": true,
+    "declarationDir": "./dist"
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*"]
 }
