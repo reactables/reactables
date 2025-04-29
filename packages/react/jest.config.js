@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   preset: 'ts-jest/presets/js-with-ts',
   testEnvironment: 'jsdom',
   testMatch: ['**/+(*.)+(spec|test).+(ts|js)?(x)'],
