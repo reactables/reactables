@@ -1,15 +1,21 @@
-import typescript from 'rollup-plugin-typescript2';
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import typescript from '@rollup/plugin-typescript'; // If you're using TypeScript
 
 export default {
-  input: ['src/index.ts'],
+  input: 'src/index.ts', // or .js if you're using plain JS
   output: [
     {
-      dir: 'dist',
-      entryFileNames: '[name].js',
+      file: 'dist/index.cjs',
       format: 'cjs',
-      exports: 'named',
+      sourcemap: true,
+    },
+    {
+      file: 'dist/index.js',
+      format: 'esm',
+      sourcemap: true,
     },
   ],
-  plugins: [typescript()],
+  plugins: [resolve(), commonjs(), typescript()],
   external: ['rxjs', 'rxjs/operators', '@reactables/core'],
 };

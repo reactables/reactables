@@ -15,11 +15,6 @@ export type Reducer<T> = (state?: T, action?: Action<unknown>) => T;
 
 export type SingleActionReducer<T, S> = (state: T, action: Action<S>) => T;
 
-export interface Slice<T> {
-  actionCreators: { [key: string]: ActionCreator<unknown> };
-  reducer: Reducer<T>;
-}
-
 export interface Cases<T> {
   [key: string]:
     | SingleActionReducer<T, unknown>

@@ -1,10 +1,17 @@
 {
   "name": "@reactables/react-forms",
   "description": "React forms with reactables",
-  "main": "dist/index.js",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "type": "module",
   "files": [
     "dist"
   ],
+  "exports": {
+    "require": "./dist/index.cjs",
+    "import": "./dist/index.js"
+  },
+  "types": "./dist/index.d.ts",
   "scripts": {
     "build": "rimraf dist && rollup --config",
     "lint": "eslint --max-warnings 0 \"src/**/*.ts*\" && prettier --check src/",

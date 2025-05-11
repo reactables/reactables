@@ -4,7 +4,8 @@
     "allowJs": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "declaration": true
+    "declaration": true,
+    "declarationDir": "./dist"
   },
   "include": ["src/**/*"]
 }
