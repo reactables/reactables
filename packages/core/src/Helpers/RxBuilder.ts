@@ -74,3 +74,23 @@ export const RxBuilder = <T, S extends Cases<T>>({
     hub.messages$,
   ] as Reactable<T, { [K in keyof S]: (payload?: unknown) => void }>;
 };
+interface CounterState {
+  count: number;
+}
+
+const initialState: CounterState = { count: 0 };
+
+const RxCounter = () =>
+  RxBuilder({
+    initialState,
+    reducers: {
+      increment: (state) => ({
+        count: state.count + 1,
+      }),
+      hi: (state) => state,
+    },
+  });
+
+const rxCounter = RxCounter();
+
+const [, actions] = rxCounter;

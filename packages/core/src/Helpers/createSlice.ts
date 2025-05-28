@@ -62,8 +62,14 @@ export const createSlice = <T, S extends Cases<T>>(config: SliceConfig<T, S>) =>
     return acc;
   }, {} as { [K in keyof S]: ActionCreator<unknown> });
 
+  const actionTypes = Object.keys(actions).reduce(
+    (acc, key) => ({ ...acc, [key]: key }),
+    {} as { [key in keyof S]: string },
+  );
+
   return {
     reducer,
     actions,
+    actionTypes,
   };
 };
