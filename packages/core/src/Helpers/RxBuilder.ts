@@ -9,6 +9,7 @@ import {
 } from '../Models/Reactable';
 import { Effect } from '../Models/Effect';
 import { Action, ScopedEffects } from '../Models/Action';
+import { combine } from './combine';
 
 export interface EffectsAndSources {
   effects?: Effect<unknown, unknown>[];
@@ -125,3 +126,15 @@ const [, toggleActions, toggleActions$] = RxToggle();
 toggleActions.setToggle(false);
 toggleActions.toggleOn();
 toggleActions$.types.setToggle;
+
+const RxCombined = () => {
+  const rxCounter = RxCounter();
+  const rxToggle = RxToggle();
+
+  return combine({
+    counter: rxCounter,
+    toggle: rxToggle,
+  });
+};
+
+const [combinedState, combinedActions, combinedActions$] = RxCombined();
