@@ -119,3 +119,9 @@ const RxToggle = () =>
       setToggle: (_, { payload }: Action<boolean>) => payload,
     },
   });
+
+const [, toggleActions, toggleActions$] = RxToggle();
+
+toggleActions.setToggle(false);
+toggleActions.toggleOn();
+toggleActions$.types.setToggle;
