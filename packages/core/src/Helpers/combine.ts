@@ -38,13 +38,16 @@ export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
         actionTypes: {
           ...acc.actionTypes,
           ...(() => {
-            const result = Object.keys(actions$?.types || []).reduce((acc, childKey) => {
-              const newKey = `[${key}] - ${childKey}`;
-              return {
-                ...acc,
-                [newKey]: newKey,
-              };
-            }, {});
+            const createKeys = <S extends Record<string, unknown>>(types: S) =>
+              Object.keys(types).reduce(<X extends string>(acc, childKey: X) => {
+                const newKey = `[${key}] - ${childKey}`;
+                return {
+                  ...acc,
+                  [newKey]: newKey,
+                } as { [K in keyof T as `[${string & K}] - ${X}`]: string };
+              }, {});
+
+            const result = createKeys(actions$.types);
             return result;
           })(),
         },
