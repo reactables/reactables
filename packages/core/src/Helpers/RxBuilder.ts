@@ -107,3 +107,15 @@ const [, actions, actions$] = RxCounter();
 actions.setCounter(3);
 
 actions$.types['some wierd reducer'];
+actions$.types.increment;
+
+const RxToggle = () =>
+  RxBuilder({
+    initialState: false,
+    reducers: {
+      toggle: (state) => !state,
+      toggleOn: () => true,
+      toggleOff: () => false,
+      setToggle: (_, { payload }: Action<boolean>) => payload,
+    },
+  });
