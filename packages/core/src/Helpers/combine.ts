@@ -1,12 +1,21 @@
 import { combineLatest, Observable, merge, ObservedValueOf } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Action, Reactable } from '../Models';
+import { ObservableWithActionTypes } from '../Models/Reactable';
 
 export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
   sourceReactables: T,
 ) => {
   const { states, actions, actions$ } = Object.entries(sourceReactables).reduce(
-    (acc, [key, [state$, actions, actions$]]) => {
+    <U, V>(
+      acc: {
+        states: { [K in keyof T]: T[K][0] };
+        actions: { [K in keyof T]: T[K][1] };
+        actions$: Observable<Action<unknown>>[];
+        actionTypes: { [key: string]: string };
+      },
+      [key, [state$, actions, actions$]]: [string, Reactable<U, V>],
+    ) => {
       return {
         states: {
           ...acc.states,
@@ -26,21 +35,42 @@ export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
               ),
             )
           : acc.actions$,
+        actionTypes: {
+          ...acc.actionTypes,
+          ...(() => {
+            const result = Object.keys(actions$?.types || []).reduce((acc, childKey) => {
+              const newKey = `[${key}] - ${childKey}`;
+              return {
+                ...acc,
+                [newKey]: newKey,
+              };
+            }, {});
+            return result;
+          })(),
+        },
       };
     },
     {
       states: {} as { [K in keyof T]: T[K][0] },
       actions: {} as { [K in keyof T]: T[K][1] },
       actions$: [] as Observable<Action<unknown>>[],
+      actionTypes: {} as { [key: string]: string },
+    } as {
+      states: { [K in keyof T]: T[K][0] };
+      actions: { [K in keyof T]: T[K][1] };
+      actions$: Observable<Action<unknown>>[];
+      actionTypes: { [key: string]: string };
     },
   );
   const states$ = combineLatest(states);
 
-  return [states$, actions, merge(...actions$)] as [
+  const mergedActions$ = merge(...actions$);
+
+  return [states$, actions, mergedActions$] as [
     Observable<{
       [K in keyof T]: ObservedValueOf<T[K][0]>;
     }>,
     { [K in keyof T]: T[K][1] },
-    Observable<Action<unknown>>,
+    ObservableWithActionTypes<Action<unknown>, T>,
   ];
 };
