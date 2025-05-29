@@ -38,16 +38,25 @@ export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
         actionTypes: {
           ...acc.actionTypes,
           ...(() => {
-            const createKeys = <S extends Record<string, unknown>>(types: S) =>
-              Object.keys(types).reduce(<X extends string>(acc, childKey: X) => {
-                const newKey = `[${key}] - ${childKey}`;
+            const createKeys = <S extends Record<string, unknown>, Z extends string>(
+              types: S,
+              parentKey: Z,
+            ) =>
+              Object.keys(types).reduce((acc, childKey: string) => {
+                const newKey = `[${parentKey}] - ${childKey}`;
                 return {
                   ...acc,
                   [newKey]: newKey,
-                } as { [K in keyof T as `[${string & K}] - ${X}`]: string };
-              }, {});
+                } as { [K in keyof S as `[${Z}] - ${string & K}`]: `[${Z}] - ${string & K}` };
+              }, {} as { [K in keyof S as `[${Z}] - ${string & K}`]: `[${Z}] - ${string & K}` });
 
-            const result = createKeys(actions$.types);
+            const result = createKeys(actions$.types, key);
+
+            const parentKey = 'parent';
+            const types = { 'send messag': 'send messag', failedme: 'failedme' };
+
+            const test = createKeys(types, parentKey);
+
             return result;
           })(),
         },
@@ -62,7 +71,7 @@ export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
       states: { [K in keyof T]: T[K][0] };
       actions: { [K in keyof T]: T[K][1] };
       actions$: Observable<Action<unknown>>[];
-      actionTypes: { [K in keyof any]: K };
+      actionTypes;
     },
   );
   const states$ = combineLatest(states);
