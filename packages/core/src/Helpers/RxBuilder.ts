@@ -5,11 +5,12 @@ import { HubFactory } from '../Factories/HubFactory';
 import {
   Reactable,
   ActionCreatorTypeFromReducer,
-  ObservableWithActionTypes,
+  ActionObservableWithTypes,
 } from '../Models/Reactable';
 import { Effect } from '../Models/Effect';
 import { Action, ScopedEffects } from '../Models/Action';
 import { combine } from './combine';
+import { createActionTypeString } from './createActionTypeString';
 
 export interface EffectsAndSources {
   effects?: Effect<unknown, unknown>[];
@@ -29,7 +30,7 @@ export const RxBuilder = <T, S extends Cases<T>>({
   storeValue = false,
   ...sliceConfig
 }: RxConfig<T, S>) => {
-  const { reducer, actions, actionTypes } = createSlice(sliceConfig);
+  const { reducer, actions } = createSlice(sliceConfig);
 
   // Check sources and see if need to add effects
   if (!Array.isArray(sources)) {
@@ -71,14 +72,16 @@ export const RxBuilder = <T, S extends Cases<T>>({
         hub.dispatch(actionCreator(payload));
       },
     ]),
-  ) as { [K in keyof S]: ActionCreatorTypeFromReducer<S[K]> } as ObservableWithActionTypes<T, S>;
+  ) as { [K in keyof S]: ActionCreatorTypeFromReducer<S[K]> };
 
-  actionsResult.types = actionTypes;
+  const actions$ = hub.messages$ as ActionObservableWithTypes;
+
+  actions$.types = createActionTypeString(actions);
 
   const rx = [
     hub.store({ reducer, debug, storeValue, name: sliceConfig.name }),
     actionsResult,
-    hub.messages$,
+    actions$,
   ] as Reactable<T, { [K in keyof S]: ActionCreatorTypeFromReducer<S[K]> }>;
 
   return rx;
@@ -138,4 +141,3 @@ const RxCombined = () => {
 };
 
 const [combinedState, combinedActions, combinedActions$] = RxCombined();
-combinedActions$.types;

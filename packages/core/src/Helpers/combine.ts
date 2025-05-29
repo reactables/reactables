@@ -1,7 +1,7 @@
 import { combineLatest, Observable, merge, ObservedValueOf } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Action, Reactable } from '../Models';
-import { ObservableWithActionTypes } from '../Models/Reactable';
+import { ActionObservableWithTypes } from '../Models/Reactable';
 import { createActionTypeString } from './createActionTypeString';
 
 export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
@@ -63,6 +63,6 @@ export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
       [K in keyof T]: ObservedValueOf<T[K][0]>;
     }>,
     { [K in keyof T]: T[K][1] },
-    ObservableWithActionTypes<Action<unknown>, T>,
+    ActionObservableWithTypes,
   ];
 };

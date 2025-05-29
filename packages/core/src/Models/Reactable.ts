@@ -7,15 +7,11 @@ export type ActionCreatorTypeFromReducer<T> = T extends (state) => unknown
   ? (payload: P) => void
   : never;
 
-export type ObservableWithActionTypes<T, S> = Observable<T> & {
-  types?: { [K in keyof S]: K };
+export type ActionObservableWithTypes = Observable<Action<unknown>> & {
+  types?: { [key: string]: string };
 };
 
-export type Reactable<T, S = ActionMap> = [
-  Observable<T>,
-  S,
-  ObservableWithActionTypes<Action<unknown>, S>?,
-];
+export type Reactable<T, S = ActionMap> = [Observable<T>, S, ActionObservableWithTypes?];
 
 export interface ActionMap {
   [key: string | number]: (payload?: unknown) => void | ActionMap;
