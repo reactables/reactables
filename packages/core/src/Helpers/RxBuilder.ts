@@ -74,7 +74,9 @@ export const RxBuilder = <T, S extends Cases<T>>({
     ]),
   ) as { [K in keyof S]: ActionCreatorTypeFromReducer<S[K]> };
 
-  const actions$ = hub.messages$ as ActionObservableWithTypes;
+  const types = createActionTypeString(actions);
+
+  const actions$ = hub.messages$ as ActionObservableWithTypes<typeof types>;
 
   actions$.types = createActionTypeString(actions);
 
@@ -82,7 +84,7 @@ export const RxBuilder = <T, S extends Cases<T>>({
     hub.store({ reducer, debug, storeValue, name: sliceConfig.name }),
     actionsResult,
     actions$,
-  ] as Reactable<T, { [K in keyof S]: ActionCreatorTypeFromReducer<S[K]> }>;
+  ] as Reactable<T, { [K in keyof S]: ActionCreatorTypeFromReducer<S[K]> }, typeof types>;
 
   return rx;
 };
@@ -141,3 +143,4 @@ const RxCombined = () => {
 };
 
 const [combinedState, combinedActions, combinedActions$] = RxCombined();
+combinedActions$;

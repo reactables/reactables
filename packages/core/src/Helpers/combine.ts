@@ -7,7 +7,7 @@ import { createActionTypeString } from './createActionTypeString';
 export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
   sourceReactables: T,
 ) => {
-  const { states, actions, actions$ } = Object.entries(sourceReactables).reduce(
+  const { states, actions, actions$, actionTypes } = Object.entries(sourceReactables).reduce(
     <U, V>(
       acc: {
         states: { [K in keyof T]: T[K][0] };
@@ -51,18 +51,19 @@ export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
       states: { [K in keyof T]: T[K][0] };
       actions: { [K in keyof T]: T[K][1] };
       actions$: Observable<Action<unknown>>[];
-      actionTypes;
+      actionTypes: Record<string, string>;
     },
   );
   const states$ = combineLatest(states);
 
-  const mergedActions$ = merge(...actions$);
+  const mergedActions$ = merge(...actions$) as ActionObservableWithTypes<typeof actionTypes>;
+  mergedActions$.types = actionTypes;
 
   return [states$, actions, mergedActions$] as [
     Observable<{
       [K in keyof T]: ObservedValueOf<T[K][0]>;
     }>,
     { [K in keyof T]: T[K][1] },
-    ActionObservableWithTypes,
+    ActionObservableWithTypes<typeof actionTypes>,
   ];
 };
