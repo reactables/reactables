@@ -96,5 +96,3 @@ const RxCounter = () =>
   });
 
 const rxCounter = RxCounter();
-
-const [, , actions$] = rxCounter;
