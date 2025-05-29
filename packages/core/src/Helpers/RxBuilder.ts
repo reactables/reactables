@@ -6,7 +6,7 @@ import { Reactable } from '../Models/Reactable';
 import { Effect } from '../Models/Effect';
 import { Action, ScopedEffects } from '../Models/Action';
 
-type PayloadTypeFromReducer<T> = T extends (state) => unknown
+type ActionCreatorTypeFromReducer<T> = T extends (state) => unknown
   ? () => void
   : T extends (state, action: Action<infer P>) => unknown
   ? (payload: P) => void
@@ -20,8 +20,11 @@ const setCounter = (_, action: Action<number>) => ({
   count: action.payload,
 });
 
-type IncrementAction = PayloadTypeFromReducer<typeof increment>;
-type SetCounterAction = PayloadTypeFromReducer<typeof setCounter>;
+const another = (state: unknown, action) => state;
+
+type IncrementAction = ActionCreatorTypeFromReducer<typeof increment>;
+type SetCounterAction = ActionCreatorTypeFromReducer<typeof setCounter>;
+type Another = ActionCreatorTypeFromReducer<typeof another>;
 
 export interface EffectsAndSources {
   effects?: Effect<unknown, unknown>[];
@@ -106,11 +109,9 @@ const RxCounter = () =>
   RxBuilder({
     initialState,
     reducers: {
-      increment: (state) => ({
-        count: state.count + 1,
-      }),
+      increment,
+      setCounter,
       hi: (state) => state,
-      setCounter: (state, action: Action<number>) => ({ count: action.payload }),
     },
   });
 
