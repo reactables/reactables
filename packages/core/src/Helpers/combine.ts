@@ -2,14 +2,7 @@ import { combineLatest, Observable, merge, ObservedValueOf } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Action, Reactable } from '../Models';
 import { ObservableWithActionTypes } from '../Models/Reactable';
-
-type ActionTypeString<S extends Record<string, unknown>, Z extends string> = Z extends undefined
-  ? {
-      [K in keyof S as `${string & K}`]: `${string & K}`;
-    }
-  : {
-      [K in keyof S as `[${Z}] - ${string & K}`]: `[${Z}] - ${string & K}`;
-    };
+import { createActionTypeString } from './createActionTypeString';
 
 export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
   sourceReactables: T,
@@ -45,29 +38,7 @@ export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
           : acc.actions$,
         actionTypes: {
           ...acc.actionTypes,
-          ...(() => {
-            const createKeys = <S extends Record<string, unknown>, Z extends string = undefined>(
-              types: S,
-              parentKey?: Z,
-            ) =>
-              Object.keys(types).reduce((acc, childKey: string) => {
-                const newKey = parentKey ? `[${parentKey}] - ${childKey}` : childKey;
-                return {
-                  ...acc,
-                  [newKey]: newKey,
-                } as ActionTypeString<S, Z>;
-              }, {} as ActionTypeString<S, Z>);
-
-            const result = createKeys(actions$.types, key);
-
-            const parentKey = 'parent';
-            const types = { 'send messag': 'send messag', failedme: 'failedme' };
-
-            const test = createKeys(types, parentKey);
-            const test2 = createKeys(types);
-
-            return result;
-          })(),
+          ...createActionTypeString(actions$.types, key),
         },
       };
     },
@@ -75,7 +46,7 @@ export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
       states: {} as { [K in keyof T]: T[K][0] },
       actions: {} as { [K in keyof T]: T[K][1] },
       actions$: [] as Observable<Action<unknown>>[],
-      actionTypes: {} as { [key: string]: string },
+      actionTypes: {},
     } as {
       states: { [K in keyof T]: T[K][0] };
       actions: { [K in keyof T]: T[K][1] };
