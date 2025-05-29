@@ -59,7 +59,7 @@ export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
       states: { [K in keyof T]: T[K][0] };
       actions: { [K in keyof T]: T[K][1] };
       actions$: Observable<Action<unknown>>[];
-      actionTypes: { [key: string]: string };
+      actionTypes: { [K in keyof any]: K };
     },
   );
   const states$ = combineLatest(states);
