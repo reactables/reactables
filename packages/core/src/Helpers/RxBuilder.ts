@@ -92,7 +92,7 @@ export const RxBuilder = <T, S extends Cases<T>>({
     hub.store({ reducer, debug, storeValue, name: sliceConfig.name }),
     actionsResult,
     hub.messages$,
-  ] as Reactable<T, { [K in keyof S]: (payload?: unknown) => void }>;
+  ] as Reactable<T, { [K in keyof S]: ActionCreatorTypeFromReducer<S[K]> }>;
 
   rx.actionTypes = actionTypes;
 
@@ -116,3 +116,7 @@ const RxCounter = () =>
   });
 
 const rxCounter = RxCounter();
+
+const [, actions] = rxCounter;
+
+actions.setCounter(3);
