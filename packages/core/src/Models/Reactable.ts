@@ -8,7 +8,7 @@ export type ActionCreatorTypeFromReducer<T> = T extends (state) => unknown
   : never;
 
 export type ObservableWithActionTypes<T, S> = Observable<T> & {
-  types?: { [K in keyof S]: string };
+  types?: { [K in keyof S]: K };
 };
 
 export type Reactable<T, S = ActionMap> = [

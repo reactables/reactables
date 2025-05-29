@@ -98,6 +98,7 @@ const RxCounter = () =>
         count: action.payload,
       }),
       hi: (state) => state,
+      'some wierd reducer': (state) => state,
     },
   });
 
@@ -105,4 +106,4 @@ const [, actions, actions$] = RxCounter();
 
 actions.setCounter(3);
 
-actions$.types.setCounter;
+actions$.types['some wierd reducer'];

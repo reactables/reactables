@@ -64,7 +64,7 @@ export const createSlice = <T, S extends Cases<T>>(config: SliceConfig<T, S>) =>
 
   const actionTypes = Object.keys(actions).reduce(
     (acc, key) => ({ ...acc, [key]: key }),
-    {} as { [key in keyof S]: string },
+    {} as { [K in keyof S]: K },
   );
 
   return {
