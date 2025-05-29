@@ -24,7 +24,7 @@ export const RxBuilder = <T, S extends Cases<T>>({
   storeValue = false,
   ...sliceConfig
 }: RxConfig<T, S>) => {
-  const { reducer, actions } = createSlice(sliceConfig);
+  const { reducer, actions, actionTypes } = createSlice(sliceConfig);
 
   // Check sources and see if need to add effects
   if (!Array.isArray(sources)) {
@@ -68,11 +68,15 @@ export const RxBuilder = <T, S extends Cases<T>>({
     ]),
   ) as { [K in keyof S]: (payload: unknown) => void };
 
-  return [
+  const rx = [
     hub.store({ reducer, debug, storeValue, name: sliceConfig.name }),
     actionsResult,
     hub.messages$,
   ] as Reactable<T, { [K in keyof S]: (payload?: unknown) => void }>;
+
+  rx.actionTypes = actionTypes;
+
+  return rx;
 };
 interface CounterState {
   count: number;
@@ -93,4 +97,4 @@ const RxCounter = () =>
 
 const rxCounter = RxCounter();
 
-const [, actions] = rxCounter;
+const [, , actions$] = rxCounter;
