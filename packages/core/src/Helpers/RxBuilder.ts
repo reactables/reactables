@@ -6,6 +6,23 @@ import { Reactable } from '../Models/Reactable';
 import { Effect } from '../Models/Effect';
 import { Action, ScopedEffects } from '../Models/Action';
 
+type PayloadTypeFromReducer<T> = T extends (state) => unknown
+  ? () => void
+  : T extends (state, action: Action<infer P>) => unknown
+  ? (payload: P) => void
+  : never;
+
+const increment = (state: { count: number }) => ({
+  count: state.count + 1,
+});
+
+const setCounter = (_, action: Action<number>) => ({
+  count: action.payload,
+});
+
+type IncrementAction = PayloadTypeFromReducer<typeof increment>;
+type SetCounterAction = PayloadTypeFromReducer<typeof setCounter>;
+
 export interface EffectsAndSources {
   effects?: Effect<unknown, unknown>[];
   sources?: Observable<Action<unknown>>[] | { [key: string]: Observable<unknown> };
@@ -78,6 +95,7 @@ export const RxBuilder = <T, S extends Cases<T>>({
 
   return rx;
 };
+
 interface CounterState {
   count: number;
 }
@@ -92,6 +110,7 @@ const RxCounter = () =>
         count: state.count + 1,
       }),
       hi: (state) => state,
+      setCounter: (state, action: Action<number>) => ({ count: action.payload }),
     },
   });
 
