@@ -2,29 +2,13 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { createSlice, SliceConfig, Cases } from './createSlice';
 import { HubFactory } from '../Factories/HubFactory';
-import { Reactable } from '../Models/Reactable';
+import {
+  Reactable,
+  ActionCreatorTypeFromReducer,
+  ObservableWithActionTypes,
+} from '../Models/Reactable';
 import { Effect } from '../Models/Effect';
 import { Action, ScopedEffects } from '../Models/Action';
-
-type ActionCreatorTypeFromReducer<T> = T extends (state) => unknown
-  ? () => void
-  : T extends (state, action: Action<infer P>) => unknown
-  ? (payload: P) => void
-  : never;
-
-const increment = (state: { count: number }) => ({
-  count: state.count + 1,
-});
-
-const setCounter = (_, action: Action<number>) => ({
-  count: action.payload,
-});
-
-const another = (state: unknown, action) => state;
-
-type IncrementAction = ActionCreatorTypeFromReducer<typeof increment>;
-type SetCounterAction = ActionCreatorTypeFromReducer<typeof setCounter>;
-type Another = ActionCreatorTypeFromReducer<typeof another>;
 
 export interface EffectsAndSources {
   effects?: Effect<unknown, unknown>[];
@@ -86,15 +70,15 @@ export const RxBuilder = <T, S extends Cases<T>>({
         hub.dispatch(actionCreator(payload));
       },
     ]),
-  ) as { [K in keyof S]: (payload: unknown) => void };
+  ) as { [K in keyof S]: ActionCreatorTypeFromReducer<S[K]> } as ObservableWithActionTypes<T, S>;
+
+  actionsResult.types = actionTypes;
 
   const rx = [
     hub.store({ reducer, debug, storeValue, name: sliceConfig.name }),
     actionsResult,
     hub.messages$,
   ] as Reactable<T, { [K in keyof S]: ActionCreatorTypeFromReducer<S[K]> }>;
-
-  rx.actionTypes = actionTypes;
 
   return rx;
 };
@@ -103,20 +87,22 @@ interface CounterState {
   count: number;
 }
 
-const initialState: CounterState = { count: 0 };
-
 const RxCounter = () =>
   RxBuilder({
-    initialState,
+    initialState: { count: 0 } as CounterState,
     reducers: {
-      increment,
-      setCounter,
+      increment: (state: { count: number }) => ({
+        count: state.count + 1,
+      }),
+      setCounter: (_, action: Action<number>) => ({
+        count: action.payload,
+      }),
       hi: (state) => state,
     },
   });
 
-const rxCounter = RxCounter();
-
-const [, actions] = rxCounter;
+const [, actions, actions$] = RxCounter();
 
 actions.setCounter(3);
+
+actions$.types.setCounter;
