@@ -3,6 +3,14 @@ import { map } from 'rxjs/operators';
 import { Action, Reactable } from '../Models';
 import { ObservableWithActionTypes } from '../Models/Reactable';
 
+type ActionTypeString<S extends Record<string, unknown>, Z extends string> = Z extends undefined
+  ? {
+      [K in keyof S as `${string & K}`]: `${string & K}`;
+    }
+  : {
+      [K in keyof S as `[${Z}] - ${string & K}`]: `[${Z}] - ${string & K}`;
+    };
+
 export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
   sourceReactables: T,
 ) => {
@@ -43,12 +51,12 @@ export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
               parentKey?: Z,
             ) =>
               Object.keys(types).reduce((acc, childKey: string) => {
-                const newKey = `[${parentKey}] - ${childKey}`;
+                const newKey = parentKey ? `[${parentKey}] - ${childKey}` : childKey;
                 return {
                   ...acc,
                   [newKey]: newKey,
-                } as { [K in keyof S as `[${Z}] - ${string & K}`]: `[${Z}] - ${string & K}` };
-              }, {} as { [K in keyof S as `[${Z}] - ${string & K}`]: `[${Z}] - ${string & K}` });
+                } as ActionTypeString<S, Z>;
+              }, {} as ActionTypeString<S, Z>);
 
             const result = createKeys(actions$.types, key);
 
@@ -56,6 +64,7 @@ export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
             const types = { 'send messag': 'send messag', failedme: 'failedme' };
 
             const test = createKeys(types, parentKey);
+            const test2 = createKeys(types);
 
             return result;
           })(),
