@@ -143,4 +143,10 @@ const RxCombined = () => {
 };
 
 const [combinedState, combinedActions, combinedActions$] = RxCombined();
-  combinedActions$.types.;
+
+const [, doubleCombinedActions, doubleCombinedActions$] = combine({
+  doubleCombined: RxCombined(),
+  counter: RxCounter(),
+});
+
+combinedActions$.types['[toggle] - toggleOn'];
