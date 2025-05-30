@@ -44,7 +44,6 @@ describe('RxBuilder', () => {
       });
 
     const [, , toggleActions$] = RxToggle();
-
     expect(toggleActions$.types).toEqual({
       toggle: 'toggle',
       toggleOn: 'toggleOn',
