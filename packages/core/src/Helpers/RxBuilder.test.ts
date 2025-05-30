@@ -103,5 +103,42 @@ describe('RxBuilder', () => {
       doubleCombined: RxCombined(),
       counter: RxCounter(),
     });
+
+    expect(tripleCombinedActions$.types).toEqual({
+      '[doubleCombined] - [toggle] - toggle': '[doubleCombined] - [toggle] - toggle',
+      '[doubleCombined] - [toggle] - toggleOn': '[doubleCombined] - [toggle] - toggleOn',
+      '[doubleCombined] - [toggle] - toggleOff': '[doubleCombined] - [toggle] - toggleOff',
+      '[doubleCombined] - [toggle] - setToggle': '[doubleCombined] - [toggle] - setToggle',
+      '[doubleCombined] - [counter] - increment': '[doubleCombined] - [counter] - increment',
+      '[doubleCombined] - [counter] - setCounter': '[doubleCombined] - [counter] - setCounter',
+      '[doubleCombined] - [counter] - hi': '[doubleCombined] - [counter] - hi',
+      '[doubleCombined] - [counter] - some wierd reducer':
+        '[doubleCombined] - [counter] - some wierd reducer',
+      '[counter] - increment': '[counter] - increment',
+      '[counter] - setCounter': '[counter] - setCounter',
+      '[counter] - hi': '[counter] - hi',
+      '[counter] - some wierd reducer': '[counter] - some wierd reducer',
+      '[tripleCombined] - [doubleCombined] - [toggle] - toggle':
+        '[tripleCombined] - [doubleCombined] - [toggle] - toggle',
+      '[tripleCombined] - [doubleCombined] - [toggle] - toggleOn':
+        '[tripleCombined] - [doubleCombined] - [toggle] - toggleOn',
+      '[tripleCombined] - [doubleCombined] - [toggle] - toggleOff':
+        '[tripleCombined] - [doubleCombined] - [toggle] - toggleOff',
+      '[tripleCombined] - [doubleCombined] - [toggle] - setToggle':
+        '[tripleCombined] - [doubleCombined] - [toggle] - setToggle',
+      '[tripleCombined] - [doubleCombined] - [counter] - increment':
+        '[tripleCombined] - [doubleCombined] - [counter] - increment',
+      '[tripleCombined] - [doubleCombined] - [counter] - setCounter':
+        '[tripleCombined] - [doubleCombined] - [counter] - setCounter',
+      '[tripleCombined] - [doubleCombined] - [counter] - hi':
+        '[tripleCombined] - [doubleCombined] - [counter] - hi',
+      '[tripleCombined] - [doubleCombined] - [counter] - some wierd reducer':
+        '[tripleCombined] - [doubleCombined] - [counter] - some wierd reducer',
+      '[tripleCombined] - [counter] - increment': '[tripleCombined] - [counter] - increment',
+      '[tripleCombined] - [counter] - setCounter': '[tripleCombined] - [counter] - setCounter',
+      '[tripleCombined] - [counter] - hi': '[tripleCombined] - [counter] - hi',
+      '[tripleCombined] - [counter] - some wierd reducer':
+        '[tripleCombined] - [counter] - some wierd reducer',
+    });
   });
 });
