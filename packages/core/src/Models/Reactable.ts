@@ -11,6 +11,7 @@ export type ActionObservableWithTypes<T extends Record<string, string>> = Observ
   Action<unknown>
 > & {
   types?: T;
+  ofTypes?: (types: Array<keyof T>) => Observable<Action<unknown>>;
 };
 
 export type Reactable<

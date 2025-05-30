@@ -1,4 +1,5 @@
 import { Observable } from 'rxjs';
+import { ofTypes } from '../Operators';
 import { map } from 'rxjs/operators';
 import { createSlice, SliceConfig, Cases } from './createSlice';
 import { HubFactory } from '../Factories/HubFactory';
@@ -78,6 +79,7 @@ export const RxBuilder = <T, S extends Cases<T>>({
   const actions$ = hub.messages$ as ActionObservableWithTypes<typeof types>;
 
   actions$.types = createActionTypeStringMap(actions);
+  actions$.ofTypes = (types) => actions$.pipe(ofTypes(types));
 
   const rx = [
     hub.store({ reducer, debug, storeValue, name: sliceConfig.name }),

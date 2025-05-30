@@ -1,4 +1,5 @@
 import { combineLatest, Observable, merge, ObservedValueOf } from 'rxjs';
+import { ofTypes } from '../Operators';
 import { map } from 'rxjs/operators';
 import { Action, Reactable } from '../Models';
 import { ActionObservableWithTypes } from '../Models/Reactable';
@@ -53,6 +54,7 @@ export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
 
   const mergedActions$ = merge(...actions$) as ActionObservableWithTypes<typeof actionTypes>;
   mergedActions$.types = actionTypes;
+  mergedActions$.ofTypes = (types) => mergedActions$.pipe(ofTypes(types));
 
   return [states$, actions, mergedActions$] as [
     Observable<{
