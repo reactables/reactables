@@ -1,3 +1,35 @@
+import { Reactable } from '../Models';
+
+type CombinedActionStringMap<T> = T extends Record<
+  infer Z extends string,
+  Reactable<unknown, unknown, infer P>
+>
+  ? {
+      [K in keyof T as `${P extends Record<infer Q, string>
+        ? `[${Z & string}] ${Q & string}` & string
+        : never}`]: `test`;
+    }
+  : never;
+
+export const combineActionTypeStringMaps = <T extends Record<string, Reactable<unknown, unknown>>>(
+  sourceReactables: T,
+) => {
+  const result = Object.entries(sourceReactables).reduce(
+    <S, U, V extends Record<string, string>>(
+      acc: CombinedActionStringMap<T>,
+      [key, [, , actions$]]: [string, Reactable<S, U, V>],
+    ) => {
+      return {
+        ...acc,
+        ...createActionTypeString(actions$.types, key),
+      };
+    },
+    {} as CombinedActionStringMap<T>,
+  );
+
+  return result;
+};
+
 export type ActionTypeString<
   S extends Record<string, unknown>,
   Z extends string,

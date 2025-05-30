@@ -2,18 +2,17 @@ import { combineLatest, Observable, merge, ObservedValueOf } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Action, Reactable } from '../Models';
 import { ActionObservableWithTypes } from '../Models/Reactable';
-import { createActionTypeString } from './createActionTypeString';
+import { combineActionTypeStringMaps } from './createActionTypeString';
 
 export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
   sourceReactables: T,
 ) => {
-  const { states, actions, actions$, actionTypes } = Object.entries(sourceReactables).reduce(
+  const { states, actions, actions$ } = Object.entries(sourceReactables).reduce(
     <U, V>(
       acc: {
         states: { [K in keyof T]: T[K][0] };
         actions: { [K in keyof T]: T[K][1] };
         actions$: Observable<Action<unknown>>[];
-        actionTypes: { [key: string]: string };
       },
       [key, [state$, actions, actions$]]: [string, Reactable<U, V>],
     ) => {
@@ -36,25 +35,21 @@ export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
               ),
             )
           : acc.actions$,
-        actionTypes: {
-          ...acc.actionTypes,
-          ...createActionTypeString(actions$.types, key),
-        },
       };
     },
     {
       states: {} as { [K in keyof T]: T[K][0] },
       actions: {} as { [K in keyof T]: T[K][1] },
       actions$: [] as Observable<Action<unknown>>[],
-      actionTypes: {},
     } as {
       states: { [K in keyof T]: T[K][0] };
       actions: { [K in keyof T]: T[K][1] };
       actions$: Observable<Action<unknown>>[];
-      actionTypes: Record<string, string>;
     },
   );
   const states$ = combineLatest(states);
+
+  const actionTypes = combineActionTypeStringMaps(sourceReactables);
 
   const mergedActions$ = merge(...actions$) as ActionObservableWithTypes<typeof actionTypes>;
   mergedActions$.types = actionTypes;

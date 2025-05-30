@@ -143,4 +143,4 @@ const RxCombined = () => {
 };
 
 const [combinedState, combinedActions, combinedActions$] = RxCombined();
-combinedActions$;
+  combinedActions$.types.;
