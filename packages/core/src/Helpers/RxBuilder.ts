@@ -10,7 +10,7 @@ import {
 import { Effect } from '../Models/Effect';
 import { Action, ScopedEffects } from '../Models/Action';
 import { combine } from './combine';
-import { createActionTypeString } from './createActionTypeString';
+import { createActionTypeStringMap } from './createActionTypeStringMap';
 
 export interface EffectsAndSources {
   effects?: Effect<unknown, unknown>[];
@@ -74,11 +74,11 @@ export const RxBuilder = <T, S extends Cases<T>>({
     ]),
   ) as { [K in keyof S]: ActionCreatorTypeFromReducer<S[K]> };
 
-  const types = createActionTypeString(actions);
+  const types = createActionTypeStringMap(actions);
 
   const actions$ = hub.messages$ as ActionObservableWithTypes<typeof types>;
 
-  actions$.types = createActionTypeString(actions);
+  actions$.types = createActionTypeStringMap(actions);
 
   const rx = [
     hub.store({ reducer, debug, storeValue, name: sliceConfig.name }),

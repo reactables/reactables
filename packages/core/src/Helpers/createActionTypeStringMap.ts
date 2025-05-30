@@ -18,7 +18,7 @@ export const combineActionTypeStringMaps = <T extends Record<string, Reactable<u
     ) => {
       return {
         ...acc,
-        ...createActionTypeString(actions$.types, key),
+        ...createActionTypeStringMap(actions$.types, key),
       };
     },
     {} as CombinedActionStringMap<T>,
@@ -37,7 +37,7 @@ export type ActionTypeString<
   : {
       [K in keyof S as `[${Z}] - ${string & K}`]: `[${Z}] - ${string & K}`;
     };
-export const createActionTypeString = <
+export const createActionTypeStringMap = <
   S extends Record<string, unknown>,
   Z extends string = undefined,
 >(
@@ -51,9 +51,3 @@ export const createActionTypeString = <
       [newKey]: newKey,
     } as ActionTypeString<S, Z>;
   }, {} as ActionTypeString<S, Z>);
-
-const parentKey = 'parent';
-const types = { 'send messag': 'send messag', failedme: 'failedme' };
-
-const test = createActionTypeString(types, parentKey);
-const test2 = createActionTypeString(types);

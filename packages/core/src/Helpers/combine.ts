@@ -2,7 +2,7 @@ import { combineLatest, Observable, merge, ObservedValueOf } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Action, Reactable } from '../Models';
 import { ActionObservableWithTypes } from '../Models/Reactable';
-import { combineActionTypeStringMaps } from './createActionTypeString';
+import { combineActionTypeStringMaps } from './createActionTypeStringMap';
 
 export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
   sourceReactables: T,
