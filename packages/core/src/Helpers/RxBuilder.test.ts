@@ -82,7 +82,21 @@ describe('RxBuilder', () => {
       });
     const [, , doubleCombinedActions$] = RxDoubleCombined();
 
-    doubleCombinedActions$.types;
+    expect(doubleCombinedActions$.types).toEqual({
+      '[doubleCombined] - [toggle] - toggle': '[doubleCombined] - [toggle] - toggle',
+      '[doubleCombined] - [toggle] - toggleOn': '[doubleCombined] - [toggle] - toggleOn',
+      '[doubleCombined] - [toggle] - toggleOff': '[doubleCombined] - [toggle] - toggleOff',
+      '[doubleCombined] - [toggle] - setToggle': '[doubleCombined] - [toggle] - setToggle',
+      '[doubleCombined] - [counter] - increment': '[doubleCombined] - [counter] - increment',
+      '[doubleCombined] - [counter] - setCounter': '[doubleCombined] - [counter] - setCounter',
+      '[doubleCombined] - [counter] - hi': '[doubleCombined] - [counter] - hi',
+      '[doubleCombined] - [counter] - some wierd reducer':
+        '[doubleCombined] - [counter] - some wierd reducer',
+      '[counter] - increment': '[counter] - increment',
+      '[counter] - setCounter': '[counter] - setCounter',
+      '[counter] - hi': '[counter] - hi',
+      '[counter] - some wierd reducer': '[counter] - some wierd reducer',
+    });
 
     const [, , tripleCombinedActions$] = combine({
       tripleCombined: RxDoubleCombined(),
