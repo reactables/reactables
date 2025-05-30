@@ -113,7 +113,7 @@ const [, actions, actions$] = RxCounter();
 actions.setCounter(3);
 
 actions$.types['some wierd reducer'];
-actions$.types.increment;
+actions$.types.setCounter;
 
 const RxToggle = () =>
   RxBuilder({
@@ -130,7 +130,7 @@ const [, toggleActions, toggleActions$] = RxToggle();
 
 toggleActions.setToggle(false);
 toggleActions.toggleOn();
-toggleActions$.types.setToggle;
+toggleActions$.types;
 
 const RxCombined = () => {
   const rxCounter = RxCounter();
@@ -144,9 +144,21 @@ const RxCombined = () => {
 
 const [combinedState, combinedActions, combinedActions$] = RxCombined();
 
-const [, doubleCombinedActions, doubleCombinedActions$] = combine({
+combinedActions$.types;
+
+const RxDoubleCombined = () =>
+  combine({
+    doubleCombined: RxCombined(),
+    counter: RxCounter(),
+  });
+const [, doubleCombinedActions, doubleCombinedActions$] = RxDoubleCombined();
+
+doubleCombinedActions$.types;
+
+const [, tripleCombinedActions, tripleCombinedActions$] = combine({
+  tripleCombined: RxDoubleCombined(),
   doubleCombined: RxCombined(),
   counter: RxCounter(),
 });
 
-combinedActions$.types['[toggle] - toggleOn'];
+tripleCombinedActions$.types['[counter] - setCounter'];
