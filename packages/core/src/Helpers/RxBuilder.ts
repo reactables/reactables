@@ -79,7 +79,7 @@ export const RxBuilder = <T, S extends Cases<T>>({
   const actions$ = hub.messages$ as ActionObservableWithTypes<typeof types>;
 
   actions$.types = createActionTypeStringMap(actions);
-  actions$.ofTypes = (types) => actions$.pipe(ofTypes(types));
+  actions$.ofTypes = (types) => actions$.pipe(ofTypes(types as string[]));
 
   const rx = [
     hub.store({ reducer, debug, storeValue, name: sliceConfig.name }),

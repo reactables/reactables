@@ -54,7 +54,7 @@ export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
 
   const mergedActions$ = merge(...actions$) as ActionObservableWithTypes<typeof actionTypes>;
   mergedActions$.types = actionTypes;
-  mergedActions$.ofTypes = (types) => mergedActions$.pipe(ofTypes(types));
+  mergedActions$.ofTypes = (types) => mergedActions$.pipe(ofTypes(types as string[]));
 
   return [states$, actions, mergedActions$] as [
     Observable<{

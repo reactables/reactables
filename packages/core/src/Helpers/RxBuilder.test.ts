@@ -45,6 +45,13 @@ describe('RxBuilder', () => {
 
     const [, , toggleActions$] = RxToggle();
 
+    expect(toggleActions$.types).toEqual({
+      toggle: 'toggle',
+      toggleOn: 'toggleOn',
+      toggleOff: 'toggleOff',
+      setToggle: 'setToggle',
+    });
+
     const RxCombined = () => {
       const rxCounter = RxCounter();
       const rxToggle = RxToggle();
@@ -56,6 +63,17 @@ describe('RxBuilder', () => {
     };
 
     const [, , combinedActions$] = RxCombined();
+
+    expect(combinedActions$.types).toEqual({
+      '[toggle] - toggle': '[toggle] - toggle',
+      '[toggle] - toggleOn': '[toggle] - toggleOn',
+      '[toggle] - toggleOff': '[toggle] - toggleOff',
+      '[toggle] - setToggle': '[toggle] - setToggle',
+      '[counter] - increment': '[counter] - increment',
+      '[counter] - setCounter': '[counter] - setCounter',
+      '[counter] - hi': '[counter] - hi',
+      '[counter] - some wierd reducer': '[counter] - some wierd reducer',
+    });
 
     const RxDoubleCombined = () =>
       combine({
