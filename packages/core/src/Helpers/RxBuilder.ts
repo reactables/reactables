@@ -9,7 +9,6 @@ import {
 } from '../Models/Reactable';
 import { Effect } from '../Models/Effect';
 import { Action, ScopedEffects } from '../Models/Action';
-import { combine } from './combine';
 import { createActionTypeStringMap } from './createActionTypeStringMap';
 
 export interface EffectsAndSources {
@@ -88,77 +87,3 @@ export const RxBuilder = <T, S extends Cases<T>>({
 
   return rx;
 };
-
-interface CounterState {
-  count: number;
-}
-
-const RxCounter = () =>
-  RxBuilder({
-    initialState: { count: 0 } as CounterState,
-    reducers: {
-      increment: (state: { count: number }) => ({
-        count: state.count + 1,
-      }),
-      setCounter: (_, action: Action<number>) => ({
-        count: action.payload,
-      }),
-      hi: (state) => state,
-      'some wierd reducer': (state) => state,
-    },
-  });
-
-const [, actions, actions$] = RxCounter();
-
-actions.setCounter(3);
-
-actions$.types['some wierd reducer'];
-actions$.types.setCounter;
-
-const RxToggle = () =>
-  RxBuilder({
-    initialState: false,
-    reducers: {
-      toggle: (state) => !state,
-      toggleOn: () => true,
-      toggleOff: () => false,
-      setToggle: (_, { payload }: Action<boolean>) => payload,
-    },
-  });
-
-const [, toggleActions, toggleActions$] = RxToggle();
-
-toggleActions.setToggle(false);
-toggleActions.toggleOn();
-toggleActions$.types;
-
-const RxCombined = () => {
-  const rxCounter = RxCounter();
-  const rxToggle = RxToggle();
-
-  return combine({
-    counter: rxCounter,
-    toggle: rxToggle,
-  });
-};
-
-const [combinedState, combinedActions, combinedActions$] = RxCombined();
-
-combinedActions$.types;
-
-const RxDoubleCombined = () =>
-  combine({
-    doubleCombined: RxCombined(),
-    counter: RxCounter(),
-  });
-const [, doubleCombinedActions, doubleCombinedActions$] = RxDoubleCombined();
-
-doubleCombinedActions$.types;
-
-const [, tripleCombinedActions, tripleCombinedActions$] = combine({
-  tripleCombined: RxDoubleCombined(),
-  doubleCombined: RxCombined(),
-  counter: RxCounter(),
-});
-
-tripleCombinedActions$.types['[counter] - setCounter'];
