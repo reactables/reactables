@@ -4,11 +4,7 @@ type CombinedActionStringMap<T> = {
   [K in keyof T as `${T[K] extends Reactable<unknown, unknown, infer P>
     ? `[${K & string}] - ${P extends Record<infer Q extends string, string> ? P[Q] : never}`
     : never}`]: `${T[K] extends Reactable<unknown, unknown, infer P>
-    ? `[${K & string}] - ${P extends Record<infer Q extends string, infer Z extends string>
-        ? P[Q] extends string
-          ? Z
-          : never
-        : never}`
+    ? `[${K & string}] - ${P extends Record<infer Q extends string, string> ? P[Q] : never}`
     : never}`;
 };
 
