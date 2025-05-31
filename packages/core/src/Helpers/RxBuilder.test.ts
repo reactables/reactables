@@ -18,7 +18,7 @@ describe('RxBuilder', () => {
           setCounter: (_, action: Action<number>) => ({
             count: action.payload,
           }),
-          hi: (state) => state,
+          hi: { reducer: (state) => state },
           'some wierd reducer': (state) => state,
         },
       });

@@ -5,6 +5,10 @@ export type ActionCreatorTypeFromReducer<T> = T extends (state: any) => unknown
   ? () => void
   : T extends (state, action: Action<infer P>) => unknown
   ? (payload: P) => void
+  : T extends { reducer: (state: any) => unknown }
+  ? () => void
+  : T extends { reducer: (state: any, action: Action<infer P>) => unknown }
+  ? (payload: P) => void
   : never;
 
 export type ActionObservableWithTypes<T extends Record<string, string>> = Observable<
