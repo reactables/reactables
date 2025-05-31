@@ -1,12 +1,26 @@
 import { Reactable } from '../Models';
 
-type CombinedActionStringMap<T> = {
-  [K in keyof T as `${T[K] extends Reactable<unknown, unknown, infer P>
-    ? `[${K & string}] - ${P extends Record<infer Q extends string, string> ? P[Q] : never}`
-    : never}`]: `${T[K] extends Reactable<unknown, unknown, infer P>
-    ? `[${K & string}] - ${P extends Record<infer Q extends string, string> ? P[Q] : never}`
-    : never}`;
+export type ExpandedMap<T extends Record<string, Reactable<unknown, unknown>>> = {
+  [K in keyof T]: T[K] extends Reactable<unknown, unknown, infer P>
+    ? {
+        [Pkey in keyof P as `[${K & string}] - ${Pkey & string}`]: `[${K & string}] - ${Pkey &
+          string}`;
+      }
+    : never;
 };
+
+type Merge<U> = {
+  [K in U extends any ? keyof U : never]: U extends { [k in K]?: any } ? U[K] : never;
+};
+
+export type FlattenedEntries<T> = Merge<
+  {
+    [K in keyof T]: T[K] extends Record<string, any> ? T[K] : never;
+  }[keyof T]
+>;
+
+type CombinedActionStringMap<T extends Record<string, Reactable<unknown, unknown>>> =
+  FlattenedEntries<ExpandedMap<T>>;
 
 export const combineActionTypeStringMaps = <T extends Record<string, Reactable<unknown, unknown>>>(
   sourceReactables: T,
