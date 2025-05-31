@@ -220,19 +220,20 @@ const createReactable = <T extends CustomReducers<S>, S>(
     name: `Stage 1 ${name ? name : 'rxForm'}`,
     debug,
     reducers: {
-      updateValues: (state: BaseFormState<unknown>, action: Action, mergeChanges: boolean) =>
-        updateValues(state, action, providers, mergeChanges),
-      removeControl: (state: BaseFormState<unknown>, action: Action, mergeChanges: boolean) =>
-        removeControl(state, action, providers, mergeChanges),
-      addControl: (state: BaseFormState<unknown>, action: Action, mergeChanges: boolean) =>
-        addControl(state, action, providers, mergeChanges),
-      pushControl: (state: BaseFormState<unknown>, action: Action, mergeChanges: boolean) =>
-        pushControl(state, action, providers, mergeChanges),
-      resetControl: (state: BaseFormState<unknown>, action: Action, mergeChanges: boolean) =>
-        resetControl(state, action, providers, mergeChanges),
-      markControlAsPristine,
-      markControlAsTouched,
-      markControlAsUntouched,
+      updateValues: (state, action: Action<UpdateValuesPayload<unknown>>) =>
+        updateValues(state, action, providers),
+      removeControl: (state, action: Action<ControlRef>) => removeControl(state, action, providers),
+      addControl: (state, action: Action<AddControlPayload>) =>
+        addControl(state, action, providers),
+      pushControl: (state, action: Action<AddControlPayload>) =>
+        pushControl(state, action, providers),
+      resetControl: (state, action: Action<ControlRef>) => resetControl(state, action, providers),
+      markControlAsPristine: (state, action: Action<ControlRef>) =>
+        markControlAsPristine(state, action),
+      markControlAsTouched: (state, action: Action<MarkTouchedPayload>) =>
+        markControlAsTouched(state, action),
+      markControlAsUntouched: (state, action: Action<ControlRef>) =>
+        markControlAsUntouched(state, action),
       ...customReducers,
     },
     ...otherOptions,

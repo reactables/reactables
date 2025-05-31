@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
 import { Action } from './Action';
 
-export type ActionCreatorTypeFromReducer<T> = T extends (state) => unknown
+export type ActionCreatorTypeFromReducer<T> = T extends (state: any) => unknown
   ? () => void
   : T extends (state, action: Action<infer P>) => unknown
   ? (payload: P) => void
