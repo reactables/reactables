@@ -1,6 +1,6 @@
 import { Reactable } from '../Models';
 
-export type ExpandedMap<T extends Record<string, Reactable<unknown, unknown>>> = {
+type ExpandedMap<T extends Record<string, Reactable<unknown, unknown>>> = {
   [K in keyof T]: T[K] extends Reactable<unknown, unknown, infer P>
     ? {
         [Pkey in keyof P as `[${K & string}] - ${Pkey & string}`]: `[${K & string}] - ${Pkey &
@@ -13,7 +13,7 @@ type Merge<U> = {
   [K in U extends any ? keyof U : never]: U extends { [k in K]?: any } ? U[K] : never;
 };
 
-export type FlattenedEntries<T> = Merge<
+type FlattenedEntries<T> = Merge<
   {
     [K in keyof T]: T[K] extends Record<string, any> ? T[K] : never;
   }[keyof T]
