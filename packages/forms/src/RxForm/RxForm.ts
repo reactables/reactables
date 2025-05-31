@@ -7,6 +7,7 @@ import {
   ScopedEffects,
   ActionMap,
   Cases,
+  ActionObservableWithTypes,
 } from '@reactables/core';
 import { filter, skip } from 'rxjs/operators';
 import { buildFormState } from '../Helpers/buildFormState';
@@ -203,13 +204,31 @@ export const load = <Value, T extends CustomReducers<unknown>>(
   return createReactable(baseFormState, options);
 };
 
+type CustomReducerActionTypes<T extends CustomReducers<unknown>> = {
+  [K in keyof T as `${K & string}`]: `${K & string}`;
+};
+
+type FormActionTypes = {
+  updateValues: 'updateValues';
+  addControl: 'addControl';
+  pushControl: 'pushControl';
+  removeControl: 'removeControl';
+  markControlAsPristine: 'markControlAsPristine';
+  markControlAsTouched: 'markControlAsTouched';
+  markControlAsUntouched: 'markControlAsUntouched';
+  resetControl: 'resetControl';
+};
+
+type ActionTypes<T extends CustomReducers<unknown>> = CustomReducerActionTypes<T> & FormActionTypes;
+
 const createReactable = <T extends CustomReducers<S>, S>(
   initialBaseState: BaseFormState<unknown>,
   options: RxFormOptions<T> = {},
   initialFormState?: Form<unknown>,
 ): Reactable<
   Form<unknown>,
-  { [K in keyof T]: ActionCreatorTypeFromCustomReducer<T[K]> } & RxFormActions
+  { [K in keyof T]: ActionCreatorTypeFromCustomReducer<T[K]> } & RxFormActions,
+  ActionTypes<T>
 > => {
   const providers = {
     normalizers: { ...options.providers?.normalizers },
@@ -280,6 +299,6 @@ const createReactable = <T extends CustomReducers<S>, S>(
   return [
     state$.pipe(filter((form) => form !== null)),
     hub1Actions as { [K in keyof T]: ActionCreatorTypeFromCustomReducer<T[K]> } & RxFormActions,
-    hub1Actions$,
+    hub1Actions$ as ActionObservableWithTypes<ActionTypes<T>>,
   ];
 };
