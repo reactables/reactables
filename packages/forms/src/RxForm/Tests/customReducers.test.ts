@@ -80,7 +80,6 @@ describe('RxForm', () => {
             },
           },
         );
-
         subscription = cold('-bc', {
           b: actions.toggleSearchType,
           c: actions.toggleSearchType,
