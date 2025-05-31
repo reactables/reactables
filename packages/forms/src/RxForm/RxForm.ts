@@ -3,10 +3,10 @@ import {
   Reactable,
   EffectsAndSources,
   Action,
-  Reducer,
   Effect,
   ScopedEffects,
   ActionMap,
+  Cases,
 } from '@reactables/core';
 import { filter, skip } from 'rxjs/operators';
 import { buildFormState } from '../Helpers/buildFormState';
@@ -213,7 +213,7 @@ const createReactable = <T extends CustomReducers<S>, S>(
         effects,
       },
     };
-  }, {} as { [K in keyof T]: Reducer<BaseFormState<unknown>> });
+  }, {} as Cases<unknown>);
 
   const [hub1State$, hub1Actions, hub1Actions$] = RxBuilder({
     initialState: initialBaseState,
