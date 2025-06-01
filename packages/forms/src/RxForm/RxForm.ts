@@ -149,7 +149,8 @@ export type ActionCreatorTypeFromCustomReducer<T> = T extends (
   ? (payload: P) => void
   : never;
 
-export interface RxFormOptions<T extends CustomReducers<unknown>> extends EffectsAndSources {
+export interface RxFormOptions<T extends CustomReducers<unknown> = CustomReducers<unknown>>
+  extends EffectsAndSources {
   reducers?: T;
   providers?: RxFormProviders;
   name?: string;
