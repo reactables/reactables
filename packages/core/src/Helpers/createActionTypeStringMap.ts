@@ -56,7 +56,7 @@ export type ActionTypeString<
     };
 
 /**
- * @descriptioncreates an action type string map from existing string maps or an ActionMap,
+ * @description creates an action type string map from existing string maps or an ActionMap,
  * if given a parent key it will append a prefix to the resulting strings
  */
 export const createActionTypeStringMap = <
