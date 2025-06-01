@@ -22,6 +22,9 @@ type FlattenedEntries<T> = Merge<
 type CombinedActionStringMap<T extends Record<string, Reactable<unknown, unknown>>> =
   FlattenedEntries<ExpandedMap<T>>;
 
+/**
+ * @description helper method to create an action type string map for a combined reacatable
+ */
 export const combineActionTypeStringMaps = <T extends Record<string, Reactable<unknown, unknown>>>(
   sourceReactables: T,
 ) => {
@@ -51,6 +54,11 @@ export type ActionTypeString<
   : {
       [K in keyof S as `[${Z}] - ${string & K}`]: `[${Z}] - ${string & K}`;
     };
+
+/**
+ * @descriptioncreates an action type string map from existing string maps or an ActionMap,
+ * if given a parent key it will append a prefix to the resulting strings
+ */
 export const createActionTypeStringMap = <
   S extends Record<string, unknown>,
   Z extends string = undefined,
