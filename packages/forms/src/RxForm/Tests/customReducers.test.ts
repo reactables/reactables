@@ -80,7 +80,6 @@ describe('RxForm', () => {
             },
           },
         );
-
         subscription = cold('-bc', {
           b: actions.toggleSearchType,
           c: actions.toggleSearchType,
@@ -550,7 +549,7 @@ describe('RxForm', () => {
 
     it('should run effect on a custom reducer', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const [state$, actions] = build(
+        const [state$, actions, actions$] = build(
           group({
             controls: {
               testControl: control([false]),
@@ -586,6 +585,19 @@ describe('RxForm', () => {
             },
           },
         );
+
+        expect(actions$.types).toEqual({
+          handleControlChange: 'handleControlChange',
+          changeControl: 'changeControl',
+          updateValues: 'updateValues',
+          addControl: 'addControl',
+          pushControl: 'pushControl',
+          removeControl: 'removeControl',
+          markControlAsPristine: 'markControlAsPristine',
+          markControlAsTouched: 'markControlAsTouched',
+          markControlAsUntouched: 'markControlAsUntouched',
+          resetControl: 'resetControl',
+        });
 
         subscription = cold('-b-c', {
           b: () => actions.changeControl(true),

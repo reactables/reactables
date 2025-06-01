@@ -1,10 +1,16 @@
 import { Observable } from 'rxjs';
+import { ofTypes } from '../Operators';
 import { map } from 'rxjs/operators';
 import { createSlice, SliceConfig, Cases } from './createSlice';
 import { HubFactory } from '../Factories/HubFactory';
-import { Reactable } from '../Models/Reactable';
+import {
+  Reactable,
+  ActionCreatorTypeFromReducer,
+  ActionObservableWithTypes,
+} from '../Models/Reactable';
 import { Effect } from '../Models/Effect';
 import { Action, ScopedEffects } from '../Models/Action';
+import { createActionTypeStringMap } from './createActionTypeStringMap';
 
 export interface EffectsAndSources {
   effects?: Effect<unknown, unknown>[];
@@ -66,11 +72,20 @@ export const RxBuilder = <T, S extends Cases<T>>({
         hub.dispatch(actionCreator(payload));
       },
     ]),
-  ) as { [K in keyof S]: (payload: unknown) => void };
+  ) as { [K in keyof S]: ActionCreatorTypeFromReducer<S[K]> };
 
-  return [
+  const types = createActionTypeStringMap(actions);
+
+  const actions$ = hub.messages$ as ActionObservableWithTypes<typeof types>;
+
+  actions$.types = createActionTypeStringMap(actions);
+  actions$.ofTypes = (types) => actions$.pipe(ofTypes(types as string[]));
+
+  const rx = [
     hub.store({ reducer, debug, storeValue, name: sliceConfig.name }),
     actionsResult,
-    hub.messages$,
-  ] as Reactable<T, { [K in keyof S]: (payload?: unknown) => void }>;
+    actions$,
+  ] as Reactable<T, { [K in keyof S]: ActionCreatorTypeFromReducer<S[K]> }, typeof types>;
+
+  return rx;
 };
