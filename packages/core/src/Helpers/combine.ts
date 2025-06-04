@@ -52,7 +52,9 @@ export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
 
   const actionTypes = combineActionTypeStringMaps(sourceReactables);
 
-  const mergedActions$ = merge(...actions$) as ActionObservableWithTypes<typeof actionTypes>;
+  const mergedActions$ = merge(...actions$) as ActionObservableWithTypes<
+    typeof actionTypes & { [key: string]: string }
+  >;
   mergedActions$.types = actionTypes;
   mergedActions$.ofTypes = (types) => mergedActions$.pipe(ofTypes(types as string[]));
 
@@ -61,6 +63,6 @@ export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
       [K in keyof T]: ObservedValueOf<T[K][0]>;
     }>,
     { [K in keyof T]: T[K][1] },
-    ActionObservableWithTypes<typeof actionTypes>,
+    ActionObservableWithTypes<typeof actionTypes & { [key: string]: string }>,
   ];
 };

@@ -1,6 +1,7 @@
 import { RxBuilder } from './RxBuilder';
 import { Action } from '../Models';
 import { combine } from './combine';
+import { Cases } from './createSlice';
 
 interface CounterState {
   count: number;
@@ -8,7 +9,7 @@ interface CounterState {
 
 describe('RxBuilder', () => {
   it('should generate types for reactables', () => {
-    const RxCounter = () =>
+    const RxCounter = <T extends Cases<CounterState>>(reducers?: T) =>
       RxBuilder({
         initialState: { count: 0 } as CounterState,
         reducers: {
@@ -20,6 +21,7 @@ describe('RxBuilder', () => {
           }),
           hi: { reducer: (state) => state },
           'some wierd reducer': (state) => state,
+          ...reducers,
         },
       });
 
@@ -32,18 +34,20 @@ describe('RxBuilder', () => {
       'some wierd reducer': 'some wierd reducer',
     });
 
-    const RxToggle = () =>
-      RxBuilder({
+    const RxToggle = <T extends Cases<boolean>>(reducers?: T) => {
+      return RxBuilder({
         initialState: false,
         reducers: {
           toggle: (state) => !state,
           toggleOn: () => true,
           toggleOff: () => false,
           setToggle: (_, { payload }: Action<boolean>) => payload,
+          ...reducers,
         },
       });
-
+    };
     const [, , toggleActions$] = RxToggle();
+
     expect(toggleActions$.types).toEqual({
       toggle: 'toggle',
       toggleOn: 'toggleOn',
@@ -52,8 +56,8 @@ describe('RxBuilder', () => {
     });
 
     const RxCombined = () => {
-      const rxCounter = RxCounter();
-      const rxToggle = RxToggle();
+      const rxCounter = RxCounter({ test2: (state) => state });
+      const rxToggle = RxToggle({ test: (state) => state });
 
       return combine({
         counter: rxCounter,
@@ -77,9 +81,9 @@ describe('RxBuilder', () => {
     const RxDoubleCombined = () =>
       combine({
         doubleCombined: RxCombined(),
-        counter: RxCounter(),
+        counter: RxCounter({ extended: (state) => state }),
       });
-    const [, , doubleCombinedActions$] = RxDoubleCombined();
+    const [, doubleCombinedActions, doubleCombinedActions$] = RxDoubleCombined();
 
     expect(doubleCombinedActions$.types).toEqual({
       '[doubleCombined] - [toggle] - toggle': '[doubleCombined] - [toggle] - toggle',
