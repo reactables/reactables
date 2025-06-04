@@ -20,7 +20,7 @@ type FlattenedEntries<T> = Merge<
 >;
 
 type CombinedActionStringMap<T extends Record<string, Reactable<unknown, unknown>>> =
-  FlattenedEntries<ExpandedMap<T>>;
+  FlattenedEntries<ExpandedMap<T>> & { [key: string]: string };
 
 /**
  * @description helper method to create an action type string map for a combined reacatable

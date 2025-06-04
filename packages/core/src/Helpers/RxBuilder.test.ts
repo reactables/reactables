@@ -57,7 +57,7 @@ describe('RxBuilder', () => {
 
     const RxCombined = () => {
       const rxCounter = RxCounter({ test2: (state) => state });
-      const rxToggle = RxToggle({ test: (state) => state });
+      const rxToggle = RxToggle({ test: (state, action: Action<boolean>) => state });
 
       return combine({
         counter: rxCounter,
