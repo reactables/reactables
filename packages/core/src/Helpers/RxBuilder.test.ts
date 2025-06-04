@@ -55,5 +55,25 @@ describe('RxBuilder', () => {
       toggleOff: 'toggleOff',
       setToggle: 'setToggle',
     });
+
+    const [, , extendedToggleActions$] = RxToggle({ extendedToggle: (state) => state });
+
+    expect(extendedToggleActions$.types).toEqual({
+      toggle: 'toggle',
+      toggleOn: 'toggleOn',
+      toggleOff: 'toggleOff',
+      setToggle: 'setToggle',
+      extendedToggle: 'extendedToggle',
+    });
+
+    const [, , extendedCounterActions$] = RxCounter({ extendedCounter: (state) => state });
+
+    expect(extendedCounterActions$.types).toEqual({
+      increment: 'increment',
+      setCounter: 'setCounter',
+      hi: 'hi',
+      'some wierd reducer': 'some wierd reducer',
+      extendedCounter: 'extendedCounter',
+    });
   });
 });
