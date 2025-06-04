@@ -9,15 +9,9 @@ type ExpandedMap<T extends Record<string, Reactable<unknown, unknown>>> = {
     : never;
 };
 
-type Merge<U> = {
-  [K in U extends any ? keyof U : never]: U extends { [k in K]?: any } ? U[K] : never;
-};
-
-type FlattenedEntries<T> = Merge<
-  {
-    [K in keyof T]: T[K] extends Record<string, any> ? T[K] : never;
-  }[keyof T]
->;
+type FlattenedEntries<T> = {
+  [K in keyof T]: T[K] extends Record<string, any> ? T[K] : never;
+}[keyof T];
 
 type CombinedActionStringMap<T extends Record<string, Reactable<unknown, unknown>>> =
   FlattenedEntries<ExpandedMap<T>> & { [key: string]: string };
