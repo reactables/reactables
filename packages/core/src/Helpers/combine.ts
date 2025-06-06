@@ -6,11 +6,11 @@ import { DestroyAction } from './RxBuilder';
 import { ActionObservableWithTypes } from '../Models/Reactable';
 import { combineActionTypeStringMaps } from './createActionTypeStringMap';
 
-export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
+export const combine = <T extends Record<string, Reactable<unknown, unknown & DestroyAction>>>(
   sourceReactables: T,
 ) => {
   const { states, actions, actions$ } = Object.entries(sourceReactables).reduce(
-    <U, V>(
+    <U, V extends DestroyAction>(
       acc: {
         states: { [K in keyof T]: T[K][0] };
         actions: { [K in keyof T]: T[K][1] } & DestroyAction;
@@ -70,7 +70,7 @@ export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
     Observable<{
       [K in keyof T]: ObservedValueOf<T[K][0]>;
     }>,
-    { [K in keyof T]: T[K][1] },
+    { [K in keyof T]: T[K][1] } & DestroyAction,
     ActionObservableWithTypes<typeof actionTypes>,
   ];
 };

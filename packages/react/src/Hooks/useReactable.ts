@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { useEffect, useState, useRef } from 'react';
-import { Reactable, ActionObservableWithTypes } from '@reactables/core';
+import { Reactable, ActionObservableWithTypes, DestroyAction } from '@reactables/core';
 
 export type HookedReactable<T, S, V extends Record<string, string>> = [
   T,
@@ -9,7 +9,12 @@ export type HookedReactable<T, S, V extends Record<string, string>> = [
   ActionObservableWithTypes<V>?,
 ];
 
-export const useReactable = <T, S, U extends unknown[], V extends Record<string, string>>(
+export const useReactable = <
+  T,
+  S extends DestroyAction,
+  U extends unknown[],
+  V extends Record<string, string>,
+>(
   reactableFactory: (...props: U) => Reactable<T, S, V>,
   ...props: U
 ): HookedReactable<T, S, V> => {
@@ -33,8 +38,10 @@ export const useReactable = <T, S, U extends unknown[], V extends Record<string,
       setState(result);
     });
 
-    return () => subscription.unsubscribe();
-  }, [state$]);
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [actions, state$]);
 
   return [state, actions, state$, actions$];
 };

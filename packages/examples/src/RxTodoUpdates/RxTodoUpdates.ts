@@ -1,4 +1,4 @@
-import { Action, Reactable, RxBuilder, ScopedEffects } from '@reactables/core';
+import { Action, RxBuilder, ScopedEffects } from '@reactables/core';
 import { UpdateTodoPayload, UpdateTodoPayloadSuccess, Todo } from './Models/Todos';
 import { switchMap, map } from 'rxjs/operators';
 import { ObservableOrPromise } from '../Models/ObservableOrPromise';
@@ -24,13 +24,9 @@ export const initialState: TodoUpdatesState = {
   ],
 };
 
-type TodoUpdatesActions = {
-  sendTodoStatusUpdate: (payload: UpdateTodoPayload) => void;
-};
-
 export const RxTodoUpdates = (
   updateTodoApi: (payload: UpdateTodoPayload) => ObservableOrPromise<UpdateTodoPayloadSuccess>,
-): Reactable<TodoUpdatesState, TodoUpdatesActions> =>
+) =>
   RxBuilder({
     initialState,
     reducers: {

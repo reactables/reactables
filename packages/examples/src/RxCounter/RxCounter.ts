@@ -1,15 +1,10 @@
-import { RxBuilder, Reactable } from '@reactables/core';
+import { RxBuilder } from '@reactables/core';
 
 interface CounterState {
   count: number;
 }
 
-type CounterActions = {
-  increment: () => void;
-  reset: () => void;
-};
-
-export const RxCounter = (): Reactable<CounterState, CounterActions> =>
+export const RxCounter = () =>
   RxBuilder({
     initialState: { count: 0 } as CounterState,
     reducers: {

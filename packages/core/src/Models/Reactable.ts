@@ -1,5 +1,6 @@
 import { Observable } from 'rxjs';
 import { Action } from './Action';
+import { DestroyAction } from '../Helpers';
 
 export type ActionCreatorTypeFromReducer<T> = T extends (state: any) => unknown
   ? () => void
@@ -20,7 +21,7 @@ export type ActionObservableWithTypes<T extends Record<string, string>> = Observ
 
 export type Reactable<
   T,
-  S = ActionMap,
+  S extends DestroyAction = ActionMap & DestroyAction,
   U extends Record<string, string> = Record<string, string>,
 > = [Observable<T>, S, ActionObservableWithTypes<U>?];
 

@@ -1,7 +1,8 @@
 import { Reactable } from '../Models';
+import { DestroyAction } from './RxBuilder';
 
-type ExpandedMap<T extends Record<string, Reactable<unknown, unknown>>> = {
-  [K in keyof T]: T[K] extends Reactable<unknown, unknown, infer P>
+type ExpandedMap<T extends Record<string, Reactable<unknown, unknown & DestroyAction>>> = {
+  [K in keyof T]: T[K] extends Reactable<unknown, unknown & DestroyAction, infer P>
     ? {
         [Pkey in keyof P as `[${K & string}] - ${Pkey & string}`]: `[${K & string}] - ${Pkey &
           string}`;
@@ -13,17 +14,20 @@ type FlattenedEntries<T> = {
   [K in keyof T]: T[K] extends Record<string, any> ? T[K] : never;
 }[keyof T];
 
-type CombinedActionStringMap<T extends Record<string, Reactable<unknown, unknown>>> =
-  FlattenedEntries<ExpandedMap<T>> & { [key: string]: string };
+type CombinedActionStringMap<
+  T extends Record<string, Reactable<unknown, unknown & DestroyAction>>,
+> = FlattenedEntries<ExpandedMap<T>> & { [key: string]: string };
 
 /**
  * @description helper method to create an action type string map for a combined reacatable
  */
-export const combineActionTypeStringMaps = <T extends Record<string, Reactable<unknown, unknown>>>(
+export const combineActionTypeStringMaps = <
+  T extends Record<string, Reactable<unknown, unknown & DestroyAction>>,
+>(
   sourceReactables: T,
 ) => {
   const result = Object.entries(sourceReactables).reduce(
-    <S, U, V extends Record<string, string>>(
+    <S, U extends DestroyAction, V extends Record<string, string>>(
       acc: CombinedActionStringMap<T>,
       [key, [, , actions$]]: [string, Reactable<S, U, V>],
     ) => {
