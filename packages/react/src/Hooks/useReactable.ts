@@ -1,14 +1,19 @@
 import { Observable } from 'rxjs';
 import { useEffect, useState, useRef } from 'react';
-import { Reactable, Action } from '@reactables/core';
+import { Reactable, ActionObservableWithTypes } from '@reactables/core';
 
-export type HookedReactable<T, S> = [T, S, Observable<T>, Observable<Action<unknown>>?];
+export type HookedReactable<T, S, V extends Record<string, string>> = [
+  T,
+  S,
+  Observable<T>,
+  ActionObservableWithTypes<V>?,
+];
 
-export const useReactable = <T, S, U extends unknown[]>(
-  reactableFactory: (...props: U) => Reactable<T, S>,
+export const useReactable = <T, S, U extends unknown[], V extends Record<string, string>>(
+  reactableFactory: (...props: U) => Reactable<T, S, V>,
   ...props: U
-): HookedReactable<T, S> => {
-  const rx = useRef<Reactable<T, S>>(null);
+): HookedReactable<T, S, V> => {
+  const rx = useRef<Reactable<T, S, V>>(null);
 
   /**
    * React Strict Mode has bugs with clean up with refs so it breaks the useReactable hook as of now
