@@ -1,3 +1,3 @@
 export { Action, ScopedEffects } from './Action';
 export { Effect } from './Effect';
-export { Reactable, ActionMap } from './Reactable';
+export { Reactable, ActionMap, ActionObservableWithTypes } from './Reactable';

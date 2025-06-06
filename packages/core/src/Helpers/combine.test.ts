@@ -57,7 +57,13 @@ describe('storeValue', () => {
         b: actions.counter.increment,
       }).subscribe((action) => action());
 
-      expectObservable(actions$.pipe(map(({ type }) => type))).toBe('-a-b', {
+      const { types } = actions$;
+
+      expectObservable(
+        actions$
+          .ofTypes([types['[toggle] - toggle'], types['[counter] - increment']])
+          .pipe(map(({ type }) => type)),
+      ).toBe('-a-b', {
         a: '[toggle] - toggle',
         b: '[counter] - increment',
       });

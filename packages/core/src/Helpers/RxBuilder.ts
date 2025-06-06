@@ -1,11 +1,17 @@
 import { createSlice, SliceConfig, Cases } from './createSlice';
-import { Reactable } from '../Models/Reactable';
+import {
+  Reactable,
+  ActionCreatorTypeFromReducer,
+  ActionObservableWithTypes,
+} from '../Models/Reactable';
 import { Effect } from '../Models/Effect';
 import { Action, ScopedEffects } from '../Models/Action';
 import { Observable, ReplaySubject, Subject, merge } from 'rxjs';
 import { filter, tap, map, mergeAll, scan, pairwise, startWith, takeUntil } from 'rxjs/operators';
 import { share, shareReplay } from 'rxjs/operators';
 import jsonDiff, { Difference } from '../Helpers/jsonDiff';
+import { ofTypes } from '../Operators';
+import { createActionTypeStringMap } from './createActionTypeStringMap';
 
 export interface DestroyAction {
   destroy: () => void;
@@ -116,10 +122,10 @@ export const RxBuilder = <T, S extends Cases<T>>({
   const seedState = sliceConfig.initialState !== undefined ? sliceConfig.initialState : reducer();
 
   // All actions received by the store
-  const actions$ = merge(incomingActions$, mergedScopedEffects$).pipe(share());
+  const mergedActions$ = merge(incomingActions$, mergedScopedEffects$).pipe(share());
 
   // State updates
-  const stateEvents$ = actions$.pipe(
+  const stateEvents$ = mergedActions$.pipe(
     tap((action) => {
       debug &&
         console.log(debugName, '[ACTION]', { type: action.type, payload: action.payload }, '\n');
@@ -191,7 +197,7 @@ export const RxBuilder = <T, S extends Cases<T>>({
           dispatcher$.next(actionCreator(payload));
         },
       ]),
-    ) as { [K in keyof S]: (payload: unknown) => void }),
+    ) as { [K in keyof S]: ActionCreatorTypeFromReducer<S[K]> }),
     // Destroy method to teardown reactable
     destroy: () => {
       destroy$.next();
@@ -199,8 +205,15 @@ export const RxBuilder = <T, S extends Cases<T>>({
     },
   };
 
+  const types = createActionTypeStringMap(actions);
+
+  const actions$ = mergedActions$ as ActionObservableWithTypes<typeof types>;
+  actions$.types = types;
+  actions$.ofTypes = (types) => actions$.pipe(ofTypes(types as string[]));
+
   return [storedState$, actions, actions$] as Reactable<
     T,
-    { [K in keyof S]: (payload?: unknown) => void } & DestroyAction
+    { [K in keyof S]: ActionCreatorTypeFromReducer<S[K]> } & DestroyAction,
+    typeof types
   >;
 };

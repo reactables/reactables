@@ -1,13 +1,23 @@
 import { combineLatest, Observable, merge, ObservedValueOf } from 'rxjs';
+import { ofTypes } from '../Operators';
 import { map } from 'rxjs/operators';
 import { Action, Reactable } from '../Models';
 import { DestroyAction } from './RxBuilder';
+import { ActionObservableWithTypes } from '../Models/Reactable';
+import { combineActionTypeStringMaps } from './createActionTypeStringMap';
 
 export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
   sourceReactables: T,
 ) => {
   const { states, actions, actions$ } = Object.entries(sourceReactables).reduce(
-    (acc, [key, [state$, actions, actions$]]) => {
+    <U, V>(
+      acc: {
+        states: { [K in keyof T]: T[K][0] };
+        actions: { [K in keyof T]: T[K][1] } & DestroyAction;
+        actions$: Observable<Action<unknown>>[];
+      },
+      [key, [state$, actions, actions$]]: [string, Reactable<U, V>],
+    ) => {
       const destroy = () => {
         (actions as DestroyAction).destroy();
         acc.actions.destroy();
@@ -19,7 +29,7 @@ export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
         },
         actions: {
           ...acc.actions,
-          [key as keyof T]: actions as { [K in keyof T]: T[K][1] },
+          [key as keyof T]: actions as { [K in keyof T]: T[K][1] } & DestroyAction,
           destroy,
         },
         actions$: actions$
@@ -42,15 +52,25 @@ export const combine = <T extends Record<string, Reactable<unknown, unknown>>>(
         },
       } as { [K in keyof T]: T[K][1] } & DestroyAction,
       actions$: [] as Observable<Action<unknown>>[],
+    } as {
+      states: { [K in keyof T]: T[K][0] };
+      actions: { [K in keyof T]: T[K][1] };
+      actions$: Observable<Action<unknown>>[];
     },
   );
   const states$ = combineLatest(states);
 
-  return [states$, actions, merge(...actions$)] as [
+  const actionTypes = combineActionTypeStringMaps(sourceReactables);
+
+  const mergedActions$ = merge(...actions$) as ActionObservableWithTypes<typeof actionTypes>;
+  mergedActions$.types = actionTypes;
+  mergedActions$.ofTypes = (types) => mergedActions$.pipe(ofTypes(types as string[]));
+
+  return [states$, actions, mergedActions$] as [
     Observable<{
       [K in keyof T]: ObservedValueOf<T[K][0]>;
     }>,
     { [K in keyof T]: T[K][1] },
-    Observable<Action<unknown>>,
+    ActionObservableWithTypes<typeof actionTypes>,
   ];
 };
