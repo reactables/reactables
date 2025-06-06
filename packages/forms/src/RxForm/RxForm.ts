@@ -228,8 +228,8 @@ const createReactable = <T extends CustomReducers<S>, S>(
   initialFormState?: Form<unknown>,
 ): Reactable<
   Form<unknown>,
-  { [K in keyof T]: ActionCreatorTypeFromCustomReducer<T[K]> } & RxFormActions,
-  ActionTypes<T>
+  { [K in keyof T]: ActionCreatorTypeFromCustomReducer<T[K]> } & RxFormActions & DestroyAction,
+  ActionTypes<T> & { destroy: 'destroy' }
 > => {
   const providers = {
     normalizers: { ...options.providers?.normalizers },
@@ -308,6 +308,6 @@ const createReactable = <T extends CustomReducers<S>, S>(
       [K in keyof T]: ActionCreatorTypeFromCustomReducer<T[K]>;
     } & RxFormActions &
       DestroyAction,
-    hub1Actions$ as ActionObservableWithTypes<ActionTypes<T>>,
+    hub1Actions$ as ActionObservableWithTypes<ActionTypes<T> & { destroy: 'destroy' }>,
   ];
 };
