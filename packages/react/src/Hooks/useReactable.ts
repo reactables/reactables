@@ -2,12 +2,9 @@ import { Observable } from 'rxjs';
 import { useEffect, useState, useRef } from 'react';
 import { Reactable, ActionObservableWithTypes, DestroyAction } from '@reactables/core';
 
-export type HookedReactable<T, S, V extends Record<string, string>> = [
-  T,
-  S,
-  Observable<T>,
-  ActionObservableWithTypes<V>?,
-];
+export type HookedReactable<T> = T extends (...args: any[]) => Reactable<infer S, infer U, infer V>
+  ? [S, U, Observable<S>, ActionObservableWithTypes<V>?]
+  : never;
 
 export const useReactable = <
   T,
@@ -17,7 +14,7 @@ export const useReactable = <
 >(
   reactableFactory: (...props: U) => Reactable<T, S, V>,
   ...props: U
-): HookedReactable<T, S, V> => {
+): HookedReactable<typeof reactableFactory> => {
   const rx = useRef<Reactable<T, S, V>>(null);
 
   /**

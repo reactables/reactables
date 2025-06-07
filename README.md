@@ -30,6 +30,7 @@ Github: https://github.com/laidav
 
 ### React
 - Store Provider & useAppStore removed from library
+- HookedReactable interface updated
 
 ### Forms
 - valid state is now longer coupled with pending
