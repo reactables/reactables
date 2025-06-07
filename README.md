@@ -24,6 +24,7 @@ Github: https://github.com/laidav
 - Effects option removed
 - effects and sources interface removed
 - all reactables now store their state and has a destroy action
+  - any reactables that were combined/created without RxBuilder/combine helper will need to have teardown logic.
 - storeValue removed
 - sources now is only array signature, no dictionary
 
