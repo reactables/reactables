@@ -1,7 +1,7 @@
 import { Observable, of, concat } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Action, Effect } from '@reactables/core';
-import { map, mergeMap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { BaseControl } from '../Models/Controls';
 import { ControlAsyncValidationResponse } from '../Models/Payloads';
 import { RxFormProviders } from '../RxForm/RxForm';
@@ -28,7 +28,7 @@ export const getScopedEffectsForControl = <T>(
           return actions$.pipe(
             map(({ payload: control }) => control),
             providers.asyncValidators[asyncValidator],
-            mergeMap((errors$) => {
+            switchMap((errors$) => {
               return concat(
                 of({ type: 'asyncValidation', payload: controlRef }),
                 errors$.pipe(
