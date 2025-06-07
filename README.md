@@ -33,3 +33,4 @@ Github: https://github.com/laidav
 ### Forms
 - valid state is now longer coupled with pending
 - control only goes into pending when async validation is actually in progress (observable sent)
+- AsyncValidator interface changed
