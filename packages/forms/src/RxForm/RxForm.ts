@@ -115,24 +115,18 @@ const reducerTools = (providers: RxFormProviders): FormReducers => ({
     markControlAsUntouched(state, { payload }, true),
 });
 
-export type CustomReducerFunc<T = unknown> = (
+export type CustomReducerFunc<FormValue = unknown, Payload = unknown> = (
   reducers: FormReducers,
-  state: BaseFormState<unknown>,
-  action: Action<T>,
+  state: BaseFormState<FormValue>,
+  action: Action<Payload>,
 ) => BaseFormState<unknown>;
 
-export type CustomReducer =
-  | CustomReducerFunc
+export type CustomReducer<FormValue = unknown, Payload = unknown> =
+  | CustomReducerFunc<FormValue, Payload>
   | {
-      reducer: CustomReducerFunc;
+      reducer: CustomReducerFunc<FormValue, Payload>;
       effects?: Effect<unknown, unknown>[] | ((payload?: unknown) => ScopedEffects<unknown>);
     };
-
-export type CustomReducers<T> = {
-  [key in keyof (T & {
-    [key: string]: CustomReducer;
-  })]: CustomReducer;
-};
 
 // Mapping a Custom reducer function to an action creator
 export type ActionCreatorTypeFromCustomReducer<T> = T extends (
@@ -140,17 +134,19 @@ export type ActionCreatorTypeFromCustomReducer<T> = T extends (
   state: BaseFormState<unknown>,
 ) => BaseFormState<unknown>
   ? () => void
-  : T extends CustomReducerFunc<infer P>
+  : T extends CustomReducerFunc<unknown, infer P>
   ? (payload: P) => void
   : T extends {
       reducer: (reducers: FormReducers, state: BaseFormState<unknown>) => BaseFormState<unknown>;
     }
   ? () => void
-  : T extends { reducer: CustomReducerFunc<infer P> }
+  : T extends { reducer: CustomReducerFunc<unknown, infer P> }
   ? (payload: P) => void
   : never;
 
-export interface RxFormOptions<T extends CustomReducers<unknown> = CustomReducers<unknown>> {
+export interface RxFormOptions<
+  T extends Record<string, CustomReducer> = Record<string, CustomReducer>,
+> {
   reducers?: T;
   providers?: RxFormProviders;
   name?: string;
@@ -166,9 +162,9 @@ export interface RxFormProviders {
   asyncValidators?: { [key: string]: ValidatorAsyncFn };
 }
 
-export const build = <T extends CustomReducers<unknown>>(
+export const build = <FormValue, CustomReducers extends Record<string, CustomReducer<FormValue>>>(
   config: AbstractControlConfig,
-  options: RxFormOptions<T> = {},
+  options: RxFormOptions<CustomReducers> = {},
 ) => {
   const providers = {
     normalizers: { ...options.providers?.normalizers },
@@ -176,14 +172,19 @@ export const build = <T extends CustomReducers<unknown>>(
     asyncValidators: { ...options.providers?.asyncValidators },
   };
 
-  const initialState = buildFormState(config, undefined, undefined, providers);
+  const initialState: BaseFormState<FormValue> = buildFormState(
+    config,
+    undefined,
+    undefined,
+    providers,
+  );
 
-  return createReactable(initialState, options);
+  return createReactable<FormValue, CustomReducers>(initialState, options);
 };
 
-export const load = <Value, T extends CustomReducers<unknown>>(
-  state: Form<Value>,
-  options: RxFormOptions<T> = {},
+export const load = <FormValue, CustomReducers extends Record<string, CustomReducer<FormValue>>>(
+  state: Form<FormValue>,
+  options: RxFormOptions<CustomReducers> = {},
 ) => {
   const baseFormState = {
     form: Object.entries(state).reduce(
@@ -202,10 +203,10 @@ export const load = <Value, T extends CustomReducers<unknown>>(
     ),
   };
 
-  return createReactable(baseFormState, options);
+  return createReactable<FormValue, CustomReducers>(baseFormState, options);
 };
 
-type CustomReducerActionTypes<T extends CustomReducers<unknown>> = {
+type CustomReducerActionTypes<T extends Record<string, CustomReducer>> = {
   [K in keyof T as `${K & string}`]: `${K & string}`;
 };
 
@@ -220,14 +221,15 @@ type FormActionTypes = {
   resetControl: 'resetControl';
 };
 
-type ActionTypes<T extends CustomReducers<unknown>> = CustomReducerActionTypes<T> & FormActionTypes;
+type ActionTypes<T extends Record<string, CustomReducer>> = CustomReducerActionTypes<T> &
+  FormActionTypes;
 
-const createReactable = <T extends CustomReducers<S>, S>(
-  initialBaseState: BaseFormState<unknown>,
+const createReactable = <FormValue, T extends Record<string, CustomReducer<FormValue>>>(
+  initialBaseState: BaseFormState<FormValue>,
   options: RxFormOptions<T> = {},
-  initialFormState?: Form<unknown>,
+  initialFormState?: Form<FormValue>,
 ): Reactable<
-  Form<unknown>,
+  Form<FormValue>,
   { [K in keyof T]: ActionCreatorTypeFromCustomReducer<T[K]> } & RxFormActions & DestroyAction,
   ActionTypes<T> & { destroy: 'destroy' }
 > => {
@@ -246,7 +248,7 @@ const createReactable = <T extends CustomReducers<S>, S>(
     return {
       ...acc,
       [key as keyof T]: {
-        reducer: ({ form }: BaseFormState<unknown>, action: Action<unknown>) => {
+        reducer: ({ form }: BaseFormState<FormValue>, action: Action<unknown>) => {
           return _reducer(reducerTools(providers), { form }, action);
         },
         effects,
@@ -303,7 +305,7 @@ const createReactable = <T extends CustomReducers<S>, S>(
   };
 
   return [
-    state$.pipe(filter((form) => form !== null)),
+    state$.pipe(filter((form) => form !== null)) as Observable<Form<FormValue>>,
     { ...hub1Actions, destroy } as {
       [K in keyof T]: ActionCreatorTypeFromCustomReducer<T[K]>;
     } & RxFormActions &

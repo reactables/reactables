@@ -1,5 +1,6 @@
 import { Action } from '@reactables/core';
-import { build, group, array, control } from '../RxForm';
+import { build, group, array, control, FormReducers } from '../RxForm';
+import { BaseFormState } from '../../Models/Controls';
 import { Subscription, Observable } from 'rxjs';
 import { map, delay } from 'rxjs/operators';
 import { TestScheduler } from 'rxjs/testing';
@@ -448,7 +449,28 @@ describe('RxForm', () => {
 
     it('reindexReducer should reindex items and preserve updated values', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const [state$, actions] = build(
+        type FormValue = Array<{ firstName: string; lastName: string }>;
+        const customReducers = {
+          reindexReducer: (
+            { removeControl, updateValues }: FormReducers,
+            state: BaseFormState<FormValue>,
+          ) => {
+            state = updateValues(state, {
+              controlRef: ['searchItems', 1, 'nameSearch', 'firstName'],
+              value: 'firstName 2 changed',
+            });
+
+            state = updateValues(state, {
+              controlRef: ['searchItems', 3, 'nameSearch', 'firstName'],
+              value: 'firstName 4 changed',
+            });
+
+            state = removeControl(state, ['searchItems', 2]);
+
+            return state;
+          },
+        };
+        const [state$, actions] = build<FormValue, typeof customReducers>(
           group({
             controls: {
               searchItems: array({
@@ -490,23 +512,7 @@ describe('RxForm', () => {
             },
           }),
           {
-            reducers: {
-              reindexReducer: ({ removeControl, updateValues }, state) => {
-                state = updateValues(state, {
-                  controlRef: ['searchItems', 1, 'nameSearch', 'firstName'],
-                  value: 'firstName 2 changed',
-                });
-
-                state = updateValues(state, {
-                  controlRef: ['searchItems', 3, 'nameSearch', 'firstName'],
-                  value: 'firstName 4 changed',
-                });
-
-                state = removeControl(state, ['searchItems', 2]);
-
-                return state;
-              },
-            },
+            reducers: customReducers,
           },
         );
 
@@ -549,40 +555,49 @@ describe('RxForm', () => {
 
     it('should run effect on a custom reducer', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const [state$, actions, actions$] = build(
+        const customReducers = {
+          changeControl: {
+            reducer: (
+              { updateValues }: FormReducers,
+              state: BaseFormState<{ testControl: boolean }>,
+              { payload }: Action<boolean>,
+            ) => {
+              return updateValues(state, { controlRef: ['testControl'], value: payload });
+            },
+            effects: [
+              (controlType$: Observable<Action<boolean>>) =>
+                controlType$.pipe(
+                  map(({ payload }) => ({ type: 'handleControlChange', payload })),
+                  delay(1),
+                ),
+            ],
+          },
+          handleControlChange: (
+            { addControl }: FormReducers,
+            state: BaseFormState<{ testControl: boolean }>,
+            { payload }: Action<boolean>,
+          ) => {
+            if (payload) {
+              return addControl(state, {
+                controlRef: ['trueControl'],
+                config: control([true]),
+              });
+            } else {
+              return addControl(state, {
+                controlRef: ['falseControl'],
+                config: control([false]),
+              });
+            }
+          },
+        };
+        const [state$, actions, actions$] = build<{ testControl: boolean }, typeof customReducers>(
           group({
             controls: {
               testControl: control([false]),
             },
           }),
           {
-            reducers: {
-              changeControl: {
-                reducer: ({ updateValues }, state, { payload }: Action<boolean>) => {
-                  return updateValues(state, { controlRef: ['testControl'], value: payload });
-                },
-                effects: [
-                  (controlType$: Observable<Action<boolean>>) =>
-                    controlType$.pipe(
-                      map(({ payload }) => ({ type: 'handleControlChange', payload })),
-                      delay(1),
-                    ),
-                ],
-              },
-              handleControlChange: ({ addControl }, state, { payload }: Action<boolean>) => {
-                if (payload) {
-                  return addControl(state, {
-                    controlRef: ['trueControl'],
-                    config: control([true]),
-                  });
-                } else {
-                  return addControl(state, {
-                    controlRef: ['falseControl'],
-                    config: control([false]),
-                  });
-                }
-              },
-            },
+            reducers: customReducers,
           },
         );
 

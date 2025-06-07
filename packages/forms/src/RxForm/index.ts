@@ -6,7 +6,6 @@ export {
   control,
   RxFormActions,
   CustomReducer,
-  CustomReducers,
   FormReducers,
   RxFormOptions,
   RxFormProviders,
