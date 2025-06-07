@@ -616,5 +616,63 @@ describe('RxForm', () => {
         });
       });
     });
+
+    describe('when subsequent subscibers subscribe', () => {
+      const rxForm = build(config, {
+        providers: { validators: Validators, asyncValidators: AsyncValidators },
+      });
+
+      const newValue = {
+        firstName: 'Dr',
+        lastName: 'Ho',
+        email: 'drhoe.com', // Validate to catch invalid email
+      };
+      it('they should get the stored value', () => {
+        testScheduler.run(({ expectObservable, cold }) => {
+          const [state$, { updateValues }] = rxForm;
+
+          subscription = cold('-b', {
+            b: () => updateValues({ controlRef: ['doctorInfo'], value: newValue }),
+          }).subscribe((action) => {
+            action();
+          });
+
+          expectObservable(state$).toBe('ab', {
+            a: {},
+            b: {
+              root: { value: { doctorInfo: newValue }, dirty: true },
+              doctorInfo: { value: newValue, dirty: true },
+              'doctorInfo.firstName': { value: newValue.firstName, dirty: true },
+              'doctorInfo.lastName': { value: newValue.lastName, dirty: true },
+              'doctorInfo.email': {
+                value: newValue.email,
+                dirty: true,
+                validatorErrors: { email: true },
+                errors: { email: true },
+              },
+            },
+          });
+        });
+      });
+      it('they should get stored value', () => {
+        testScheduler.run(({ expectObservable }) => {
+          const [state$] = rxForm;
+          expectObservable(state$).toBe('a', {
+            a: {
+              root: { value: { doctorInfo: newValue }, dirty: true },
+              doctorInfo: { value: newValue, dirty: true },
+              'doctorInfo.firstName': { value: newValue.firstName, dirty: true },
+              'doctorInfo.lastName': { value: newValue.lastName, dirty: true },
+              'doctorInfo.email': {
+                value: newValue.email,
+                dirty: true,
+                validatorErrors: { email: true },
+                errors: { email: true },
+              },
+            },
+          });
+        });
+      });
+    });
   });
 });
