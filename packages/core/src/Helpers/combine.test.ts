@@ -69,4 +69,36 @@ describe('combine', () => {
       });
     });
   });
+
+  describe('when combined', () => {
+    const rxToggle = RxToggle();
+    const rxCounter = RxCounter();
+    const combined = combine({ toggle: rxToggle, counter: rxCounter });
+
+    it('should subscribe and receive stored value', () => {
+      testScheduler.run(({ expectObservable, cold }) => {
+        const [state$, actions] = combined;
+
+        subscription = cold('-a-b', {
+          a: actions.toggle.toggle,
+          b: actions.counter.increment,
+        }).subscribe((action) => action());
+
+        expectObservable(state$).toBe('a b-c', {
+          a: { toggle: false, counter: 0 },
+          b: { toggle: true, counter: 0 },
+          c: { toggle: true, counter: 1 },
+        });
+      });
+    });
+
+    it('should subscribe and receive stored value', () => {
+      testScheduler.run(({ expectObservable }) => {
+        const [state$] = combined;
+        expectObservable(state$).toBe('a', {
+          a: { toggle: true, counter: 1 },
+        });
+      });
+    });
+  });
 });
