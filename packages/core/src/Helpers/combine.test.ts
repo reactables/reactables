@@ -8,7 +8,7 @@ const RxToggle = () => RxBuilder({ initialState: false, reducers: { toggle: (sta
 const RxCounter = () =>
   RxBuilder({ initialState: 0, reducers: { increment: (state) => state + 1 } });
 
-describe('storeValue', () => {
+describe('combine', () => {
   let testScheduler: TestScheduler;
 
   beforeEach(() => {
