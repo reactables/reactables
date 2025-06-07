@@ -24,7 +24,11 @@ Github: https://github.com/laidav
 - Effects option removed
 - effects and sources interface removed
 - all reactables now store their state and has a destroy action
+- storeValue removed
 - sources now is only array signature, no dictionary
+
+### React
+- Store Provider & useAppStore removed from library
 
 ### Forms
 - valid state is now longer coupled with pending
