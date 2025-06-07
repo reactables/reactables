@@ -130,8 +130,9 @@ describe('RxBuilder', () => {
       destroy: 'destroy',
     });
   });
-  it('should generate types for reactables combined multiple times', () => {
-    const [, , actions$] = combine({
+
+  describe('when combined and nested', () => {
+    const rxNestedCombined = combine({
       combined: RxCombined(),
       multiplier: RxBuilder({
         initialState: 0,
@@ -141,20 +142,58 @@ describe('RxBuilder', () => {
       }),
     });
 
-    expect(actions$.types).toEqual({
-      '[combined] - [counter] - destroy': '[combined] - [counter] - destroy',
-      '[combined] - [counter] - extendedCounter': '[combined] - [counter] - extendedCounter',
-      '[combined] - [counter] - increment': '[combined] - [counter] - increment',
-      '[combined] - [counter] - setCounter': '[combined] - [counter] - setCounter',
-      '[combined] - [counter] - hi': '[combined] - [counter] - hi',
-      '[combined] - [counter] - some wierd reducer': '[combined] - [counter] - some wierd reducer',
-      '[combined] - [toggle] - destroy': '[combined] - [toggle] - destroy',
-      '[combined] - [toggle] - toggle': '[combined] - [toggle] - toggle',
-      '[combined] - [toggle] - toggleOn': '[combined] - [toggle] - toggleOn',
-      '[combined] - [toggle] - toggleOff': '[combined] - [toggle] - toggleOff',
-      '[combined] - [toggle] - setToggle': '[combined] - [toggle] - setToggle',
-      '[multiplier] - multiply': '[multiplier] - multiply',
-      '[multiplier] - destroy': '[multiplier] - destroy',
+    it('should read the latest stored value', () => {
+      testScheduler.run(({ expectObservable, cold }) => {
+        const [state$, actions] = rxNestedCombined;
+        subscription = cold('-a', {
+          a: () => actions.combined.counter.increment(),
+        }).subscribe((action) => action());
+
+        expectObservable(state$).toBe('a b', {
+          a: {
+            combined: { counter: { count: 0 }, toggle: false },
+            multiplier: 0,
+          },
+          b: {
+            combined: { counter: { count: 1 }, toggle: false },
+            multiplier: 0,
+          },
+        });
+      });
+    });
+
+    it('should read the latest stored value', () => {
+      testScheduler.run(({ expectObservable }) => {
+        const [state$] = rxNestedCombined;
+
+        expectObservable(state$).toBe('a', {
+          a: {
+            combined: { counter: { count: 1 }, toggle: false },
+            multiplier: 0,
+          },
+        });
+      });
+    });
+
+    it('should generate types for reactables combined multiple times', () => {
+      const [, , actions$] = rxNestedCombined;
+
+      expect(actions$.types).toEqual({
+        '[combined] - [counter] - destroy': '[combined] - [counter] - destroy',
+        '[combined] - [counter] - extendedCounter': '[combined] - [counter] - extendedCounter',
+        '[combined] - [counter] - increment': '[combined] - [counter] - increment',
+        '[combined] - [counter] - setCounter': '[combined] - [counter] - setCounter',
+        '[combined] - [counter] - hi': '[combined] - [counter] - hi',
+        '[combined] - [counter] - some wierd reducer':
+          '[combined] - [counter] - some wierd reducer',
+        '[combined] - [toggle] - destroy': '[combined] - [toggle] - destroy',
+        '[combined] - [toggle] - toggle': '[combined] - [toggle] - toggle',
+        '[combined] - [toggle] - toggleOn': '[combined] - [toggle] - toggleOn',
+        '[combined] - [toggle] - toggleOff': '[combined] - [toggle] - toggleOff',
+        '[combined] - [toggle] - setToggle': '[combined] - [toggle] - setToggle',
+        '[multiplier] - multiply': '[multiplier] - multiply',
+        '[multiplier] - destroy': '[multiplier] - destroy',
+      });
     });
   });
 });
