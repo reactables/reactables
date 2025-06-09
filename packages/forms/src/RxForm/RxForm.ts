@@ -162,7 +162,13 @@ export interface RxFormProviders {
   asyncValidators?: { [key: string]: ValidatorAsyncFn };
 }
 
-export const build = <FormValue, CustomReducers extends Record<string, CustomReducer<FormValue>>>(
+export const build = <
+  FormValue,
+  CustomReducers extends Record<string, CustomReducer<FormValue>> = Record<
+    string,
+    CustomReducer<FormValue>
+  >,
+>(
   config: AbstractControlConfig,
   options: RxFormOptions<CustomReducers> = {},
 ) => {
@@ -182,7 +188,13 @@ export const build = <FormValue, CustomReducers extends Record<string, CustomRed
   return createReactable<FormValue, CustomReducers>(initialState, options);
 };
 
-export const load = <FormValue, CustomReducers extends Record<string, CustomReducer<FormValue>>>(
+export const load = <
+  FormValue,
+  CustomReducers extends Record<string, CustomReducer<FormValue>> = Record<
+    string,
+    CustomReducer<FormValue>
+  >,
+>(
   state: Form<FormValue>,
   options: RxFormOptions<CustomReducers> = {},
 ) => {
