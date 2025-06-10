@@ -13,9 +13,13 @@ import { getAncestorControls } from '../../Helpers/getAncestorControls';
 import { RxFormProviders } from '../../RxForm/RxForm';
 import { controlRefCheck } from '../../Helpers/controlRefCheck';
 
-const checkKeys = (obj1: object, obj2: object): void => {
-  if (Object.keys(obj1).slice().sort().join() !== Object.keys(obj2).slice().sort().join()) {
-    throw 'Can not update value because keys are not the same.';
+const checkKeys = (oldObj: object, newObj: object): void => {
+  const oldKeys = Object.keys(oldObj).slice().sort().join();
+  const newKeys = Object.keys(newObj).slice().sort().join();
+  if (oldKeys !== newKeys) {
+    console.warn(
+      `You are trying to update multiple controls but they key don't match. It is recommended your keys match. Old keys: ${oldKeys}. New Keys: ${newKeys}  `,
+    );
   }
 };
 
