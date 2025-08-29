@@ -55,7 +55,7 @@ export const RxBuilder = <T, S extends Cases<T>>({
           };
         }
 
-        return action;
+        return { type: action.type, payload: action.payload };
       }),
     ),
   );
