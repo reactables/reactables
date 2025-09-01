@@ -33,7 +33,6 @@ export const useReactable = <
 
   useEffect(() => {
     lastMount.current = new Date();
-    console.log(lastMount.current.getTime());
     const subscription = state$.subscribe((result) => {
       setState(result);
     });
@@ -42,8 +41,8 @@ export const useReactable = <
       console.log('unsubscribe');
       subscription.unsubscribe();
 
-      if (new Date().getTime() - lastMount.current.getTime() > 10) {
-        console.log('destroy');
+      const diff = new Date().getTime() - lastMount.current.getTime();
+      if (diff > 50) {
         actions.destroy?.();
       }
     };
