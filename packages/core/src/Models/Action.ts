@@ -5,7 +5,7 @@ export interface ScopedEffects<T> {
   effects: Effect<T, unknown>[];
 }
 export interface Action<T = undefined> {
-  type?: string;
+  type: string;
   scopedEffects?: ScopedEffects<T>;
   payload?: T;
 }

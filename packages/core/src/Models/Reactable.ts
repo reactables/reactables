@@ -4,7 +4,7 @@ import { DestroyAction } from '../Helpers';
 
 export type ActionCreatorTypeFromReducer<T> = T extends (state: any) => unknown
   ? () => void
-  : T extends (state, action: Action<infer P>) => unknown
+  : T extends (state: T, action: Action<infer P>) => unknown
   ? (payload: P) => void
   : T extends { reducer: (state: any) => unknown }
   ? () => void

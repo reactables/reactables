@@ -77,7 +77,7 @@ export const RxBuilder = <T, S extends Cases<T>>({
   );
 
   // Dictionary of effects scoped to actions & key (if provided)
-  const scopedEffectsDict: { [key: string]: Effect<unknown, unknown>[] } = {};
+  const scopedEffectsDict: { [key: string]: Effect<unknown, unknown>[] | undefined } = {};
 
   // Registers scoped effects to the dictionary.
   const mergedScopedEffects$ = incomingActions$.pipe(
@@ -87,25 +87,29 @@ export const RxBuilder = <T, S extends Cases<T>>({
 
       return (
         hasEffects &&
-        scopedEffectsDict[getScopedEffectSignature(type, scopedEffects.key)] === undefined
+        scopedEffectsDict[getScopedEffectSignature(type, scopedEffects?.key as string)] ===
+          undefined
       );
     }),
     // Register the new scoped effect
-    tap(({ type, scopedEffects: { key, effects } }) => {
-      scopedEffectsDict[getScopedEffectSignature(type, key)] = effects;
+    tap(({ type, scopedEffects }) => {
+      scopedEffectsDict[getScopedEffectSignature(type, scopedEffects?.key as string)] =
+        scopedEffects?.effects;
     }),
     // Once effects are registered, merge them into the `mergeScopedEffects$` stream for the store to receive.
-    map(({ type, scopedEffects: { key, effects } }) => {
-      const signature = getScopedEffectSignature(type, key);
+    map(({ type, scopedEffects }) => {
+      const signature = getScopedEffectSignature(type, scopedEffects?.key as string);
 
-      const pipedEffects = effects.reduce(
+      const pipedEffects = scopedEffects?.effects.reduce(
         (acc: Observable<Action<unknown>>[], effect) =>
           acc.concat(
             incomingActions$.pipe(
               filter(
                 (initialAction) =>
-                  getScopedEffectSignature(initialAction.type, initialAction.scopedEffects?.key) ===
-                  signature,
+                  getScopedEffectSignature(
+                    initialAction.type,
+                    initialAction.scopedEffects?.key as string,
+                  ) === signature,
               ),
               effect,
             ),
@@ -113,7 +117,7 @@ export const RxBuilder = <T, S extends Cases<T>>({
         [],
       );
 
-      return merge(...pipedEffects);
+      return merge(...(pipedEffects || []));
     }),
     mergeAll(),
   );
