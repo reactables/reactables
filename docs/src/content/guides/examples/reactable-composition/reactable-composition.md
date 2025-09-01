@@ -1,17 +1,13 @@
 ## Composition with Reactables <a name="reactable-composition">
 
-Aside from creating Reactable primitives with the <a href="https://reactables.github.io/reactables/references/core-api/#rx-builder" target="_blank">RxBuilder</a> factory function, we can also combine any number of Reactables together to form a new one.
+Beyond creating primitives with the `RxBuilder` factory, Reactables can be combined to form new ones.
 
-**Two primary use cases for this approach (not mutually exclusive):**
+Two main use cases:
+- Reuse functionality from existing Reactables.  
+- Make one part of state react to another.  
 
-- We wish to create a Reactable that reuses functionality from other Reactables.
-
-- One part of our state needs to react to changes of another part.
-
-
-Using an example for illustration. Consider a naive search that filter's hotels based on `smokingAllowed` and `petsAllowed`. Using `RxToggle` and a slightly modified `RxFetchData` from previous examples, we will combine them and implement the search.
-
-We can start with the toggle filter controls for `smokingAllowed` and `petsAllowed`. We will want a reactable with the following state and actions.
+Example: a simple hotel search filtered by `smokingAllowed` and `petsAllowed`.  
+Using `RxToggle` and a modified `RxFetchData`, we’ll combine them to implement the search, starting with the toggle filters for smoking and pets. 
 
 <a class="mb-3 d-block" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/examples/reactable-composition/reactable-composition.md" target="_blank" rel="noreferrer">
   Edit this snippet <i class="fa fa-edit"></i>

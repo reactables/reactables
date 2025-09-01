@@ -1,12 +1,8 @@
 ## Communication between Reactables
 
-The [reactable composition example](#reactable-composition) above is a case where one reactable reacts to the state changes of another.
+The [composition example](#reactable-composition) shows one reactable responding to another’s state.  
 
-Reactables can also emit their actions for other reactables to receive. The [reactable interface](/reactables/references/core-api/#reactable) has a third optional item which is an observable emitting the reactable's actions.
-
-All reactable primitives created with [RxBuilder](/reactables/references/core-api/#rx-builder) provides the actions observable.
-
-When composing reactables the developer can decide what actions to expose (if any) by merging any number of action observables together with [RxJS](https://rxjs.dev/).
+Reactables also emit actions for others can react to, via the **actions observable** (the third item of the [Reactable interface](/reactables/references/core-api/#reactable)). 
 
 Below is an example where a counter reactable, `RxCounter`, is extended to react to `toggle` actions emitted by `RxToggle`.
 

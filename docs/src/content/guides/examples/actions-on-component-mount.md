@@ -1,10 +1,9 @@
-## Actions On Component Mount
+## Actions On Mount
 
-There are cases where we want actions to occur when a reactable is initialized during the UI component's mount.
 
-In our above [fetching data](#fetching-data) example, the data is only fetched when the user clicks the button. We can make an update so the page fetches data on load.
+Sometimes we want a reactable to trigger an action as soon as its component mounts.  
 
-We can add a **source** observable that emits only one action and completes with rxjs <a href="https://rxjs.dev/api/index/function/of" target="_blank" rel="noreferrer">of</a> function. This action then occurs when the reactable is initialized during component mount.
+In the [fetching data](#fetching-data) example, data only loads when the user clicks a button. To fetch on page load instead, add a **source** observable that emits a single action on initialization using RxJS [`of`](https://rxjs.dev/api/index/function/of). This ensures the action runs once when the reactable is created. 
 
 <a class="mb-3 d-block" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/examples/actions-on-initialization.md" target="_blank" rel="noreferrer">
   Edit this snippet <i class="fa fa-edit"></i>
