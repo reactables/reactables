@@ -70,9 +70,9 @@ Reactables can receive actions from multiple external sources and respond to the
 
 - Reactables can be composed to handle larger state domains and **be reused**.  
 
-- Reactables can **listen to other reactables’ state or actions**, forming a **directed acyclic graph (DAG)**.  
+- Reactables can **listen and react to other reactables’ state or actions**.  
 
-- Ensures **predictable dependencies and state changes**.  
+- Reactable composition forms a **directed acyclic graph (DAG)** and ensures **predictable dependencies and state changes**.  
 
 - **All actions flow in one direction**, supporting a reactive programming style.  
 
