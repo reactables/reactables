@@ -16,6 +16,7 @@ export const useReactable = <
   ...props: U
 ): HookedReactable<typeof reactableFactory> => {
   const rx = useRef<Reactable<T, S, V>>(null);
+  const lastMount = useRef<Date>(null);
 
   /**
    * React Strict Mode has bugs with clean up with refs so it breaks the useReactable hook as of now
@@ -31,13 +32,18 @@ export const useReactable = <
   const [state, setState] = useState<T>();
 
   useEffect(() => {
+    lastMount.current = new Date();
     const subscription = state$.subscribe((result) => {
       setState(result);
     });
 
     return () => {
-      actions.destroy?.();
       subscription.unsubscribe();
+
+      const diff = new Date().getTime() - lastMount.current.getTime();
+      if (diff > 50) {
+        actions.destroy?.();
+      }
     };
   }, [actions, state$]);
 
