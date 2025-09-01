@@ -1,6 +1,6 @@
-Reactables provide **one** core API for handling a wide range of state management use-cases.
+Reactables provide a consistent API for state management across diverse use cases and any UI framework.
 
-It leverages RxJS and reactive/declarative patterns to allow more time to **focus on what** you want to achieve in your buisness logic and **save time on how** it is implemented.
+By leveraging RxJS and reactive/declarative patterns, they let you spend less time on implementation and more time on business logic.
 
 ## Installation
 
