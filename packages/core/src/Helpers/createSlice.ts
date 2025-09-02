@@ -7,7 +7,7 @@ export const addEffects = <T>(
 ): ActionCreator<T> => {
   return (payload?: T) => ({
     ...actionCreator(payload),
-    scopedEffects: scopedEffects(payload),
+    scopedEffects: scopedEffects(payload as T),
   });
 };
 

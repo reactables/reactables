@@ -42,30 +42,24 @@ export const combineActionTypeStringMaps = <
   return result;
 };
 
-export type ActionTypeString<
-  S extends Record<string, unknown>,
-  Z extends string,
-> = Z extends undefined
+export type ActionTypeString<S extends Record<string, unknown>, Z> = Z extends undefined
   ? {
       [K in keyof S as `${string & K}`]: `${string & K}`;
     }
   : {
-      [K in keyof S as `[${Z}] - ${string & K}`]: `[${Z}] - ${string & K}`;
+      [K in keyof S as `[${Z & string}] - ${string & K}`]: `[${Z & string}] - ${string & K}`;
     };
 
 /**
  * @description creates an action type string map from existing string maps or an ActionMap,
  * if given a parent key it will append a prefix to the resulting strings
  */
-export const createActionTypeStringMap = <
-  S extends Record<string, unknown>,
-  Z extends string = undefined,
->(
+export const createActionTypeStringMap = <S extends Record<string, unknown>, Z = undefined>(
   types: S,
   parentKey?: Z,
 ) =>
   Object.keys(types).reduce((acc, childKey: string) => {
-    const newKey = parentKey ? `[${parentKey}] - ${childKey}` : childKey;
+    const newKey = parentKey ? `[${parentKey as string}] - ${childKey}` : childKey;
     return {
       ...acc,
       [newKey]: newKey,

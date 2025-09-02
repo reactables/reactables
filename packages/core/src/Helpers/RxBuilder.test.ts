@@ -18,8 +18,6 @@ const RxToggle = <T extends Cases<boolean>>(reducers?: T) => {
   });
 };
 
-const [state$, actions, actions$] = RxToggle();
-
 interface CounterState {
   count: number;
 }
@@ -39,6 +37,7 @@ const RxCounter = <T extends Cases<CounterState>>(reducers?: T) =>
       ...reducers,
     },
   });
+const [state$, actions, actions$] = RxCounter();
 
 const RxCombined = () =>
   combine({
