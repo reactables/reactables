@@ -13,13 +13,13 @@ export const addEffects = <T>(
 
 export type Reducer<T> = (state?: T, action?: Action<unknown>) => T;
 
-export type SingleActionReducer<T, S> = (state: T, action: any) => T;
+export type SingleActionReducer<T> = (state: T, action: any) => T;
 
 export interface Cases<T> {
   [key: string]:
-    | SingleActionReducer<T, unknown>
+    | SingleActionReducer<T>
     | {
-        reducer: SingleActionReducer<T, unknown>;
+        reducer: SingleActionReducer<T>;
         effects?: ((payload?: unknown) => ScopedEffects<unknown>) | Effect<unknown, unknown>[];
       };
 }
