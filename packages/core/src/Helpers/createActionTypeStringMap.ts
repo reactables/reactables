@@ -27,13 +27,13 @@ export const combineActionTypeStringMaps = <
   sourceReactables: T,
 ) => {
   const result = Object.entries(sourceReactables).reduce(
-    <S, U extends DestroyAction, V extends Record<string, string>>(
+    <S, U extends DestroyAction, V>(
       acc: CombinedActionStringMap<T>,
       [key, [, , actions$]]: [string, Reactable<S, U, V>],
     ) => {
       return {
         ...acc,
-        ...createActionTypeStringMap(actions$.types, key),
+        ...createActionTypeStringMap(actions$.types as Record<string, string>, key),
       };
     },
     {} as CombinedActionStringMap<T>,

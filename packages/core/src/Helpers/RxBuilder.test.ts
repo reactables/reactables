@@ -37,13 +37,13 @@ const RxCounter = <T extends Cases<CounterState>>(reducers?: T) =>
       ...reducers,
     },
   });
-const [state$, actions, actions$] = RxCounter();
 
 const RxCombined = () =>
   combine({
     counter: RxCounter({ extendedCounter: (state) => state }),
     toggle: RxToggle(),
   });
+const [state$, actions, actions$] = RxCombined();
 
 describe('RxBuilder', () => {
   let testScheduler: TestScheduler;
