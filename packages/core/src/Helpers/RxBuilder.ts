@@ -150,7 +150,9 @@ export const RxBuilder = <T, S extends Cases<T>>({
             const reduceDiff = (diff: Difference[]) =>
               diff.reduce((acc, change) => ({ ...acc, [change.path.join('|')]: change }), {});
 
-            const difference = reduceDiff(jsonDiff(prevState as object, newState as object));
+            const difference = reduceDiff(
+              jsonDiff(prevState as Record<string, any>, newState as object),
+            );
 
             console.log(
               debugName,
