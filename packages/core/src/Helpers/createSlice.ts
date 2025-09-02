@@ -13,7 +13,7 @@ export const addEffects = <T>(
 
 export type Reducer<T> = (state?: T, action?: Action<unknown>) => T;
 
-export type SingleActionReducer<T, S> = (state: T, action: Action<S>) => T;
+export type SingleActionReducer<T, S> = (state: T, action: any) => T;
 
 export interface Cases<T> {
   [key: string]:

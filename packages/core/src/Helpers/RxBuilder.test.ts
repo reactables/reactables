@@ -18,6 +18,8 @@ const RxToggle = <T extends Cases<boolean>>(reducers?: T) => {
   });
 };
 
+const [state$, actions, actions$] = RxToggle();
+
 interface CounterState {
   count: number;
 }
