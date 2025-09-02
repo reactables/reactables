@@ -43,7 +43,7 @@ const RxCombined = () =>
     counter: RxCounter({ extendedCounter: (state) => state }),
     toggle: RxToggle(),
   });
-const [state$, actions, actions$] = RxCombined();
+// const [state$, actions, actions$] = RxCombined();
 
 describe('RxBuilder', () => {
   let testScheduler: TestScheduler;
