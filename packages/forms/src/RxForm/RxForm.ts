@@ -98,21 +98,21 @@ export interface FormReducers {
 
 const reducerTools = (providers: RxFormProviders): FormReducers => ({
   updateValues: <T>(state: BaseFormState<T>, payload: UpdateValuesPayload<unknown>) =>
-    updateValues(state, { payload }, providers, true),
+    updateValues(state, { type: 'updateValues', payload }, providers, true),
   removeControl: <T>(state: BaseFormState<T>, payload: ControlRef) =>
-    removeControl(state, { payload }, providers, true),
+    removeControl(state, { type: 'removeControl', payload }, providers, true),
   pushControl: <T>(state: BaseFormState<T>, payload: PushControlPayload) =>
-    pushControl(state, { payload }, providers, true),
+    pushControl(state, { type: 'pushControl', payload }, providers, true),
   addControl: <T>(state: BaseFormState<T>, payload: AddControlPayload) =>
-    addControl(state, { payload }, providers, true),
+    addControl(state, { type: 'addControl', payload }, providers, true),
   resetControl: <T>(state: BaseFormState<T>, payload: ControlRef) =>
-    resetControl(state, { payload }, providers, true),
+    resetControl(state, { type: 'resetControl', payload }, providers, true),
   markControlAsPristine: <T>(state: BaseFormState<T>, payload: ControlRef) =>
-    markControlAsPristine(state, { payload }, true),
+    markControlAsPristine(state, { type: 'markControlAsPristine', payload }, true),
   markControlAsTouched: <T>(state: BaseFormState<T>, payload: MarkTouchedPayload) =>
-    markControlAsTouched(state, { payload }, true),
+    markControlAsTouched(state, { type: 'markControlAsTouched', payload }, true),
   markControlAsUntouched: <T>(state: BaseFormState<T>, payload: ControlRef) =>
-    markControlAsUntouched(state, { payload }, true),
+    markControlAsUntouched(state, { type: 'markControlAsUntouched', payload }, true),
 });
 
 export type CustomReducerFunc<FormValue = unknown, Payload = unknown> = (
