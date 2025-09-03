@@ -5,10 +5,10 @@ import { Action } from '@reactables/core';
 import { BaseFormState } from '../Models/Controls';
 import { getAsyncValidationEffects } from './addAsyncValidationEffects';
 
-export const buildHub2Source = <T>(
-  hub1State$: Observable<BaseFormState<T>>,
-  initialBaseState: BaseFormState<T>,
-): Observable<Action<T>> => {
+export const buildHub2Source = (
+  hub1State$: Observable<BaseFormState<any>>,
+  initialBaseState: BaseFormState<any>,
+): Observable<Action<any>> => {
   const hub1StateMapped$ = hub1State$.pipe(map((payload) => ({ type: 'formChange', payload })));
 
   const initialAction = { type: 'formChange', payload: initialBaseState };
@@ -39,5 +39,5 @@ export const buildHub2Source = <T>(
     ),
   );
 
-  return sourceForHub2$ as Observable<Action<T>>;
+  return sourceForHub2$ as Observable<Action<any>>;
 };

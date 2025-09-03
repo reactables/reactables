@@ -8,7 +8,7 @@ export const asyncValidation = (
   form: Form<any> | null,
   { payload: controlRef }: Action<ControlRef>,
 ): Form<any> => {
-  const updatedSelfAndAncestors = getAncestorControls(controlRef, form).reduce((acc, control) => {
+  const updatedSelfAndAncestors = getAncestorControls(controlRef, form!).reduce((acc, control) => {
     const isChangedControl = getFormKey(control.controlRef) === getFormKey(controlRef);
     return {
       ...acc,
