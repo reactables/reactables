@@ -145,7 +145,7 @@ export type ActionCreatorTypeFromCustomReducer<T> = T extends (
   : never;
 
 export interface RxFormOptions<
-  T extends Record<string, CustomReducer> = Record<string, CustomReducer>,
+  T extends Record<string, CustomReducer<any>> = Record<string, CustomReducer<any>>,
 > {
   reducers?: T;
   providers?: RxFormProviders;
