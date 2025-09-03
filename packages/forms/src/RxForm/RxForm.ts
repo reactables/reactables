@@ -6,7 +6,6 @@ import {
   ScopedEffects,
   ActionMap,
   DestroyAction,
-  Cases,
   ActionObservableWithTypes,
 } from '@reactables/core';
 import { Observable } from 'rxjs';
@@ -208,7 +207,7 @@ export const load = <
       },
       {},
     ),
-  };
+  } as BaseFormState<FormValue>;
 
   return createReactable<FormValue, CustomReducers>(baseFormState, options);
 };
@@ -261,7 +260,7 @@ const createReactable = <FormValue, T extends Record<string, CustomReducer<FormV
         effects,
       },
     };
-  }, {} as Cases<unknown>);
+  }, {});
 
   const [hub1State$, hub1Actions, hub1Actions$] = RxBuilder({
     initialState: initialBaseState,
