@@ -1,11 +1,11 @@
-import { Reducer, Action } from '@reactables/core';
+import { Action } from '@reactables/core';
 import { BaseFormState, Form, Hub2Fields } from '../../Models/Controls';
 import { mergeErrors } from './mergeErrors';
 import { mergeControls } from './mergeControls';
 import { DEFAULT_HUB2_FIELDS } from '../../Models/Controls';
 
-export const formChange: Reducer<Form<unknown>> = <T>(
-  state: Form<T> = null,
+export const formChange = <T>(
+  state: Form<T> | null = null,
   { payload }: Action<BaseFormState<T>>,
 ) => {
   const { form } = payload;

@@ -17,7 +17,7 @@ export const asyncValidation = <T>(
         pending: true,
         asyncValidateInProgress: isChangedControl
           ? {
-              ...control.config.asyncValidators.reduce(
+              ...control.config.asyncValidators?.reduce(
                 (acc, _, index) => ({ ...acc, [index]: true }),
                 {},
               ),
