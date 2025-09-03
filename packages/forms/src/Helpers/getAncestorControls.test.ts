@@ -12,7 +12,7 @@ describe('getAncestorControls', () => {
     const clonedConfig: FormGroupConfig = cloneDeep(config);
     (<FormArrayConfig>clonedConfig.controls.emergencyContacts).controls = emergencyContactConfigs;
 
-    const { form } = buildFormState(clonedConfig, undefined, undefined, {
+    const { form } = buildFormState(clonedConfig, undefined, {
       validators: { ...Validators, ...builtValidators },
       asyncValidators: AsyncValidators,
     });

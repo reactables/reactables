@@ -178,12 +178,7 @@ export const build = <
     asyncValidators: { ...options.providers?.asyncValidators },
   };
 
-  const initialState: BaseFormState<FormValue> = buildFormState(
-    config,
-    undefined,
-    undefined,
-    providers,
-  );
+  const initialState: BaseFormState<FormValue> = buildFormState(config, undefined, providers);
 
   return createReactable<FormValue, CustomReducers>(initialState, options);
 };

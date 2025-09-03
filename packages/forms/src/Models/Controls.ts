@@ -20,9 +20,9 @@ interface AsyncFields {
 }
 
 interface ValidatedFields {
-  valid: boolean;
-  errors: FormErrors;
-  childrenValid: boolean;
+  valid: boolean | null;
+  errors: FormErrors | null;
+  childrenValid: boolean | null;
 }
 
 export interface Hub2Fields extends AsyncFields, ValidatedFields {}
@@ -41,15 +41,14 @@ export interface BaseFormState<T> {
   };
 }
 
-export interface BaseForm<T> {
-  root?: BaseControl<T>;
+export type BaseForm<T> = {
+  root: BaseControl<T>;
   [key: string]: BaseControl<unknown>;
-}
+};
 
-export interface Form<T> {
-  root?: FormControl<T>;
-  [key: string]: FormControl<unknown>;
-}
+export type Form<T> = {
+  root: FormControl<T>;
+} & { [key: string]: FormControl<unknown> };
 
 export const DEFAULT_HUB2_FIELDS: Hub2Fields = {
   asyncValidatorErrors: {},

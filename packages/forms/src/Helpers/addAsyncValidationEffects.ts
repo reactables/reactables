@@ -22,7 +22,7 @@ export const getScopedEffectsForControl = <T>(
     scopedEffects = asyncValidators.reduce(
       (acc: ControlScopedEffect<T>[], asyncValidator, validatorIndex) => {
         const effect: ControlScopedEffect<T> = (actions$: Observable<Action<BaseControl<T>>>) => {
-          if (!providers.asyncValidators[asyncValidator]) {
+          if (!providers.asyncValidators?.[asyncValidator]) {
             throw `You have not provided an asyncValidator for "${asyncValidator}"`;
           }
           return actions$.pipe(

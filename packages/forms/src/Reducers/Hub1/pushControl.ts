@@ -38,7 +38,7 @@ export const pushControl = <T>(
     throw 'You are attempting to push to a control that is not a Form Array';
   }
 
-  const newForm = buildState(config, state.form, newControlRef, providers);
+  const newForm = buildState(config, newControlRef, providers, state.form);
   const newValue = getControl(newControlRef, newForm).value;
 
   const ancestorsUpdated = updateAncestorValuesAddControl(
