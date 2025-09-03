@@ -227,7 +227,7 @@ type FormActionTypes = {
   resetControl: 'resetControl';
 };
 
-type ActionTypes<T extends Record<string, CustomReducer>> = CustomReducerActionTypes<T> &
+type ActionTypes<T extends Record<string, CustomReducer<any>>> = CustomReducerActionTypes<T> &
   FormActionTypes;
 
 const createReactable = <FormValue, T extends Record<string, CustomReducer<FormValue>>>(
@@ -310,12 +310,14 @@ const createReactable = <FormValue, T extends Record<string, CustomReducer<FormV
     hub2Actions.destroy();
   };
 
+  const actions = { ...hub1Actions, destroy } as {
+    [K in keyof T]: ActionCreatorTypeFromCustomReducer<T[K]>;
+  } & RxFormActions &
+    DestroyAction;
+
   return [
     state$.pipe(filter((form) => form !== null)) as Observable<Form<FormValue>>,
-    { ...hub1Actions, destroy } as {
-      [K in keyof T]: ActionCreatorTypeFromCustomReducer<T[K]>;
-    } & RxFormActions &
-      DestroyAction,
+    actions,
     hub1Actions$ as ActionObservableWithTypes<ActionTypes<T> & { destroy: 'destroy' }>,
   ];
 };
