@@ -40,7 +40,7 @@ export const buildState = <T>(
   if (controls && !(controls instanceof Array)) {
     newForm = Object.entries((<FormGroupConfig>config).controls).reduce(
       (acc, [key, controlConfig]) => {
-        return buildState(controlConfig, acc, controlRef.concat(key), providers);
+        return buildState(controlConfig, controlRef.concat(key), providers, acc);
       },
       newForm,
     );
@@ -48,7 +48,7 @@ export const buildState = <T>(
     // Adding controls for Form Array
     newForm = (<FormArrayConfig>config).controls.reduce(
       (acc, controlConfig, index) =>
-        buildState(controlConfig, acc, controlRef.concat(index), providers),
+        buildState(controlConfig, controlRef.concat(index), providers, acc),
       newForm,
     );
   }
