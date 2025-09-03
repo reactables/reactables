@@ -19,7 +19,7 @@ export interface DestroyAction {
 
 export interface RxConfig<T, S extends Cases<T>> extends SliceConfig<T, S> {
   debug?: boolean;
-  sources?: Observable<Action<unknown>>[];
+  sources?: Observable<Action<any> | Action>[];
 }
 
 const getScopedEffectSignature = (actionType: string, key: string | number) =>
@@ -45,17 +45,15 @@ export const RxBuilder = <T, S extends Cases<T>>({
           const effects =
             typeof _case.effects === 'function'
               ? _case.effects
-              : ((() => ({ effects: _case.effects })) as (
-                  payload?: unknown,
-                ) => ScopedEffects<unknown>);
+              : ((() => ({ effects: _case.effects })) as (payload?: unknown) => ScopedEffects);
 
           return {
             ...action,
-            scopedEffects: effects(action.payload),
+            scopedEffects: effects((action as Action<unknown>).payload),
           };
         }
 
-        return { type: action.type, payload: action.payload };
+        return { type: action.type, payload: (action as Action<unknown>).payload };
       }),
     ),
   );
@@ -68,7 +66,7 @@ export const RxBuilder = <T, S extends Cases<T>>({
   const destroy$ = new Subject<void>();
 
   // Dispatcher for the UI to push state updates
-  const dispatcher$ = new ReplaySubject<Action<unknown>>(1);
+  const dispatcher$ = new ReplaySubject<Action<any> | Action>(1);
 
   // All incoming actions
   const incomingActions$ = merge(
@@ -94,14 +92,14 @@ export const RxBuilder = <T, S extends Cases<T>>({
     // Register the new scoped effect
     tap(({ type, scopedEffects }) => {
       scopedEffectsDict[getScopedEffectSignature(type, scopedEffects?.key as string)] =
-        scopedEffects?.effects;
+        scopedEffects?.effects as Effect<unknown, unknown>[] | undefined;
     }),
     // Once effects are registered, merge them into the `mergeScopedEffects$` stream for the store to receive.
     map(({ type, scopedEffects }) => {
       const signature = getScopedEffectSignature(type, scopedEffects?.key as string);
 
       const pipedEffects = scopedEffects?.effects.reduce(
-        (acc: Observable<Action<unknown>>[], effect) =>
+        (acc: Observable<Action<any> | Action>[], effect) =>
           acc.concat(
             incomingActions$.pipe(
               filter(
@@ -114,8 +112,8 @@ export const RxBuilder = <T, S extends Cases<T>>({
               effect,
             ),
           ),
-        [],
-      );
+        [] as Observable<Action<any> | Action>[],
+      ) as Observable<Action<any> | Action>[];
 
       return merge(...(pipedEffects || []));
     }),
@@ -130,10 +128,10 @@ export const RxBuilder = <T, S extends Cases<T>>({
 
   // State updates
   const stateEvents$ = mergedActions$.pipe(
-    tap((action) => {
-      debug &&
-        console.log(debugName, '[ACTION]', { type: action.type, payload: action.payload }, '\n');
-    }),
+    // tap((action) => {
+    //   debug &&
+    //     console.log(debugName, '[ACTION]', { type: action.type, payload: action.payload }, '\n');
+    // }),
     scan(reducer, seedState),
     startWith(null, seedState),
     pairwise(),
