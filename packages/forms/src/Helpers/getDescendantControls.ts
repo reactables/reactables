@@ -16,7 +16,7 @@ export const getDescendantControls = <T extends BaseForm<unknown> | Form<unknown
 
   const control = getControl(controlRef, form);
   const { value, config } = control;
-  let descendants: (T extends Form<unknown> ? FormControl<unknown> : BaseControl<unknown>)[];
+  let descendants: (T extends Form<unknown> ? FormControl<unknown> : BaseControl<unknown>)[] = [];
 
   if (Array.isArray(config.controls)) {
     // If control is a Form Array
@@ -32,7 +32,7 @@ export const getDescendantControls = <T extends BaseForm<unknown> | Form<unknown
     ) as (T extends Form<unknown> ? FormControl<unknown> : BaseControl<unknown>)[];
   } else if (config.controls) {
     // If control is a Form Group
-    descendants = Object.keys(value).reduce(
+    descendants = Object.keys(value as object).reduce(
       (acc: (T extends Form<unknown> ? FormControl<unknown> : BaseControl<unknown>)[], key) => {
         return acc.concat(getDescendantControls(controlRef.concat(key), form));
       },
