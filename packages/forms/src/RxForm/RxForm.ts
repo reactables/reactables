@@ -48,14 +48,14 @@ type FbControl<T> = [T, (string | string[])?, (string | string[])?];
 export const control = <T>(config: FormControlConfig<T> | FbControl<T>) => {
   if (Array.isArray(config)) {
     return (config as FbControl<T>).reduce((acc, item, index) => {
-      const indexMap = {
+      const indexMap: { [key: number]: string } = {
         0: 'initialValue',
         1: 'validators',
         2: 'asyncValidators',
       };
       return {
         ...acc,
-        [indexMap[index]]: index < 1 ? item : [].concat(item || []),
+        [indexMap[index]]: index < 1 ? item : ([] as any[]).concat(item || []),
       };
     }, {} as FormControlConfig<T>);
   }
