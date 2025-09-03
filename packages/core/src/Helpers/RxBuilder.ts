@@ -5,7 +5,7 @@ import {
   ActionObservableWithTypes,
 } from '../Models/Reactable';
 import { Effect } from '../Models/Effect';
-import { Action, ScopedEffects } from '../Models/Action';
+import { Action, ScopedEffects, AnyAction } from '../Models/Action';
 import { Observable, ReplaySubject, Subject, merge } from 'rxjs';
 import { filter, tap, map, mergeAll, scan, pairwise, startWith, takeUntil } from 'rxjs/operators';
 import { share, shareReplay } from 'rxjs/operators';
@@ -17,9 +17,11 @@ export interface DestroyAction {
   destroy: () => void;
 }
 
+type AnyActionStream = Observable<AnyAction>;
+
 export interface RxConfig<T, S extends Cases<T>> extends SliceConfig<T, S> {
   debug?: boolean;
-  sources?: Observable<Action<any> | Action>[];
+  sources?: Array<AnyActionStream>;
 }
 
 const getScopedEffectSignature = (actionType: string, key: string | number) =>
@@ -66,7 +68,7 @@ export const RxBuilder = <T, S extends Cases<T>>({
   const destroy$ = new Subject<void>();
 
   // Dispatcher for the UI to push state updates
-  const dispatcher$ = new ReplaySubject<Action<any> | Action>(1);
+  const dispatcher$ = new ReplaySubject<AnyAction>(1);
 
   // All incoming actions
   const incomingActions$ = merge(
@@ -99,7 +101,7 @@ export const RxBuilder = <T, S extends Cases<T>>({
       const signature = getScopedEffectSignature(type, scopedEffects?.key as string);
 
       const pipedEffects = scopedEffects?.effects.reduce(
-        (acc: Observable<Action<any> | Action>[], effect) =>
+        (acc: Array<AnyActionStream>, effect) =>
           acc.concat(
             incomingActions$.pipe(
               filter(
@@ -112,8 +114,8 @@ export const RxBuilder = <T, S extends Cases<T>>({
               effect,
             ),
           ),
-        [] as Observable<Action<any> | Action>[],
-      ) as Observable<Action<any> | Action>[];
+        [],
+      );
 
       return merge(...(pipedEffects || []));
     }),
@@ -128,10 +130,15 @@ export const RxBuilder = <T, S extends Cases<T>>({
 
   // State updates
   const stateEvents$ = mergedActions$.pipe(
-    // tap((action) => {
-    //   debug &&
-    //     console.log(debugName, '[ACTION]', { type: action.type, payload: action.payload }, '\n');
-    // }),
+    tap((action) => {
+      debug &&
+        console.log(
+          debugName,
+          '[ACTION]',
+          { type: action.type, payload: (action as Action<unknown>).payload },
+          '\n',
+        );
+    }),
     scan(reducer, seedState),
     startWith(null, seedState),
     pairwise(),

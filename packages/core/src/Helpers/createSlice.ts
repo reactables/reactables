@@ -1,5 +1,5 @@
 import { Effect } from '../Models/Effect';
-import { Action, ActionCreator, ScopedEffects } from '../Models/Action';
+import { Action, ActionCreator, AnyAction, ScopedEffects } from '../Models/Action';
 
 export const addEffects = <T>(
   actionCreator: ActionCreator<T>,
@@ -11,7 +11,7 @@ export const addEffects = <T>(
   });
 };
 
-export type Reducer<T> = (state?: T, action?: Action<unknown>) => T;
+export type Reducer<T> = (state?: T, action?: AnyAction) => T;
 
 export type SingleActionReducer<T> = (state: T, action: any) => T;
 

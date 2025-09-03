@@ -15,4 +15,6 @@ export type Action<T = undefined> = T extends undefined
       payload: T;
     };
 
+export type AnyAction = Action<any> | Action;
+
 export type ActionCreator<T> = (payload?: T) => Action<T>;
