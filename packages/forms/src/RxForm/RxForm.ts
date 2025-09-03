@@ -288,7 +288,7 @@ const createReactable = <FormValue, T extends Record<string, CustomReducer<FormV
 
   const [state$, hub2Actions] = RxBuilder({
     sources: [buildHub2Source(hub1State$, initialBaseState).pipe(skip(initialFormState ? 1 : 0))],
-    initialState: initialFormState || (null as Form<unknown>),
+    initialState: initialFormState || null,
     name: `Stage 2 ${name ? name : 'rxForm'}`,
     debug,
     reducers: {

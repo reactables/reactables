@@ -4,9 +4,9 @@ import { mergeErrors } from './mergeErrors';
 import { mergeControls } from './mergeControls';
 import { DEFAULT_HUB2_FIELDS } from '../../Models/Controls';
 
-export const formChange = <T>(
-  state: Form<T> | null = null,
-  { payload }: Action<BaseFormState<T>>,
+export const formChange = (
+  state: Form<any> | null = null,
+  { payload }: Action<BaseFormState<any>>,
 ) => {
   const { form } = payload;
 
@@ -20,7 +20,7 @@ export const formChange = <T>(
             ...baseControl,
           },
         };
-      }, {} as Form<T>),
+      }, {} as Form<any>),
     );
   }
 
