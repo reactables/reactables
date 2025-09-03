@@ -20,7 +20,7 @@ export const updateAncestorValuesRemoveControl = <T>(
     const parentFormKey = getFormKey(parentControl.controlRef);
     const childKey = controlRef.slice(-1)[0];
 
-    let newValue: unknown;
+    let newValue;
 
     // If parent is a Form Array
     if (Array.isArray(parentControl.value)) {

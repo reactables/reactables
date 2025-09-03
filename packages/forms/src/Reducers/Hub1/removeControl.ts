@@ -77,7 +77,7 @@ export const removeControl = <T>(
 
       return { ...acc, [key]: control };
     },
-    {},
+    {} as BaseForm<T>,
   );
 
   const result = updateAncestorValuesRemoveControl(
