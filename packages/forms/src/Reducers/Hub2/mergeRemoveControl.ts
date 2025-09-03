@@ -62,7 +62,7 @@ export const mergeRemoveControl = <T>(
           childrenValid,
         },
       };
-    }, {}) as unknown as { [key: string]: FormControl<unknown> };
+    }, {} as Form<unknown>) as unknown as { [key: string]: FormControl<unknown> };
 
   const updatedControlBranchOrderRestored = reverseObjectKeys(
     updatedControlBranch as Form<unknown>,
