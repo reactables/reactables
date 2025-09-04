@@ -117,14 +117,14 @@ const reducerTools = (providers: RxFormProviders): FormReducers => ({
 export type CustomReducerFunc<FormValue = unknown, Payload = unknown> = (
   reducers: FormReducers,
   state: BaseFormState<FormValue>,
-  action: Action<Payload>,
+  action: Action<Payload> | Action,
 ) => BaseFormState<unknown>;
 
 export type CustomReducer<FormValue = unknown, Payload = unknown> =
   | CustomReducerFunc<FormValue, Payload>
   | {
       reducer: CustomReducerFunc<FormValue, Payload>;
-      effects?: Effect<unknown, unknown>[] | ((payload?: unknown) => ScopedEffects<unknown>);
+      effects?: Effect<unknown, unknown>[] | ((payload?: unknown) => ScopedEffects);
     };
 
 // Mapping a Custom reducer function to an action creator
@@ -156,7 +156,7 @@ export interface RxFormOptions<
 type NormalizerFunction<T> = (value: T) => T;
 
 export interface RxFormProviders {
-  normalizers?: { [key: string]: NormalizerFunction<unknown> };
+  normalizers?: { [key: string]: NormalizerFunction<any> };
   validators?: { [key: string]: ValidatorFn };
   asyncValidators?: { [key: string]: ValidatorAsyncFn };
 }
@@ -297,7 +297,7 @@ const createReactable = <FormValue, T extends Record<string, CustomReducer<FormV
         reducer: (state) => state,
         effects: (control: BaseControl<unknown>) => ({
           key: control.key,
-          effects: getScopedEffectsForControl(control, providers),
+          effects: getScopedEffectsForControl(control, providers) as Effect<unknown, unknown>[],
         }),
       },
       asyncValidation,

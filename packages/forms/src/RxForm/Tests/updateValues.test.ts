@@ -106,7 +106,7 @@ describe('RxForm', () => {
 
     it('should perform async validation on FC', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const [state$, { updateValues }] = build(control(['', null, 'uniqueEmail']), {
+        const [state$, { updateValues }] = build(control(['', [], 'uniqueEmail']), {
           providers: { validators: Validators, asyncValidators: AsyncValidators },
         });
 
@@ -149,7 +149,7 @@ describe('RxForm', () => {
 
     it('should perform async validation and set pending state on FC with a debounced time', () => {
       testScheduler.run(({ expectObservable, cold }) => {
-        const [state$, { updateValues }] = build(control(['', null, 'debouncedUniqueName']), {
+        const [state$, { updateValues }] = build(control(['', [], 'debouncedUniqueName']), {
           providers: { validators: Validators, asyncValidators: AsyncValidators },
         });
 
