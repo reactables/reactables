@@ -6,7 +6,7 @@ import {
 } from '../Models/Reactable';
 import { Effect } from '../Models/Effect';
 import { Action, ScopedEffects, AnyAction } from '../Models/Action';
-import { Observable, ReplaySubject, Subject, merge } from 'rxjs';
+import { Observable, OperatorFunction, ReplaySubject, Subject, merge } from 'rxjs';
 import { filter, tap, map, mergeAll, scan, pairwise, startWith, takeUntil } from 'rxjs/operators';
 import { share, shareReplay } from 'rxjs/operators';
 import jsonDiff, { Difference } from '../Helpers/jsonDiff';
@@ -111,7 +111,7 @@ export const RxBuilder = <T, S extends Cases<T>>({
                     initialAction.scopedEffects?.key as string,
                   ) === signature,
               ),
-              effect,
+              effect as OperatorFunction<AnyAction, AnyAction>,
             ),
           ),
         [],
