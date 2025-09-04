@@ -3,11 +3,9 @@ import { catchError } from 'rxjs/operators';
 import { Action, Effect } from '@reactables/core';
 import { map, switchMap } from 'rxjs/operators';
 import { BaseControl } from '../Models/Controls';
-import { ControlAsyncValidationResponse } from '../Models/Payloads';
 import { RxFormProviders } from '../RxForm/RxForm';
-import { ControlRef } from '../Models';
 
-type ControlScopedEffect<T> = Effect<BaseControl<T>, ControlAsyncValidationResponse | ControlRef>;
+type ControlScopedEffect<T> = Effect;
 
 export const getScopedEffectsForControl = <T>(
   formControl: BaseControl<T>,

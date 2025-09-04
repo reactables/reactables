@@ -124,7 +124,7 @@ export type CustomReducer<FormValue = unknown> =
   | CustomReducerFunc<FormValue>
   | {
       reducer: CustomReducerFunc<FormValue>;
-      effects?: Effect<unknown, unknown>[] | ((payload?: unknown) => ScopedEffects);
+      effects?: Effect[] | ((payload?: unknown) => ScopedEffects);
     };
 
 // Mapping a Custom reducer function to an action creator
@@ -297,7 +297,7 @@ const createReactable = <FormValue, T extends Record<string, CustomReducer<FormV
         reducer: (state) => state,
         effects: (control: BaseControl<unknown>) => ({
           key: control.key,
-          effects: getScopedEffectsForControl(control, providers) as Effect<unknown, unknown>[],
+          effects: getScopedEffectsForControl(control, providers) as Effect[],
         }),
       },
       asyncValidation,
