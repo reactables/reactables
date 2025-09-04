@@ -15,7 +15,7 @@ export const mergeControls = <T>(
 ) => {
   const controlsRemoved = _removedControls
     ? Object.values(_removedControls).reduce(
-        (acc, { controlRef }) => mergeRemoveControl(acc, form, controlRef),
+        (acc, { controlRef }) => mergeRemoveControl(acc, form, controlRef) as Form<T>,
         state,
       )
     : state;
@@ -52,7 +52,7 @@ export const mergeControls = <T>(
         });
       } else if (control.config.controls) {
         // If control is a FormGroup
-        childrenValid = Object.keys(control.value).every((childKey) => {
+        childrenValid = Object.keys(control.value as unknown[]).every((childKey) => {
           const formKey = getFormKey(control.controlRef.concat(childKey));
           const valid =
             acc[formKey] === undefined ? controlsRemoved[formKey].valid : acc[formKey].valid;
@@ -69,7 +69,7 @@ export const mergeControls = <T>(
           childrenValid,
         },
       };
-    }, {});
+    }, {} as Form<unknown>);
 
   const orderRestored = reverseObjectKeys(updatedBranch);
 

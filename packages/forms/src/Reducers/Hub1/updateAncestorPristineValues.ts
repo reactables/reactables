@@ -33,7 +33,7 @@ export const updateAncestorPristineValues = <T>(
       newValue = siblingControls.reduce((acc, { controlRef, pristineValue }) => {
         return {
           ...acc,
-          [controlRef.at(-1)]: pristineValue,
+          [controlRef.at(-1) as string | number]: pristineValue,
         };
       }, {});
     }

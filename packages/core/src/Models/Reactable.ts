@@ -4,7 +4,7 @@ import { DestroyAction } from '../Helpers';
 
 export type ActionCreatorTypeFromReducer<T> = T extends (state: any) => unknown
   ? () => void
-  : T extends (state, action: Action<infer P>) => unknown
+  : T extends (state: any, action: Action<infer P>) => unknown
   ? (payload: P) => void
   : T extends { reducer: (state: any) => unknown }
   ? () => void
@@ -13,14 +13,14 @@ export type ActionCreatorTypeFromReducer<T> = T extends (state: any) => unknown
   : never;
 
 export type ActionObservableWithTypes<T> = Observable<Action<unknown>> & {
-  types?: T;
-  ofTypes?: (types: Array<keyof T>) => Observable<Action<unknown>>;
+  types: T;
+  ofTypes: (types: Array<keyof T>) => Observable<Action<unknown>>;
 };
 
 export type Reactable<T, S extends DestroyAction = ActionMap & DestroyAction, U = unknown> = [
   Observable<T>,
   S,
-  ActionObservableWithTypes<U>?,
+  ActionObservableWithTypes<U>,
 ];
 
 export interface ActionMap {

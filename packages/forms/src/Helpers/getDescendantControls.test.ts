@@ -14,7 +14,7 @@ describe('getDescendantControls', () => {
 
     //TODOS: getDescendants is used in syncValidate which is used in buildFormState
     // should not use the method in the test set up?
-    const { form } = buildFormState(clonedConfig, undefined, undefined, {
+    const { form } = buildFormState(clonedConfig, undefined, {
       validators: { ...Validators, ...builtValidators },
       asyncValidators: AsyncValidators,
     });

@@ -1,4 +1,4 @@
-import { Subscription } from 'rxjs';
+import { Observable, Subscription, map, mergeMap, of } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { RxBuilder } from './RxBuilder';
 import { Action } from '../Models';
@@ -196,4 +196,30 @@ describe('RxBuilder', () => {
       });
     });
   });
+});
+
+// TODO: Write test for effects and scoped effects
+
+const [state$, actions, actions$] = RxBuilder({
+  initialState: false,
+  reducers: {
+    max: (state) => state,
+    testNumber: (_, action: Action<number>) => action.payload > 0,
+    set: {
+      reducer: (_, action: Action<boolean>) => action.payload,
+      effects: [
+        (flip$: Observable<Action<string>>) =>
+          flip$.pipe(mergeMap((action) => of({ type: 'hello', payload: action.payload }))),
+      ],
+    },
+    set2effectWithPayloadFunction: {
+      reducer: (_) => _,
+      effects: (payload: string) => ({
+        key: payload,
+        effects: [
+          (flip$: Observable<Action>) => flip$.pipe(mergeMap((action) => of({ type: 'hello' }))),
+        ],
+      }),
+    },
+  },
 });

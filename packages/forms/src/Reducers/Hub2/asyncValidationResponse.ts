@@ -16,17 +16,17 @@ const getControlByKey = (key: string, form: Form<unknown>) => {
   return Object.values(form).find((control) => control.key === key);
 };
 
-export const asyncValidationResponse = <T>(
-  form: Form<T>,
+export const asyncValidationResponse = (
+  form: Form<any> | null,
   { payload: { key, validatorIndex, errors } }: Action<ControlAsyncValidationResponse>,
-): Form<T> => {
-  const control = getControlByKey(key, form);
+): Form<any> => {
+  const control = getControlByKey(key, form!);
 
   if (!control) {
-    return form;
+    return form!;
   }
 
-  const controlUpdated: Form<T> = {
+  const controlUpdated = {
     ...form,
     [getFormKey(control.controlRef)]: {
       ...control,
@@ -39,7 +39,7 @@ export const asyncValidationResponse = <T>(
         ...errors,
       },
     },
-  };
+  } as Form<any>;
 
   const ancestors = getAncestorControls(control.controlRef, controlUpdated);
 
@@ -61,7 +61,7 @@ export const asyncValidationResponse = <T>(
       ...acc,
       [key]: control,
     };
-  }, {} as Form<T>);
+  }, {} as Form<any>);
 
   return mergeBranchErrors(ancestorsUpdated, control.controlRef);
 };

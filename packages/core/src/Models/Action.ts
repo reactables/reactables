@@ -1,13 +1,20 @@
 import { Effect } from './Effect';
 
-export interface ScopedEffects<T> {
+export interface ScopedEffects {
   key?: string | number;
-  effects: Effect<T, unknown>[];
+  effects: Effect[];
 }
-export interface Action<T = undefined> {
-  type?: string;
-  scopedEffects?: ScopedEffects<T>;
-  payload?: T;
-}
+export type Action<T = undefined> = T extends undefined
+  ? {
+      type: string;
+      scopedEffects?: ScopedEffects;
+    }
+  : {
+      type: string;
+      scopedEffects?: ScopedEffects;
+      payload: T;
+    };
+
+export type AnyAction = Action<any> | Action;
 
 export type ActionCreator<T> = (payload?: T) => Action<T>;
