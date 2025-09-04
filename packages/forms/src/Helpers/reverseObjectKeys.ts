@@ -5,4 +5,4 @@ export const reverseObjectKeys = <T>(form: Form<T>) =>
     .reduce((acc, key) => {
       acc[key] = form[key];
       return acc;
-    }, {}) as Form<T>;
+    }, {} as Form<T>);

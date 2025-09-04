@@ -29,8 +29,8 @@ interface Options {
 }
 
 const jsonDiff = (
-  obj: Record<string, any> | any[],
-  newObj: Record<string, any> | any[],
+  obj: Record<string, any>,
+  newObj: Record<string, any>,
   options: Partial<Options> = { cyclesFix: true },
   _stack: Record<string, any>[] = [],
 ): Difference[] => {
@@ -38,7 +38,7 @@ const jsonDiff = (
   const isObjArray = Array.isArray(obj);
 
   for (const key in obj) {
-    const objKey = obj[key] as unknown;
+    const objKey = obj[key] as string;
     const path = isObjArray ? +key : key;
     if (!(key in newObj)) {
       diffs.push({
@@ -69,7 +69,12 @@ const jsonDiff = (
       objKey !== newObjKey &&
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //@ts-ignore
-      !(areObjects && (isNaN(objKey) ? objKey + '' === newObjKey + '' : +objKey === +newObjKey))
+      !(
+        areObjects &&
+        (isNaN(objKey)
+          ? (objKey as string) + '' === (newObjKey as unknown as string) + ''
+          : +objKey === +(newObjKey as unknown as string))
+      )
     ) {
       diffs.push({
         path: [path],

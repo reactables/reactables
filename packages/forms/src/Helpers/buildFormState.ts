@@ -10,9 +10,9 @@ import { RxFormProviders } from '../RxForm/RxForm';
 
 export const buildState = <T>(
   config: AbstractControlConfig,
-  form: BaseForm<T> = { root: null },
   controlRef: ControlRef = [],
   providers: RxFormProviders,
+  form?: BaseForm<T>,
 ): BaseForm<T> => {
   const value = getValueFromControlConfig(config);
   const control: BaseControl<unknown> = {
@@ -32,7 +32,7 @@ export const buildState = <T>(
       ...control,
       validatorErrors: getErrors(control, value, providers),
     },
-  };
+  } as BaseForm<T>;
 
   const controls = (<FormGroupConfig | FormArrayConfig>config).controls;
 
@@ -40,7 +40,7 @@ export const buildState = <T>(
   if (controls && !(controls instanceof Array)) {
     newForm = Object.entries((<FormGroupConfig>config).controls).reduce(
       (acc, [key, controlConfig]) => {
-        return buildState(controlConfig, acc, controlRef.concat(key), providers);
+        return buildState(controlConfig, controlRef.concat(key), providers, acc);
       },
       newForm,
     );
@@ -48,7 +48,7 @@ export const buildState = <T>(
     // Adding controls for Form Array
     newForm = (<FormArrayConfig>config).controls.reduce(
       (acc, controlConfig, index) =>
-        buildState(controlConfig, acc, controlRef.concat(index), providers),
+        buildState(controlConfig, controlRef.concat(index), providers, acc),
       newForm,
     );
   }
@@ -58,11 +58,11 @@ export const buildState = <T>(
 
 export const buildFormState = <T>(
   config: AbstractControlConfig,
-  form: BaseForm<T> = { root: null },
   controlRef: ControlRef = [],
   providers: RxFormProviders,
+  form?: BaseForm<T>,
 ): BaseFormState<T> => {
   return {
-    form: buildState(config, form, controlRef, providers),
+    form: buildState(config, controlRef, providers, form),
   };
 };

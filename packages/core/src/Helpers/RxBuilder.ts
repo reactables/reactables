@@ -5,8 +5,8 @@ import {
   ActionObservableWithTypes,
 } from '../Models/Reactable';
 import { Effect } from '../Models/Effect';
-import { Action, ScopedEffects } from '../Models/Action';
-import { Observable, ReplaySubject, Subject, merge } from 'rxjs';
+import { Action, ScopedEffects, AnyAction } from '../Models/Action';
+import { Observable, OperatorFunction, ReplaySubject, Subject, merge } from 'rxjs';
 import { filter, tap, map, mergeAll, scan, pairwise, startWith, takeUntil } from 'rxjs/operators';
 import { share, shareReplay } from 'rxjs/operators';
 import jsonDiff, { Difference } from '../Helpers/jsonDiff';
@@ -17,9 +17,11 @@ export interface DestroyAction {
   destroy: () => void;
 }
 
+type AnyActionStream = Observable<AnyAction>;
+
 export interface RxConfig<T, S extends Cases<T>> extends SliceConfig<T, S> {
   debug?: boolean;
-  sources?: Observable<Action<unknown>>[];
+  sources?: Array<AnyActionStream>;
 }
 
 const getScopedEffectSignature = (actionType: string, key: string | number) =>
@@ -45,17 +47,15 @@ export const RxBuilder = <T, S extends Cases<T>>({
           const effects =
             typeof _case.effects === 'function'
               ? _case.effects
-              : ((() => ({ effects: _case.effects })) as (
-                  payload?: unknown,
-                ) => ScopedEffects<unknown>);
+              : ((() => ({ effects: _case.effects })) as (payload?: unknown) => ScopedEffects);
 
           return {
             ...action,
-            scopedEffects: effects(action.payload),
+            scopedEffects: effects((action as Action<unknown>).payload),
           };
         }
 
-        return { type: action.type, payload: action.payload };
+        return { type: action.type, payload: (action as Action<unknown>).payload };
       }),
     ),
   );
@@ -68,7 +68,7 @@ export const RxBuilder = <T, S extends Cases<T>>({
   const destroy$ = new Subject<void>();
 
   // Dispatcher for the UI to push state updates
-  const dispatcher$ = new ReplaySubject<Action<unknown>>(1);
+  const dispatcher$ = new ReplaySubject<AnyAction>(1);
 
   // All incoming actions
   const incomingActions$ = merge(
@@ -77,7 +77,7 @@ export const RxBuilder = <T, S extends Cases<T>>({
   );
 
   // Dictionary of effects scoped to actions & key (if provided)
-  const scopedEffectsDict: { [key: string]: Effect<unknown, unknown>[] } = {};
+  const scopedEffectsDict: { [key: string]: Effect[] | undefined } = {};
 
   // Registers scoped effects to the dictionary.
   const mergedScopedEffects$ = incomingActions$.pipe(
@@ -87,33 +87,37 @@ export const RxBuilder = <T, S extends Cases<T>>({
 
       return (
         hasEffects &&
-        scopedEffectsDict[getScopedEffectSignature(type, scopedEffects.key)] === undefined
+        scopedEffectsDict[getScopedEffectSignature(type, scopedEffects?.key as string)] ===
+          undefined
       );
     }),
     // Register the new scoped effect
-    tap(({ type, scopedEffects: { key, effects } }) => {
-      scopedEffectsDict[getScopedEffectSignature(type, key)] = effects;
+    tap(({ type, scopedEffects }) => {
+      scopedEffectsDict[getScopedEffectSignature(type, scopedEffects?.key as string)] =
+        scopedEffects?.effects as Effect[];
     }),
     // Once effects are registered, merge them into the `mergeScopedEffects$` stream for the store to receive.
-    map(({ type, scopedEffects: { key, effects } }) => {
-      const signature = getScopedEffectSignature(type, key);
+    map(({ type, scopedEffects }) => {
+      const signature = getScopedEffectSignature(type, scopedEffects?.key as string);
 
-      const pipedEffects = effects.reduce(
-        (acc: Observable<Action<unknown>>[], effect) =>
+      const pipedEffects = (scopedEffects?.effects as Effect[]).reduce(
+        (acc: Array<AnyActionStream>, effect) =>
           acc.concat(
             incomingActions$.pipe(
               filter(
                 (initialAction) =>
-                  getScopedEffectSignature(initialAction.type, initialAction.scopedEffects?.key) ===
-                  signature,
+                  getScopedEffectSignature(
+                    initialAction.type,
+                    initialAction.scopedEffects?.key as string,
+                  ) === signature,
               ),
-              effect,
+              effect as OperatorFunction<AnyAction, AnyAction>,
             ),
           ),
         [],
       );
 
-      return merge(...pipedEffects);
+      return merge(...(pipedEffects || []));
     }),
     mergeAll(),
   );
@@ -128,7 +132,12 @@ export const RxBuilder = <T, S extends Cases<T>>({
   const stateEvents$ = mergedActions$.pipe(
     tap((action) => {
       debug &&
-        console.log(debugName, '[ACTION]', { type: action.type, payload: action.payload }, '\n');
+        console.log(
+          debugName,
+          '[ACTION]',
+          { type: action.type, payload: (action as Action<unknown>).payload },
+          '\n',
+        );
     }),
     scan(reducer, seedState),
     startWith(null, seedState),
@@ -146,7 +155,9 @@ export const RxBuilder = <T, S extends Cases<T>>({
             const reduceDiff = (diff: Difference[]) =>
               diff.reduce((acc, change) => ({ ...acc, [change.path.join('|')]: change }), {});
 
-            const difference = reduceDiff(jsonDiff(prevState as object, newState as object));
+            const difference = reduceDiff(
+              jsonDiff(prevState as Record<string, any>, newState as object),
+            );
 
             console.log(
               debugName,

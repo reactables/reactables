@@ -3,7 +3,7 @@ import { ControlModels, RxFormActions } from '@reactables/forms';
 
 export type HookedRxForm = [ControlModels.Form<unknown>, RxFormActions, ...unknown[]];
 
-export const FormContext = React.createContext(null) as React.Context<HookedRxForm>;
+export const FormContext = React.createContext(null) as unknown as React.Context<HookedRxForm>;
 
 interface FormProps {
   rxForm: HookedRxForm;

@@ -30,7 +30,7 @@ describe('RxForm', () => {
         subscription = cold('-bc', {
           b: () => updateValues({ controlRef: ['firstName'], value: 'Changed first name' }),
           c: () => resetControl([]),
-        }).subscribe((action) => {
+        } as { [key: string]: () => void }).subscribe((action) => {
           action();
         });
 
@@ -60,7 +60,7 @@ describe('RxForm', () => {
         subscription = cold('-bc', {
           b: () => updateValues({ controlRef: ['doctorInfo'], value: newValue }),
           c: () => resetControl([]),
-        }).subscribe((action) => {
+        } as { [key: string]: () => void }).subscribe((action) => {
           action();
         });
 
