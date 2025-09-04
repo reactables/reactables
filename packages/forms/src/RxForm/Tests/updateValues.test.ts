@@ -169,7 +169,7 @@ describe('RxForm', () => {
               value: 'newName',
               controlRef: [],
             }),
-        }).subscribe((action) => {
+        } as { [key: string]: () => void }).subscribe((action) => {
           action();
         });
 

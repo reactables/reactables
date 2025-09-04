@@ -297,7 +297,7 @@ const createReactable = <FormValue, T extends Record<string, CustomReducer<FormV
         reducer: (state) => state,
         effects: (control: BaseControl<unknown>) => ({
           key: control.key,
-          effects: getScopedEffectsForControl(control, providers) as Effect[],
+          effects: getScopedEffectsForControl(control, providers),
         }),
       },
       asyncValidation,

@@ -103,7 +103,7 @@ export const updateValues = <T>(
         if (!normalizers?.[normalizer]) {
           throw `You have not provided a normalizer for "${normalizer}"`;
         }
-        return normalizers[normalizer](acc);
+        return normalizers[normalizer](acc) as unknown;
       },
       value,
     );
