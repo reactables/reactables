@@ -77,7 +77,7 @@ export const RxBuilder = <T, S extends Cases<T>>({
   );
 
   // Dictionary of effects scoped to actions & key (if provided)
-  const scopedEffectsDict: { [key: string]: Effect<unknown, unknown>[] | undefined } = {};
+  const scopedEffectsDict: { [key: string]: Effect[] | undefined } = {};
 
   // Registers scoped effects to the dictionary.
   const mergedScopedEffects$ = incomingActions$.pipe(
@@ -94,13 +94,13 @@ export const RxBuilder = <T, S extends Cases<T>>({
     // Register the new scoped effect
     tap(({ type, scopedEffects }) => {
       scopedEffectsDict[getScopedEffectSignature(type, scopedEffects?.key as string)] =
-        scopedEffects?.effects as Effect<unknown, unknown>[];
+        scopedEffects?.effects as Effect[];
     }),
     // Once effects are registered, merge them into the `mergeScopedEffects$` stream for the store to receive.
     map(({ type, scopedEffects }) => {
       const signature = getScopedEffectSignature(type, scopedEffects?.key as string);
 
-      const pipedEffects = (scopedEffects?.effects as Effect<any, any>[]).reduce(
+      const pipedEffects = (scopedEffects?.effects as Effect[]).reduce(
         (acc: Array<AnyActionStream>, effect) =>
           acc.concat(
             incomingActions$.pipe(

@@ -2,7 +2,7 @@ import { Effect } from './Effect';
 
 export interface ScopedEffects {
   key?: string | number;
-  effects: Effect<unknown, unknown>[];
+  effects: Effect[];
 }
 export type Action<T = undefined> = T extends undefined
   ? {

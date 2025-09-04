@@ -20,7 +20,7 @@ export interface Cases<T> {
     | SingleActionReducer<T>
     | {
         reducer: SingleActionReducer<T>;
-        effects?: ((payload?: any) => ScopedEffects) | Effect<unknown, unknown>[];
+        effects?: ((payload?: any) => ScopedEffects) | Effect[];
       };
 }
 

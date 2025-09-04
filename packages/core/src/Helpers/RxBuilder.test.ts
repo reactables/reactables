@@ -200,26 +200,26 @@ describe('RxBuilder', () => {
 
 // TODO: Write test for effects and scoped effects
 
-// const [state$, actions, actions$] = RxBuilder({
-//   initialState: false,
-//   reducers: {
-//     max: (state) => state,
-//     testNumber: (state, action: Action<number>) => action.payload > 0,
-//     set: {
-//       reducer: (_, action: Action<boolean>) => action.payload,
-//       effects: [
-//         (flip$) => flip$.pipe(mergeMap((action) => of({ type: 'hello', payload: action.payload }))),
-//       ],
-//     },
-//     set2effectWithPayloadFunction: {
-//       reducer: (_) => _,
-//       effects: (payload: string) => ({
-//         key: payload,
-//         effects: [
-//           (flip$) =>
-//             flip$.pipe(mergeMap((action) => of({ type: 'hello', payload: action.payload }))),
-//         ],
-//       }),
-//     },
-//   },
-// });
+const [state$, actions, actions$] = RxBuilder({
+  initialState: false,
+  reducers: {
+    max: (state) => state,
+    testNumber: (_, action: Action<number>) => action.payload > 0,
+    set: {
+      reducer: (_, action: Action<boolean>) => action.payload,
+      effects: [
+        (flip$: Observable<Action<string>>) =>
+          flip$.pipe(mergeMap((action) => of({ type: 'hello', payload: action.payload }))),
+      ],
+    },
+    set2effectWithPayloadFunction: {
+      reducer: (_) => _,
+      effects: (payload: string) => ({
+        key: payload,
+        effects: [
+          (flip$: Observable<Action>) => flip$.pipe(mergeMap((action) => of({ type: 'hello' }))),
+        ],
+      }),
+    },
+  },
+});
