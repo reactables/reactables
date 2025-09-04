@@ -2,6 +2,7 @@ import { Action, RxBuilder, ScopedEffects } from '@reactables/core';
 import { UpdateTodoPayload, UpdateTodoPayloadSuccess, Todo } from './Models/Todos';
 import { switchMap, map } from 'rxjs/operators';
 import { ObservableOrPromise } from '../Models/ObservableOrPromise';
+import { Observable } from 'rxjs';
 
 interface TodoUpdatesState {
   todos: Todo[];
@@ -37,10 +38,10 @@ export const RxTodoUpdates = (
             [] as Todo[],
           ),
         }),
-        effects: (payload: UpdateTodoPayload): ScopedEffects<UpdateTodoPayload> => ({
+        effects: (payload: UpdateTodoPayload): ScopedEffects => ({
           key: payload.todoId,
           effects: [
-            (todoUpdates$) => {
+            (todoUpdates$: Observable<Action<UpdateTodoPayload>>) => {
               return todoUpdates$.pipe(
                 // Call todo API Service - switchMap operator cancels previous pending call if a new one is initiated
                 switchMap(({ payload }) => updateTodoApi(payload)),
