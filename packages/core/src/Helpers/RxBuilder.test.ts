@@ -1,4 +1,4 @@
-import { Subscription, map, mergeMap, of } from 'rxjs';
+import { Observable, Subscription, map, mergeMap, of } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { RxBuilder } from './RxBuilder';
 import { Action } from '../Models';
@@ -203,6 +203,8 @@ describe('RxBuilder', () => {
 // const [state$, actions, actions$] = RxBuilder({
 //   initialState: false,
 //   reducers: {
+//     max: (state) => state,
+//     testNumber: (state, action: Action<number>) => action.payload > 0,
 //     set: {
 //       reducer: (_, action: Action<boolean>) => action.payload,
 //       effects: [

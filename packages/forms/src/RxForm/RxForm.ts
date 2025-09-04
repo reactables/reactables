@@ -114,32 +114,32 @@ const reducerTools = (providers: RxFormProviders): FormReducers => ({
     markControlAsUntouched(state, { type: 'markControlAsUntouched', payload }, true),
 });
 
-export type CustomReducerFunc<FormValue = unknown, Payload = unknown> = (
+export type CustomReducerFunc<FormValue = unknown> = (
   reducers: FormReducers,
   state: BaseFormState<FormValue>,
-  action: Action<Payload> | Action,
+  action: any,
 ) => BaseFormState<unknown>;
 
-export type CustomReducer<FormValue = unknown, Payload = unknown> =
-  | CustomReducerFunc<FormValue, Payload>
+export type CustomReducer<FormValue = unknown> =
+  | CustomReducerFunc<FormValue>
   | {
-      reducer: CustomReducerFunc<FormValue, Payload>;
+      reducer: CustomReducerFunc<FormValue>;
       effects?: Effect<unknown, unknown>[] | ((payload?: unknown) => ScopedEffects);
     };
 
 // Mapping a Custom reducer function to an action creator
 export type ActionCreatorTypeFromCustomReducer<T> = T extends (
-  reducers: FormReducers,
-  state: BaseFormState<unknown>,
-) => BaseFormState<unknown>
+  formReducers: FormReducers,
+  state: any,
+) => unknown
   ? () => void
-  : T extends CustomReducerFunc<unknown, infer P>
+  : T extends (formReducers: FormReducers, state: any, action: Action<infer P>) => unknown
   ? (payload: P) => void
-  : T extends {
-      reducer: (reducers: FormReducers, state: BaseFormState<unknown>) => BaseFormState<unknown>;
-    }
+  : T extends { reducer: (formReducers: FormReducers, state: any) => unknown }
   ? () => void
-  : T extends { reducer: CustomReducerFunc<unknown, infer P> }
+  : T extends {
+      reducer: (formReducers: FormReducers, state: any, action: Action<infer P>) => unknown;
+    }
   ? (payload: P) => void
   : never;
 
