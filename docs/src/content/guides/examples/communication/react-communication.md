@@ -6,37 +6,35 @@
 <br>
 
 ```typescript
-import { RxToggleCounter } from './RxToggleCounter';
 import { useReactable } from '@reactables/react';
+import { RxApp } from './RxApp';
 
 function App() {
-  const [state, actions] = useReactable(RxToggleCounter);
+  const [state, actions] = useReactable(RxApp);
 
   if (!state) return;
 
   const {
-    toggle: toggleState,
-    counter: { count },
+    auth: { loggingIn, loggedIn, userId },
+    profile: { fetchingProfile, userProfile },
   } = state;
-
-  const {
-    toggle: { toggleOn, toggleOff, toggle },
-    counter,
-  } = actions;
 
   return (
     <>
-      <h5>Reactable Toggle</h5>
-      Toggle is: {toggleState ? 'On' : 'Off'}
-      <br />
-      <button onClick={toggleOn}>Turn On</button>
-      <button onClick={toggleOff}>Turn Off</button>
-      <button onClick={toggle}>Toggle</button>
-      <br />
-      <br />
-      Toggle Button Count: {count}
-      <br />
-      <button onClick={counter.reset}>Reset Count</button>
+      <div>
+        <button onClick={actions.auth.login} disabled={loggingIn}>
+          Login
+        </button>
+        {loggingIn && <div>Logging In</div>}
+        {loggedIn && <div>User Id: {userId} logged in.</div>}
+        {fetchingProfile && <div>Fetching Profile...</div>}
+
+        {userProfile && (
+          <>
+            <h3>Hello {userProfile.userName}</h3>
+          </>
+        )}
+      </div>
     </>
   );
 }

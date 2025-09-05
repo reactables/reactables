@@ -9,42 +9,41 @@ Two main use cases:
 Example: a simple hotel search filtered by `smokingAllowed` and `petsAllowed`.  
 Using `RxToggle` and a modified `RxFetchData`, we’ll combine them to implement the search, starting with the toggle filters for smoking and pets. 
 
-<a class="mb-3 d-block" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/examples/reactable-composition/reactable-composition.md" target="_blank" rel="noreferrer">
-  Edit this snippet <i class="fa fa-edit"></i>
-</a>
-
-```typescript
-import { ToggleState, ToggleActions } from './RxToggle';
-
-export type SearchControlsState = {
-  smokingAllowed: ToggleState; // boolean
-  petsAllowed: ToggleState; // boolean
-};
-
-export type SearchControlsActions = {
-  smokingAllowed: ToggleActions;
-  petsAllowed: ToggleActions;
-};
-```
-
 We can initialize an `RxToggle` for each filter control and use the [`combine`](/reactables/references/core-api#combine) helper function to combine the Reactables together to create `RxSearchControls`.
 
 ```typescript
+import { combine } from '@reactables/core';
+import { RxToggle } from './RxToggle';
 
-import { Reactable, combine } from '@reactables/core';
-import { RxToggle, ToggleState, ToggleActions } from './RxToggle';
-
-...
-
-export const RxSearchControls = (): Reactable<
-  SearchControlsState,
-  SearchControlsActions
-> =>
+export const RxSearchControls = () =>
   combine({
     smokingAllowed: RxToggle(),
     petsAllowed: RxToggle(),
   });
 
+
+```
+
+We can make a slight improvement to `RxFetchData` to accept a `sources` parameter so it can listen to state changes from `RxSearchControls`
+
+```typescript
+
+export const RxFetchData = ({
+  dataService,
+  // Include a sources option
+  sources,
+}: {
+  dataService: DataService;
+  sources: Observable<Action<any>>[];
+}) =>
+  RxBuilder({
+    initialState: {
+      ...
+    },
+    // Add sources to the reactable
+    sources,
+    reducers: {
+      ...
 
 ```
 
@@ -55,28 +54,17 @@ We know when there is a state change in `RxSearchControls`, `RxFetchData` will h
 We will pipe the state observable from `RxSearchControls` and map it to a `fetch` action. Then provide this piped observable, `fetchOnSearchChange$`, as a source for `RxFetchData` during initialization.
 
 ```typescript
-import { Reactable, combine } from '@reactables/core';
+import { combine } from '@reactables/core';
 import { map } from 'rxjs/operators';
-import {
-  RxSearchControls,
-  SearchControlsState,
-  SearchControlsActions,
-} from './RxSearchControls';
-import { RxFetchData, FetchDataState } from './RxFetchData';
+import { RxSearchControls } from './RxSearchControls';
+import { RxFetchData } from './RxFetchData';
 import HotelService from '../hotel-service';
-
-type HotelSearchState = {
-  controls: SearchControlsState;
-  searchResult: FetchDataState;
-};
-
-type HotelSearchActions = { controls: SearchControlsActions };
 
 export const RxHotelSearch = ({
   hotelService,
 }: {
   hotelService: HotelService;
-}): Reactable<HotelSearchState, HotelSearchActions> => {
+}) => {
   const rxSearchControls = RxSearchControls();
 
   const fetchOnSearchChange$ = rxSearchControls[0].pipe(
@@ -93,6 +81,7 @@ export const RxHotelSearch = ({
     searchResult: rxSearchResult,
   });
 };
+
 
 ```
 

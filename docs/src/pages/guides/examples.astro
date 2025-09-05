@@ -16,9 +16,6 @@ const { Content : Debugging } = await debugging.render();
 const fetchData = await getEntry('guides', 'examples/fetch-data/fetch-data');
 const { Content : FetchData } = await fetchData.render();
 
-const actionsOnComponentMount = await getEntry('guides', 'examples/actions-on-component-mount');
-const { Content : ActionsOnComponentMount } = await actionsOnComponentMount.render();
-
 const reactFetchData = await getEntry('guides', 'examples/fetch-data/react-fetch-data');
 const { Content : ReactFetchData } = await reactFetchData.render();
 
@@ -40,7 +37,6 @@ const { Content : GlobalState } = await globalState.render();
 const sectionsLinks = [
   { label: 'Basic Toggle', link: "#basic-toggle"},
   { label: 'Fetching Data with an Effect', link: "#fetching-data"},
-  { label: 'Actions On Mount', link: "#actions-on-mount"},
   { label: 'Composition with Reactables', link: "#reactable-composition"},
   { label: 'Communication between Reactables', link: "#communication-between-reactables"},
   { label: 'Global State with Reactables', link: "#global-state-with-reactables"},
@@ -108,11 +104,6 @@ const sectionsLinks = [
 
     <br />
 
-    <!-- Actions On Component Mount -->
-     <ActionsOnComponentMount />
-
-    <br />
-
     <!-- Composition with Reactables -->
     <ReactableComposition />
 
@@ -137,7 +128,7 @@ const sectionsLinks = [
 
     <!-- Communication between Reactables -->
     <ReactableCommunication />
-    <h5>Bind RxToggleCounter to View</h5>
+    <h5>Bind RxApp to View</h5>
     <ul class="nav nav-tabs">
       <li class="nav-item">
           <a href="#react-communication" class="nav-link active" data-bs-toggle="tab">
