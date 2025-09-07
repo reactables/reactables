@@ -2,7 +2,7 @@
 
 ## Reactable
 
-A **Reactable** is an interface for modelling state in Reactables.  
+A **Reactable** is an interface for modelling state management.  
 It provides a way for applications and UI components to **observe state** and **trigger updates**.
 
 A `Reactable` is a tuple with:

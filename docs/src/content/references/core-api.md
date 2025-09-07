@@ -2,7 +2,7 @@
 
 ## `Reactable`
 
-A **Reactable** is an interface for modelling state in Reactables.  
+A **Reactable** is an interface for modelling state management.  
 It provides a way for applications and UI components to **observe state** and **trigger updates**.
 
 A `Reactable` is a tuple with:
@@ -38,84 +38,104 @@ actions.increment();
 actions.decrement();
 ```
 
----
-
-### Type Definition
-
-```typescript
-export type Reactable<
-  T,
-  S extends DestroyAction = ActionMap & DestroyAction,
-  U = unknown
-> = [
-  Observable<T>,                // state stream
-  S,                            // actions
-  ActionObservableWithTypes<U>, // actions stream with helpers
-];
-
-export interface ActionMap {
-  [key: string | number]: (payload?: unknown) => void | ActionMap;
-}
-
-export type ActionObservableWithTypes<T> = Observable<Action<unknown>> & {
-  types: T;
-  ofTypes: (types: Array<string>) => Observable<Action<unknown>>;
-};
-```
-
-
 ## `RxBuilder` <a name="rx-builder"></a>
 
-Factory function for building a [reactable primitive](/reactables/getting-started/core-concepts#reactable-primitive). Accepts a [RxConfig](#rx-config) configuration object.
+`RxBuilder` is a factory function for creating a **Reactable primitive**.  
+It takes a configuration object (`RxConfig`) that defines the Reactable’s **initial state**, **reducers**, and optional behaviors like debugging or listening to additional sources.
+
+| Property               | Description                                                                                                                                                                                             |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `initialState`         | The initial state of the Reactable.                                                                                                                                                                     |
+| `reducers`             | Dictionary of cases defining how the Reactable handles actions. Each case can be a reducer function or a config object. Used to generate Actions, Reducers, and [`ScopedEffects`](#api-scoped-effects). |
+| `debug` *(optional)*   | Logs all actions and state changes to the console when `true`.                                                                                                                                          |
+| `sources` *(optional)* | Additional action Observables the Reactable listens to.                                                                 |
+
+---
+
+### Example
 
 ```typescript
-declare const RxBuilder: <T, S extends Cases<T>>(config: RxConfig<T, S>) => Reactable<T, { [K in keyof S]: (payload?: unknown) => void; }>;
+import { RxBuilder, Action } from "reactables";
+import { of } from "rxjs";
+
+// Additional source observable
+const externalActions$ = of({ type: "reset", payload: 0 });
+
+const rxCounter = RxBuilder({
+  initialState: 0,
+  reducers: {
+    increment: (state) => state + 1,
+    decrement: (state) => state - 1,
+    reset: (_, payload) => payload,
+  },
+  debug: true,
+  sources: [externalActions$], // Listening to an external observable
+});
+
+// Subscribe to state changes
+const [state$, actions, actions$] = rxCounter;
+state$.subscribe(count => console.log("State:", count));
+
+// Trigger local actions
+actions.increment();
+actions.decrement();
+
+// External action from sources$ will also update state
 
 ```
-
-### `RxConfig` <a name="rx-config"></a>
-
-Configuration object for creating Reactables.
-
-```typescript
-interface RxConfig <T, S extends Cases<T>>{
-  initialState: T;
-  reducers: S;
-  debug?: boolean;
-  effects?: Effect<unknown, unknown>[];
-  sources?: Observable<Action<unknown>>[] | { [key: string]: Observable<unknown> };
-}
-
-interface Cases<T> {
-  [key: string]:
-    | SingleActionReducer<T, unknown>
-    | {
-        reducer: SingleActionReducer<T, unknown>;
-        effects?: Effect<unknown, unknown>[] | ((payload?: unknown) => ScopedEffects<unknown>);
-      };
-}
-
-type SingleActionReducer<T, S> = (state: T, action: Action<S>) => T;
-```
-| Property | Description |
-| -------- | ----------- |
-| initialState | Initial state of the Reactable |
-| reducers | Dictionary of cases for the Reactable to handle. Each case can be a reducer function or a configuration object. RxBuilder will use this to generate Actions, Reducers, and add [`ScopedEffects`](#api-scoped-effects). |
-| debug (optional) | to turn on debugging to console.log all messages received by the store and state changes |
-| effects (optional) | Array of [`Effects`](#api-effect) to be registered to the Reactable |
-| sources (optional) <a name="hub-sources"></a> | Additional [`Action`](#api-action) Observables the Reactable is listening to. Can be an array or a dictionary where key is the action type and value is the Observable emitting the payload |
 
 ## `combine` <a name="combine"></a>
-Helper function that accepts a dictionary of Reactables and combines them into one Reactable.
+
+`combine` is a helper function that merges a **dictionary of Reactables** into a single Reactable.  
+The resulting Reactable organizes the **state** and **actions** of each input Reactable under their respective keys.
+
+- The **state observable** emits an object where each key corresponds to the current state of its Reactable.  
+- The **actions map** contains a nested object of actions for each input Reactable.  
+- The **actions observable** emits all actions from all combined Reactables, with the `type` formatted as `"[key] - action"` to indicate which Reactable the action came from.
+
+---
+
+### Example
 
 ```typescript
-export declare const combine: <T extends Record<string, Reactable<unknown, unknown>>>(sourceReactables: T) =>
-  Reactable<
-    { [K in keyof T]: ObservedValueOf<T[K][0]>; }, // Combined State
-    { [K in keyof T]: T[K][1] }, // Combined ActionMap
-    Observable<Action<unknown>>, // Merged Actions Observable
-  >;
-```
+import { RxBuilder, combine } from "reactables";
+
+// Two simple Reactables
+const rxCounterA = RxBuilder({
+  initialState: 0,
+  reducers: { increment: (s) => s + 1 },
+});
+
+const rxCounterB = RxBuilder({
+  initialState: 10,
+  reducers: { increment: (s) => s + 2 },
+});
+
+// Combine them
+const rxCombined = combine({
+  a: rxCounterA,
+  b: rxCounterB,
+});
+
+const [state$, actions, actions$] = rxCombined;
+
+// Subscribe to combined state
+state$.subscribe(state => {
+  console.log("Combined state:", state);
+  // { a: 0, b: 10 } initially
+});
+
+// Subscribe to combined actions
+actions$.subscribe(action => {
+  console.log("Action received:", action.type);
+  // Example: "[a] - increment"
+  // Example: "[b] - increment"
+});
+
+// Trigger actions
+actions.a.increment(); // increments rxCounterA
+actions.b.increment(); // increments rxCounterB
+
 
 ## `ofTypes` <a name="of-types"></a>
 
