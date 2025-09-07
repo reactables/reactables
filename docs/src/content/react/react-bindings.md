@@ -1,78 +1,31 @@
 # React Bindings
 
-Reactable bindings for React Components
+Bindings for using **Reactables** in React components.
 
 ## Installation <a name="installation"></a>
 
-`npm i @reactables/react`
-
-## Providers<a name="providers"></a>
-
-### `StoreProvider`<a name="store-provider"></a>
-
-Used to set up a context containing one reactable responsible for managing application (global) state. The reactable can be accessed via the [`useAppStore`](#useAppStore) hook in components.
-
-**Note: The reactable used for application state must be modified with the [`storeValue`](/reactables/references/core-api#store-value) modifier function to ensure subsequent subscriptions to the reactable by components receive the latest stored value.**
-
-Example:
-```typescript
-// index.js
-
-import { storeValue, RxBuilder } from '@reactables/core';
-import React from 'react';
-import { createRoot } from 'react-dom/client';
-
-export interface AppState {
-  userLoggedIn: boolean
-}
-
-export interface AppActions {
-  logout: () => void;
-}
-
-const config = {
-  name: 'rxAppStore',
-  initialState: {
-    userLoggedIn: false,
-  },
-  reducers: {
-    loginSuccess: () => ({ userLoggedIn: true })
-    logout: () => ({ userLoggedIn: false })
-  }
-};
-
-const rxAppStore = storeValue(RxBuilder(config));
-
-const container = document.getElementById('root');
-const root = createRoot(container);
-
-root.render(
-  <StoreProvider rxStore={rxAppStore}>
-    <App />
-  </StoreProvider>
-);
-
+```bash
+npm i @reactables/react
 ```
+## `useReactable` <a name="use-reactable"></a>
 
-## Hooks<a name="hooks"></a>
+A React hook that binds a reactable to a component.
+It takes a reactable factory and optional dependencies, returning a tuple:
 
-### `useReactable` <a name="use-reactable"></a>
+1. State – current reactable state
 
-React hook for binding a reactable to a React component. Accepts a reactable factory, dependencies (if any) and returns a tuple with the state `T`, actions `S`, the original observable state `Observable<T>`, and optional actions observable.
+1. Actions – functions to update state
 
-```typescript
-export type HookedReactable<T, S> = [T, S, Observable<T>, Observable<Action<unknown>>?];
+1. State Observable – emits state changes
 
-export declare const useReactable = <T, S, U extends unknown[]>(
-  reactableFactory: (...props: U) => Reactable<T, S>,
-  ...props: U
-) => HookedReactable<T, S>
-```
+1. Action Observable – emits action events
+
+Observables (3 & 4) can be subscribed to for side effects.
 
 Example:
 
 ```typescript
-import React from 'react';
+import React, useEffect from 'react';
 import { RxBuilder } from '@reactables/core';
 import { useReactable } from '@reactables/react';
 
@@ -88,7 +41,31 @@ const RxToggle = (
   });
 
 const Toggle = () => {
-  const [state, actions] = useReactable(RxToggle, false);
+  const [
+    state, // State: boolean
+    actions, // Actions
+    state$, // Observable emitting the state
+    actions$, // Observable emitting actions events from the Reactable
+    ] = useReactable(RxToggle, false);
+
+  useEffect(() => {
+    // Subscriptions
+    const sub1 = state$.subscribe((state) => {
+      console.log('Run something on state change');
+    });
+
+    const sub2 = actions$.subscribe((action) => {
+      console.log('Run something when receiving an action event');
+    });
+
+    // Clean up subscriptions
+    return () => {
+      sub1.unsubscribe();
+      sub2.unsubscribe();
+    }
+
+
+  }, [state$, actions$])
 
   if (!state) return;
 
@@ -101,40 +78,5 @@ const Toggle = () => {
 }
 
 export default Toggle;
-
-```
-
-### `useAppStore`<a name="useAppStore"></a>
-
-React hook for accessing reactable provided by [`StoreProvider`](#store-provider) and binding it to a React component. Like [`useReactable`](#use-reactable) it returns a tuple with the state `T`, actions `S`, and the original observable state `Observable<T>`.
-
-```typescript
-export declare const useAppStore: <T, S = ActionMap>() => [T, S, Observable<T>];
-```
-
-Example using the setup from [`StoreProvider`](#store-provider) example above:
-
-```typescript
-import React from 'react';
-import { useAppStore } from '@reactables/react';
-import { AppState, AppActions } from '../index'
-
-const App = () => {
-  const [appState, appActions] = useAppStore<AppState, AppActions>();
-
-  if (!appState) return;
-
-  return (
-    <>
-      <div>
-        User is {appState.userLoggedIn ? 'logged in': 'not logged in'}.
-      </div>
-      <button type="button" onClick={appActions.logout}>Logout</button>
-    </>
-
-  )
-}
-
-export default App;
 
 ```
