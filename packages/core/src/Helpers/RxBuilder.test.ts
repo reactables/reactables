@@ -1,4 +1,4 @@
-import { Observable, Subscription, map, mergeMap, of } from 'rxjs';
+import { Observable, Subscription, mergeMap, of } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { RxBuilder } from './RxBuilder';
 import { Action } from '../Models';

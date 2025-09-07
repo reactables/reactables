@@ -1,14 +1,43 @@
 # Core Concepts
 
-## Reactable Interface
+## Reactable
+
+A **Reactable** is an interface for modelling state in Reactables.  
+It provides a way for applications and UI components to **observe state** and **trigger updates**.
+
+A `Reactable` is a tuple with:
+
+1. **State Observable** – emits state changes.  
+2. **Actions Map** – a dictionary of methods for updating state.  
+3. **Actions Observable** – emits every action received by the store.  
+   This observable is extended with helpers:
+   - **`ofTypes(...types)`** – returns a filtered stream of only the specified action types.  
+   - **`types`** – a dictionary of action type constants for all declared actions in the Reactable.
+---   
+#### Example
 
 ```typescript
-  const [state$, actions] = RxToggle();
+import { RxCounter } from './RxCounter';
+
+// Create a counter Reactable
+const [state$, actions, actions$] = RxCounter();
+
+// Subscribe to state changes
+state$.subscribe(count => console.log("State:", count));
+
+// Subscribe to all actions
+actions$.subscribe(action => console.log("Action received:", action));
+
+// Subscribe only to increment actions using `ofTypes`
+actions$
+  .ofTypes([actions$.types.increment])
+  .subscribe(action => console.log("Incremented:", action));
+
+// Trigger updates
+actions.increment();
+actions.decrement();
 ```
-
-Reactables (prefixed with Rx) separate state logic from UI presentation, improving testability and extensibility. They encapsulate state and expose an observable (state$) that UI components can subscribe to for changes.
-
-State changes are predictable: the UI can only modify state by invoking action methods provided by the reactable.
+---
 
 <br>
 

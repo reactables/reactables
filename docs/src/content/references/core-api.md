@@ -1,20 +1,68 @@
 # Reactables Core API
 
-## `Reactable` <a name="reactable"></a>
+## `Reactable`
 
-Reactables provide the API for applications and UI components to receive and trigger state updates.
+A **Reactable** is an interface for modelling state in Reactables.  
+It provides a way for applications and UI components to **observe state** and **trigger updates**.
 
-It is a tuple with the first item being an Observable emitting state changes and the second item is a dictionary of action methods for triggering state updates. 
+A `Reactable` is a tuple with:
 
-Reactables may also expose an optional third item - an observable emitting all the actions the received by the store during state updates. This can be helpful if other reactables also want to subscribe and react to any of those actions.
+1. **State Observable** – emits state changes.  
+2. **Actions Map** – a dictionary of methods for updating state.  
+3. **Actions Observable** – emits every action received by the store.  
+   This observable is extended with helpers:
+   - **`ofTypes(...types)`** – returns a filtered stream of only the specified action types.  
+   - **`types`** – a dictionary of action type constants for all declared actions in the Reactable.
+---
+#### Example
 
 ```typescript
-export type Reactable<T, S = ActionMap> = [Observable<T>, S, Observable<Action<unknown>>?];
+import { RxCounter } from './RxCounter';
+
+// Create a counter Reactable
+const [state$, actions, actions$] = RxCounter();
+
+// Subscribe to state changes
+state$.subscribe(count => console.log("State:", count));
+
+// Subscribe to all actions
+actions$.subscribe(action => console.log("Action received:", action));
+
+// Subscribe only to increment actions using `ofTypes`
+actions$
+  .ofTypes([actions$.types.increment])
+  .subscribe(action => console.log("Incremented:", action));
+
+// Trigger updates
+actions.increment();
+actions.decrement();
+```
+
+---
+
+### Type Definition
+
+```typescript
+export type Reactable<
+  T,
+  S extends DestroyAction = ActionMap & DestroyAction,
+  U = unknown
+> = [
+  Observable<T>,                // state stream
+  S,                            // actions
+  ActionObservableWithTypes<U>, // actions stream with helpers
+];
 
 export interface ActionMap {
   [key: string | number]: (payload?: unknown) => void | ActionMap;
 }
+
+export type ActionObservableWithTypes<T> = Observable<Action<unknown>> & {
+  types: T;
+  ofTypes: (types: Array<string>) => Observable<Action<unknown>>;
+};
 ```
+
 
 ## `RxBuilder` <a name="rx-builder"></a>
 
