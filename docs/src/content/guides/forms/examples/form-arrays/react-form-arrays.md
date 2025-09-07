@@ -9,8 +9,7 @@ See <a href="/reactables/react/react-bindings">React Bindings</a> & <a href="/re
 
 ```typescript
 
-import { build, group, control, array } from '@reactables/forms';
-import { useReactable } from '@reactables/react-helpers';
+import { useReactable } from '@reactables/react';
 import { Form, Field, FormArray } from '@reactables/react-forms';
 import Input from './Input';
 import { RxFormArray, userConfig } from './RxFormArray';

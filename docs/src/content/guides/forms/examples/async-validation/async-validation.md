@@ -9,28 +9,29 @@
 ```typescript
 import { control, build, group } from '@reactables/forms';
 import { of } from 'rxjs';
-import { switchMap, delay } from 'rxjs/operators';
+import { map, delay } from 'rxjs/operators';
 
-export const RxFormAsyncValidation = () => build(
-  group({
-    controls: {
-      email: control(['', ['required', 'email'], ['blacklistedEmail']]),
-    },
-  }),
-  {
-    providers: {
-      asyncValidators: {
-        blacklistedEmail: (control$) =>
-          control$.pipe(
-            switchMap(({ value }) =>
-              of({
-                blacklistedEmail: value === 'black@listed.com',
-              }).pipe(delay(1000))
-            )
-          ),
+export const RxFormAsyncValidation = () =>
+  build(
+    group({
+      controls: {
+        email: control(['', ['required', 'email'], ['blacklistedEmail']]),
       },
-    },
-  }
-);
+    }),
+    {
+      providers: {
+        asyncValidators: {
+          blacklistedEmail: (control$) =>
+            control$.pipe(
+              map(({ value }) =>
+                of({
+                  blacklistedEmail: value === 'black@listed.com',
+                }).pipe(delay(1000))
+              )
+            ),
+        },
+      },
+    }
+  );
 
 ```
