@@ -25,12 +25,6 @@ const { Content : ReactableComposition } = await reactableComposition.render();
 const reactReactableComposition = await getEntry('guides', 'examples/reactable-composition/react-reactable-composition');
 const { Content : ReactReactableComposition } = await reactReactableComposition.render();
 
-const reactableCommunication = await getEntry('guides', 'examples/communication/communication');
-const { Content : ReactableCommunication } = await reactableCommunication.render();
-
-const reactReactableCommunication = await getEntry('guides', 'examples/communication/react-communication');
-const { Content : ReactReactableCommunication } = await reactReactableCommunication.render();
-
 const globalState = await getEntry('guides', 'examples/global-state');
 const { Content : GlobalState } = await globalState.render();
 
@@ -38,7 +32,6 @@ const sectionsLinks = [
   { label: 'Basic Toggle', link: "#basic-toggle"},
   { label: 'Fetching Data with an Effect', link: "#fetching-data"},
   { label: 'Composition with Reactables', link: "#reactable-composition"},
-  { label: 'Communication between Reactables', link: "#communication-between-reactables"},
   { label: 'Global State with Reactables', link: "#global-state-with-reactables"},
   { label: 'Debugging', link: "#debugging"},
 ]
@@ -121,27 +114,6 @@ const sectionsLinks = [
           Edit this snippet <i class="fa fa-edit"></i>
         </a>
         <ReactReactableComposition />
-      </div>
-    </div>
-
-    <br />
-
-    <!-- Communication between Reactables -->
-    <ReactableCommunication />
-    <h5>Bind RxApp to View</h5>
-    <ul class="nav nav-tabs">
-      <li class="nav-item">
-          <a href="#react-communication" class="nav-link active" data-bs-toggle="tab">
-            <img src="/reactables/React.png" width="50" title="React Communication"/>
-          </a>
-      </li>
-    </ul>
-    <div class="tab-content pt-3">
-      <div class="tab-pane fade show active" id="react-communication">
-        <a class="edit-snippet pt-3 pe-4" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/examples/communication/react-communication.md" target="_blank" rel="noreferrer">
-          Edit this snippet <i class="fa fa-edit"></i>
-        </a>
-        <ReactReactableCommunication />
       </div>
     </div>
 

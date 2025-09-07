@@ -1,88 +1,162 @@
 ## Composition with Reactables <a name="reactable-composition">
 
-Beyond creating primitives with the `RxBuilder` factory, Reactables can be combined to form new ones.
+Beyond creating primitives with `RxBuilder`, Reactables can be combined into new ones.
 
-Two main use cases:
-- Reuse functionality from existing Reactables.  
-- Make one part of state react to another.  
+Two main use cases:  
+- Reuse existing functionality.  
+- Reactable(s) reacting to changes from another reactables.
 
-Example: a simple hotel search filtered by `smokingAllowed` and `petsAllowed`.  
-Using `RxToggle` and a modified `RxFetchData`, we’ll combine them to implement the search, starting with the toggle filters for smoking and pets. 
+Reactables emit:  
+- **state updates** via the **state observable** (first item in the [Reactable interface](/reactables/references/core-api/#reactable)).  
+- **actions** via the **actions observable** (third item in the [Reactable interface](/reactables/references/core-api/#reactable)).  
 
-We can initialize an `RxToggle` for each filter control and use the [`combine`](/reactables/references/core-api#combine) helper function to combine the Reactables together to create `RxSearchControls`.
+Other reactables can subscribe to these events via its `sources` option (see [RxConfig](/reactables/references/core-api#rx-config)).
+
+Example:  
+
+- **`RxAuth`** – handles user login.  
+- **`RxProfile`** – loads the user profile after login.  
+
+This forms a **directed acyclic graph (DAG)**: profile management depends on authentication but not vice versa. Both remain reusable, independent units of state logic.  
+
+**DAG flow:** 
+RxAuth (login) ──▶ (loginSuccess) ──▶ RxProfile (fetch profile)
+
+<a class="mb-3 d-block" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/examples/communication/communication.md" target="_blank" rel="noreferrer">
+  Edit this snippet <i class="fa fa-edit"></i>
+</a>
+
+
+<br>
+
+**RxAuth**
 
 ```typescript
-import { combine } from '@reactables/core';
-import { RxToggle } from './RxToggle';
+import { Action, RxBuilder } from '@reactables/core';
+import { Observable, switchMap, of, delay } from 'rxjs';
 
-export const RxSearchControls = () =>
-  combine({
-    smokingAllowed: RxToggle(),
-    petsAllowed: RxToggle(),
+export const RxAuth = () =>
+  RxBuilder({
+    initialState: {
+      loggingIn: false,
+      loggedIn: false,
+      userId: null as number | null,
+    },
+    reducers: {
+      login: {
+        reducer: (state) => ({
+          ...state,
+          loggingIn: true,
+        }),
+        effects: [
+          (login$: Observable<Action>) =>
+            login$.pipe(
+              switchMap(() =>
+                // Simulate API call for logging in
+                of({ type: 'loginSuccess', payload: { userId: 123 } }).pipe(
+                  delay(500)
+                )
+              )
+            ),
+        ],
+      },
+      loginSuccess: (state, action: Action<{ userId: number }>) => ({
+        ...state,
+        loggedIn: true,
+        userId: action.payload.userId,
+        loggingIn: false,
+      }),
+    },
   });
-
 
 ```
 
-We can make a slight improvement to `RxFetchData` to accept a `sources` parameter so it can listen to state changes from `RxSearchControls`
-
+**RxProfile**
 ```typescript
+import { Action, RxBuilder } from '@reactables/core';
+import { Observable, switchMap, of, delay } from 'rxjs';
+type UserProfile = {
+  userId: number;
+  userName: string;
+  email: string;
+};
 
-export const RxFetchData = ({
-  dataService,
-  // Include a sources option
+export const RxProfile = ({
   sources,
 }: {
-  dataService: DataService;
   sources: Observable<Action<any>>[];
 }) =>
   RxBuilder({
     initialState: {
-      ...
+      fetchingProfile: false,
+      userProfile: null as null | UserProfile,
     },
-    // Add sources to the reactable
     sources,
     reducers: {
-      ...
-
+      fetchProfile: {
+        reducer: (state, _: Action<number>) => ({
+          ...state,
+          fetchingProfile: true,
+        }),
+        effects: [
+          (login$: Observable<Action<number>>) =>
+            login$.pipe(
+              switchMap(({ payload: userId }) =>
+                // Simulate API call for fetching user profile
+                of({
+                  type: 'fetchProfileSuccess',
+                  payload: {
+                    userId,
+                    userName: 'Homer Simpson',
+                    email: 'homer@simpson.com',
+                  } as UserProfile,
+                }).pipe(delay(500))
+              )
+            ),
+        ],
+      },
+      fetchProfileSuccess: (_, action: Action<UserProfile>) => ({
+        fetchingProfile: false,
+        userProfile: action.payload,
+      }),
+    },
+  });
 ```
 
-Next, we create an `RxHotelSearch` reactable that includes `RxSearchControls` and `RxFetchData`.
+We can now combine the two and have `RxProfile` listen to `RxAuth`'s actions to detect a `loginSuccess`.
 
-We know when there is a state change in `RxSearchControls`, `RxFetchData` will have to react and fetch data to perform the search.
-
-We will pipe the state observable from `RxSearchControls` and map it to a `fetch` action. Then provide this piped observable, `fetchOnSearchChange$`, as a source for `RxFetchData` during initialization.
-
+**RxApp** (combining `RxAuth` & `RxProfile`)
 ```typescript
 import { combine } from '@reactables/core';
 import { map } from 'rxjs/operators';
-import { RxSearchControls } from './RxSearchControls';
-import { RxFetchData } from './RxFetchData';
-import HotelService from '../hotel-service';
+import { RxAuth } from './RxAuth';
+import { RxProfile } from './RxProfile';
 
-export const RxHotelSearch = ({
-  hotelService,
-}: {
-  hotelService: HotelService;
-}) => {
-  const rxSearchControls = RxSearchControls();
+export const RxApp = () => {
+  const rxAuth = RxAuth();
+  // Access rxAuth's actions observable
+  const [, , authActions$] = rxAuth;
 
-  const fetchOnSearchChange$ = rxSearchControls[0].pipe(
-    map((search) => ({ type: 'fetch', payload: search }))
-  );
+  const fetchProfileOnLoginSuccess$ = authActions$
+    // Filter for login success actions
+    .ofTypes([authActions$.types.loginSuccess])
+    .pipe(
+      // Map action to a fetch profile action
+      map(({ payload: userId }) => ({
+        type: 'fetchProfile',
+        payload: userId,
+      }))
+    );
 
-  const rxSearchResult = RxFetchData({
-    sources: [fetchOnSearchChange$],
-    dataService: hotelService,
+  const rxProfile = RxProfile({
+    // Have RxProfile listen for loginSuccess and fetch profile
+    sources: [fetchProfileOnLoginSuccess$],
   });
 
   return combine({
-    controls: rxSearchControls,
-    searchResult: rxSearchResult,
+    auth: rxAuth,
+    profile: rxProfile,
   });
 };
 
-
 ```
-
-We then use [`combine`](/reactables/references/core-api#combine) function again to to give us our combined state observable.
