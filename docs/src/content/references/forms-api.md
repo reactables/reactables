@@ -4,6 +4,7 @@
 ## `FormBuilders` <a name="api-builders"></a>
 
 Reactable form builders are inspired by [Angular Reactive Forms](https://angular.dev/guide/forms).  
+
 Forms are built by composing configuration objects using the helper functions: `control`, `group`, and `array`.  
 Once composed, you initialize a form with the `build` function.  
 
@@ -53,6 +54,7 @@ actions.updateValues({ controlRef: ["firstName"] , value: "Jane", });
 ### `control` <a name="api-control"></a>
 
 Creates a **form control configuration** object for a single field.  
+
 You can initialize it either with a configuration object or with a **short-form tuple** for convenience.
 
 #### Example
@@ -98,6 +100,7 @@ Note: Validators are specified as strings in the configuration; the actual funct
 ### `array` <a name="api-array"></a>
 
 Creates a **form array configuration**, which is a list of controls, groups, or arrays.
+
 Arrays are useful for repeated fields, such as multiple email addresses or phone numbers.
 
 You can also define **validators and async validators** at the array level, which apply to the array as a whole.
@@ -141,6 +144,7 @@ state$.subscribe(formState => console.log("Restored form state:", formState));
 ### `RxFormOptions` <a name="api-form-options"></a>
 
 Options for customizing the behavior of a Reactable form.  
+
 You can provide additional action sources, custom reducers, validators, and other settings.
 
 | Option     | Description |
@@ -204,8 +208,6 @@ const rxProviders = {
 };
 
 ```
-
-
 
 ## `RxFormActions` <a name="api-actions"></a>
 

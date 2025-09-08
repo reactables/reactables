@@ -12,7 +12,7 @@ npm i @reactables/react
 A React hook that binds a reactable to a component.
 It takes a reactable factory and optional dependencies, returning a tuple:
 
-1. State – current reactable state
+1. State – snapshot of the current state
 
 1. Actions – functions to update state
 
@@ -42,7 +42,7 @@ const RxToggle = (
 
 const Toggle = () => {
   const [
-    state, // State: boolean
+    state, // Snapshot of the current state
     actions, // Actions
     state$, // Observable emitting the state
     actions$, // Observable emitting actions events from the Reactable
