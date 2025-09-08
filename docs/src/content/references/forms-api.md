@@ -215,93 +215,233 @@ Actions available to trigger state changes on Form Reactable.
 
 ### `updateValues` <a name="api-actions-update-values"></a>
 
-Updates values of a [`FormControl`](#api-form-control). For form group and form arrays, updates will only occur if the specified descendant controls exists. Otherwise it will throw an error.
+Updates the value of a control. For groups and arrays, only existing descendant controls are updated; otherwise it will throw an error.
+
+#### Example
 
 ```typescript
-type updateValues = <T>(payload: UpdateValuesPayload<T>) => void;
+const rxForm = build(group({
+  controls: {
+    firstName: control(["John"]),
+    lastName: control(["Doe"]),
+    address: group({
+      controls: {
+        street: control(["123 Main St"]),
+        city: control(["Toronto"])
+      }
+    })
+  }
+}));
 
-interface UpdateValuesPayload<T> {
-  value: T;
-  controlRef: ControlRef;
-}
+const [state$, actions] = rxForm;
 
+state$.subscribe((state) => {
+  console.log("Form value:", state.root.value);
+});
+
+// Update top-level control
+actions.updateValues({ controlRef: ["firstName"], value: "Jane" });
+// Form value: { firstName: "Jane", lastName: "Doe", address: { street: "123 Main St", city: "Toronto" } }
+
+// Update nested control
+actions.updateValues({ controlRef: ["address", "street"], value: "456 Oak Ave" });
+// Form value: { firstName: "Jane", lastName: "Doe", address: { street: "456 Oak Ave", city: "Toronto" } }
 ```
 
 ### `addControl` <a name="api-actions-add-control"></a>
 
-Adds a control to a form group.
+Adds a control to a form group at a specified key.
+
+#### Example
 
 ```typescript
-type addControl = (payload: AddControlPayload) => void;
 
-interface AddControlPayload {
-  config: AbstractControlConfig;
-  controlRef: ControlRef;
-}
+const rxForm = build(group({
+  controls: {
+    name: control(["John Doe"])
+  }
+}));
+
+const [state$, actions] = rxForm;
+
+state$.subscribe((state) => {
+  console.log("Form value:", state.root.value);
+});
+
+// Add a new control dynamically
+actions.addControl({
+  controlRef: ["email"],
+  config: control(["john@example.com", "email"])
+});
+// Form value: { name: "John Doe", email: "john@example.com" }
+
 
 ```
 
 ### `pushControl` <a name="api-actions-push-control"></a>
 
-Pushes a control to a form array.
+Adds a control to the end of a form array.
+
+#### Example
 
 ```typescript
-type pushControl = (payload: PushControlPayload) => void;
+const rxForm = build(array({
+  controls: [control(["john@example.com"])]
+}));
 
-interface PushControlPayload {
-  config: AbstractControlConfig;
-  controlRef: ControlRef;
-}
+const [state$, actions] = rxForm;
+
+state$.subscribe((state) => {
+  console.log("Form value:", state.root.value);
+});
+
+// Push a new control into the array
+actions.pushControl({
+  controlRef: [],
+  config: control(["doe@example.com"])
+});
+// Form value: ["john@example.com", "doe@example.com"]
 
 ```
 
 ### `removeControl` <a name="api-actions-remove-control"></a>
 
-Removes a specified control from the form.
+Removes a specified control from a group or array.
+
+#### Example
 
 ```typescript
-type removeControl = (payload: ControlRef) => void;
+const rxForm = build(group({
+  controls: {
+    firstName: control(["John"]),
+    lastName: control(["Doe"])
+  }
+}));
+
+const [state$, actions] = rxForm;
+
+state$.subscribe((state) => {
+  console.log("Form value:", state.root.value);
+});
+
+// Remove a control
+actions.removeControl(["lastName"]);
+// Form value: { firstName: "John" }
 
 ```
 
 ### `markControlAsPristine` <a name="api-actions-mark-as-pristine"></a>
 
-Marks a control and all descendant controls as pristine.
+Marks a control and all descendants as pristine, clearing any “dirty” state.
+
+#### Example
 
 ```typescript
-type markControlAsPristine = (payload: ControlRef) => void;
+const rxForm = build(group({
+  controls: {
+    profile: group({
+      controls: {
+        firstName: control(["John"]),
+        lastName: control(["Doe"])
+      }
+    }),
+    email: control(["john@example.com"])
+  }
+}));
+
+const [state$, actions] = rxForm;
+
+state$.subscribe((state) => {
+  console.log("Form value:", state.root.value, "| dirty:", state.root.dirty);
+});
+
+// Update nested control → both the control and ancestors become dirty
+actions.updateValues({ controlRef: ["profile", "firstName"], value: "Jane" });
+// Console: Form value: { profile: { firstName: "Jane", lastName: "Doe" }, email: "john@example.com" } | dirty: true
+
+// Mark the whole form group as pristine → clears dirty flag for all descendants
+actions.markControlAsPristine([]);
+// Console: Form value: { profile: { firstName: "Jane", lastName: "Doe" }, email: "john@example.com" } | dirty: false
 
 ```
 
 ### `markControlAsTouched` <a name="api-actions-mark-as-touched"></a>
 
-Marks a control and all ancestors as touched. Can set `markAll` to `true` to mark all descendants as touched as well (defaults to `false`).
+Marks a control and all ancestors as touched.
+
+Optional markAll flag marks all descendants as touched as well (default `false`).
 
 ```typescript
-type markControlAsTouched = (payload: MarkTouchedPayload) => void;
+const rxForm = build(group({
+  controls: {
+    username: control(["JohnDoe"]),
+    password: control(["secret"])
+  }
+}));
 
-interface MarkTouchedPayload {
-  controlRef: ControlRef;
-  markAll?: boolean;
-}
+const [state$, actions] = rxForm;
+
+state$.subscribe((state) => {
+  console.log("Form status:", state.username.touched);
+});
+
+// LOGS: false
+
+// Mark username as touched
+actions.markControlAsTouched({ controlRef: ["username"]  });
+
+// LOGS: true
 
 ```
 
 ### `markControlAsUntouched` <a name="api-actions-mark-as-untouched"></a>
 
-Marks a control and all descendants as untouched. This will recheck ancestor controls and update the touched status.
+Marks a control and all descendants as untouched, and updates ancestor touched status accordingly.
+
+#### Example
 
 ```typescript
-type markControlAsUnTouched = (payload: ControlRef) => void;
+const rxForm = build(control(["hello"]));
+
+const [state$, actions] = rxForm;
+
+state$.subscribe((state) => {
+  console.log("Form status:", state.root.touched);
+});
+
+// Mark as untouched
+actions.markControlAsUntouched([]);
+
+// LOG: false
 
 ```
 
 ### `resetControl` <a name="api-actions-resetControl"></a>
 
-Resets a control by removing existing control and rebuilding it with the original configuration.
+Resets a control by removing it and rebuilding it with the original configuration.
+
+#### Example
 
 ```typescript
-type resetControls = (payload: ControlRef) => void;
+const rxForm = build(group({
+  controls: {
+    city: control(["Toronto"])
+  }
+}));
+
+const [state$, actions] = rxForm;
+
+state$.subscribe((state) => {
+  console.log("Form value:", state.root.value);
+});
+
+// Update city
+actions.updateValues({ controlRef: ["city"], value: "Vancouver" });
+// Form value: { city: "Vancouver" }
+
+// Reset city to original config
+actions.resetControl(["city"]);
+// Form value: { city: "Toronto" }
 
 ```
 
@@ -350,7 +490,7 @@ Reads a [`AbstractControlConfig`](#api-configuration-interfaces) and returns its
 type getValueFromControlConfig = <T>(controlConfig: AbstractControlConfig) => T
 ```
 
-## Other Interfaces <a name="api-interfaces"></a>
+## Interfaces <a name="api-interfaces"></a>
 
 ### `Form` <a name="api-form"></a>
 Form state. Dictionary of [`FormControl`](#api-form-control)(s) where the key is a period separated representation of the [`ControlRef`](#api-control-ref) tuple.
@@ -409,7 +549,7 @@ Dictionary of errors for the control.
 
 ```typescript
 interface FormErrors {
-  [key: string]: boolean;
+  [key: string]: any;
 }
 ```
 
@@ -418,15 +558,15 @@ interface FormErrors {
 Validator function that reads the value of the `FormControl` and returns a `FormErrors` object.
 
 ```typescript
-type ValidatorFn = (value: unknown) => FormErrors
+type ValidatorFn = (value: any) => FormErrors;
 ```
 
 ### `ValidatorFnAsync` <a name="api-validator-fn-async"></a>
 
-Validator function takes in an `BaseControl` observable and returns an `Observable<FormErrors>`.
+Validator function takes in an `BaseControl` observable and returns a [higher order observable](https://rxjs.dev/guide/higher-order-observables) `Observable<Observabe<FormErrors>>`.
 
 ```typescript
-type ValidatorAsyncFn = <T>(control$: Observable<BaseControl<T>>) => Observable<FormErrors>;
+type ValidatorAsyncFn = <T>(control$: Observable<BaseControl<T>>) => Observable<Observable<FormErrors>>;
 
 ```
 
@@ -450,27 +590,22 @@ interface FormReducers {
   resetControl: <T>(state: BaseFormState<T>, payload: ControlRef) => BaseFormState<T>;
 }
 ```
-### `CustomReducers` <a name="api-custom-reducers"></a>
+### `CustomReducer` <a name="api-custom-reducer"></a>
 
 ```typescript
-export type CustomReducerFunc = (
+
+type CustomReducerFunc<FormValue = unknown> = (
   reducers: FormReducers,
-  state: BaseFormState<unknown>,
-  action: Action<unknown>,
+  state: BaseFormState<FormValue>,
+  action: any,
 ) => BaseFormState<unknown>;
 
-export type CustomReducer =
-  | CustomReducerFunc
+type CustomReducer<FormValue = unknown> =
+  | CustomReducerFunc<FormValue>
   | {
-      reducer: CustomReducerFunc;
-      effects?: Effect<unknown, unknown>[] | ((payload?: unknown) => ScopedEffects<unknown>);
+      reducer: CustomReducerFunc<FormValue>;
+      effects?: Effect[] | ((payload?: unknown) => ScopedEffects);
     };
-
-export type CustomReducers<T> = {
-  [key in keyof (T & {
-    [key: string]: CustomReducer;
-  })]: CustomReducer;
-};
 
 ```
 
@@ -481,31 +616,19 @@ Form state before it is fully validated. This is accessible in `CustomReducer`s 
 ```typescript
 interface BaseFormState<T> {
   form: BaseForm<T>;
+  _changedControls?: {
+    [key: string]: BaseControl<unknown>;
+  };
+  _removedControls?: {
+    [key: string]: BaseControl<unknown>;
+  };
 }
 
-interface BaseForm<T> {
-  root?: BaseControl<T>;
+type BaseForm<T> = {
+  root: BaseControl<T>;
   [key: string]: BaseControl<unknown>;
-}
+};
 
-```
-
-### `BaseControl` <a name="api-base-control"></a>
-
-`BaseControl` contains some control information before a fully validated `FormControl` is created.
-
-```typescript
-
-interface BaseControl<T> {
-  pristineValue: T;
-  controlRef: ControlRef;
-  value: T;
-  dirty: boolean;
-  touched: boolean;
-  validatorErrors: FormErrors;
-  config: AbstractControlConfig;
-  key: string;
-}
 ```
 
 ### Configuration Interfaces
