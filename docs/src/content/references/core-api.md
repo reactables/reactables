@@ -46,7 +46,7 @@ It takes a configuration object (`RxConfig`) that defines the Reactable’s **in
 | Property               | Description                                                                                                                                                                                             |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `initialState`         | The initial state of the Reactable.                                                                                                                                                                     |
-| `reducers`             | Dictionary of cases defining how the Reactable handles actions. Each case can be a reducer function or a config object. Used to generate Actions, Reducers, and [`ScopedEffects`](#api-scoped-effects). |
+| `reducers`             | Dictionary of cases defining how the Reactable handles actions. Each case can be a reducer function or a config object. Used to generate actions, reducers and effects. |
 | `debug` *(optional)*   | Logs all actions and state changes to the console when `true`.                                                                                                                                          |
 | `sources` *(optional)* | Additional action Observables the Reactable listens to.                                                                 |
 
