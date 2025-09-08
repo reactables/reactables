@@ -9,6 +9,40 @@ const { Content } = await content.render();
 
 const sectionLinks: Array<SectionLink> = [
   {
+    label: 'Form Builders',
+    link: '#api-builders',
+    children: [
+      {
+        label: 'build',
+        link: '#api-build',
+      },
+      {
+        label: 'control',
+        link: '#api-control',
+      },
+      {
+        label: 'group',
+        link: '#api-group',
+      },
+      {
+        label: 'array',
+        link: '#api-array',
+      },
+      {
+        label: 'load',
+        link: '#api-load',
+      },
+      {
+        label: 'RxFormOptions',
+        link: '#api-form-options',
+      },
+      {
+        label: 'RxFormProviders',
+        link: '#api-form-providers',
+      },
+    ]
+  },
+  {
     label: 'RxFormActions',
     link: '#api-actions',
     children: [
@@ -42,24 +76,6 @@ const sectionLinks: Array<SectionLink> = [
       {
         label: 'resetControl',
         link: '#api-actions-resetControl',
-      },
-    ]
-  },
-  {
-    label: 'Form Builders',
-    link: '#api-builders',
-    children: [
-      {
-        label: 'build',
-        link: '#api-build',
-      },
-      {
-        label: 'load',
-        link: '#api-load',
-      },
-      {
-        label: 'RxFormOptions',
-        link: '#api-form-options',
       },
     ]
   },
