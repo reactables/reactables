@@ -2,7 +2,10 @@
 
 You can pass explicit type parameters when calling `build` to get stronger type inference for both your form state and your custom reducers. This ensures that `state$`, `actions`, and `actions$` are all fully typed, reducing mistakes when using the form reactable.
 
-#### Example
+#### Example 
+
+[✏️ Edit this snippet](https://github.com/reactables/reactables/edit/main/docs/src/content/guides/forms/examples/typed-forms/typed-forms.md)
+ 
 
 ```typescript
 // Define the form's value type
