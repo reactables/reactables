@@ -4,7 +4,9 @@ React components for binding [`@reactables/forms`](https://github.com/reactables
 
 ## Installation <a name="installation"></a>
 
-`npm i @reactables/react-forms`
+```bash
+npm i @reactables/react-forms
+```
 
 ### `Form`<a name="form"></a>
 
