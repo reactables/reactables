@@ -220,7 +220,7 @@ export const RxBuilder = <T, S extends Cases<T>>({
 
   const actions$ = mergedActions$ as ActionObservableWithTypes<typeof types>;
   actions$.types = types;
-  actions$.ofTypes = (types) => actions$.pipe(ofTypes(types as string[]));
+  actions$.ofTypes = (types) => actions$.pipe(ofTypes(types));
 
   return [storedState$, actions, actions$] as Reactable<
     T,

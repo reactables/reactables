@@ -4,13 +4,11 @@ React components for binding [`@reactables/forms`](https://github.com/reactables
 
 ## Installation <a name="installation"></a>
 
-`npm i @reactables/react-forms`
+```bash
+npm i @reactables/react-forms
+```
 
 ### `Form`<a name="form"></a>
-
-```typescript
-type HookedRxForm = HookedReactable<ControlModels.Form<unknown>, RxFormActions>;
-```
 
 `Form` is the provider component giving child [`Field`](#field) and [`FormArray`](#form-array) child components access to a `HookedRxForm`.
 
@@ -35,10 +33,10 @@ const userConfig = group({
 });
 
 const MyForm = () => {
-  const rxForm = useReactable(() => build(userConfig));
+  const [state, actions] = useReactable(() => build(userConfig));
 
   return (
-    <Form rxForm={rxForm}>
+    <Form rxForm={[state, actions]}>
       <Field name="name" label="Name:" component={Input} />
       <Field name="email" label="Email: " component={Input} />
     </Form>
@@ -46,6 +44,7 @@ const MyForm = () => {
 };
 
 export default MyForm;
+
 ```
 
 ### `Field`<a name="field"></a>

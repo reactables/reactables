@@ -5,65 +5,47 @@
 </a>
 
 ```typescript
-import { RxBuilder, Reactable } from '@reactables/core';
+import { RxBuilder, Action } from '@reactables/core';
 import DataService from './data-service';
-import { from, of } from 'rxjs';
+import { from, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
-export type FetchDataState = {
-  loading: boolean;
-  success: boolean;
-  data: string | null;
-  error: unknown;
-};
-
-const initialState: FetchDataState = {
-  loading: false,
-  success: false,
-  data: null,
-  error: null,
-};
-
-export type FetchDataActions = {
-  fetch: () => void;
-};
-
-export type FetchDataReactable = Reactable<FetchDataState, FetchDataActions>;
-
-export const RxFetchData = ({
-  dataService,
-}: {
-  dataService: DataService;
-}): FetchDataReactable =>
+export const RxFetchData = ({ dataService }: { dataService: DataService }) =>
   RxBuilder({
-    initialState,
+    initialState: {
+      loading: false,
+      success: false,
+      data: null as string | null,
+      error: null as any,
+    },
     reducers: {
       fetch: {
         reducer: (state) => ({ ...state, loading: true }),
         effects: [
-          (action$) =>
+          (action$: Observable<Action>) =>
             action$.pipe(switchMap(() => from(dataService.fetchData()))).pipe(
               map((response) => ({ type: 'fetchSuccess', payload: response })),
               catchError((err: unknown) =>
-                of({ type: 'fetchFailure', payload: true })
+                of({ type: 'fetchFailure' })
               )
             ),
         ],
       },
-      fetchSuccess: (state, action) => ({
+      fetchSuccess: (state, action: Action<string>) => ({
         ...state,
         success: true,
         loading: false,
-        data: action.payload as string,
+        data: action.payload,
         error: null,
       }),
       fetchFailure: (state, action) => ({
         ...state,
         loading: false,
-        error: action.payload,
+        error: true,
         success: false,
       }),
     },
   });
+
 
 ```

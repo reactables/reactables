@@ -1,11 +1,19 @@
 # Reactable Forms
 
-Reactive forms with reactables. What fun is state management without forms?
+Reactable Forms provide a reactable for managing the state of your form(s).  
 
-Reactable Forms API took its inspiration from [Angular Forms](https://angular.dev/guide/forms) but has a reactive programming style. State is managed with reducers inside reactables vs class based form controls. 
+Inspired by [Angular Reactive Forms](https://angular.dev/guide/forms), Reactable Forms take a different approach:  
+state is managed with reducers inside reactables rather than class-based form controls.  
 
-## Installation <a name="installation"></a>
+---
 
-Requires <a href="https://rxjs.dev/" target="_blank" rel="noreferrer">RxJS</a> 6 or above. If not already installed, run `npm i rxjs`
+## Installation
 
-`npm i @reactables/forms`
+Reactable Forms require [RxJS](https://rxjs.dev/) 6 or above.  
+
+```bash
+# Core package (requires RxJS 6+)
+npm i rxjs @reactables/core
+
+# React bindings + form utilities
+npm i @reactables/react @reactables/react-form
