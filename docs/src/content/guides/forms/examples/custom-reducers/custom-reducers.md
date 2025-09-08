@@ -1,8 +1,8 @@
 ## Custom Reducers
 
-You can declare [`CustomReducer`s](/reactables/references/forms-api#api-custom-reducers) during form initialization to implement custom behaviour.
+You can define custom reducers when initializing a form to add custom behavior.  
 
-Below the form reactable will have a `doubleOrder` action method which can be called to double the order amount.
+In this example, the form reactable gets a `doubleOrder` action that doubles the donut order amount:
 
 <a class="mb-3 d-block" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/forms/examples/custom-reducers/custom-reducers.md" target="_blank" rel="noreferrer">
   Edit this snippet <i class="fa fa-edit"></i>
@@ -33,12 +33,12 @@ export const RxCustomReducers = () => build(
 
         state = updateValues(state, { controlRef: ['donuts'], value });
 
-  /**
-   * You can perform any number of operations imperatively
-   * with formReducers i.e addControl, removeControl etc...
-   * until you get your desired result,
-   * and then return the new state.
-   **/
+      /**
+       * You can perform any number of operations imperatively
+       * with formReducers i.e addControl, removeControl etc...
+       * until you get your desired result,
+       * and then return the new state.
+       **/
 
         return state;
       };,
@@ -48,4 +48,4 @@ export const RxCustomReducers = () => build(
 
 ```
 
-**IMPORTANT**: When updating the form with custom reducers, it must be done **imperatively** with the provided [`FormReducers`](/reactables/references/forms-api#api-form-reducers). This will propagate the change appropriately to all ancestor and descendant controls - maintaining the integrity of the state tree.
+**IMPORTANT**: Note: Always update the form imperatively using [`FormReducers`](/reactables/references/forms-api#api-form-reducers). This ensures all related controls are updated correctly, preserving the integrity of the state tree.

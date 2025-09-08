@@ -1,12 +1,22 @@
-Reactables provide **one** core API for handling a wide range of state management use-cases.
+Reactables provide a consistent API for state management across diverse use cases and UI frameworks.
 
-It leverages RxJS and reactive/declarative patterns to allow more time to **focus on what** you want to achieve in your buisness logic and **save time on how** it is implemented.
+Built on RxJS and reactive/declarative patterns, they reduce boilerplate so you can focus on business logic.
+
+> **Note:** While examples in these docs use React, Reactables are framework-agnostic. Examples for other frameworks may be added over time — contributions welcome!
+
+---
 
 ## Installation
 
-Requires <a href="https://rxjs.dev/" target="_blank" rel="noreferrer">RxJS</a> 6 or above. If not already installed, run `npm i rxjs`
+Reactables require [RxJS](https://rxjs.dev/) 6 or above.  
 
-`npm i @reactables/core`
+```bash
+# Core package (requires RxJS 6+)
+npm i rxjs @reactables/core
+
+# Optional: React bindings + form components
+npm i @reactables/react
+```
 
 ## Create your first Reactable!
 
