@@ -31,7 +31,7 @@ export const mergeErrors = <T>(form: Form<T>): Form<T> => {
         );
       } else if (control.config.controls) {
         // If control is a FormGroup
-        childrenValid = Object.keys(control.value).every(
+        childrenValid = Object.keys(control.value as unknown[]).every(
           (childKey) => acc[getFormKey(control.controlRef.concat(childKey))].valid,
         );
       }

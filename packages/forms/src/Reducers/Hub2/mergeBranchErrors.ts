@@ -38,7 +38,7 @@ export const mergeBranchErrors = <T>(form: Form<T>, controlRef: ControlRef): For
         });
       } else if (control.config.controls) {
         // If control is a FormGroup
-        childrenValid = Object.keys(control.value).every((childKey) => {
+        childrenValid = Object.keys(control.value as unknown[]).every((childKey) => {
           const formKey = getFormKey(control.controlRef.concat(childKey));
           const valid = acc[formKey] === undefined ? form[formKey].valid : acc[formKey].valid;
           return valid;

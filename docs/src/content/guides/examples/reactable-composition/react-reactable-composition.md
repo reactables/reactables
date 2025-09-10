@@ -1,45 +1,39 @@
-<a href="https://stackblitz.com/edit/vitejs-vite-vab54vcn?file=src%2FApp.tsx" target="_blank" rel="noreferrer">
+<a href="https://stackblitz.com/edit/vitejs-vite-ksxbknfu?file=src%2FApp.tsx" target="_blank" rel="noreferrer">
  <img src="/reactables/stackblitz.png" width="100" />
 <a>
 
 <br>
 <br>
 
-
 ```typescript
 import { useReactable } from '@reactables/react';
-import HotelService from './hotel-service';
-import { RxHotelSearch } from './Rx/RxHotelSearch';
-import './App.css';
+import { RxApp } from './RxApp';
 
 function App() {
-  const [state, actions] = useReactable(RxHotelSearch, {
-    hotelService: new HotelService(),
-  });
+  const [state, actions] = useReactable(RxApp);
 
   if (!state) return;
 
   const {
-    controls: { smokingAllowed, petsAllowed },
-    searchResult: { loading, data },
+    auth: { loggingIn, loggedIn, userId },
+    profile: { fetchingProfile, userProfile },
   } = state;
 
   return (
     <>
       <div>
-        <br />
-        <button onClick={actions.controls.smokingAllowed.toggle}>
-          Smoking Allowed : {smokingAllowed ? 'Yes' : 'No'}{' '}
+        <button onClick={actions.auth.login} disabled={loggingIn}>
+          Login
         </button>
-        <br />
-        <br />
-        <button onClick={actions.controls.petsAllowed.toggle}>
-          Pets Allowed : {petsAllowed ? 'Yes' : 'No'}{' '}
-        </button>
-        <br />
-        {loading && 'Searching...'}
-        <br />
-        {data && data}
+        {loggingIn && <div>Logging In</div>}
+        {loggedIn && <div>User Id: {userId} logged in.</div>}
+        {fetchingProfile && <div>Fetching Profile...</div>}
+
+        {userProfile && (
+          <>
+            <h3>Hello {userProfile.userName}</h3>
+          </>
+        )}
       </div>
     </>
   );

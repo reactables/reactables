@@ -5,11 +5,9 @@ import { getEntry } from 'astro:content';
 const introduction = await getEntry('getting-started', 'introduction');
 const vanillaJSToggle = await getEntry('getting-started', 'vanilla-js-toggle');
 const reactToggle = await getEntry('getting-started', 'react-toggle');
-const angularToggle = await getEntry('getting-started', 'angular-toggle');
 const { Content : Content1 } = await introduction.render();
 const { Content : VanillaJsToggle } = await vanillaJSToggle.render();
 const { Content : ReactToggle } = await reactToggle.render();
-const { Content : AngularToggle } = await angularToggle.render();
 
 const sectionLinks= [
   { label: 'Introduction', link: "#introduction" },
@@ -25,21 +23,12 @@ const sectionLinks= [
     editPageLink={{ link: 'https://github.com/reactables/reactables/edit/main/docs/src/content/getting-started/introduction.md'}}
   >
     <h1 id="introduction">Introduction</h1>
-    <div class="mb-4">
-      <img class="d-md-none img-fluid"src="/reactables/WhatToUse.jpg" alt="WhatToUseMobile" />
-      <img class="d-none d-md-inline img-fluid" src="https://github.com/reactables/reactables/blob/main/assets/docs/SlideNineStandardPattern.jpg?raw=true" alt="WhatToUseDesktop" />
-    </div>
     <Content1 />
     <h2 id="bind-to-the-view">Bind to the view!</h2>
     <ul class="nav nav-tabs">
       <li class="nav-item">
           <a href="#react-toggle" class="nav-link active" data-bs-toggle="tab">
             <img src="/reactables/React.png" width="50" title="React Toggle"/>
-          </a>
-      </li>
-      <li class="nav-item">
-          <a href="#angular-toggle" class="nav-link" data-bs-toggle="tab">
-            <img src="/reactables/angular.png" width="50" title="Angular Toggle"/>
           </a>
       </li>
       <li class="nav-item">
@@ -54,12 +43,6 @@ const sectionLinks= [
           Edit this snippet <i class="fa fa-edit"/>
         </a>
         <ReactToggle />
-      </div>
-      <div class="tab-pane fade" id="angular-toggle">
-        <a class="edit-snippet" href="https://github.com/reactables/reactables/edit/main/docs/src/content/getting-started/angular-toggle.md" target="_blank" rel="noreferrer">
-          Edit this snippet <i class="fa fa-edit"/>
-        </a>
-        <AngularToggle />
       </div>
       <div class="tab-pane fade" id="vanilla-js-toggle">
         <a class="edit-snippet" href="https://github.com/reactables/reactables/edit/main/docs/src/content/getting-started/vanilla-js-toggle.md" target="_blank" rel="noreferrer">

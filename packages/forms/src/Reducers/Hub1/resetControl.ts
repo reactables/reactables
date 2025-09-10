@@ -34,9 +34,9 @@ export const resetControl = <T>(
 
   const restoredControls = buildState(
     controlToReset.config,
-    descendantsRemoved,
     controlToReset.controlRef,
     providers,
+    descendantsRemoved,
   );
 
   const restoredControlValue = getControl(controlRef, restoredControls).value;

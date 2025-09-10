@@ -35,7 +35,9 @@ const updateDescendantValues = <T>(
 
   const result = descendants.reduce((acc: BaseForm<T>, [key, control]) => {
     if (isChildRef(control.controlRef, controlRef)) {
-      const newChildValue = value[control.controlRef.at(-1)] as unknown;
+      const newChildValue = (value as { [key: string]: any })[
+        control.controlRef.at(-1) as string
+      ] as unknown;
       const validatorErrors: FormErrors = getErrors(control, newChildValue, providers);
       const oldChildValue = control.value;
 
@@ -96,12 +98,12 @@ export const updateValues = <T>(
   const { config } = form[ctrlKey];
 
   if ((config as FormControlConfig<unknown>).normalizers) {
-    newValue = (config as FormControlConfig<unknown>).normalizers.reduce(
+    newValue = (config as FormControlConfig<unknown>).normalizers?.reduce(
       (acc: unknown, normalizer) => {
-        if (!normalizers[normalizer]) {
+        if (!normalizers?.[normalizer]) {
           throw `You have not provided a normalizer for "${normalizer}"`;
         }
-        return normalizers[normalizer](acc);
+        return normalizers[normalizer](acc) as unknown;
       },
       value,
     );

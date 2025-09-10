@@ -187,7 +187,7 @@ describe('RxForm', () => {
               controlRef: ['searchItems', 1, 'addressSearch'],
               value: { streetAddress: 'next final street', city: 'next final city' },
             }),
-        }).subscribe((action) => {
+        } as { [key: string]: () => void }).subscribe((action) => {
           action();
         });
 

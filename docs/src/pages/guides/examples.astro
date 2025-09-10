@@ -7,56 +7,33 @@ const basicToggle = await getEntry('guides', 'examples/basic-toggle/basic-toggle
 const { Content : BasicToggle } = await basicToggle.render();
 const vanillaJSToggle = await getEntry('getting-started', 'vanilla-js-toggle');
 const reactToggle = await getEntry('getting-started', 'react-toggle');
-const angularToggle = await getEntry('getting-started', 'angular-toggle');
 const { Content : VanillaJsToggle } = await vanillaJSToggle.render();
 const { Content : ReactToggle } = await reactToggle.render();
-const { Content : AngularToggle } = await angularToggle.render();
 
 const debugging = await getEntry('guides', 'examples/debugging');
 const { Content : Debugging } = await debugging.render();
 
-const extendingFunctionality = await getEntry('guides', 'examples/extending-functionality');
-const { Content : ExtendingFunctionality } = await extendingFunctionality.render();
-
 const fetchData = await getEntry('guides', 'examples/fetch-data/fetch-data');
 const { Content : FetchData } = await fetchData.render();
 
-const actionsOnComponentMount = await getEntry('guides', 'examples/actions-on-component-mount');
-const { Content : ActionsOnComponentMount } = await actionsOnComponentMount.render();
-
 const reactFetchData = await getEntry('guides', 'examples/fetch-data/react-fetch-data');
-const angularFetchData = await getEntry('guides', 'examples/fetch-data/angular-fetch-data');
 const { Content : ReactFetchData } = await reactFetchData.render();
-const { Content : AngularFetchData } = await angularFetchData.render();
 
 const reactableComposition = await getEntry('guides', 'examples/reactable-composition/reactable-composition');
 const { Content : ReactableComposition } = await reactableComposition.render();
 
 const reactReactableComposition = await getEntry('guides', 'examples/reactable-composition/react-reactable-composition');
-const angularReactableComposition = await getEntry('guides', 'examples/reactable-composition/angular-reactable-composition');
 const { Content : ReactReactableComposition } = await reactReactableComposition.render();
-const { Content : AngularReactableComposition } = await angularReactableComposition.render();
-
-const reactableCommunication = await getEntry('guides', 'examples/communication/communication');
-const { Content : ReactableCommunication } = await reactableCommunication.render();
-
-const reactReactableCommunication = await getEntry('guides', 'examples/communication/react-communication');
-const angularReactableCommunication = await getEntry('guides', 'examples/communication/angular-communication');
-const { Content : ReactReactableCommunication } = await reactReactableCommunication.render();
-const { Content : AngularReactableCommunication } = await angularReactableCommunication.render();
 
 const globalState = await getEntry('guides', 'examples/global-state');
 const { Content : GlobalState } = await globalState.render();
 
 const sectionsLinks = [
   { label: 'Basic Toggle', link: "#basic-toggle"},
-  { label: 'Debugging', link: "#debugging"},
-  { label: 'Extending Functionality', link: "#extending-functionality"},
   { label: 'Fetching Data with an Effect', link: "#fetching-data"},
-  { label: 'Actions On Component Mount', link: "#actions-on-component-mount"},
   { label: 'Composition with Reactables', link: "#reactable-composition"},
-  { label: 'Communication between Reactables', link: "#communication-between-reactables"},
   { label: 'Global State with Reactables', link: "#global-state-with-reactables"},
+  { label: 'Debugging', link: "#debugging"},
 ]
 ---
 
@@ -77,11 +54,6 @@ const sectionsLinks = [
           </a>
       </li>
       <li class="nav-item">
-          <a href="#angular-toggle" class="nav-link" data-bs-toggle="tab">
-            <img src="/reactables/angular.png" width="50" title="Angular Toggle"/>
-          </a>
-      </li>
-      <li class="nav-item">
           <a href="#vanilla-js-toggle" class="nav-link" data-bs-toggle="tab">
             <img src="/reactables/VanillaJS.jpg" width="50" title="VanillaJS Toggle" />
           </a>
@@ -94,12 +66,6 @@ const sectionsLinks = [
         </a>
         <ReactToggle />
       </div>
-      <div class="tab-pane fade" id="angular-toggle">
-        <a class="edit-snippet" href="https://github.com/reactables/reactables/edit/main/docs/src/content/getting-started/angular-toggle.md" target="_blank" rel="noreferrer">
-          Edit this snippet <i class="fa fa-edit"/>
-        </a>
-        <AngularToggle />
-      </div>
       <div class="tab-pane fade" id="vanilla-js-toggle">
         <a class="edit-snippet" href="https://github.com/reactables/reactables/edit/main/docs/src/content/getting-started/vanilla-js-toggle.md" target="_blank" rel="noreferrer">
           Edit this snippet <i class="fa fa-edit"/>
@@ -107,16 +73,6 @@ const sectionsLinks = [
         <VanillaJsToggle />
       </div>
     </div>
-
-    <br />
-
-    <Debugging />
-
-    <br />
-    <br />
-    <br />
-
-    <ExtendingFunctionality />
 
     <br />
 
@@ -129,11 +85,6 @@ const sectionsLinks = [
             <img src="/reactables/React.png" width="50" title="React Fetch Data"/>
           </a>
       </li>
-      <li class="nav-item">
-          <a href="#angular-fetch-data" class="nav-link" data-bs-toggle="tab">
-            <img src="/reactables/angular.png" width="50" title="Angular Fetch Data"/>
-          </a>
-      </li>
     </ul>
     <div class="tab-content pt-3">
       <div class="tab-pane fade show active" id="react-fetch-data">
@@ -142,34 +93,18 @@ const sectionsLinks = [
         </a>
         <ReactFetchData />
       </div>
-      <div class="tab-pane fade" id="angular-fetch-data">
-        <a class="edit-snippet pt-3 pe-4" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/examples/fetch-data/angular-fetch-data.md" target="_blank" rel="noreferrer">
-          Edit this snippet <i class="fa fa-edit"></i>
-        </a>
-        <AngularFetchData />
-      </div>
     </div>
-
-    <br />
-
-    <!-- Actions On Component Mount -->
-     <ActionsOnComponentMount />
 
     <br />
 
     <!-- Composition with Reactables -->
     <ReactableComposition />
 
-    <h5>Bind RxHotelSearch to View</h5>
+    <h5>Bind RxApp to View</h5>
     <ul class="nav nav-tabs">
       <li class="nav-item">
           <a href="#react-reactable-composition" class="nav-link active" data-bs-toggle="tab">
             <img src="/reactables/React.png" width="50" title="React Reactable Composition"/>
-          </a>
-      </li>
-      <li class="nav-item">
-          <a href="#angular-reactable-composition" class="nav-link" data-bs-toggle="tab">
-            <img src="/reactables/angular.png" width="50" title="Angular Reactable Composition" />
           </a>
       </li>
     </ul>
@@ -180,49 +115,13 @@ const sectionsLinks = [
         </a>
         <ReactReactableComposition />
       </div>
-      <div class="tab-pane fade" id="angular-reactable-composition">
-        <a class="edit-snippet pt-3 pe-4" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/examples/reactable-composition/angular-reactable-composition.md" target="_blank" rel="noreferrer">
-          Edit this snippet <i class="fa fa-edit"></i>
-        </a>
-        <AngularReactableComposition />
-      </div>
-    </div>
-
-    <br />
-
-    <!-- Communication between Reactables -->
-    <ReactableCommunication />
-    <h5>Bind RxToggleCounter to View</h5>
-    <ul class="nav nav-tabs">
-      <li class="nav-item">
-          <a href="#react-communication" class="nav-link active" data-bs-toggle="tab">
-            <img src="/reactables/React.png" width="50" title="React Communication"/>
-          </a>
-      </li>
-      <li class="nav-item">
-          <a href="#angular-communication" class="nav-link" data-bs-toggle="tab">
-            <img src="/reactables/angular.png" width="50" title="Angular Communication"/>
-          </a>
-      </li>
-    </ul>
-    <div class="tab-content pt-3">
-      <div class="tab-pane fade show active" id="react-communication">
-        <a class="edit-snippet pt-3 pe-4" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/examples/communication/react-communication.md" target="_blank" rel="noreferrer">
-          Edit this snippet <i class="fa fa-edit"></i>
-        </a>
-        <ReactReactableCommunication />
-      </div>
-      <div class="tab-pane fade" id="angular-communication">
-        <a class="edit-snippet pt-3 pe-4" href="https://github.com/reactables/reactables/edit/main/docs/src/content/guides/examples/communication/angular-communication.md" target="_blank" rel="noreferrer">
-          Edit this snippet <i class="fa fa-edit"></i>
-        </a>
-        <AngularReactableCommunication />
-      </div>
     </div>
 
     <br />
 
     <GlobalState />
+
+    <Debugging />
 
   </ContentPageLayout>
 

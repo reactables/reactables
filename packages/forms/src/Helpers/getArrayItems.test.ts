@@ -24,7 +24,6 @@ describe('getArrayItems', () => {
         },
       },
       undefined,
-      undefined,
       {
         validators: { ...Validators, ...builtValidators },
         asyncValidators: AsyncValidators,

@@ -9,6 +9,40 @@ const { Content } = await content.render();
 
 const sectionLinks: Array<SectionLink> = [
   {
+    label: 'Form Builders',
+    link: '#api-builders',
+    children: [
+      {
+        label: 'build',
+        link: '#api-build',
+      },
+      {
+        label: 'control',
+        link: '#api-control',
+      },
+      {
+        label: 'group',
+        link: '#api-group',
+      },
+      {
+        label: 'array',
+        link: '#api-array',
+      },
+      {
+        label: 'load',
+        link: '#api-load',
+      },
+      {
+        label: 'RxFormOptions',
+        link: '#api-form-options',
+      },
+      {
+        label: 'RxFormProviders',
+        link: '#api-form-providers',
+      },
+    ]
+  },
+  {
     label: 'RxFormActions',
     link: '#api-actions',
     children: [
@@ -46,24 +80,6 @@ const sectionLinks: Array<SectionLink> = [
     ]
   },
   {
-    label: 'Form Builders',
-    link: '#api-builders',
-    children: [
-      {
-        label: 'build',
-        link: '#api-build',
-      },
-      {
-        label: 'load',
-        link: '#api-load',
-      },
-      {
-        label: 'RxFormOptions',
-        link: '#api-form-options',
-      },
-    ]
-  },
-  {
     label: 'Helpers',
     link: '#api-helpers',
     children: [
@@ -85,10 +101,53 @@ const sectionLinks: Array<SectionLink> = [
       },
     ]
   },
-  {
-    label: 'Other Interfaces',
-    link: '#api-interfaces'
-  },
+{
+  label: 'Interfaces',
+  link: '#api-interfaces',
+  children: [
+    {
+      label: 'Form',
+      link: '#api-form'
+    },
+    {
+      label: 'FormControl',
+      link: '#api-form-control'
+    },
+    {
+      label: 'ControlRef',
+      link: '#api-control-ref'
+    },
+    {
+      label: 'FormErrors',
+      link: '#api-form-errors'
+    },
+    {
+      label: 'ValidatorFn',
+      link: '#api-validator-fn'
+    },
+    {
+      label: 'ValidatorAsyncFn',
+      link: '#api-validator-fn-async'
+    },
+    {
+      label: 'FormReducers',
+      link: '#api-form-reducers'
+    },
+    {
+      label: 'CustomReducer',
+      link: '#api-custom-reducer'
+    },
+    {
+      label: 'BaseFormState',
+      link: '#api-base-form-state'
+    },
+    {
+      label: 'Configuration Interfaces',
+      link: '#api-configuration-interfaces'
+    }
+  ]
+}
+
 ];
 ---
 

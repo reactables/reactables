@@ -39,7 +39,7 @@ describe('RxForm', () => {
         subscription = cold('-bc', {
           b: () => updateValues({ controlRef: ['doctorInfo'], value: newValue }),
           c: () => markControlAsPristine(['doctorInfo', 'firstName']),
-        }).subscribe((action) => {
+        } as { [key: string]: () => void }).subscribe((action) => {
           action();
         });
 
@@ -76,7 +76,7 @@ describe('RxForm', () => {
         subscription = cold('-bc', {
           b: () => updateValues({ controlRef: ['doctorInfo'], value: newValue }),
           c: () => markControlAsPristine(['doctorInfo']),
-        }).subscribe((action) => {
+        } as { [key: string]: () => void }).subscribe((action) => {
           action();
         });
 

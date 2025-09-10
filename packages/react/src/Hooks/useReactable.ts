@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, MutableRefObject } from 'react';
 import { Reactable, ActionObservableWithTypes, DestroyAction } from '@reactables/core';
 
 export type HookedReactable<T> = T extends (...args: any[]) => Reactable<infer S, infer U, infer V>
@@ -15,8 +15,8 @@ export const useReactable = <
   reactableFactory: (...props: U) => Reactable<T, S, V>,
   ...props: U
 ): HookedReactable<typeof reactableFactory> => {
-  const rx = useRef<Reactable<T, S, V>>(null);
-  const lastMount = useRef<Date>(null);
+  const rx = useRef<Reactable<T, S, V>>(null) as MutableRefObject<Reactable<T, S, V>>;
+  const lastMount = useRef<Date>(null) as MutableRefObject<Date>;
 
   /**
    * React Strict Mode has bugs with clean up with refs so it breaks the useReactable hook as of now

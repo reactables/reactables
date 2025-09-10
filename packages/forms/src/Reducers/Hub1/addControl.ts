@@ -29,7 +29,7 @@ export const addControl = <T>(
     throw 'You are attempting to add a control to a non-existent form group';
   }
 
-  const newForm = buildState(config, state.form, controlRef, providers);
+  const newForm = buildState(config, controlRef, providers, state.form);
   const newValue = getControl(controlRef, newForm).value;
 
   const ancestorsUpdated = updateAncestorValuesAddControl(
