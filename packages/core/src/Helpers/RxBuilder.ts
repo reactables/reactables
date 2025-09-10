@@ -55,7 +55,7 @@ export const RxBuilder = <T, S extends Cases<T>>({
           };
         }
 
-        return { type: action.type, payload: (action as Action<any>).payload };
+        return { type: action.type, payload: action.payload as unknown };
       }),
     ),
   );
@@ -135,7 +135,7 @@ export const RxBuilder = <T, S extends Cases<T>>({
         console.log(
           debugName,
           '[ACTION]',
-          { type: action.type, payload: (action as Action<any>).payload },
+          { type: action.type, payload: action.payload as unknown },
           '\n',
         );
     }),
