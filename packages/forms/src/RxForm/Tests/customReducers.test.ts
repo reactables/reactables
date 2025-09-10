@@ -616,9 +616,7 @@ describe('RxForm', () => {
         });
 
         subscription = cold('-b-c', {
-          //@ts-ignore
           b: () => actions.changeControl(true),
-          //@ts-ignore
           c: () => actions.changeControl(false),
         }).subscribe((action) => {
           action();
