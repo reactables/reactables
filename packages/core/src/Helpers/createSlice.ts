@@ -37,7 +37,7 @@ export const createSlice = <T, S extends Cases<T>>(config: SliceConfig<T, S>) =>
     (acc, [key, _case]): Reducer<T> => {
       const _reducer = typeof _case === 'function' ? _case : _case.reducer;
 
-      const newFunc = (state: T, action: Action<unknown>) => {
+      const newFunc = (state: T, action: Action<any>) => {
         if (action && action.type === key) {
           return _reducer(state, action);
         }

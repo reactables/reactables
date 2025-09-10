@@ -8,6 +8,7 @@ export type Action<T = undefined> = T extends undefined
   ? {
       type: string;
       scopedEffects?: ScopedEffects;
+      payload?: T;
     }
   : {
       type: string;

@@ -22,9 +22,9 @@ export interface ActionMap {
   [key: string | number]: (payload?: unknown) => void | ActionMap;
 }
 
-export type ActionObservableWithTypes<T> = Observable<Action<unknown>> & {
+export type ActionObservableWithTypes<T> = Observable<Action<any>> & {
   types: T;
-  ofTypes: (types: Array<string>) => Observable<Action<unknown>>;
+  ofTypes: (types: Array<string>) => Observable<Action<any>>;
 };
 
 export type ReactableState<RxFactory> = RxFactory extends (

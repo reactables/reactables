@@ -150,7 +150,7 @@ export interface RxFormOptions<
   providers?: RxFormProviders;
   name?: string;
   debug?: boolean;
-  sources?: Observable<Action<unknown>>[];
+  sources?: Observable<Action<any>>[];
 }
 
 type NormalizerFunction<T> = (value: T) => T;
@@ -254,7 +254,7 @@ const createReactable = <FormValue, T extends Record<string, CustomReducer<FormV
     return {
       ...acc,
       [key as keyof T]: {
-        reducer: ({ form }: BaseFormState<FormValue>, action: Action<unknown>) => {
+        reducer: ({ form }: BaseFormState<FormValue>, action: Action<any>) => {
           return _reducer(reducerTools(providers), { form }, action);
         },
         effects,
