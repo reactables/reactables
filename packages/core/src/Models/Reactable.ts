@@ -26,3 +26,9 @@ export type ActionObservableWithTypes<T> = Observable<Action<unknown>> & {
   types: T;
   ofTypes: (types: Array<string>) => Observable<Action<unknown>>;
 };
+
+export type ReactableState<RxFactory> = RxFactory extends (
+  ...args: any[]
+) => Reactable<infer S, any, any>
+  ? S
+  : never;
