@@ -14,7 +14,7 @@ Reactables require [RxJS](https://rxjs.dev/) 6 or above.
 # Core package (requires RxJS 6+)
 npm i rxjs @reactables/core
 
-# Optional: React bindings + form components
+# React bindings
 npm i @reactables/react
 ```
 
