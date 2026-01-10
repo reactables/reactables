@@ -1,9 +1,8 @@
-import { Form, BaseForm, FormControl, Hub2Fields } from '../../Models/Controls';
+import { Form, BaseForm, FormControl, cloneHub2Fields } from '../../Models/Controls';
 import { getFormKey } from '../../Helpers/getFormKey';
 import { getControlBranch } from '../../Helpers/getControlBranch';
 import { ControlRef } from '../../Models/ControlRef';
 import { FormErrors } from '../../Models';
-import { DEFAULT_HUB2_FIELDS } from '../../Models/Controls';
 import { reverseObjectKeys } from '../../Helpers/reverseObjectKeys';
 
 const hasErrors = (errors: FormErrors) => {
@@ -24,8 +23,7 @@ export const mergeRemoveControl = <T>(
       const key = getFormKey(baseControl.controlRef);
 
       const existingControl =
-        existingBranch.find((control) => baseControl.key === control.key) ||
-        (structuredClone(DEFAULT_HUB2_FIELDS) as Hub2Fields);
+        existingBranch.find((control) => baseControl.key === control.key) || cloneHub2Fields();
 
       const errors = {
         ...baseControl.validatorErrors,

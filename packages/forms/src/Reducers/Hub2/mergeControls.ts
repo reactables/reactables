@@ -1,7 +1,12 @@
-import { Form, Hub2Fields, FormControl, BaseFormState } from '../../Models/Controls';
+import {
+  Form,
+  Hub2Fields,
+  FormControl,
+  BaseFormState,
+  cloneHub2Fields,
+} from '../../Models/Controls';
 import { getFormKey } from '../../Helpers/getFormKey';
 import { FormErrors } from '../../Models/FormErrors';
-import { DEFAULT_HUB2_FIELDS } from '../../Models/Controls';
 import { mergeRemoveControl } from './mergeRemoveControl';
 import { reverseObjectKeys } from '../../Helpers/reverseObjectKeys';
 
@@ -27,9 +32,7 @@ export const mergeControls = <T>(
       const existingControl = controlsRemoved && controlsRemoved[formKey];
 
       const newControl: FormControl<unknown> = {
-        ...(existingControl
-          ? existingControl
-          : (structuredClone(DEFAULT_HUB2_FIELDS) as Hub2Fields)),
+        ...(existingControl ? existingControl : cloneHub2Fields()),
         ...control,
       };
 

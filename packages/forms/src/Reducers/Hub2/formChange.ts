@@ -1,8 +1,7 @@
 import { Action } from '@reactables/core';
-import { BaseFormState, Form, Hub2Fields } from '../../Models/Controls';
+import { BaseFormState, Form, cloneHub2Fields } from '../../Models/Controls';
 import { mergeErrors } from './mergeErrors';
 import { mergeControls } from './mergeControls';
-import { DEFAULT_HUB2_FIELDS } from '../../Models/Controls';
 
 export const formChange = (
   state: Form<any> | null = null,
@@ -16,7 +15,7 @@ export const formChange = (
         return {
           ...acc,
           [dictKey]: {
-            ...(structuredClone(DEFAULT_HUB2_FIELDS) as Hub2Fields),
+            ...cloneHub2Fields(),
             ...baseControl,
           },
         };

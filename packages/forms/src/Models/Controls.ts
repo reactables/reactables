@@ -58,3 +58,5 @@ export const DEFAULT_HUB2_FIELDS: Hub2Fields = {
   childrenValid: null,
   errors: {},
 };
+
+export const cloneHub2Fields = () => JSON.parse(JSON.stringify(DEFAULT_HUB2_FIELDS)) as Hub2Fields;
