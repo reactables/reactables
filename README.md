@@ -16,25 +16,3 @@ email: <a href="dlai@dave-lai.com">dlai@dave-lai.com</a>
 <br>
 <br>
 Github: https://github.com/laidav
-
-## v2 breaking changes
-
-### Core
-- EffectsAndSources Interface removed
-- Effects option removed
-- effects and sources interface removed
-- all reactables now store their state and has a destroy action
-  - any reactables that were combined/created without RxBuilder/combine helper will need to have teardown logic.
-- storeValue removed
-- sources now is only array signature, no dictionary
-
-### React
-- Store Provider & useAppStore removed from library
-- HookedReactable interface updated
-
-### Forms
-- valid state is now longer coupled with pending
-- control only goes into pending when async validation is actually in progress (observable sent)
-- `AsyncValidatorFn` interface changed
-- Removed `CustomReducers` interface
-- `build` and `load` now accept Generic types for parameters for `FormValue` and `Record<string, CustomReducer>`
