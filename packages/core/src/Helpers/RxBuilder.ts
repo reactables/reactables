@@ -1,6 +1,7 @@
 import { createSlice, SliceConfig, Cases } from './createSlice';
 import {
   Reactable,
+  StateObservable,
   ActionCreatorTypeFromReducer,
   ActionObservableWithTypes,
 } from '../Models/Reactable';

@@ -3,10 +3,10 @@ import { ofTypes } from '../Operators';
 import { map } from 'rxjs/operators';
 import { Action, Reactable } from '../Models';
 import { DestroyAction } from './RxBuilder';
-import { ActionObservableWithTypes } from '../Models/Reactable';
+import { ActionObservableWithTypes, StateObservable } from '../Models/Reactable';
 import { combineActionTypeStringMaps } from './createActionTypeStringMap';
 
-export const combine = <T extends Record<string, Reactable<unknown, unknown & DestroyAction>>>(
+export const combine = <T extends Record<string, Reactable<any, any & DestroyAction>>>(
   sourceReactables: T,
 ) => {
   const { states, actions, actions$ } = Object.entries(sourceReactables).reduce(
@@ -65,10 +65,10 @@ export const combine = <T extends Record<string, Reactable<unknown, unknown & De
   const mergedActions$ = merge(...actions$) as ActionObservableWithTypes<typeof actionTypes>;
 
   mergedActions$.types = actionTypes;
-  mergedActions$.ofTypes = (types) => mergedActions$.pipe(ofTypes(types as string[]));
+  mergedActions$.ofTypes = (types) => mergedActions$.pipe(ofTypes(types));
 
   return [states$, actions, mergedActions$] as [
-    Observable<{
+    StateObservable<{
       [K in keyof T]: ObservedValueOf<T[K][0]>;
     }>,
     { [K in keyof T]: T[K][1] } & DestroyAction,
