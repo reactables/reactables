@@ -12,15 +12,21 @@ export type ActionCreatorTypeFromReducer<T> = T extends (state: any) => unknown
   ? (payload: P) => void
   : never;
 
-export type StateObservable<T> = {
-  selectors?: { [key: string]: (state: T) => any };
-} & Observable<T>;
+export type Selectors<T> = { [key: string]: (state: T) => any };
 
-export type Reactable<T, S extends DestroyAction = ActionMap & DestroyAction, U = unknown> = [
-  StateObservable<T>,
-  S,
-  ActionObservableWithTypes<U>,
-];
+export type StateObservable<
+  State,
+  SelectorsDict extends Selectors<State> | undefined = undefined,
+> = {
+  selectors?: SelectorsDict;
+} & Observable<State>;
+
+export type Reactable<
+  State,
+  Actions extends DestroyAction = ActionMap & DestroyAction,
+  Types = unknown,
+  SelectorsDict extends Selectors<State> | undefined = undefined,
+> = [StateObservable<State, SelectorsDict>, Actions, ActionObservableWithTypes<Types>];
 
 export interface ActionMap {
   [key: string | number]: (payload?: unknown) => void | ActionMap;

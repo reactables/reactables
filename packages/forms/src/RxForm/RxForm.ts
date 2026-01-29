@@ -316,7 +316,7 @@ const createReactable = <FormValue, T extends Record<string, CustomReducer<FormV
     DestroyAction;
 
   return [
-    state$.pipe(filter((form) => form !== null)) as Observable<Form<FormValue>>,
+    state$.pipe(filter((form) => form !== null)),
     actions,
     hub1Actions$ as ActionObservableWithTypes<ActionTypes<T> & { destroy: 'destroy' }>,
   ];

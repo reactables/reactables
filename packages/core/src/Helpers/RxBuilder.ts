@@ -4,6 +4,7 @@ import {
   StateObservable,
   ActionCreatorTypeFromReducer,
   ActionObservableWithTypes,
+  Selectors,
 } from '../Models/Reactable';
 import { Effect } from '../Models/Effect';
 import { Action, ScopedEffects, AnyAction } from '../Models/Action';
@@ -20,19 +21,29 @@ export interface DestroyAction {
 
 type AnyActionStream = Observable<AnyAction>;
 
-export interface RxConfig<T, S extends Cases<T>> extends SliceConfig<T, S> {
+export interface RxConfig<
+  State,
+  Actions extends Cases<State>,
+  SelectorsDict extends Selectors<State> | undefined = undefined,
+> extends SliceConfig<State, Actions> {
   debug?: boolean;
   sources?: Array<AnyActionStream>;
+  selectors?: SelectorsDict;
 }
 
 const getScopedEffectSignature = (actionType: string, key: string | number) =>
   `type: ${actionType}, scoped: true${key ? `,key:${key}` : ''}`;
 
-export const RxBuilder = <T, S extends Cases<T>>({
+export const RxBuilder = <
+  State,
+  Actions extends Cases<State>,
+  SelectorsDict extends Selectors<State> | undefined = undefined,
+>({
   sources = [],
   debug = false,
+  selectors,
   ...sliceConfig
-}: RxConfig<T, S>) => {
+}: RxConfig<State, Actions, SelectorsDict>) => {
   /**
    * CREATE MAIN REDUCER AND ACTION CREATORS
    */
@@ -194,11 +205,15 @@ export const RxBuilder = <T, S extends Cases<T>>({
         }
       }
     }),
-    map((pair) => pair[1] as T),
+    map((pair) => pair[1] as State),
   );
 
-  const storedState$ = new ReplaySubject<T>(1);
-  stateEvents$.pipe(takeUntil(destroy$)).subscribe((state) => storedState$.next(state));
+  const storedState$ = new ReplaySubject<State>(1) as StateObservable<State, SelectorsDict>;
+  storedState$.selectors = selectors;
+
+  stateEvents$
+    .pipe(takeUntil(destroy$))
+    .subscribe((state) => (storedState$ as ReplaySubject<State>).next(state));
 
   // Action methods for the UI to invoke state changes
   const actions = {
@@ -209,7 +224,7 @@ export const RxBuilder = <T, S extends Cases<T>>({
           dispatcher$.next(actionCreator(payload));
         },
       ]),
-    ) as { [K in keyof S]: ActionCreatorTypeFromReducer<S[K]> }),
+    ) as { [K in keyof Actions]: ActionCreatorTypeFromReducer<Actions[K]> }),
     // Destroy method to teardown reactable
     destroy: () => {
       destroy$.next();
@@ -224,8 +239,9 @@ export const RxBuilder = <T, S extends Cases<T>>({
   actions$.ofTypes = (types) => actions$.pipe(ofTypes(types));
 
   return [storedState$, actions, actions$] as Reactable<
-    T,
-    { [K in keyof S]: ActionCreatorTypeFromReducer<S[K]> } & DestroyAction,
-    typeof types
+    State,
+    { [K in keyof Actions]: ActionCreatorTypeFromReducer<Actions[K]> } & DestroyAction,
+    typeof types,
+    SelectorsDict
   >;
 };
