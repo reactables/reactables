@@ -1,4 +1,5 @@
 import { Observable, Subscription, mergeMap, of } from 'rxjs';
+import { map } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { RxBuilder } from './RxBuilder';
 import { Action } from '../Models';
@@ -84,6 +85,20 @@ describe('RxBuilder', () => {
       const [state$] = rxCounter;
 
       expectObservable(state$).toBe('a', { a: 3 });
+    });
+  });
+
+  it('should have selectors', () => {
+    testScheduler.run(({ expectObservable }) => {
+      const [state$] = RxBuilder({
+        initialState: false,
+        reducers: {},
+        selectors: {
+          invert: (state: boolean) => !state,
+        },
+      });
+
+      expectObservable(state$.pipe(map(state$.selectors!.invert))).toBe('a', { a: true });
     });
   });
 
