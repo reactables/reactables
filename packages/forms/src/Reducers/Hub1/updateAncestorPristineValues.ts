@@ -26,14 +26,18 @@ export const updateAncestorPristineValues = <T>(
     if (Array.isArray(form[parentKey].value)) {
       newValue = siblingControls
         .slice()
-        .sort((a, b) => (a.controlRef.at(-1) as number) - (b.controlRef.at(-1) as number))
+        .sort(
+          (a, b) =>
+            (a.controlRef[a.controlRef.length - 1] as number) -
+            (b.controlRef[b.controlRef.length - 1] as number),
+        )
         .map((control) => control.pristineValue);
     } else {
       // If parent is a Form Group
       newValue = siblingControls.reduce((acc, { controlRef, pristineValue }) => {
         return {
           ...acc,
-          [controlRef.at(-1) as string | number]: pristineValue,
+          [controlRef[controlRef.length - 1]]: pristineValue,
         };
       }, {});
     }
