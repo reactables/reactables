@@ -51,7 +51,7 @@ export const removeControl = <T>(
       // May need to reindex array items of removed control
       // if it was part of a Form Array.
       if (parentIsFormArray) {
-        const oldIndex = control.controlRef.at(parentRef.length) as number;
+        const oldIndex = control.controlRef[parentRef.length] as number;
 
         if (
           // If control is descendant.
@@ -59,7 +59,7 @@ export const removeControl = <T>(
           control.controlRef.length > parentRef.length &&
           // If the array item index was greater than the index of item removed
           // we need to decrement its index by 1.
-          oldIndex > (controlRef.at(-1) as number)
+          oldIndex > (controlRef[controlRef.length - 1] as number)
         ) {
           const newRef: ControlRef = parentRef
             .concat(oldIndex - 1)
@@ -103,7 +103,7 @@ export const removeControl = <T>(
   // Check for reindexing for changed controls
   if (parentIsFormArray) {
     _changedControls = Object.entries(_changedControls).reduce((acc, [key, control]) => {
-      const oldIndex = control.controlRef.at(parentRef.length) as number;
+      const oldIndex = control.controlRef[parentRef.length] as number;
 
       if (
         // If control is descendant.
@@ -111,7 +111,7 @@ export const removeControl = <T>(
         control.controlRef.length > parentRef.length &&
         // If the array item index was greater than the index of item removed
         // we need to decrement its index by 1.
-        oldIndex > (controlRef.at(-1) as number)
+        oldIndex > (controlRef[controlRef.length - 1] as number)
       ) {
         const newRef: ControlRef = parentRef
           .concat(oldIndex - 1)

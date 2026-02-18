@@ -36,7 +36,7 @@ const updateDescendantValues = <T>(
   const result = descendants.reduce((acc: BaseForm<T>, [key, control]) => {
     if (isChildRef(control.controlRef, controlRef)) {
       const newChildValue = (value as { [key: string]: any })[
-        control.controlRef.at(-1) as string
+        control.controlRef[control.controlRef.length - 1] as string
       ] as unknown;
       const validatorErrors: FormErrors = getErrors(control, newChildValue, providers);
       const oldChildValue = control.value;
