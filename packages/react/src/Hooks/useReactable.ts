@@ -3,7 +3,7 @@ import { useEffect, useState, useRef, MutableRefObject } from 'react';
 import { Reactable, ActionObservableWithTypes, DestroyAction } from '@reactables/core';
 
 export type HookedReactable<T> = T extends (...args: any[]) => Reactable<infer S, infer U, infer V>
-  ? [S, U, Observable<S>, ActionObservableWithTypes<V>?]
+  ? [S, U, Observable<S>, ActionObservableWithTypes<V>]
   : never;
 
 export const useReactable = <
