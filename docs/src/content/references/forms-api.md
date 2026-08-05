@@ -51,6 +51,13 @@ const [state$, actions, actions$] = rxProfileForm;
 state$.subscribe(formState => console.log("Profile form state:", formState));
 actions.updateValues({ controlRef: ["firstName"] , value: "Jane", });
 
+// Subscribe directly to a specific action via actionMap — payload is fully typed
+actions$.actionMap.updateValues.subscribe(action => {
+  // action.type    → 'updateValues'
+  // action.payload → UpdateValuesPayload<unknown>
+  console.log("Values updated:", action.payload);
+});
+
 ```
 
 ### `control` <a name="api-control"></a>
@@ -214,6 +221,32 @@ const rxProviders = {
 ## `RxFormActions` <a name="api-actions"></a>
 
 Actions available to trigger state changes on Form Reactable.
+
+The **actions observable** (`actions$`) returned by `build` and `load` exposes an `actionMap` property — a dictionary of Observables, one per declared action (built-in and custom). Each Observable emits only its specific action type with a fully typed payload and literal `type` string.
+
+```typescript
+const [, actions, actions$] = build(group({
+  controls: {
+    firstName: control(["John"]),
+  },
+}), {
+  reducers: {
+    resetFirstName: ({ updateValues }, state) =>
+      updateValues(state, { controlRef: ["firstName"], value: "" }),
+  },
+});
+
+// Built-in action — payload typed as UpdateValuesPayload<unknown>
+actions$.actionMap.updateValues.subscribe(action => {
+  console.log(action.type);    // 'updateValues'
+  console.log(action.payload); // { controlRef: [...], value: ... }
+});
+
+// Custom reducer action — payload inferred from the reducer signature
+actions$.actionMap.resetFirstName.subscribe(action => {
+  console.log(action.type); // 'resetFirstName'
+});
+```
 
 ### `updateValues` <a name="api-actions-update-values"></a>
 
