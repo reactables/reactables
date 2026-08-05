@@ -7,4 +7,5 @@ export type {
   ReactableState,
   PayloadFromCase,
   ActionMapType,
+  CombinedActionMapType,
 } from './Reactable';

@@ -150,6 +150,27 @@ describe('RxBuilder', () => {
     });
   });
 
+  describe('when combined', () => {
+    it('should expose a nested actionMap mirroring the reactable hierarchy', () => {
+      testScheduler.run(({ expectObservable, cold }) => {
+        const [, actions, actions$] = RxCombined();
+
+        subscription = cold('-a-b', {
+          a: actions.counter.increment,
+          b: actions.toggle.toggle,
+        }).subscribe((action) => (action as () => void)());
+
+        expectObservable(actions$.actionMap.counter.increment).toBe('-a', {
+          a: { type: 'increment', payload: undefined },
+        });
+
+        expectObservable(actions$.actionMap.toggle.toggle).toBe('---b', {
+          b: { type: 'toggle', payload: undefined },
+        });
+      });
+    });
+  });
+
   describe('when combined and nested', () => {
     const rxNestedCombined = combine({
       combined: RxCombined(),
