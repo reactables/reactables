@@ -212,7 +212,7 @@ export const load = <
   return createReactable<FormValue, CustomReducers>(baseFormState, options);
 };
 
-type CustomReducerActionTypes<T extends Record<string, CustomReducer<any>>> = {
+type CustomReducerActionTypes<T extends Record<string, CustomReducer>> = {
   [K in keyof T as `${K & string}`]: `${K & string}`;
 };
 
