@@ -16,7 +16,7 @@ export type Reactable<
   T,
   S extends DestroyAction = ActionMap & DestroyAction,
   U = unknown,
-  M extends Record<string, unknown> = Record<string, Observable<Action<any>>>,
+  M extends Record<string, unknown> = Record<string, unknown>,
 > = [Observable<T>, S, ActionObservableWithTypes<U, M>];
 
 export interface ActionMap {
@@ -35,7 +35,7 @@ export type ActionMapType<S> = {
 
 export type ActionObservableWithTypes<
   T,
-  M extends Record<string, unknown> = Record<string, Observable<Action<any>>>,
+  M extends Record<string, unknown> = Record<string, unknown>,
 > = Observable<Action<any>> & {
   types: T;
   ofTypes: (types: Array<string>) => Observable<Action<any>>;
