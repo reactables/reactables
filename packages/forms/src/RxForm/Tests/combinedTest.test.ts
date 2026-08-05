@@ -35,6 +35,21 @@ describe('RxForm', () => {
   });
 
   describe('using build and combined with other Reactables', () => {
+    it('should expose actionMap that routes to per-source observables', () => {
+      testScheduler.run(({ expectObservable, cold }) => {
+        const [, actions, actions$] = RxCombined();
+
+        subscription = cold('-a-b', {
+          a: () => actions.toggle.toggle(),
+          b: () => actions.form.updateValues({ controlRef: [], value: 'test' }),
+        }).subscribe((action) => action());
+
+        expectObservable(actions$.actionMap.toggle.toggle).toBe('-a', {
+          a: { type: 'toggle' },
+        });
+      });
+    });
+
     it('should emit initial state', () => {
       testScheduler.run(({ expectObservable, cold }) => {
         const [state$, actions] = RxCombined();

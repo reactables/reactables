@@ -36,6 +36,36 @@ describe('RxForm', () => {
         },
       });
 
+    it('should expose actionMap with observables for built-in and custom reducers', () => {
+      testScheduler.run(({ expectObservable, cold }) => {
+        const customReducers = {
+          changeControl: (
+            { updateValues }: FormReducers,
+            state: BaseFormState<{ testControl: boolean }>,
+            { payload }: Action<boolean>,
+          ) => updateValues(state, { controlRef: ['testControl'], value: payload }),
+        };
+
+        const [, actions, actions$] = build<{ testControl: boolean }, typeof customReducers>(
+          group({ controls: { testControl: control([false]) } }),
+          { reducers: customReducers },
+        );
+
+        subscription = cold('-a-b', {
+          a: () => actions.changeControl(true),
+          b: () => actions.updateValues({ controlRef: ['testControl'], value: false }),
+        }).subscribe((action) => action());
+
+        expectObservable(actions$.actionMap.changeControl).toBe('-a', {
+          a: { type: 'changeControl', payload: true },
+        });
+
+        expectObservable(actions$.actionMap.updateValues).toBe('---b', {
+          b: { type: 'updateValues', payload: { controlRef: ['testControl'], value: false } },
+        });
+      });
+    });
+
     it('custom toggleSearchType reducer should toggle controls, and update values for a group control', () => {
       testScheduler.run(({ expectObservable, cold }) => {
         const [state$, actions] = build(
