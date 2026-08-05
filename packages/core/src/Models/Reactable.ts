@@ -30,7 +30,7 @@ export type PayloadFromCase<T> = T extends (state: any, action: Action<infer P>)
   : undefined;
 
 export type ActionMapType<S> = {
-  [K in keyof S & string]: Observable<Action<PayloadFromCase<S[K]>>>;
+  [K in keyof S & string]: Observable<Action<PayloadFromCase<S[K]>> & { type: K }>;
 };
 
 export type ActionObservableWithTypes<
