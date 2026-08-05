@@ -1,10 +1,9 @@
 export default {
-  preset: 'ts-jest/presets/js-with-ts',
   testEnvironment: 'jsdom',
   testMatch: ['**/+(*.)+(spec|test).+(ts|js)?(x)'],
   moduleFileExtensions: ['ts', 'js', 'tsx'],
   transform: {
-    '^.+\\.ts?$': 'ts-jest',
+    '^.+\\.tsx?$': ['@swc/jest', { jsc: { transform: { react: { runtime: 'automatic' } } } }],
   },
   moduleNameMapper: {
     '\\.(css|less)$': '<rootDir>/styleMock.js',

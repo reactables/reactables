@@ -5,7 +5,9 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "declaration": true,
-    "declarationDir": "./dist"
+    "declarationDir": "./dist",
+    "skipLibCheck": true,
+    "types": ["jest"]
   },
   "include": ["src/**/*"]
 }
