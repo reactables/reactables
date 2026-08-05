@@ -51,19 +51,3 @@ This provides several benefits:
 - **Improved developer experience.** Developers can simply navigate to the action they want instead of repeatedly calling `ofTypes(...)`.
 
 `ofTypes(...)` will continue to exist for scenarios where dynamic filtering or listening to multiple action types is desired. `actionMap` is intended to provide a more ergonomic and type-safe API for the common case.
-
-# Task
-
-Update `packages/core/src/Helpers/RxBuilder.ts` and all relevant types/interfaces to support this feature.
-
-The resulting `ActionObservableWithTypes<T>` should always expose an `actionMap` property that is fully typed based on the actions declared when the Reactable is created.
-
-Existing functionality, including `ofTypes(...)`, should continue to work unchanged.
-
-# Scope
-
-This change is limited to the `core` package.
-
-Implement support for Reactable primitives created by `packages/core/src/Helpers/RxBuilder.ts` only. This work is expected to be a feature branch and may be implemented incrementally.
-
-Support for combined Reactables (`packages/core/src/Helpers/combine.ts`) is intentionally out of scope for this change and will be implemented in a later phase. At that point, `actionMap` will mirror the combined Reactable hierarchy, with Observables at each leaf.
