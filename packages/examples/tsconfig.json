@@ -6,8 +6,10 @@
     "allowSyntheticDefaultImports": true,
     "declaration": true,
     "declarationDir": "./dist",
+    "rootDir": "./src",
     "skipLibCheck": true,
     "types": ["jest"]
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["src/**/*.test.ts", "src/**/*.test.tsx"]
 }

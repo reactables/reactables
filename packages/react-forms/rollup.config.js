@@ -1,9 +1,9 @@
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
-import typescript from '@rollup/plugin-typescript'; // If you're using TypeScript
+import { swc } from 'rollup-plugin-swc3';
 
 export default {
-  input: 'src/index.ts', // or .js if you're using plain JS
+  input: 'src/index.ts',
   output: [
     {
       file: 'dist/index.cjs',
@@ -16,7 +16,7 @@ export default {
       sourcemap: true,
     },
   ],
-  plugins: [resolve(), commonjs(), typescript()],
+  plugins: [resolve(), commonjs(), swc({ sourceMaps: true })],
   external: [
     'rxjs',
     'rxjs/operators',
