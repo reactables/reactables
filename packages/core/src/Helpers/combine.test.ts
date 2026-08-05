@@ -44,6 +44,47 @@ describe('combine', () => {
     });
   });
 
+  it('should expose actionMap with per-source typed observables', () => {
+    testScheduler.run(({ expectObservable, cold }) => {
+      const rxToggle = RxToggle();
+      const rxCounter = RxCounter();
+      const [, actions, actions$] = combine({ toggle: rxToggle, counter: rxCounter });
+
+      subscription = cold('-a-b', {
+        a: actions.toggle.toggle,
+        b: actions.counter.increment,
+      }).subscribe((action) => action());
+
+      expectObservable(actions$.actionMap.toggle.toggle).toBe('-a', {
+        a: { type: 'toggle', payload: undefined },
+      });
+
+      expectObservable(actions$.actionMap.counter.increment).toBe('---b', {
+        b: { type: 'increment', payload: undefined },
+      });
+    });
+  });
+
+  it('should expose a deeply nested actionMap for nested combined reactables', () => {
+    testScheduler.run(({ expectObservable, cold }) => {
+      const inner = combine({ toggle: RxToggle(), counter: RxCounter() });
+      const [, actions, actions$] = combine({ inner });
+
+      subscription = cold('-a-b', {
+        a: actions.inner.toggle.toggle,
+        b: actions.inner.counter.increment,
+      }).subscribe((action) => (action as () => void)());
+
+      expectObservable(actions$.actionMap.inner.toggle.toggle).toBe('-a', {
+        a: { type: 'toggle', payload: undefined },
+      });
+
+      expectObservable(actions$.actionMap.inner.counter.increment).toBe('---b', {
+        b: { type: 'increment', payload: undefined },
+      });
+    });
+  });
+
   it('should emit action events for the combined Reactable', () => {
     testScheduler.run(({ expectObservable, cold }) => {
       const rxToggle = RxToggle();
