@@ -87,6 +87,25 @@ describe('RxBuilder', () => {
     });
   });
 
+  it('should expose actionMap with per-action typed observables', () => {
+    testScheduler.run(({ expectObservable, cold }) => {
+      const [, actions, actions$] = RxCounter();
+
+      subscription = cold('-a-b', {
+        a: actions.increment,
+        b: actions.setCounter,
+      }).subscribe((action) => (action as (payload?: unknown) => void)(action === actions.setCounter ? 5 : undefined));
+
+      expectObservable(actions$.actionMap.increment).toBe('-a', {
+        a: { type: 'increment', payload: undefined },
+      });
+
+      expectObservable(actions$.actionMap.setCounter).toBe('---b', {
+        b: { type: 'setCounter', payload: 5 },
+      });
+    });
+  });
+
   it('should generate types for reactables', () => {
     const [, , counterActions$] = RxCounter();
 
