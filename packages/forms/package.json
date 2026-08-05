@@ -14,7 +14,7 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "test": "jest",
-    "build": "rimraf dist && rollup --config",
+    "build": "rimraf dist && rollup --config && tsc --emitDeclarationOnly",
     "lint": "eslint --max-warnings 0 \"src/**/*.ts*\" && prettier --check src/",
     "fix": "eslint --fix \"src/**/*.ts*\" && prettier --write \"src/**/*.(ts*|scss)\""
   },

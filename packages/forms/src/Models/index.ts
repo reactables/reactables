@@ -1,18 +1,18 @@
-export {
+export type {
   AbstractControlConfig,
   FormArrayConfig,
   FormGroupConfig,
   FormControlConfig,
 } from './Configs';
 
-export { ControlRef } from './ControlRef';
+export type { ControlRef } from './ControlRef';
 export * as ControlModels from './Controls';
-export { FormErrors } from './FormErrors';
-export {
+export type { FormErrors } from './FormErrors';
+export type {
   UpdateValuesPayload,
   AddControlPayload,
   ControlAsyncValidationResponse,
   MarkTouchedPayload,
 } from './Payloads';
 
-export { ValidatorAsyncFn, ValidatorFn } from './Validators';
+export type { ValidatorAsyncFn, ValidatorFn } from './Validators';

@@ -1,1 +1,2 @@
-export { useReactable, HookedReactable } from './useReactable';
+export { useReactable } from './useReactable';
+export type { HookedReactable } from './useReactable';
