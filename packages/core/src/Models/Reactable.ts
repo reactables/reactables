@@ -30,7 +30,7 @@ export type PayloadFromCase<T> = T extends (state: any, action: Action<infer P>)
   : undefined;
 
 export type ActionMapType<S> = {
-  [K in keyof S & string]: Observable<Action<PayloadFromCase<S[K]>> & { type: K }>;
+  [K in keyof S & string as `${K}$`]: Observable<Action<PayloadFromCase<S[K]>> & { type: K }>;
 };
 
 export type ActionObservableWithTypes<
@@ -45,7 +45,9 @@ export type ActionObservableWithTypes<
 export type CombinedActionMapType<
   T extends Record<string, Reactable<unknown, unknown & DestroyAction>>,
 > = {
-  [K in keyof T]: T[K] extends Reactable<unknown, unknown & DestroyAction, any, infer M> ? M : never;
+  [K in keyof T]: T[K] extends Reactable<unknown, unknown & DestroyAction, any, infer M>
+    ? M
+    : never;
 };
 
 export type ReactableState<RxFactory> = RxFactory extends (

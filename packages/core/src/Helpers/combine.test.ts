@@ -55,11 +55,11 @@ describe('combine', () => {
         b: actions.counter.increment,
       }).subscribe((action) => action());
 
-      expectObservable(actions$.actionMap.toggle.toggle).toBe('-a', {
+      expectObservable(actions$.actionMap.toggle.toggle$).toBe('-a', {
         a: { type: 'toggle', payload: undefined },
       });
 
-      expectObservable(actions$.actionMap.counter.increment).toBe('---b', {
+      expectObservable(actions$.actionMap.counter.increment$).toBe('---b', {
         b: { type: 'increment', payload: undefined },
       });
     });
@@ -75,11 +75,11 @@ describe('combine', () => {
         b: actions.inner.counter.increment,
       }).subscribe((action) => (action as () => void)());
 
-      expectObservable(actions$.actionMap.inner.toggle.toggle).toBe('-a', {
+      expectObservable(actions$.actionMap.inner.toggle.toggle$).toBe('-a', {
         a: { type: 'toggle', payload: undefined },
       });
 
-      expectObservable(actions$.actionMap.inner.counter.increment).toBe('---b', {
+      expectObservable(actions$.actionMap.inner.counter.increment$).toBe('---b', {
         b: { type: 'increment', payload: undefined },
       });
     });

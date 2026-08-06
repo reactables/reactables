@@ -159,19 +159,21 @@ export type PayloadFromCustomReducer<T> = T extends (
   : undefined;
 
 export type FormActionMapType = {
-  updateValues: Observable<Action<UpdateValuesPayload<unknown>> & { type: 'updateValues' }>;
-  addControl: Observable<Action<AddControlPayload> & { type: 'addControl' }>;
-  pushControl: Observable<Action<PushControlPayload> & { type: 'pushControl' }>;
-  removeControl: Observable<Action<ControlRef> & { type: 'removeControl' }>;
-  markControlAsPristine: Observable<Action<ControlRef> & { type: 'markControlAsPristine' }>;
-  markControlAsTouched: Observable<Action<MarkTouchedPayload> & { type: 'markControlAsTouched' }>;
-  markControlAsUntouched: Observable<Action<ControlRef> & { type: 'markControlAsUntouched' }>;
-  resetControl: Observable<Action<ControlRef> & { type: 'resetControl' }>;
+  updateValues$: Observable<Action<UpdateValuesPayload<unknown>> & { type: 'updateValues' }>;
+  addControl$: Observable<Action<AddControlPayload> & { type: 'addControl' }>;
+  pushControl$: Observable<Action<PushControlPayload> & { type: 'pushControl' }>;
+  removeControl$: Observable<Action<ControlRef> & { type: 'removeControl' }>;
+  markControlAsPristine$: Observable<Action<ControlRef> & { type: 'markControlAsPristine' }>;
+  markControlAsTouched$: Observable<Action<MarkTouchedPayload> & { type: 'markControlAsTouched' }>;
+  markControlAsUntouched$: Observable<Action<ControlRef> & { type: 'markControlAsUntouched' }>;
+  resetControl$: Observable<Action<ControlRef> & { type: 'resetControl' }>;
 };
 
 export type RxFormActionMapType<T extends Record<string, CustomReducer<any>>> =
   FormActionMapType & {
-    [K in keyof T & string]: Observable<Action<PayloadFromCustomReducer<T[K]>> & { type: K }>;
+    [K in keyof T & string as `${K}$`]: Observable<
+      Action<PayloadFromCustomReducer<T[K]>> & { type: K }
+    >;
   };
 
 export interface RxFormOptions<
@@ -350,6 +352,9 @@ const createReactable = <FormValue, T extends Record<string, CustomReducer<FormV
   return [
     state$.pipe(filter((form) => form !== null)) as Observable<Form<FormValue>>,
     actions,
-    hub1Actions$ as ActionObservableWithTypes<ActionTypes<T> & { destroy: 'destroy' }, RxFormActionMapType<T>>,
+    hub1Actions$ as ActionObservableWithTypes<
+      ActionTypes<T> & { destroy: 'destroy' },
+      RxFormActionMapType<T>
+    >,
   ];
 };

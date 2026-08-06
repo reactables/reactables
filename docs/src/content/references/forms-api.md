@@ -52,7 +52,7 @@ state$.subscribe(formState => console.log("Profile form state:", formState));
 actions.updateValues({ controlRef: ["firstName"] , value: "Jane", });
 
 // Subscribe directly to a specific action via actionMap — payload is fully typed
-actions$.actionMap.updateValues.subscribe(action => {
+actions$.actionMap.updateValues$.subscribe(action => {
   // action.type    → 'updateValues'
   // action.payload → UpdateValuesPayload<unknown>
   console.log("Values updated:", action.payload);
@@ -237,13 +237,13 @@ const [, actions, actions$] = build(group({
 });
 
 // Built-in action — payload typed as UpdateValuesPayload<unknown>
-actions$.actionMap.updateValues.subscribe(action => {
+actions$.actionMap.updateValues$.subscribe(action => {
   console.log(action.type);    // 'updateValues'
   console.log(action.payload); // { controlRef: [...], value: ... }
 });
 
 // Custom reducer action — payload inferred from the reducer signature
-actions$.actionMap.resetFirstName.subscribe(action => {
+actions$.actionMap.resetFirstName$.subscribe(action => {
   console.log(action.type); // 'resetFirstName'
 });
 ```

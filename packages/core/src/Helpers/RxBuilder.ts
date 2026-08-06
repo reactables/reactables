@@ -220,7 +220,7 @@ export const RxBuilder = <T, S extends Cases<T>>({
   const types = createActionTypeStringMap(actions);
 
   const actionMap = Object.keys(sliceConfig.reducers).reduce((acc, key) => {
-    (acc as Record<string, Observable<Action<any>>>)[key] = mergedActions$.pipe(
+    (acc as Record<string, Observable<Action<any>>>)[`${key}$`] = mergedActions$.pipe(
       filter(({ type }) => type === key),
     );
     return acc;

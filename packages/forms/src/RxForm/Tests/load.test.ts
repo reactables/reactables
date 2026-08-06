@@ -27,11 +27,11 @@ describe('load', () => {
         b: () => actions.markControlAsTouched({ controlRef: ['firstName'] }),
       }).subscribe((action) => action());
 
-      expectObservable(actions$.actionMap.updateValues).toBe('-a', {
+      expectObservable(actions$.actionMap.updateValues$).toBe('-a', {
         a: { type: 'updateValues', payload: { controlRef: ['firstName'], value: 'Homer' } },
       });
 
-      expectObservable(actions$.actionMap.markControlAsTouched).toBe('---b', {
+      expectObservable(actions$.actionMap.markControlAsTouched$).toBe('---b', {
         b: { type: 'markControlAsTouched', payload: { controlRef: ['firstName'] } },
       });
     });
@@ -60,7 +60,7 @@ describe('load', () => {
         a: () => actions.resetField('firstName'),
       }).subscribe((action) => action());
 
-      expectObservable(actions$.actionMap.resetField).toBe('-a', {
+      expectObservable(actions$.actionMap.resetField$).toBe('-a', {
         a: { type: 'resetField', payload: 'firstName' },
       });
     });
