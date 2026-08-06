@@ -13,11 +13,12 @@ export const useReactable = <
   S extends DestroyAction,
   U extends unknown[],
   V extends Record<string, string>,
+  M extends Record<string, unknown> = Record<string, unknown>,
 >(
-  reactableFactory: (...props: U) => Reactable<T, S, V>,
+  reactableFactory: (...props: U) => Reactable<T, S, V, M>,
   ...props: U
 ): HookedReactable<typeof reactableFactory> => {
-  const rx = useRef<Reactable<T, S, V>>(null) as MutableRefObject<Reactable<T, S, V>>;
+  const rx = useRef<Reactable<T, S, V, M>>(null) as MutableRefObject<Reactable<T, S, V, M>>;
   const lastMount = useRef<Date>(null) as MutableRefObject<Date>;
 
   /**
