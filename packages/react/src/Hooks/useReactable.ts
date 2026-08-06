@@ -2,8 +2,10 @@ import { Observable } from 'rxjs';
 import { useEffect, useState, useRef, MutableRefObject } from 'react';
 import { Reactable, ActionObservableWithTypes, DestroyAction } from '@reactables/core';
 
-export type HookedReactable<T> = T extends (...args: any[]) => Reactable<infer S, infer U, infer V>
-  ? [S, U, Observable<S>, ActionObservableWithTypes<V>]
+export type HookedReactable<T> = T extends (
+  ...args: any[]
+) => Reactable<infer S, infer U, infer V, infer M>
+  ? [S, U, Observable<S>, ActionObservableWithTypes<V, M>]
   : never;
 
 export const useReactable = <
