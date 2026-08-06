@@ -8,4 +8,5 @@ export type {
   PayloadFromCase,
   ActionMapType,
   CombinedActionMapType,
+  ActionCreatorTypeFromReducer,
 } from './Reactable';

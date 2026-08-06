@@ -13,6 +13,7 @@ export type {
   AddControlPayload,
   ControlAsyncValidationResponse,
   MarkTouchedPayload,
+  PushControlPayload,
 } from './Payloads';
 
 export type { ValidatorAsyncFn, ValidatorFn } from './Validators';
