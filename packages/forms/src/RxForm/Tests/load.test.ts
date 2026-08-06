@@ -1,7 +1,9 @@
+import { Action } from '@reactables/core';
 import { Subscription } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { initialState } from '../../Testing/Models/initialState';
-import { load } from '../RxForm';
+import { load, FormReducers } from '../RxForm';
+import { BaseFormState } from '../../Models/Controls';
 import * as Validators from '../../Testing/Validators';
 
 describe('load', () => {
@@ -10,6 +12,58 @@ describe('load', () => {
 
   afterEach(() => {
     subscription?.unsubscribe();
+  });
+
+  it('should expose actionMap with built-in action observables', () => {
+    testScheduler = new TestScheduler((actual, expected) => {
+      expect(actual).toMatchObject(expected);
+    });
+
+    testScheduler.run(({ expectObservable, cold }) => {
+      const [, actions, actions$] = load(initialState, { providers: { validators: Validators } });
+
+      subscription = cold('-a-b', {
+        a: () => actions.updateValues({ controlRef: ['firstName'], value: 'Homer' }),
+        b: () => actions.markControlAsTouched({ controlRef: ['firstName'] }),
+      }).subscribe((action) => action());
+
+      expectObservable(actions$.actionMap.updateValues).toBe('-a', {
+        a: { type: 'updateValues', payload: { controlRef: ['firstName'], value: 'Homer' } },
+      });
+
+      expectObservable(actions$.actionMap.markControlAsTouched).toBe('---b', {
+        b: { type: 'markControlAsTouched', payload: { controlRef: ['firstName'] } },
+      });
+    });
+  });
+
+  it('should expose actionMap with typed observables for custom reducers', () => {
+    testScheduler = new TestScheduler((actual, expected) => {
+      expect(actual).toMatchObject(expected);
+    });
+
+    const customReducers = {
+      resetField: (
+        { updateValues }: FormReducers,
+        state: BaseFormState<any>,
+        { payload }: Action<string>,
+      ) => updateValues(state, { controlRef: [payload], value: '' }),
+    };
+
+    testScheduler.run(({ expectObservable, cold }) => {
+      const [, actions, actions$] = load<any, typeof customReducers>(initialState, {
+        providers: { validators: Validators },
+        reducers: customReducers,
+      });
+
+      subscription = cold('-a', {
+        a: () => actions.resetField('firstName'),
+      }).subscribe((action) => action());
+
+      expectObservable(actions$.actionMap.resetField).toBe('-a', {
+        a: { type: 'resetField', payload: 'firstName' },
+      });
+    });
   });
 
   it('should load the state', () => {

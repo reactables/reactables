@@ -137,16 +137,13 @@ export const RxApp = () => {
   // Access rxAuth's actions observable
   const [, , authActions$] = rxAuth;
 
-  const fetchProfileOnLoginSuccess$ = authActions$
-    // Filter for login success actions
-    .ofTypes([authActions$.types.loginSuccess])
-    .pipe(
-      // Map action to a fetch profile action
-      map(({ payload: userId }) => ({
-        type: 'fetchProfile',
-        payload: userId,
-      }))
-    );
+  const fetchProfileOnLoginSuccess$ = authActions$.actionMap.loginSuccess.pipe(
+    // action.payload is typed as { userId: number } — no narrowing needed
+    map(({ payload }) => ({
+      type: 'fetchProfile',
+      payload: payload.userId,
+    }))
+  );
 
   const rxProfile = RxProfile({
     // Have RxProfile listen for loginSuccess and fetch profile
@@ -160,3 +157,5 @@ export const RxApp = () => {
 };
 
 ```
+
+> **Note:** `actionMap.loginSuccess` is a pre-filtered Observable that only emits `loginSuccess` actions, with `payload` fully typed as `{ userId: number }`. This replaces the previous pattern of calling `.ofTypes([authActions$.types.loginSuccess])` — no string literals, no manual type narrowing.

@@ -1,3 +1,11 @@
 export type { Action, ScopedEffects } from './Action';
 export type { Effect } from './Effect';
-export type { Reactable, ActionMap, ActionObservableWithTypes, ReactableState } from './Reactable';
+export type {
+  Reactable,
+  ActionMap,
+  ActionObservableWithTypes,
+  ReactableState,
+  PayloadFromCase,
+  ActionMapType,
+  CombinedActionMapType,
+} from './Reactable';

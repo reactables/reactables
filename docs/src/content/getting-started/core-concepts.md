@@ -7,13 +7,15 @@ It provides a way for applications and UI components to **observe state** and **
 
 A `Reactable` is a tuple with:
 
-1. **State Observable** – emits state changes.  
-2. **Actions Map** – a dictionary of methods for updating state.  
-3. **Actions Observable** – emits every action received by the store.  
+1. **State Observable** – emits state changes.
+2. **Actions Map** – a dictionary of methods for updating state.
+3. **Actions Observable** – emits every action received by the store.
    This observable is extended with helpers:
-   - **`ofTypes(...types)`** – returns a filtered stream of only the specified action types.  
-   - **`types`** – a dictionary of action type constants for all declared actions in the Reactable.
----   
+   - **`actionMap`** – a dictionary of Observables, one per declared action. Each Observable emits only its specific action type with a fully typed payload and literal `type` string. Prefer this over `ofTypes` for the common case of subscribing to a single action.
+   - **`ofTypes(...types)`** – returns a filtered stream for one or more action types, identified by string. Useful when filtering dynamically or across multiple types at once.
+   - **`types`** – a dictionary of action type string constants for all declared actions.
+
+---
 #### Example
 
 ```typescript
@@ -25,13 +27,17 @@ const [state$, actions, actions$] = RxCounter();
 // Subscribe to state changes
 state$.subscribe(count => console.log("State:", count));
 
-// Subscribe to all actions
-actions$.subscribe(action => console.log("Action received:", action));
+// Subscribe directly to a single action via actionMap — fully typed payload and literal type
+actions$.actionMap.increment.subscribe(action => {
+  // action.type    → 'increment'  (literal, not just string)
+  // action.payload → typed payload
+  console.log("Incremented:", action);
+});
 
-// Subscribe only to increment actions using `ofTypes`
+// Subscribe to multiple action types dynamically using ofTypes
 actions$
-  .ofTypes([actions$.types.increment])
-  .subscribe(action => console.log("Incremented:", action));
+  .ofTypes([actions$.types.increment, actions$.types.decrement])
+  .subscribe(action => console.log("Counter changed:", action));
 
 // Trigger updates
 actions.increment();

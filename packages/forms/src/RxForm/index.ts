@@ -5,4 +5,7 @@ export type {
   FormReducers,
   RxFormOptions,
   RxFormProviders,
+  PayloadFromCustomReducer,
+  FormActionMapType,
+  RxFormActionMapType,
 } from './RxForm';

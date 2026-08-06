@@ -3,6 +3,7 @@ import {
   Reactable,
   ActionCreatorTypeFromReducer,
   ActionObservableWithTypes,
+  ActionMapType,
 } from '../Models/Reactable';
 import { Effect } from '../Models/Effect';
 import { Action, ScopedEffects, AnyAction } from '../Models/Action';
@@ -218,13 +219,22 @@ export const RxBuilder = <T, S extends Cases<T>>({
 
   const types = createActionTypeStringMap(actions);
 
-  const actions$ = mergedActions$ as ActionObservableWithTypes<typeof types>;
+  const actionMap = Object.keys(sliceConfig.reducers).reduce((acc, key) => {
+    (acc as Record<string, Observable<Action<any>>>)[key] = mergedActions$.pipe(
+      filter(({ type }) => type === key),
+    );
+    return acc;
+  }, {} as ActionMapType<S>);
+
+  const actions$ = mergedActions$ as ActionObservableWithTypes<typeof types, ActionMapType<S>>;
   actions$.types = types;
   actions$.ofTypes = (types) => actions$.pipe(ofTypes(types));
+  actions$.actionMap = actionMap;
 
   return [storedState$, actions, actions$] as Reactable<
     T,
     { [K in keyof S]: ActionCreatorTypeFromReducer<S[K]> } & DestroyAction,
-    typeof types
+    typeof types,
+    ActionMapType<S>
   >;
 };

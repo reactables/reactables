@@ -87,6 +87,25 @@ describe('RxBuilder', () => {
     });
   });
 
+  it('should expose actionMap with per-action typed observables', () => {
+    testScheduler.run(({ expectObservable, cold }) => {
+      const [, actions, actions$] = RxCounter();
+
+      subscription = cold('-a-b', {
+        a: actions.increment,
+        b: actions.setCounter,
+      }).subscribe((action) => (action as (payload?: unknown) => void)(action === actions.setCounter ? 5 : undefined));
+
+      expectObservable(actions$.actionMap.increment).toBe('-a', {
+        a: { type: 'increment', payload: undefined },
+      });
+
+      expectObservable(actions$.actionMap.setCounter).toBe('---b', {
+        b: { type: 'setCounter', payload: 5 },
+      });
+    });
+  });
+
   it('should generate types for reactables', () => {
     const [, , counterActions$] = RxCounter();
 
@@ -128,6 +147,27 @@ describe('RxBuilder', () => {
       'some wierd reducer': 'some wierd reducer',
       extendedCounter: 'extendedCounter',
       destroy: 'destroy',
+    });
+  });
+
+  describe('when combined', () => {
+    it('should expose a nested actionMap mirroring the reactable hierarchy', () => {
+      testScheduler.run(({ expectObservable, cold }) => {
+        const [, actions, actions$] = RxCombined();
+
+        subscription = cold('-a-b', {
+          a: actions.counter.increment,
+          b: actions.toggle.toggle,
+        }).subscribe((action) => (action as () => void)());
+
+        expectObservable(actions$.actionMap.counter.increment).toBe('-a', {
+          a: { type: 'increment', payload: undefined },
+        });
+
+        expectObservable(actions$.actionMap.toggle.toggle).toBe('---b', {
+          b: { type: 'toggle', payload: undefined },
+        });
+      });
     });
   });
 

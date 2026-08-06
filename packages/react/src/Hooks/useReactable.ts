@@ -2,8 +2,10 @@ import { Observable } from 'rxjs';
 import { useEffect, useState, useRef, MutableRefObject } from 'react';
 import { Reactable, ActionObservableWithTypes, DestroyAction } from '@reactables/core';
 
-export type HookedReactable<T> = T extends (...args: any[]) => Reactable<infer S, infer U, infer V>
-  ? [S, U, Observable<S>, ActionObservableWithTypes<V>]
+export type HookedReactable<T> = T extends (
+  ...args: any[]
+) => Reactable<infer S, infer U, infer V, infer M>
+  ? [S, U, Observable<S>, ActionObservableWithTypes<V, M>]
   : never;
 
 export const useReactable = <
@@ -11,11 +13,12 @@ export const useReactable = <
   S extends DestroyAction,
   U extends unknown[],
   V extends Record<string, string>,
+  M extends Record<string, unknown> = Record<string, unknown>,
 >(
-  reactableFactory: (...props: U) => Reactable<T, S, V>,
+  reactableFactory: (...props: U) => Reactable<T, S, V, M>,
   ...props: U
 ): HookedReactable<typeof reactableFactory> => {
-  const rx = useRef<Reactable<T, S, V>>(null) as MutableRefObject<Reactable<T, S, V>>;
+  const rx = useRef<Reactable<T, S, V, M>>(null) as MutableRefObject<Reactable<T, S, V, M>>;
   const lastMount = useRef<Date>(null) as MutableRefObject<Date>;
 
   /**
