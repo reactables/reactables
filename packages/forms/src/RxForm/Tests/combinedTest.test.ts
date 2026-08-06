@@ -44,7 +44,7 @@ describe('RxForm', () => {
           b: () => actions.form.updateValues({ controlRef: [], value: 'test' }),
         }).subscribe((action) => action());
 
-        expectObservable(actions$.actionMap.toggle.toggle).toBe('-a', {
+        expectObservable(actions$.actionMap.toggle.toggle$).toBe('-a', {
           a: { type: 'toggle' },
         });
       });

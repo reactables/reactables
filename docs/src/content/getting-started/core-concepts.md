@@ -28,7 +28,7 @@ const [state$, actions, actions$] = RxCounter();
 state$.subscribe(count => console.log("State:", count));
 
 // Subscribe directly to a single action via actionMap — fully typed payload and literal type
-actions$.actionMap.increment.subscribe(action => {
+actions$.actionMap.increment$.subscribe(action => {
   // action.type    → 'increment'  (literal, not just string)
   // action.payload → typed payload
   console.log("Incremented:", action);

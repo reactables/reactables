@@ -28,7 +28,7 @@ Instead of filtering a generic action stream, developers can subscribe directly 
 
 ```ts
 const [,,actions$] = rxSomeReactable;
-actions$.actionMap.loginSucceeded.subscribe(action => {
+actions$.actionMap.loginSucceeded$.subscribe(action => {
   // action.payload is fully typed
 });
 ```
@@ -37,7 +37,7 @@ For combined Reactables, the structure naturally mirrors the Reactable hierarchy
 
 ```ts
 const [,,actions$] = rxSomeReactable;
-actions$.actionMap.user.loginSucceeded.subscribe(action => {
+actions$.actionMap.user.loginSucceeded$.subscribe(action => {
   // ...
 });
 ```
