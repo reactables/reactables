@@ -15,14 +15,9 @@ import * as FormStories from './Form.stories';
   [Reactables on Github](https://github.com/reactables/reactables)
   ## Contents
 
-  1. [Architecture](#architecture)
-  1. [Examples](#examples)
-      1. [Basic Control](#basic-control)
-      1. [Validation](#validation)
-      1. [Async Validation](#async-validation)
-      1. [Form Arrays](#form-arrays)
-      1. [Resetting Forms](#resetting-forms)
-</div>
+1. [Architecture](#architecture)
+1. [Examples](#examples) 1. [Basic Control](#basic-control) 1. [Validation](#validation) 1. [Async Validation](#async-validation) 1. [Form Arrays](#form-arrays) 1. [Resetting Forms](#resetting-forms)
+      </div>
 <div className="container">
 
 # Reactables React Forms (WIP)
@@ -41,130 +36,132 @@ There are two sets of hub and stores. The first set is responsible for handling 
 
 The second set is responsible for reacting to the form change in the first store and asynchronous validation.
 
-<a href="https://raw.githubusercontent.com/reactables/reactables/main/assets/docs/Slide10ReactablesForms.jpg" target="_blank"><img src="https://raw.githubusercontent.com/reactables/reactables/main/assets/docs/Slide10ReactablesForms.jpg" width="700" />
+<a
+  href="https://raw.githubusercontent.com/reactables/reactables/main/assets/docs/Slide10ReactablesForms.jpg"
+  target="_blank"
+>
+  <img
+    src="https://raw.githubusercontent.com/reactables/reactables/main/assets/docs/Slide10ReactablesForms.jpg"
+    width="700"
+  />
 </a>
 See [Reactables Forms](https://github.com/reactables/reactables/tree/main/packages/forms) for more details.
 
 ## Examples <a name="examples"></a>
-<br/>
+
+<br />
 
 ### Basic Control <a name="basic-control"></a>
+
 <Story of={FormStories.BasicControl} />
 <Source of={FormStories.BasicControl} language="tsx" code={`
 import { RxForm } from '@reactables/forms';
 import { Form, useForm } from '@reactables/react-forms';
 
 const BasicControlExample = () => {
-  const rxForm = useForm(
-    RxForm.control({
-      initialValue: 'john',
-    }),
-  );
+const rxForm = useForm(
+RxForm.control({
+initialValue: 'john',
+}),
+);
 
-  return (
-    rxForm.state && (
-      <Form rxForm={rxForm}>
-        <Field component={Input} />
-        <div>
-          First Name: <span>{rxForm.state.root.value as string}</span>
-        </div>
-      </Form>
-    )
-  );
+return (
+rxForm.state && (
+
+<Form rxForm={rxForm}>
+<Field component={Input} />
+<div>
+First Name: <span>{rxForm.state.root.value as string}</span>
+</div>
+</Form>
+)
+);
 };`}/>
 
 ### Validation <a name="validation"></a>
+
 <Story of={FormStories.Validation} />
 <Source of={FormStories.Validation} language="tsx" code={`
 import React from 'react';
 import { Form, FormBuilder, Validators } from '@reactables/react-forms';
 
 const Input = ({
-  input,
-  meta: { touched, errors, pending, valid },
-  label,
+input,
+meta: { touched, errors, pending, valid },
+label,
 }: InputProps) => {
-  return (
-    <div className="mb-3">
-      {label && (
-        <label
-          className={\`form-label \${touched && !valid ? 'text-danger' : ''}\`}
-        >
-          {label}
-        </label>
-      )}
-      <input
-        {...input}
-        type="text"
-        className={\`form-control \${
-          (touched && !valid) || errors.blacklistedEmail ? 'is-invalid' : ''
-        }\`}
-      />
-      {touched && errors.required && (
-        <div>
-          <small className="text-danger">Field is required</small>
-        </div>
-      )}
-      {touched && errors.email && (
-        <div>
-          <small className="text-danger">Not a valid email address</small>
-        </div>
-      )}
-      {errors.blacklistedEmail && (
-        <div>
-          <small className="text-danger">
-            This email has been blacklisted.
-          </small>
-        </div>
-      )}
-      {pending && (
-        <div>
-          <small className="text-warning">Pending</small>
-        </div>
-      )}
-    </div>
-  );
+return (
+
+<div className="mb-3">
+{label && (
+<label
+className={\`form-label \${touched && !valid ? 'text-danger' : ''}\`} >
+{label}
+</label>
+)}
+<input
+{...input}
+type="text"
+className={\`form-control \${
+(touched && !valid) || errors.blacklistedEmail ? 'is-invalid' : ''
+}\`}
+/>
+{touched && errors.required && (
+<div>
+<small className="text-danger">Field is required</small>
+</div>
+)}
+{touched && errors.email && (
+<div>
+<small className="text-danger">Not a valid email address</small>
+</div>
+)}
+{errors.blacklistedEmail && (
+<div>
+<small className="text-danger">
+This email has been blacklisted.
+</small>
+</div>
+)}
+{pending && (
+<div>
+<small className="text-warning">Pending</small>
+</div>
+)}
+</div>
+);
 };
 
 const MyForm = () => {
-  const formConfig = FormBuilder.group({
-    controls: {
-      firstName: FormBuilder.control({
-        initialValue: 'John',
-        validators: [Validators.required],
-      }),
-      lastName: FormBuilder.control({
-        initialValue: '',
-        validators: [Validators.required],
-      }),
-    },
-  });
+const formConfig = FormBuilder.group({
+controls: {
+firstName: FormBuilder.control({
+initialValue: 'John',
+validators: [Validators.required],
+}),
+lastName: FormBuilder.control({
+initialValue: '',
+validators: [Validators.required],
+}),
+},
+});
 
-  return (
-    <Form
-      formConfig={formConfig}
-    >
-      {() => {
-        return (
-          <div className="form-group">
-            <Field
-              controlRef={['firstName']}
-              component={Input}
-              label="First Name (required)"
-            />
-            <Field
-              controlRef={['lastName']}
-              component={Input}
-              label="Last Name (required)"
-            />
-          </div>
-        );
-      }}
-    </Form>
-  );
-};`}/>
+return (
+
+<Form formConfig={formConfig}>
+  {() => {
+    return (
+      <div className="form-group">
+        <Field controlRef={['firstName']} component={Input} label="First Name (required)" />
+        <Field controlRef={['lastName']} component={Input} label="Last Name (required)" />
+      </div>
+    );
+  }}
+</Form>
+); };`}/>
 
 ### Async Validation <a name="async-validation"></a>
+
 <Story of={FormStories.AsyncValidation} />
 <Source of={FormStories.AsyncValidation} language="tsx" code={`
 import { Form, FormBuilder, Validators, ValidatorAsyncFn } from '@reactables/react-forms';
@@ -172,80 +169,74 @@ import { of } from 'rxjs';
 import { mergeMap, delay, debounceTime } from 'rxjs/operators';
 
 const blacklistedEmail: ValidatorAsyncFn = (control$) => {
-  const blacklisted = ['not@allowed.com'];
+const blacklisted = ['not@allowed.com'];
 
-  return control$.pipe(
-    debounceTime(500),
-    mergeMap((control) => {
-      return of({
-        blacklistedEmail: blacklisted.includes(control.value as string),
-      }).pipe(delay(1000));
-    }),
-  );
+return control$.pipe(
+debounceTime(500),
+mergeMap((control) => {
+return of({
+blacklistedEmail: blacklisted.includes(control.value as string),
+}).pipe(delay(1000));
+}),
+);
 };
 
 const contactFormConfig = ({ firstName, lastName, email }) =>
-  FormBuilder.group({
-    controls: {
-      firstName: FormBuilder.control({
-        initialValue: firstName,
-        validators: [Validators.required],
-      }),
-      lastName: FormBuilder.control({
-        initialValue: lastName,
-        validators: [Validators.required],
-      }),
-      email: FormBuilder.control({
-        initialValue: email,
-        validators: [Validators.required, Validators.email],
-        asyncValidators: [blacklistedEmail],
-      }),
-    },
-  });
+FormBuilder.group({
+controls: {
+firstName: FormBuilder.control({
+initialValue: firstName,
+validators: [Validators.required],
+}),
+lastName: FormBuilder.control({
+initialValue: lastName,
+validators: [Validators.required],
+}),
+email: FormBuilder.control({
+initialValue: email,
+validators: [Validators.required, Validators.email],
+asyncValidators: [blacklistedEmail],
+}),
+},
+});
 
 const MyForm = () => {
-  return (
-    <Form
-      formConfig={contactFormConfig({
-        firstName: 'John',
-        lastName: 'Doe',
-        email: '',
-      })}
-    >
-      {() => 
-        <div className="form-group">
-          <Field
-            controlRef={['firstName']}
-            component={Input}
-            label="First Name"
-          />
-          <Field
-            controlRef={['lastName']}
-            component={Input}
-            label="Last Name"
-          />
-          <Field
-            controlRef={['email']}
-            component={Input}
-            label={
-              <span>
-                Email <i>(not@allowed.com is blacklisted)</i>
-              </span>
-            }
-          />
-        </div>
-      }
-    </Form>
-  );
-};`}/>
+return (
+
+<Form
+  formConfig={contactFormConfig({
+    firstName: 'John',
+    lastName: 'Doe',
+    email: '',
+  })}
+>
+  {() => (
+    <div className="form-group">
+      <Field controlRef={['firstName']} component={Input} label="First Name" />
+      <Field controlRef={['lastName']} component={Input} label="Last Name" />
+      <Field
+        controlRef={['email']}
+        component={Input}
+        label={
+          <span>
+            Email <i>(not@allowed.com is blacklisted)</i>
+          </span>
+        }
+      />
+    </div>
+  )}
+</Form>
+); };`}/>
 
 ### Form Arrays <a name="form-arrays"></a>
+
 <Story of={FormStories.FormArrays} />
 <Source of={FormStories.FormArrays} language="tsx" code={`
 import { Form, FormArray, RxForm } from '@reactables/react-forms';
 import { arrayLengthRequired } from './Validators';
 
-const MyForm = () => 
+const MyForm = () =>
+
   <Form
     formConfig={RxForm.group({
       controls: {
@@ -319,6 +310,7 @@ const MyForm = () =>
 `}/>
 
 ### Resetting Controls <a name="resetting-forms"></a>
+
 <Story of={FormStories.ResetForm} />
 <Source of={FormStories.ResetForm} language="tsx" code={`
 import { Form, FormArray, FormBuilder } from '@reactables/react-forms';
@@ -326,39 +318,38 @@ import { arrayLengthRequired } from './Validators';
 import { contactFormConfig } from './contactFormConfig';
 
 const MyForm = () => {
-  const formConfig = FormBuilder.group(
-    contactFormConfig({
-      firstName: 'Bart',
-      lastName: 'Simpson',
-      email: 'bart@man.com',
-    }),
-  );
+const formConfig = FormBuilder.group(
+contactFormConfig({
+firstName: 'Bart',
+lastName: 'Simpson',
+email: 'bart@man.com',
+}),
+);
 
-  return (
-    <Form
-      formConfig={FormBuilder.group(
-        contactFormConfig({
-          firstName: 'Bart',
-          lastName: 'Simpson',
-          email: 'bart@man.com',
-        }),
-      )}
-    >
-      {({ state, resetControl }) => (
-        <>
-          <ContactForm formGroup={state as FormGroup<Contact>} />
-          <button
-            type="button"
-            onClick={() => {
-              resetControl(state.controlRef);
-            }}
-          >
-            Reset Form
-          </button>
-        </>
-      )}
-    </Form>
-  );
+return (
+
+<Form
+formConfig={FormBuilder.group(
+contactFormConfig({
+firstName: 'Bart',
+lastName: 'Simpson',
+email: 'bart@man.com',
+}),
+)} >
+{({ state, resetControl }) => (
+<>
+<ContactForm formGroup={state as FormGroup<Contact>} />
+<button
+type="button"
+onClick={() => {
+resetControl(state.controlRef);
+}} >
+Reset Form
+</button>
+</>
+)}
+</Form>
+);
 };`}/>
 
 </div>

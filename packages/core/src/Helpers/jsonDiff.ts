@@ -67,7 +67,6 @@ const jsonDiff = (
       );
     } else if (
       objKey !== newObjKey &&
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //@ts-ignore
       !(
         areObjects &&

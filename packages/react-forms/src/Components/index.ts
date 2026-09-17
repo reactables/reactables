@@ -1,3 +1,6 @@
-export { Form, HookedRxForm } from './Form';
-export { Field, WrappedFieldInputProps, WrappedFieldProps, FieldProps } from './Field';
-export { FormArray, FormArrayChildrenProps, FormArrayProps } from './FormArray';
+export { Form } from './Form';
+export type { HookedRxForm } from './Form';
+export { Field } from './Field';
+export type { WrappedFieldInputProps, WrappedFieldProps, FieldProps } from './Field';
+export { FormArray } from './FormArray';
+export type { FormArrayChildrenProps, FormArrayProps } from './FormArray';

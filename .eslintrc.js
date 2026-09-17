@@ -2,14 +2,15 @@ module.exports = {
   extends: [
     'plugin:jsx-a11y/recommended',
     'prettier',
-    'plugin:@typescript-eslint/recommended',
-    'plugin:@typescript-eslint/recommended-requiring-type-checking',
   ],
-  parser: '@typescript-eslint/parser',
+  parser: '@babel/eslint-parser',
   parserOptions: {
-    project: true,
+    requireConfigFile: false,
+    babelOptions: {
+      presets: ['@babel/preset-typescript'],
+    },
   },
-  plugins: ['jsx-a11y', '@typescript-eslint'],
+  plugins: ['jsx-a11y'],
   rules: {
     'jsx-a11y/label-has-associated-control': [
       'error',
