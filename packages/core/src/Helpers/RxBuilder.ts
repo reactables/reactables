@@ -4,11 +4,14 @@ import {
   ActionCreatorTypeFromReducer,
   ActionObservableWithTypes,
   ActionMapType,
+  RxBuilderResult,
+  ReactableWithSelectors,
+  SelectorsFromDefs,
 } from '../Models/Reactable';
 import { Effect } from '../Models/Effect';
 import { Action, ScopedEffects, AnyAction } from '../Models/Action';
 import { Observable, OperatorFunction, ReplaySubject, Subject, merge } from 'rxjs';
-import { filter, tap, map, mergeAll, scan, pairwise, startWith, takeUntil } from 'rxjs/operators';
+import { filter, tap, map, mergeAll, scan, pairwise, startWith, takeUntil, distinctUntilChanged } from 'rxjs/operators';
 import { share, shareReplay } from 'rxjs/operators';
 import jsonDiff, { Difference } from '../Helpers/jsonDiff';
 import { ofTypes } from '../Operators';
@@ -231,10 +234,38 @@ export const RxBuilder = <T, S extends Cases<T>>({
   actions$.ofTypes = (types) => actions$.pipe(ofTypes(types));
   actions$.actionMap = actionMap;
 
-  return [storedState$, actions, actions$] as Reactable<
+  type ActionsType = { [K in keyof S]: ActionCreatorTypeFromReducer<S[K]> } & DestroyAction;
+
+  const result = [storedState$, actions, actions$] as unknown as RxBuilderResult<
     T,
-    { [K in keyof S]: ActionCreatorTypeFromReducer<S[K]> } & DestroyAction,
+    ActionsType,
     typeof types,
     ActionMapType<S>
   >;
+
+  (result as any).selectors = <Defs extends Record<string, (state: T) => unknown>>(defs: Defs) => {
+    const selectorMap = Object.fromEntries(
+      Object.entries(defs).map(([key, fn]) => [
+        key,
+        storedState$.pipe(
+          map(fn as (state: T) => unknown),
+          distinctUntilChanged(),
+          takeUntil(destroy$),
+          shareReplay(1),
+        ),
+      ]),
+    ) as SelectorsFromDefs<T, Defs>;
+
+    (result as any).selectors = selectorMap;
+
+    return result as unknown as ReactableWithSelectors<
+      T,
+      ActionsType,
+      typeof types,
+      ActionMapType<S>,
+      SelectorsFromDefs<T, Defs>
+    >;
+  };
+
+  return result;
 };
