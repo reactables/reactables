@@ -65,7 +65,7 @@ describe('selectors on RxForm.build()', () => {
 
       expectObservable(form.select.isValid()).toBe('ab', {
         a: false, // required validator fails on empty initial value
-        b: true,  // passes once a value is set
+        b: true, // passes once a value is set
       });
     });
   });
@@ -92,7 +92,7 @@ describe('selectors on RxForm.build()', () => {
     testScheduler.run(({ expectObservable, cold }) => {
       const form = build(config, { providers: { validators: Validators } }).selectors({
         hasError: (state, controlRef: string, errorKey: string) =>
-          !!(state[controlRef]?.errors?.[errorKey]),
+          !!state[controlRef]?.errors?.[errorKey],
       });
       const [, actions] = form;
 
@@ -101,7 +101,7 @@ describe('selectors on RxForm.build()', () => {
       }).subscribe((action) => action());
 
       expectObservable(form.select.hasError('firstName', 'required')).toBe('ab', {
-        a: true,  // required error present on empty initial value
+        a: true, // required error present on empty initial value
         b: false, // clears once a value is set
       });
     });
@@ -121,7 +121,7 @@ describe('selectors on RxForm.build()', () => {
 
       expectObservable(form.select.isFirstNameValid()).toBe('ab', {
         a: false, // firstName invalid initially
-        b: true,  // firstName valid after update
+        b: true, // firstName valid after update
         // no third emission — lastName change does not affect firstName validity
       });
     });
@@ -213,8 +213,8 @@ describe('selectors on RxForm.load()', () => {
       }).subscribe((action) => action());
 
       expectObservable(form.select.getControlValue('firstName')).toBe('ab', {
-        a: '',       // firstName empty in loaded initialState
-        b: 'Homer',  // updated value
+        a: '', // firstName empty in loaded initialState
+        b: 'Homer', // updated value
       });
     });
   });
@@ -223,7 +223,7 @@ describe('selectors on RxForm.load()', () => {
     testScheduler.run(({ expectObservable, cold }) => {
       const form = load(initialState, { providers: { validators: Validators } }).selectors({
         hasError: (state, controlRef: string, errorKey: string) =>
-          !!(state[controlRef]?.errors?.[errorKey]),
+          !!state[controlRef]?.errors?.[errorKey],
       });
       const [, actions] = form;
 
@@ -294,8 +294,7 @@ describe('selectors on combine() with RxForm', () => {
   it('exposes a combined-level no-arg selector over form and toggle state', () => {
     testScheduler.run(({ expectObservable, cold }) => {
       const app = RxCombined().selectors({
-        isFormValidAndToggleOn: (state) =>
-          state.form.root.valid === true && state.toggle === true,
+        isFormValidAndToggleOn: (state) => state.form.root.valid === true && state.toggle === true,
       });
       const [, actions] = app;
 
@@ -335,8 +334,7 @@ describe('selectors on combine() with RxForm', () => {
       const app = RxCombined().selectors({
         // Returns a formatted summary string, gated on toggle being on
         summary: (state, label: string, showToggle: boolean) =>
-          `${label}:${state.form.root.value as string}` +
-          (showToggle ? `|on:${state.toggle}` : ''),
+          `${label}:${state.form.root.value as string}` + (showToggle ? `|on:${state.toggle}` : ''),
       });
       const [, actions] = app;
 
