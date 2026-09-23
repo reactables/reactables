@@ -9,10 +9,10 @@ export type {
   ActionMapType,
   CombinedActionMapType,
   ActionCreatorTypeFromReducer,
-  SelectorsFromDefs,
-  SelectorsOf,
+  SelectFromDefs,
+  SelectOf,
   InheritedSelectors,
-  ReactableWithSelectors,
+  ReactableWithSelect,
   RxBuilderResult,
   CombinedState,
 } from './Reactable';

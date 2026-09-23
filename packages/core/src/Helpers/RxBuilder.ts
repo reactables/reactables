@@ -5,8 +5,8 @@ import {
   ActionObservableWithTypes,
   ActionMapType,
   RxBuilderResult,
-  ReactableWithSelectors,
-  SelectorsFromDefs,
+  ReactableWithSelect,
+  SelectFromDefs,
 } from '../Models/Reactable';
 import { Effect } from '../Models/Effect';
 import { Action, ScopedEffects, AnyAction } from '../Models/Action';
@@ -243,27 +243,28 @@ export const RxBuilder = <T, S extends Cases<T>>({
     ActionMapType<S>
   >;
 
-  (result as any).selectors = <Defs extends Record<string, (state: T) => unknown>>(defs: Defs) => {
-    const selectorMap = Object.fromEntries(
+  (result as any).selectors = <Defs extends Record<string, (state: T, ...args: any[]) => unknown>>(defs: Defs) => {
+    const selectMap = Object.fromEntries(
       Object.entries(defs).map(([key, fn]) => [
         key,
-        storedState$.pipe(
-          map(fn as (state: T) => unknown),
-          distinctUntilChanged(),
-          takeUntil(destroy$),
-          shareReplay(1),
-        ),
+        (...args: any[]) =>
+          storedState$.pipe(
+            map((state) => fn(state, ...args)),
+            distinctUntilChanged(),
+            takeUntil(destroy$),
+            shareReplay(1),
+          ),
       ]),
-    ) as SelectorsFromDefs<T, Defs>;
+    ) as SelectFromDefs<T, Defs>;
 
-    (result as any).selectors = selectorMap;
+    (result as any).select = selectMap;
 
-    return result as unknown as ReactableWithSelectors<
+    return result as unknown as ReactableWithSelect<
       T,
       ActionsType,
       typeof types,
       ActionMapType<S>,
-      SelectorsFromDefs<T, Defs>
+      SelectFromDefs<T, Defs>
     >;
   };
 

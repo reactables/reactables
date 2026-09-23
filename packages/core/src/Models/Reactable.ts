@@ -56,49 +56,52 @@ export type ReactableState<RxFactory> = RxFactory extends (
   ? S
   : never;
 
-// Maps selector definition functions to { key: Observable<ReturnType> }
-export type SelectorsFromDefs<T, Defs extends Record<string, (state: T) => unknown>> = {
-  [K in keyof Defs]: Observable<ReturnType<Defs[K]>>;
+// Maps selector definition functions to { key: (...extraArgs) => Observable<ReturnType> }.
+// Each selector can accept (state, ...args) — the state is supplied internally from the
+// reactive stream; callers only pass the extra args.
+export type SelectFromDefs<T, Defs extends Record<string, (state: T, ...args: any[]) => unknown>> = {
+  [K in keyof Defs]: Defs[K] extends (state: T, ...args: infer Args) => infer R
+    ? (...args: Args) => Observable<R>
+    : never;
 };
 
-// Extracts the .selectors object from a reactable that has called .selectors().
-// Returns never if the reactable has no .selectors, or if .selectors is still the
+// Extracts the .select object from a reactable that has called .select().
+// Returns never if the reactable has no .select, or if .select is still the
 // method (a function) rather than the resolved property map.
-export type SelectorsOf<R> = R extends { selectors: infer Sel }
+export type SelectOf<R> = R extends { select: infer Sel }
   ? Sel extends (...args: any[]) => any
     ? never
     : Sel
   : never;
 
-// Maps a record of reactables to the nested selector maps inherited from
-// children that have called .selectors(). Keys for children without selectors
-// are omitted entirely.
+// Maps a record of reactables to the nested select maps inherited from
+// children that have called .select(). Keys for children without select are omitted.
 export type InheritedSelectors<T extends Record<string, any>> = {
-  [K in keyof T as SelectorsOf<T[K]> extends never ? never : K]: SelectorsOf<T[K]>;
+  [K in keyof T as SelectOf<T[K]> extends never ? never : K]: SelectOf<T[K]>;
 };
 
-// A Reactable tuple augmented with a resolved .selectors property.
-// This is the type returned after calling .selectors() on a RxBuilderResult or
-// after calling .selectors() on a CombineResult.
-export type ReactableWithSelectors<
+// A Reactable tuple augmented with a resolved .select property.
+// This is the type returned after calling .select() on a RxBuilderResult or combine result.
+export type ReactableWithSelect<
   T,
   S extends DestroyAction,
   U,
   M extends Record<string, unknown>,
   Sel extends Record<string, unknown>,
-> = Reactable<T, S, U, M> & { selectors: Sel };
+> = Reactable<T, S, U, M> & { select: Sel };
 
 // What RxBuilder returns: the standard Reactable tuple plus a .selectors()
 // method whose defs parameter is typed against the reactable's state type T.
+// Calling .selectors(defs) resolves the .select property on the returned tuple.
 export type RxBuilderResult<
   T,
   S extends DestroyAction,
   U,
   M extends Record<string, unknown>,
 > = Reactable<T, S, U, M> & {
-  selectors<Defs extends Record<string, (state: T) => unknown>>(
+  selectors<Defs extends Record<string, (state: T, ...args: any[]) => unknown>>(
     defs: Defs,
-  ): ReactableWithSelectors<T, S, U, M, SelectorsFromDefs<T, Defs>>;
+  ): ReactableWithSelect<T, S, U, M, SelectFromDefs<T, Defs>>;
 };
 
 // Convenience alias for the combined state shape produced by combine().

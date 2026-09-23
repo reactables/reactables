@@ -35,14 +35,14 @@ describe('selectors on RxBuilder', () => {
     });
   });
 
-  it('exposes selector observables after calling .selectors()', () => {
+  it('exposes selector callables on .select after calling .selectors()', () => {
     const counter = RxCounter().selectors({
       double: (state) => state.count * 2,
       isPositive: (state) => state.count > 0,
     });
 
-    expect(counter.selectors.double).toBeDefined();
-    expect(counter.selectors.isPositive).toBeDefined();
+    expect(counter.select.double).toBeDefined();
+    expect(counter.select.isPositive).toBeDefined();
   });
 
   it('infers selector result types correctly', async () => {
@@ -52,8 +52,8 @@ describe('selectors on RxBuilder', () => {
     });
 
     // double$ should emit numbers; label$ should emit strings
-    const doubleValue = await firstValueFrom(counter.selectors.double);
-    const labelValue = await firstValueFrom(counter.selectors.label);
+    const doubleValue = await firstValueFrom(counter.select.double());
+    const labelValue = await firstValueFrom(counter.select.label());
 
     expect(typeof doubleValue).toBe('number');
     expect(typeof labelValue).toBe('string');
@@ -64,7 +64,7 @@ describe('selectors on RxBuilder', () => {
       double: (state) => state.count * 2,
     });
 
-    const value = await firstValueFrom(counter.selectors.double);
+    const value = await firstValueFrom(counter.select.double());
     expect(value).toBe(0); // initialState.count = 0, double = 0
   });
 
@@ -78,7 +78,7 @@ describe('selectors on RxBuilder', () => {
 
       cold('-a-b').subscribe(() => actions.increment());
 
-      expectObservable(counter.selectors.double).toBe('a b-c', {
+      expectObservable(counter.select.double()).toBe('a b-c', {
         a: 0,
         b: 2,
         c: 4,
@@ -98,7 +98,7 @@ describe('selectors on RxBuilder', () => {
 
       cold('-a-b').subscribe(() => actions.increment());
 
-      expectObservable(counter.selectors.isPositive).toBe('a b', {
+      expectObservable(counter.select.isPositive()).toBe('a b', {
         a: false,
         b: true,
         // no third emission even though state changes again on second increment
@@ -116,7 +116,7 @@ describe('selectors on RxBuilder', () => {
     actions.increment();
 
     // Subscribe after two increments — should immediately get latest value
-    const value = await firstValueFrom(counter.selectors.double);
+    const value = await firstValueFrom(counter.select.double());
     expect(value).toBe(4);
   });
 
@@ -132,6 +132,54 @@ describe('selectors on RxBuilder', () => {
     expect(state.count).toBe(1);
   });
 
+  it('passes a single extra argument through to the selector function', async () => {
+    const counter = RxCounter().selectors({
+      multiplyBy: (state, factor: number) => state.count * factor,
+    });
+
+    const [, actions] = counter;
+    actions.set(5);
+
+    const value = await firstValueFrom(counter.select.multiplyBy(3));
+    expect(value).toBe(15); // count=5, 5 * 3 = 15
+  });
+
+  it('passes multiple extra arguments through to the selector function', async () => {
+    const counter = RxCounter().selectors({
+      clampedMultiply: (state, factor: number, min: number, max: number) => {
+        const result = state.count * factor;
+        return Math.min(Math.max(result, min), max);
+      },
+    });
+
+    const [, actions] = counter;
+    actions.set(10);
+
+    const unclamped = await firstValueFrom(counter.select.clampedMultiply(5, 0, 100));
+    expect(unclamped).toBe(50); // 10 * 5 = 50, within [0, 100]
+
+    const clampedHigh = await firstValueFrom(counter.select.clampedMultiply(5, 0, 30));
+    expect(clampedHigh).toBe(30); // 10 * 5 = 50, clamped to 30
+
+    const clampedLow = await firstValueFrom(counter.select.clampedMultiply(5, 60, 100));
+    expect(clampedLow).toBe(60); // 10 * 5 = 50, clamped up to 60
+  });
+
+  it('different argument values produce independent observables', () => {
+    testScheduler.run(({ expectObservable, cold }) => {
+      const counter = RxCounter().selectors({
+        multiplyBy: (state, factor: number) => state.count * factor,
+      });
+
+      const [, actions] = counter;
+
+      cold('-a-b').subscribe(() => actions.increment());
+
+      expectObservable(counter.select.multiplyBy(2)).toBe('a b-c', { a: 0, b: 2, c: 4 });
+      expectObservable(counter.select.multiplyBy(10)).toBe('a b-c', { a: 0, b: 10, c: 20 });
+    });
+  });
+
   it('supports composed selectors that reference each other via plain functions', () => {
     testScheduler.run(({ expectObservable, cold }) => {
       const fns = {
@@ -144,7 +192,7 @@ describe('selectors on RxBuilder', () => {
 
       cold('-a').subscribe(() => actions.set(3));
 
-      expectObservable(counter.selectors.quadruple).toBe('a b', {
+      expectObservable(counter.select.quadruple()).toBe('a b', {
         a: 0,
         b: 12, // count=3, double=6, quadruple=12
       });
@@ -172,8 +220,8 @@ describe('selectors on combine()', () => {
 
     const app = combine({ counter, toggle }).selectors({});
 
-    const doubleValue = await firstValueFrom(app.selectors.counter.double);
-    const labelValue = await firstValueFrom(app.selectors.toggle.label);
+    const doubleValue = await firstValueFrom(app.select.counter.double());
+    const labelValue = await firstValueFrom(app.select.toggle.label());
 
     expect(doubleValue).toBe(0);
     expect(labelValue).toBe('off');
@@ -187,7 +235,7 @@ describe('selectors on combine()', () => {
       summary: (state) => `count=${state.counter.count} on=${state.toggle.on}`,
     });
 
-    const value = await firstValueFrom(app.selectors.summary);
+    const value = await firstValueFrom(app.select.summary());
     expect(value).toBe('count=0 on=false');
   });
 
@@ -209,7 +257,7 @@ describe('selectors on combine()', () => {
         b: () => actions.toggle.toggle(),
       }).subscribe((action) => action());
 
-      expectObservable(app.selectors.isCountPositive).toBe('a b', {
+      expectObservable(app.select.isCountPositive()).toBe('a b', {
         a: false,
         b: true,
         // toggle action does not change isCountPositive → no third emission
@@ -217,7 +265,7 @@ describe('selectors on combine()', () => {
     });
   });
 
-  it('merges inherited and top-level selectors onto the same .selectors object', async () => {
+  it('merges inherited and top-level selectors onto the same .select object', async () => {
     const counter = RxCounter().selectors({
       double: (state) => state.count * 2,
     });
@@ -226,11 +274,11 @@ describe('selectors on combine()', () => {
       isReady: (_state) => true,
     });
 
-    expect(app.selectors.counter).toBeDefined();
-    expect(app.selectors.counter.double).toBeDefined();
-    expect(app.selectors.isReady).toBeDefined();
+    expect(app.select.counter).toBeDefined();
+    expect(app.select.counter.double).toBeDefined();
+    expect(app.select.isReady).toBeDefined();
 
-    const ready = await firstValueFrom(app.selectors.isReady);
+    const ready = await firstValueFrom(app.select.isReady());
     expect(ready).toBe(true);
   });
 
@@ -240,10 +288,10 @@ describe('selectors on combine()', () => {
 
     const app = combine({ counter, toggle }).selectors({});
 
-    // counter key should not appear under app.selectors
-    expect((app.selectors as any).counter).toBeUndefined();
+    // counter key should not appear under app.select
+    expect((app.select as any).counter).toBeUndefined();
     // toggle key should appear
-    expect(app.selectors.toggle).toBeDefined();
+    expect(app.select.toggle).toBeDefined();
   });
 
   it('still works as a destructurable tuple after combine().selectors()', async () => {
@@ -264,9 +312,9 @@ describe('selectors on combine()', () => {
     });
     const outer = combine({ inner }).selectors({});
 
-    // outer.selectors.inner.counter.double should be accessible
-    const doubleValue = await firstValueFrom(outer.selectors.inner.counter.double);
-    const innerReadyValue = await firstValueFrom(outer.selectors.inner.innerReady);
+    // outer.select.inner.counter.double should be accessible
+    const doubleValue = await firstValueFrom(outer.select.inner.counter.double());
+    const innerReadyValue = await firstValueFrom(outer.select.inner.innerReady());
 
     expect(doubleValue).toBe(0);
     expect(innerReadyValue).toBe(true);
