@@ -288,3 +288,27 @@ For `combine`, the inherited selector observables from children already carry th
 **`Helpers/combine.ts`** — at construction time, child reactables with a `.selectors` property object are collected into `inheritedSelectors`. The result array gets a `.selectors(defs)` method that derives new selectors from `states$` (the `combineLatest` stream), then merges inherited + new selectors onto the same object.
 
 **`Helpers/selectors.test.ts`** — 15 tests covering the full matrix: primitive selectors, memoization via `distinctUntilChanged`, `shareReplay(1)` for late subscribers, tuple destructuring still working, selector composition, combined state inference, inherited selectors, and deep nesting through multiple `combine()` levels.
+
+---
+
+## Backwards compatibility vs `feature/v3-upgrade`
+
+**`core` — `Reactable.ts` & `index.ts`**
+Pure additions: new types (`SelectFromDefs`, `RxBuilderResult`, `ReactableWithSelect`, etc.) and new exports. Nothing removed or changed. ✅
+
+**`core` — `RxBuilder.ts`**
+Return type changed from `Reactable<...>` → `RxBuilderResult<...>`.
+`RxBuilderResult = Reactable<...> & { selectors(...) }` — it's a strict supertype that adds a method. Existing destructuring `const [state$, actions, actions$] = RxBuilder(...)` and any code typed against `Reactable<...>` still works. The `.selectors()` method on the array object is invisible to existing callers. ✅
+
+**`core` — `combine.ts`**
+Same story — return type gains `.selectors()`. Tuple destructuring and `Reactable<...>` typings unaffected. ✅
+
+**`forms` — `RxForm.ts`**
+Same as RxBuilder — `createReactable` now returns `RxBuilderResult<...>`. Added `formDestroy$` subject only for teardown inside the new `.selectors()` path; the existing `destroy()` action already called `hub1Actions.destroy()` / `hub2Actions.destroy()`, and the new `formDestroy$.complete()` is a no-op for callers who never use selectors. ✅
+
+**`react` — `useReactable.ts`**
+- `HookedReactable<T>` when `T`'s factory has no `.select` → intersects with `unknown`, which is a no-op. Resolves to the exact same tuple type as before. ✅
+- Added `F` type parameter with a default — existing call sites work identically; `F` is inferred as the factory type, and for plain `Reactable`-returning factories the result type is unchanged. ✅
+- At runtime: `hookedSelect.current` is only set if `(rx.current as any).select` exists. Factories from `feature/v3` never set `.select`, so the `if` branch is never entered and the returned tuple is bit-for-bit identical. ✅
+
+**Summary**: Every change is additive — new types, new exports, new optional methods on existing return values. No existing type signatures were narrowed, no runtime behaviour was changed for code that doesn't call `.selectors()`. Both compile-time and runtime compatibility are preserved across all packages.
