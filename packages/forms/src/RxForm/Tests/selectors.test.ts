@@ -145,7 +145,10 @@ describe('selectors on RxForm.build()', () => {
   });
 
   it('still works as a destructurable tuple after .selectors()', () => {
-    testScheduler.run(({ expectObservable, cold }) => {
+    const partialScheduler = new TestScheduler((actual, expected) => {
+      expect(actual).toMatchObject(expected);
+    });
+    partialScheduler.run(({ expectObservable, cold }) => {
       const form = build(config.controls.firstName).selectors({
         isValid: (state) => state.root.valid === true,
       });
