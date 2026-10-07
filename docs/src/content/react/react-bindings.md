@@ -22,6 +22,8 @@ It takes a reactable factory and optional dependencies, returning a tuple:
 
 Observables (3 & 4) can be subscribed to for side effects.
 
+If the reactable was created with `.selectors()`, the returned tuple also exposes a **`select`** property. Each key on `select` is a function matching the selector's signature, but instead of returning an `Observable` it returns the **latest computed value synchronously**. The component re-renders whenever state changes (driven by the existing state subscription), so selector calls on `select` are always up to date at render time.
+
 Example:
 
 ```typescript
@@ -80,3 +82,46 @@ const Toggle = () => {
 export default Toggle;
 
 ```
+
+### Using `select`
+
+```typescript
+import React from 'react';
+import { RxBuilder } from '@reactables/core';
+import { useReactable } from '@reactables/react';
+
+const RxCounter = () =>
+  RxBuilder({
+    initialState: { count: 0 },
+    reducers: {
+      increment: (state) => ({ count: state.count + 1 }),
+    },
+  }).selectors({
+    double: (state) => state.count * 2,
+    isPositive: (state) => state.count > 0,
+  });
+
+const Counter = () => {
+  const result = useReactable(RxCounter);
+  const [state, actions] = result;
+  const { select } = result;
+
+  // select.double() and select.isPositive() return the latest computed value synchronously.
+  // The component re-renders whenever state changes, keeping them up to date.
+
+  if (!state) return null;
+
+  return (
+    <div>
+      <div>Count: {state.count}</div>
+      <div>Double: {select.double()}</div>
+      <div>Is positive: {select.isPositive() ? 'yes' : 'no'}</div>
+      <button onClick={actions.increment}>Increment</button>
+    </div>
+  );
+};
+
+export default Counter;
+```
+
+> `select` is a property on the returned tuple object. Destructure the tuple for state and actions as usual, then access `select` by name.

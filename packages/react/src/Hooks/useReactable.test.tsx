@@ -109,6 +109,7 @@ describe('useReactable select', () => {
 
     it('exposes nested child selectors under their key', () => {
       const { result } = renderHook(() => useReactable(RxApp));
+      const { 0: state, select } = result.current;
       expect(result.current.select.counter.double()).toBe(0);
       expect(result.current.select.toggle.label()).toBe('off');
     });
