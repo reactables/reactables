@@ -6,6 +6,7 @@ import { asyncConfig } from '../../Testing/asyncConfig';
 import * as Validators from '../../Testing/Validators';
 import * as AsyncValidators from '../../Testing/AsyncValidators';
 import { map } from 'rxjs/operators';
+import { Form } from '../../Models/Controls';
 
 describe('RxForm', () => {
   let testScheduler: TestScheduler;
@@ -166,6 +167,39 @@ describe('RxForm', () => {
           ],
         });
       });
+    });
+
+    it('should add a form group when a child control key is all digits', () => {
+      const [state$, { addControl }] = build(group({ controls: {} }), {
+        providers: { validators: Validators, asyncValidators: AsyncValidators },
+      });
+
+      let state = {} as Form<unknown>;
+      subscription = state$.subscribe((s) => (state = s));
+
+      // Each key takes 5 Math.random calls. Calls 6-10 build the first child's key, which these
+      // values made "11111" before keys were forced to start with a letter.
+      const random = Math.random;
+      let calls = 0;
+      jest
+        .spyOn(Math, 'random')
+        .mockImplementation(() => (++calls > 5 && calls <= 10 ? 53.5 / 62 : random()));
+
+      addControl({
+        controlRef: ['doctorInfo'],
+        config: group({
+          controls: {
+            firstName: control(['', 'required']),
+            lastName: control(['']),
+          },
+        }),
+      });
+
+      jest.restoreAllMocks();
+
+      expect(state['doctorInfo.firstName'].valid).toBe(false);
+      expect(state['doctorInfo'].valid).toBe(false);
+      expect(state['root'].valid).toBe(false);
     });
   });
 });
