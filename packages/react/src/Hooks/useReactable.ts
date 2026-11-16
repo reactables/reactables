@@ -49,11 +49,11 @@ export const useReactable = <
   U extends unknown[],
   V extends Record<string, string>,
   M extends Record<string, unknown> = Record<string, unknown>,
-  F extends (...props: U) => Reactable<T, S, V, M> = (...props: U) => Reactable<T, S, V, M>,
+  R extends Reactable<T, S, V, M> = Reactable<T, S, V, M>,
 >(
-  reactableFactory: F,
+  reactableFactory: (...props: U) => R,
   ...props: U
-): HookedReactable<F> => {
+): HookedReactable<(...args: U) => R> => {
   const rx = useRef<Reactable<T, S, V, M>>(null) as MutableRefObject<Reactable<T, S, V, M>>;
   const hookedSelect = useRef<Record<string, unknown> | null>(null);
   const lastMount = useRef<Date>(null) as MutableRefObject<Date>;
@@ -95,5 +95,5 @@ export const useReactable = <
   if (hookedSelect.current) {
     (tuple as any).select = hookedSelect.current;
   }
-  return tuple as unknown as HookedReactable<F>;
+  return tuple as unknown as HookedReactable<(...args: U) => R>;
 };

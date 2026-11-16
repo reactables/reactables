@@ -131,3 +131,45 @@ describe('useReactable select', () => {
     });
   });
 });
+
+// Type-level regression: factories that take arguments must keep their prop types
+// inferred (U) while still exposing typed `.select`. Checked by `tsc` (build), since
+// jest/swc does not type-check.
+describe('useReactable factory argument inference', () => {
+  const RxWithArgs = (start: number, label: string) =>
+    RxBuilder({
+      initialState: { count: start, label },
+      reducers: { increment: (state) => ({ ...state, count: state.count + 1 }) },
+    }).selectors({
+      double: (state) => state.count * 2,
+      times: (state, n: number) => state.count * n,
+    });
+
+  const RxWithArgsNoSelectors = (start: number) =>
+    RxBuilder({
+      initialState: { count: start },
+      reducers: { increment: (state) => ({ count: state.count + 1 }) },
+    });
+
+  it('infers props and typed select from a factory with arguments', () => {
+    const { result } = renderHook(() => useReactable(RxWithArgs, 2, 'a'));
+    const double: number = result.current.select.double();
+    const times: number = result.current.select.times(3);
+    const count: number = result.current[0].count;
+    expect([double, times, count]).toEqual([4, 6, 2]);
+  });
+
+  it('rejects wrongly typed props', () => {
+    renderHook(() => {
+      // @ts-expect-error props must match factory parameters
+      return useReactable(RxWithArgs, 'x', 1);
+    });
+  });
+
+  it('infers props for factories without selectors', () => {
+    const { result } = renderHook(() => useReactable(RxWithArgsNoSelectors, 1));
+    result.current[1].increment();
+    // @ts-expect-error .select is not available without .selectors()
+    result.current.select;
+  });
+});
