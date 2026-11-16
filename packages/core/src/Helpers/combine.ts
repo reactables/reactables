@@ -126,7 +126,7 @@ export const combine = <T extends Record<string, Reactable<unknown, unknown & De
           states$.pipe(
             map((state) => fn(state, ...args)),
             distinctUntilChanged(),
-            shareReplay(1),
+            shareReplay({ bufferSize: 1, refCount: true }),
           ),
       ]),
     ) as SelectFromDefs<State, Defs>;

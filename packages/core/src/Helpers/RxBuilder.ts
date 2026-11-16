@@ -252,7 +252,7 @@ export const RxBuilder = <T, S extends Cases<T>>({
             map((state) => fn(state, ...args)),
             distinctUntilChanged(),
             takeUntil(destroy$),
-            shareReplay(1),
+            shareReplay({ bufferSize: 1, refCount: true }),
           ),
       ]),
     ) as SelectFromDefs<T, Defs>;

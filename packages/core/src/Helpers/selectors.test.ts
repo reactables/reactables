@@ -320,3 +320,54 @@ describe('selectors on combine()', () => {
     expect(innerReadyValue).toBe(true);
   });
 });
+
+describe('selector subscription cleanup', () => {
+  // Frameworks that read a selector once (subscribe, take value, unsubscribe)
+  // must not leave a live upstream subscription behind.
+  it('RxBuilder: does not keep evaluating the selector after all subscribers leave', () => {
+    const fn = jest.fn((state: CounterState) => state.count);
+    const counter = RxCounter().selectors({ count: fn });
+    const [state$, actions] = counter;
+    const sub = state$.subscribe();
+
+    for (let i = 0; i < 5; i++) {
+      counter.select.count().subscribe().unsubscribe();
+    }
+
+    fn.mockClear();
+    actions.increment();
+
+    expect(fn).not.toHaveBeenCalled();
+    sub.unsubscribe();
+  });
+
+  it('combine: does not keep evaluating the selector after all subscribers leave', () => {
+    const fn = jest.fn((state: { counter: CounterState }) => state.counter.count);
+    const combined = combine({ counter: RxCounter() }).selectors({ count: fn });
+    const [state$, actions] = combined;
+    const sub = state$.subscribe();
+
+    for (let i = 0; i < 5; i++) {
+      combined.select.count().subscribe().unsubscribe();
+    }
+
+    fn.mockClear();
+    actions.counter.increment();
+
+    expect(fn).not.toHaveBeenCalled();
+    sub.unsubscribe();
+  });
+
+  it('still delivers the current value synchronously on a one-shot read', () => {
+    const counter = RxCounter().selectors({ double: (s) => s.count * 2 });
+    const [state$, actions] = counter;
+    const sub = state$.subscribe();
+    actions.set(4);
+
+    let value: number | undefined;
+    counter.select.double().subscribe((v) => (value = v)).unsubscribe();
+
+    expect(value).toBe(8);
+    sub.unsubscribe();
+  });
+});
