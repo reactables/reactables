@@ -90,6 +90,51 @@ actions.decrement();
 
 ```
 
+### `.selectors()` <a name="rx-builder-selectors"></a>
+
+`RxBuilder` returns a result with a `.selectors(defs)` method for deriving computed values from state.
+Each entry in `defs` is a function `(state) => value`. Calling `.selectors()` attaches a `.select` property to the reactable where each key is a callable that returns an **Observable of the computed value**.
+
+Selector observables are:
+- **Memoized** — `distinctUntilChanged()` suppresses re-emissions when the computed value hasn't changed.
+- **Multicast** — `shareReplay(1)` means multiple subscribers share one execution and late subscribers get the latest value immediately.
+- **Lifecycle-bound** — completed automatically when the reactable is destroyed.
+
+Extra arguments beyond `state` are supported and are passed through by the caller.
+
+```typescript
+import { RxBuilder } from '@reactables/core';
+
+const RxCounter = () =>
+  RxBuilder({
+    initialState: { count: 0 },
+    reducers: {
+      increment: (state) => ({ count: state.count + 1 }),
+      set: (_, action) => ({ count: action.payload }),
+    },
+  });
+
+const counter = RxCounter().selectors({
+  double: (state) => state.count * 2,
+  isPositive: (state) => state.count > 0,
+  multiplyBy: (state, factor: number) => state.count * factor,
+});
+
+// Tuple destructuring still works as normal
+const [state$, actions] = counter;
+
+// Each key on .select returns an Observable of the computed value
+counter.select.double().subscribe(v => console.log('double:', v));     // Observable<number>
+counter.select.isPositive().subscribe(v => console.log('positive:', v)); // Observable<boolean>
+counter.select.multiplyBy(3).subscribe(v => console.log('x3:', v));   // Observable<number>
+
+actions.increment(); // triggers re-evaluation of all selectors
+```
+
+> **Note:** `distinctUntilChanged` uses `===` by default. Selectors that return a new object reference on every call (e.g. `state => state.items.filter(...)`) will emit on every state change regardless of whether the contents changed. For these cases, consider returning a primitive or a stable reference.
+
+---
+
 ## `combine` <a name="combine"></a>
 
 `combine` is a helper function that merges a **dictionary of Reactables** into a single Reactable.
@@ -148,3 +193,49 @@ actions$.actionMap.a.increment$.subscribe(action => {
 // Trigger actions
 actions.a.increment(); // increments rxCounterA
 actions.b.increment(); // increments rxCounterB
+```
+
+### `.selectors()` on `combine` <a name="combine-selectors"></a>
+
+`combine` also returns a result with a `.selectors(defs)` method. It works the same way as on `RxBuilder`, with two additions:
+
+- **Inherited selectors** — if any of the input reactables had `.selectors()` called on them, their `.select` maps are automatically nested under their key on the combined `.select`.
+- **Top-level selectors** — `defs` receives the full combined state, so you can derive values that span multiple child reactables.
+
+```typescript
+import { RxBuilder, combine } from '@reactables/core';
+
+const RxCounter = () =>
+  RxBuilder({
+    initialState: { count: 0 },
+    reducers: { increment: (s) => ({ count: s.count + 1 }) },
+  });
+
+const RxToggle = () =>
+  RxBuilder({
+    initialState: { on: false },
+    reducers: { toggle: (s) => ({ on: !s.on }) },
+  });
+
+const counter = RxCounter().selectors({
+  double: (state) => state.count * 2,
+});
+
+const toggle = RxToggle().selectors({
+  label: (state) => (state.on ? 'on' : 'off'),
+});
+
+const app = combine({ counter, toggle }).selectors({
+  summary: (state) => `count=${state.counter.count} on=${state.toggle.on}`,
+});
+
+// Inherited child selectors are nested under their key
+app.select.counter.double().subscribe(v => console.log('double:', v)); // Observable<number>
+app.select.toggle.label().subscribe(v => console.log('label:', v));   // Observable<string>
+
+// Top-level selector operates over the full combined state
+app.select.summary().subscribe(v => console.log(v)); // 'count=0 on=false'
+```
+
+Selectors inherit through nested `combine()` calls as well — `app.select.inner.counter.double()` works at any depth.
+

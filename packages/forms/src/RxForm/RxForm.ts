@@ -7,9 +7,12 @@ import {
   ActionMap,
   DestroyAction,
   ActionObservableWithTypes,
+  RxBuilderResult,
+  ReactableWithSelect,
+  SelectFromDefs,
 } from '@reactables/core';
-import { Observable } from 'rxjs';
-import { filter, skip } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { filter, skip, map, distinctUntilChanged, takeUntil, shareReplay } from 'rxjs/operators';
 import { buildFormState } from '../Helpers/buildFormState';
 import {
   UpdateValuesPayload,
@@ -267,7 +270,7 @@ const createReactable = <FormValue, T extends Record<string, CustomReducer<FormV
   initialBaseState: BaseFormState<FormValue>,
   options: RxFormOptions<T> = {},
   initialFormState?: Form<FormValue>,
-): Reactable<
+): RxBuilderResult<
   Form<FormValue>,
   { [K in keyof T]: ActionCreatorTypeFromCustomReducer<T[K]> } & RxFormActions & DestroyAction,
   ActionTypes<T> & { destroy: 'destroy' },
@@ -339,9 +342,13 @@ const createReactable = <FormValue, T extends Record<string, CustomReducer<FormV
     },
   });
 
+  const formDestroy$ = new Subject<void>();
+
   const destroy = () => {
     hub1Actions.destroy();
     hub2Actions.destroy();
+    formDestroy$.next();
+    formDestroy$.complete();
   };
 
   const actions = { ...hub1Actions, destroy } as {
@@ -349,12 +356,48 @@ const createReactable = <FormValue, T extends Record<string, CustomReducer<FormV
   } & RxFormActions &
     DestroyAction;
 
-  return [
-    state$.pipe(filter((form) => form !== null)) as Observable<Form<FormValue>>,
+  type ActionsType = { [K in keyof T]: ActionCreatorTypeFromCustomReducer<T[K]> } & RxFormActions & DestroyAction;
+
+  const formState$ = state$.pipe(filter((form) => form !== null)) as Observable<Form<FormValue>>;
+
+  const result = [
+    formState$,
     actions,
     hub1Actions$ as ActionObservableWithTypes<
       ActionTypes<T> & { destroy: 'destroy' },
       RxFormActionMapType<T>
     >,
-  ];
+  ] as unknown as RxBuilderResult<
+    Form<FormValue>,
+    ActionsType,
+    ActionTypes<T> & { destroy: 'destroy' },
+    RxFormActionMapType<T>
+  >;
+
+  (result as any).selectors = <Defs extends Record<string, (state: Form<FormValue>, ...args: any[]) => unknown>>(defs: Defs) => {
+    const selectMap = Object.fromEntries(
+      Object.entries(defs).map(([key, fn]) => [
+        key,
+        (...args: any[]) =>
+          formState$.pipe(
+            map((state) => fn(state, ...args)),
+            distinctUntilChanged(),
+            takeUntil(formDestroy$),
+            shareReplay(1),
+          ),
+      ]),
+    ) as SelectFromDefs<Form<FormValue>, Defs>;
+
+    (result as any).select = selectMap;
+
+    return result as unknown as ReactableWithSelect<
+      Form<FormValue>,
+      ActionsType,
+      ActionTypes<T> & { destroy: 'destroy' },
+      RxFormActionMapType<T>,
+      SelectFromDefs<Form<FormValue>, Defs>
+    >;
+  };
+
+  return result;
 };

@@ -4,11 +4,14 @@ import {
   ActionCreatorTypeFromReducer,
   ActionObservableWithTypes,
   ActionMapType,
+  RxBuilderResult,
+  ReactableWithSelect,
+  SelectFromDefs,
 } from '../Models/Reactable';
 import { Effect } from '../Models/Effect';
 import { Action, ScopedEffects, AnyAction } from '../Models/Action';
 import { Observable, OperatorFunction, ReplaySubject, Subject, merge } from 'rxjs';
-import { filter, tap, map, mergeAll, scan, pairwise, startWith, takeUntil } from 'rxjs/operators';
+import { filter, tap, map, mergeAll, scan, pairwise, startWith, takeUntil, distinctUntilChanged } from 'rxjs/operators';
 import { share, shareReplay } from 'rxjs/operators';
 import jsonDiff, { Difference } from '../Helpers/jsonDiff';
 import { ofTypes } from '../Operators';
@@ -231,10 +234,39 @@ export const RxBuilder = <T, S extends Cases<T>>({
   actions$.ofTypes = (types) => actions$.pipe(ofTypes(types));
   actions$.actionMap = actionMap;
 
-  return [storedState$, actions, actions$] as Reactable<
+  type ActionsType = { [K in keyof S]: ActionCreatorTypeFromReducer<S[K]> } & DestroyAction;
+
+  const result = [storedState$, actions, actions$] as unknown as RxBuilderResult<
     T,
-    { [K in keyof S]: ActionCreatorTypeFromReducer<S[K]> } & DestroyAction,
+    ActionsType,
     typeof types,
     ActionMapType<S>
   >;
+
+  (result as any).selectors = <Defs extends Record<string, (state: T, ...args: any[]) => unknown>>(defs: Defs) => {
+    const selectMap = Object.fromEntries(
+      Object.entries(defs).map(([key, fn]) => [
+        key,
+        (...args: any[]) =>
+          storedState$.pipe(
+            map((state) => fn(state, ...args)),
+            distinctUntilChanged(),
+            takeUntil(destroy$),
+            shareReplay(1),
+          ),
+      ]),
+    ) as SelectFromDefs<T, Defs>;
+
+    (result as any).select = selectMap;
+
+    return result as unknown as ReactableWithSelect<
+      T,
+      ActionsType,
+      typeof types,
+      ActionMapType<S>,
+      SelectFromDefs<T, Defs>
+    >;
+  };
+
+  return result;
 };

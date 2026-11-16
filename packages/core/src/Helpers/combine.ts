@@ -1,9 +1,16 @@
 import { combineLatest, Observable, merge, ObservedValueOf } from 'rxjs';
 import { ofTypes } from '../Operators';
-import { map } from 'rxjs/operators';
+import { distinctUntilChanged, map, shareReplay } from 'rxjs/operators';
 import { Action, Reactable } from '../Models';
 import { DestroyAction } from './RxBuilder';
-import { ActionObservableWithTypes, CombinedActionMapType } from '../Models/Reactable';
+import {
+  ActionObservableWithTypes,
+  CombinedActionMapType,
+  CombinedState,
+  InheritedSelectors,
+  ReactableWithSelect,
+  SelectFromDefs,
+} from '../Models/Reactable';
 import { combineActionTypeStringMaps } from './createActionTypeStringMap';
 
 export const combine = <T extends Record<string, Reactable<unknown, unknown & DestroyAction>>>(
@@ -78,11 +85,62 @@ export const combine = <T extends Record<string, Reactable<unknown, unknown & De
   mergedActions$.ofTypes = (types) => mergedActions$.pipe(ofTypes(types as string[]));
   mergedActions$.actionMap = actionMap as CombinedActionMapType<T>;
 
-  return [states$, actions, mergedActions$] as [
-    Observable<{
-      [K in keyof T]: ObservedValueOf<T[K][0]>;
-    }>,
-    { [K in keyof T]: T[K][1] } & DestroyAction,
+  type ActionsType = { [K in keyof T]: T[K][1] } & DestroyAction;
+  type State = CombinedState<T>;
+
+  // Collect .select objects from children that have already called .select().
+  // Children that haven't called .select() (their .select is still a function)
+  // or have no .select at all are omitted.
+  const inheritedSelectors = Object.fromEntries(
+    Object.entries(sourceReactables)
+      .filter(([, r]) => {
+        const sel = (r as any).select;
+        return sel != null && typeof sel === 'object';
+      })
+      .map(([key, r]) => [key, (r as any).select]),
+  ) as InheritedSelectors<T>;
+
+  const result = [states$, actions, mergedActions$] as [
+    Observable<State>,
+    ActionsType,
     ActionObservableWithTypes<typeof actionTypes, CombinedActionMapType<T>>,
-  ];
+  ] & {
+    selectors<Defs extends Record<string, (state: State, ...args: any[]) => unknown>>(
+      defs: Defs,
+    ): ReactableWithSelect<
+      State,
+      ActionsType,
+      typeof actionTypes,
+      CombinedActionMapType<T>,
+      InheritedSelectors<T> & SelectFromDefs<State, Defs>
+    >;
+  };
+
+  (result as any).selectors = <Defs extends Record<string, (state: State, ...args: any[]) => unknown>>(
+    defs: Defs,
+  ) => {
+    const newSelectors = Object.fromEntries(
+      Object.entries(defs).map(([key, fn]) => [
+        key,
+        (...args: any[]) =>
+          states$.pipe(
+            map((state) => fn(state, ...args)),
+            distinctUntilChanged(),
+            shareReplay(1),
+          ),
+      ]),
+    ) as SelectFromDefs<State, Defs>;
+
+    (result as any).select = { ...inheritedSelectors, ...newSelectors };
+
+    return result as unknown as ReactableWithSelect<
+      State,
+      ActionsType,
+      typeof actionTypes,
+      CombinedActionMapType<T>,
+      InheritedSelectors<T> & SelectFromDefs<State, Defs>
+    >;
+  };
+
+  return result;
 };
